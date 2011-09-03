@@ -1,9 +1,5 @@
 #pragma once
 
-#include <sstream>
-#include <fstream>
-#include <windows.h>
-
 #include "i4core.h"
 
 namespace i4core
@@ -16,8 +12,8 @@ namespace i4core
 			FLAG_NONE		= 0,
 			FLAG_CONSOLE	= 1 << 1,
 			FLAG_DEBUGGER	= 1 << 2,
-			FLAG_FILE		= 1 << 4,
-			FLAG_XML		= 1 << 8,
+			FLAG_FILE		= 1 << 3,
+			FLAG_XML		= 1 << 4,
 		};
 
 		enum Level
