@@ -1,0 +1,9 @@
+syntax: glob
+Debug/
+Release/
+ipch/
+syntax: regexp
+\.user$
+\.opensdf$
+\.sdf$
+\.suo$
