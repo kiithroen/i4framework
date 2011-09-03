@@ -1,0 +1,126 @@
+#pragma once
+
+#include <sstream>
+#include <fstream>
+#include <windows.h>
+
+#include "i4core.h"
+
+namespace i4core
+{
+	class I4CORE_API I4Log
+	{
+	public:
+		enum Flag
+		{
+			FLAG_NONE		= 0,
+			FLAG_CONSOLE	= 1 << 1,
+			FLAG_DEBUGGER	= 1 << 2,
+			FLAG_FILE		= 1 << 4,
+			FLAG_XML		= 1 << 8,
+		};
+
+		enum Level
+		{
+			LEVEL_DEBUG		= 0,
+			LEVEL_INFO		= 1,
+			LEVEL_WARNING	= 2,
+			LEVEL_ERROR		= 3,
+			LEVEL_FATAL		= 4,
+		};
+
+	public:
+		I4Log(void)
+		{
+		}
+
+		~I4Log(void)
+		{
+			os << std::endl;
+
+			if (reportFlag & FLAG_CONSOLE)
+			{
+				fwprintf(stderr, L"%s", os.str().c_str());
+				fflush(stderr);
+			}
+
+			if (reportFlag & FLAG_DEBUGGER)
+			{
+				OutputDebugString(os.str().c_str());
+			}
+
+			if (reportFlag & FLAG_FILE)
+			{
+				ofs << os.str().c_str();
+			}
+		}
+
+		std::wostringstream& get(Level level, const char* file, const char* func, int line)
+		{
+			os << L"[" << getLevelString(level) << L"]";
+			os << L" ";
+
+			return os;
+		}
+
+		const wchar_t* getLevelString(Level level) const
+		{
+			static const wchar_t* LEVEL_STRING[] =
+			{
+				L"DEBUG",
+				L"INFO",
+				L"WARNING",
+				L"ERROR",
+				L"FATAL",
+			};
+
+			return LEVEL_STRING[level];
+		}
+
+	private:
+		I4Log(const I4Log&);
+		I4Log& operator = (const I4Log&);
+
+	private:
+		std::wostringstream	os;
+
+	public:
+		static const int getReportFlag()			{ return reportFlag; }
+		static const Level&	getReportLevel()		{ return reportLevel; }
+
+		static void initialize(int flag, Level level, const wchar_t* fname = L"i4framework.log")
+		{
+			reportFlag = flag;
+			reportLevel = level;
+
+			if (reportFlag & FLAG_FILE)
+			{
+				ofs.open(fname);
+			}
+		}
+
+		static void finalize()
+		{
+			if (reportFlag & FLAG_FILE)
+			{
+				ofs.close();
+			}
+		}
+
+	private:
+		static int				reportFlag;
+		static Level			reportLevel;
+		static std::wofstream	ofs;
+	};
+
+#define I4LOG(level, file, func, line) \
+	if (I4Log::getReportFlag() == 0 || level < I4Log::getReportLevel()) ; \
+	else I4Log().get(level, file, func, line)
+
+#define I4LOG_DEBUG		I4LOG(I4Log::LEVEL_DEBUG, __FILE__, __FUNCTION__, __LINE__)
+#define I4LOG_INFO		I4LOG(I4Log::LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__)
+#define I4LOG_WARNING	I4LOG(I4Log::LEVEL_WARNING, __FILE__, __FUNCTION__, __LINE__)
+#define I4LOG_ERROR		I4LOG(I4Log::LEVEL_ERROR, __FILE__, __FUNCTION__, __LINE__)
+#define I4LOG_FATAL		I4LOG(I4Log::LEVEL_FATAL, __FILE__, __FUNCTION__, __LINE__)
+
+}
