@@ -8,3 +8,9 @@ syntax: regexp
 \.sdf$
 \.suo$
 \.ilk$
+\.log$
+\.dll$
+\.exp$
+\.pdb$
+\.exe$
+\.lib$
