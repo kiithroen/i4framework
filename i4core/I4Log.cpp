@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "I4Log.h"
 
 using namespace i4core;

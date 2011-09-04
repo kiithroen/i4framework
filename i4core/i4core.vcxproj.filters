@@ -10,14 +10,14 @@
     <Filter Include="debug\log">
       <UniqueIdentifier>{b97e5209-1d5c-48a6-a55e-571c71b88a97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="debug\profile">
+      <UniqueIdentifier>{f77eb1c2-80cf-4dca-84b5-980d6f293f03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>dllmain</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>dllmain</Filter>
     </ClInclude>
@@ -27,12 +27,15 @@
     <ClInclude Include="i4core.h">
       <Filter>dllmain</Filter>
     </ClInclude>
+    <ClInclude Include="I4Profile.h">
+      <Filter>debug\profile</Filter>
+    </ClInclude>
+    <ClInclude Include="I4StopWatch.h">
+      <Filter>debug\profile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
-      <Filter>dllmain</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
       <Filter>dllmain</Filter>
     </ClCompile>
     <ClCompile Include="i4core.cpp">
@@ -40,6 +43,12 @@
     </ClCompile>
     <ClCompile Include="I4Log.cpp">
       <Filter>debug\log</Filter>
+    </ClCompile>
+    <ClCompile Include="I4Profile.cpp">
+      <Filter>debug\profile</Filter>
+    </ClCompile>
+    <ClCompile Include="I4StopWatch.cpp">
+      <Filter>debug\profile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
