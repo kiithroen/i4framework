@@ -34,31 +34,31 @@ namespace i4core
 
 		~I4Log(void)
 		{
-			os << std::endl;
+			oss << std::endl;
 
 			if (reportFlag & FLAG_CONSOLE)
 			{
-				fwprintf(stderr, L"%s", os.str().c_str());
+				fwprintf(stderr, L"%s", oss.str().c_str());
 				fflush(stderr);
 			}
 
 			if (reportFlag & FLAG_DEBUGGER)
 			{
-				OutputDebugString(os.str().c_str());
+				OutputDebugString(oss.str().c_str());
 			}
 
 			if (reportFlag & FLAG_FILE)
 			{
-				ofs << os.str().c_str();
+				ofs << oss.str().c_str();
 			}
 		}
 
 		std::wostringstream& get(Level level, const char* file, const char* func, int line)
 		{
-			os << L"[" << getLevelString(level) << L"]";
-			os << L" ";
+			oss << L"[" << getLevelString(level) << L"]";
+			oss << L" ";
 
-			return os;
+			return oss;
 		}
 
 		const wchar_t* getLevelString(Level level) const
@@ -80,7 +80,7 @@ namespace i4core
 		I4Log& operator = (const I4Log&);
 
 	private:
-		std::wostringstream	os;
+		std::wostringstream	oss;
 
 	public:
 		static const int getReportFlag()			{ return reportFlag; }

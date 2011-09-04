@@ -2,6 +2,8 @@
 
 #include "i4core.h"
 #include "I4StopWatch.h"
+#include "I4Log.h"
+#include <json/json.h>
 
 namespace i4core
 {
@@ -187,8 +189,8 @@ namespace i4core
 			root.reset();
 		}
 
-		static I4ProfileIterator*	getIterator()									{ return new I4ProfileIterator(&root); }
-		static void					releaseIterator(I4ProfileIterator* iterator)	{ delete iterator; }
+		static I4ProfileIterator	getIterator()									{ return I4ProfileIterator(&root); }
+		static I4ProfileNode*		getRoot()										{ return &root; }
 
 	private:
 		static I4ProfileNode	root;
@@ -206,6 +208,47 @@ namespace i4core
 		~I4ProfileSample()
 		{
 			I4ProfileManager::end();
+		}
+	};
+
+	class I4CORE_API I4ProfileWriter
+	{
+	public:
+		static void writeJson(I4ProfileNode* node, const wchar_t* fname)
+		{
+			// Node를 Json 데이타로 변환
+			Json::Value root;
+			getJson(node, root);
+
+			// Json 문자열 데이타를 만들고
+			Json::StyledStreamWriter writer;
+			std::ostringstream os;
+			writer.write(os, root);
+
+			// 파일에 쓴다.
+			std::wofstream ofs;
+			ofs.open(fname);
+			ofs << os.str().c_str();
+			ofs.close();
+		}
+
+		static void getJson(I4ProfileNode* node, Json::Value& value)
+		{
+			// 현재 노드의 값을 저장하고
+			value["name"] = node->getName();
+			value["totalTime"] = node->getTotalTime();
+			value["totalCalls"] = node->getTotalCalls();
+
+			// 자식노드들을 배열에 추가한다.
+			I4ProfileNode* child = node->getChild();
+			int i = 0;
+			while (child != NULL)
+			{
+				// 자식들은 재귀적으로 값을 얻어온다.
+				getJson(child, value["child"][i]);
+				child = child->getSibling();
+				i++;
+			}
 		}
 	};
 
