@@ -5,7 +5,6 @@
 #include "I4Log.h"
 #include "I4StopWatch.h"
 #include "I4Profile.h"
-#include <iostream>
 
 using namespace i4core;
 
@@ -13,7 +12,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	I4Log::initialize(I4Log::FLAG_CONSOLE|I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE, I4Log::LEVEL_DEBUG, L"i4.log");
 	I4StopWatch::initialize();
-
+	/*
 	I4StopWatch stopWatch;
 
 	stopWatch.reset();
@@ -57,7 +56,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	I4LOG_DEBUG << stopWatch.getElapsedTime();
 
-	I4ProfileIterator itr = I4ProfileManager::getIterator();
+	I4ProfileIterator itr = I4ProfileManager::getRootIterator();
 
 	do
 	{
@@ -65,10 +64,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		itr.next();
 	} while (!itr.isDone());
 
-	I4ProfileWriter::writeJson(I4ProfileManager::getRoot(), L"profile.json");
+	I4ProfileWriter::writeJson(I4ProfileManager::getRootNode(), L"profile.json");
 
 	I4Log::finalize();
+	*/
+	::testing::InitGoogleTest(&argc, argv);
 
-	return 0;
+	return RUN_ALL_TESTS();
 }
 

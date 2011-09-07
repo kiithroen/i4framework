@@ -105,61 +105,64 @@ namespace i4core
 	public:
 		I4ProfileIterator(I4ProfileNode* start)
 		{
-			curParentNode = start;
+			curNode = start;
 			curChildNode = start->getChild();
 		}
 
-		void		first()
+		void		firstChild()
 		{
-			curChildNode = curParentNode->getChild();
+			curChildNode = curNode->getChild();
 		}
 
-		void		next()
+		void		nextChild()
 		{
 			curChildNode = curChildNode->getSibling();
 		}
 
-		bool		isDone()
+		bool		isCurChildValid()
 		{
-			return (curChildNode == NULL);
+			return (curChildNode != NULL);
 		}
 
 		void		enterChild(int index)
 		{
-			curChildNode = curParentNode->getChild();
-			while (!isDone() && index != 0)
+			// 자식들을 순회하면서 인덱스만큼 가던지 아니면 마지막까지 가본다
+			curChildNode = curNode->getChild();
+			while (isCurChildValid() && index != 0)
 			{
 				--index;
+
 				curChildNode = curChildNode->getSibling();
 			}
 
+			// 찾은 자식이 있으면 자식노드로 들어간다.
 			if (curChildNode != NULL)
 			{
-				curParentNode = curChildNode;
-				curChildNode = curParentNode->getChild();
+				curNode = curChildNode;
+				curChildNode = curNode->getChild();
 			}
 		}
 
 		void		enterParent()
 		{
-			if (curParentNode->getParent() != NULL)
+			if (curNode->getParent() != NULL)
 			{
-				curParentNode = curParentNode->getParent();
+				curNode = curNode->getParent();
 			}
 
-			curChildNode = curParentNode->getChild();
+			curChildNode = curNode->getChild();
 		}
+
+		const char*	getCurName()				{ return curNode->getName(); }
+		int			getCurTotalCalls()			{ return curNode->getTotalCalls(); }
+		float		getCurTotalTime()			{ return curNode->getTotalTime(); }
 
 		const char*	getCurChildName()			{ return curChildNode->getName(); }
 		int			getCurChildTotalCalls()		{ return curChildNode->getTotalCalls(); }
 		float		getCurChildTotalTime()		{ return curChildNode->getTotalTime(); }
 
-		const char*	getCurParentName()			{ return curParentNode->getName(); }
-		int			getCurParentTotalCalls()	{ return curParentNode->getTotalCalls(); }
-		float		getCurParentTotalTime()		{ return curParentNode->getTotalTime(); }
-
 	private:
-		I4ProfileNode*		curParentNode;
+		I4ProfileNode*		curNode;
 		I4ProfileNode*		curChildNode;
 	};
 
@@ -186,14 +189,14 @@ namespace i4core
 
 		static void		reset()
 		{
-			root.reset();
+			rootNode.reset();
 		}
 
-		static I4ProfileIterator	getIterator()									{ return I4ProfileIterator(&root); }
-		static I4ProfileNode*		getRoot()										{ return &root; }
+		static I4ProfileIterator	getRootIterator()									{ return I4ProfileIterator(&rootNode); }
+		static I4ProfileNode*		getRootNode()										{ return &rootNode; }
 
 	private:
-		static I4ProfileNode	root;
+		static I4ProfileNode	rootNode;
 		static I4ProfileNode*	curNode;
 	};
 
@@ -244,7 +247,7 @@ namespace i4core
 			int i = 0;
 			while (child != NULL)
 			{
-				// 자식들은 재귀적으로 값을 얻어온다.
+				// 자식들은 재귀적으로 값을 저장한다.
 				getJson(child, value["child"][i]);
 				child = child->getSibling();
 				i++;

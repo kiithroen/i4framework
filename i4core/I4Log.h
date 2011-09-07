@@ -86,7 +86,7 @@ namespace i4core
 		static const int getReportFlag()			{ return reportFlag; }
 		static const Level&	getReportLevel()		{ return reportLevel; }
 
-		static void initialize(int flag, Level level, const wchar_t* fname = L"i4framework.log")
+		static void initialize(int flag, Level level, const wchar_t* fname = L"i4.log")
 		{
 			reportFlag = flag;
 			reportLevel = level;
