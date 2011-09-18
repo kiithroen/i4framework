@@ -2,32 +2,16 @@
 
 #include "i4core.h"
 #include "I4StopWatch.h"
-#include "I4Log.h"
-#include <json/json.h>
 
 namespace i4core
 {
 	class I4ProfileNode
 	{
 	public:
-		I4ProfileNode(const char* _name, I4ProfileNode* _parent, I4ProfileNode* _sibling)
-		: totalTime(0)
-		, totalCalls(0)
-		, recursionCounter(0)
-		, parent(_parent)
-		, child(NULL)		
-		, sibling(_sibling)
-		, name(_name)
-		{
-		};
+		I4ProfileNode(const char* _name, I4ProfileNode* _parent, I4ProfileNode* _sibling);
+		~I4ProfileNode();
 
-		~I4ProfileNode()
-		{
-			delete child;
-			delete sibling;
-		}
-
-		I4ProfileNode*	findSubNode(const char* name)
+		I4ProfileNode* findSubNode(const char* name)
 		{
 			// 첫번째 자식들중에 있는지 찾아서 있으면 리턴
 			I4ProfileNode* _child = child;
@@ -46,7 +30,7 @@ namespace i4core
 			return child;
 		}
 
-		void			reset()
+		void reset()
 		{
 			totalCalls = 0;
 			totalTime = 0;
@@ -62,7 +46,7 @@ namespace i4core
 			}
 		}
 
-		void			begin()
+		void begin()
 		{
 			++totalCalls;
 			if (recursionCounter++ == 0)
@@ -71,7 +55,7 @@ namespace i4core
 			}
 		}
 
-		bool			end()
+		bool end()
 		{
 			if (--recursionCounter == 0)
 			{				
@@ -109,22 +93,22 @@ namespace i4core
 			curChildNode = start->getChild();
 		}
 
-		void		firstChild()
+		void firstChild()
 		{
 			curChildNode = curNode->getChild();
 		}
 
-		void		nextChild()
+		void nextChild()
 		{
 			curChildNode = curChildNode->getSibling();
 		}
 
-		bool		isCurChildValid()
+		bool isCurChildValid()
 		{
 			return (curChildNode != NULL);
 		}
 
-		void		enterChild(int index)
+		void enterChild(int index)
 		{
 			// 자식들을 순회하면서 인덱스만큼 가던지 아니면 마지막까지 가본다
 			curChildNode = curNode->getChild();
@@ -143,7 +127,7 @@ namespace i4core
 			}
 		}
 
-		void		enterParent()
+		void enterParent()
 		{
 			if (curNode->getParent() != NULL)
 			{
@@ -169,7 +153,7 @@ namespace i4core
 	class I4CORE_API I4ProfileManager
 	{
 	public:
-		static void		begin(const char* name)
+		static void	begin(const char* name)
 		{
 			if (name != curNode->getName())
 			{
@@ -179,7 +163,7 @@ namespace i4core
 			curNode->begin();
 		}
 
-		static void		end()
+		static void	end()
 		{
 			if (curNode->end())
 			{
@@ -187,7 +171,7 @@ namespace i4core
 			}
 		}
 
-		static void		reset()
+		static void	reset()
 		{
 			rootNode.reset();
 		}
@@ -214,47 +198,12 @@ namespace i4core
 		}
 	};
 
-	class I4CORE_API I4ProfileWriter
+	class I4ProfileWriter
 	{
 	public:
-		static void writeJson(I4ProfileNode* node, const wchar_t* fname)
-		{
-			// Node를 Json 데이타로 변환
-			Json::Value root;
-			getJson(node, root);
-
-			// Json 문자열 데이타를 만들고
-			Json::StyledStreamWriter writer;
-			std::ostringstream os;
-			writer.write(os, root);
-
-			// 파일에 쓴다.
-			std::wofstream ofs;
-			ofs.open(fname);
-			ofs << os.str().c_str();
-			ofs.close();
-		}
-
-		static void getJson(I4ProfileNode* node, Json::Value& value)
-		{
-			// 현재 노드의 값을 저장하고
-			value["name"] = node->getName();
-			value["totalTime"] = node->getTotalTime();
-			value["totalCalls"] = node->getTotalCalls();
-
-			// 자식노드들을 배열에 추가한다.
-			I4ProfileNode* child = node->getChild();
-			int i = 0;
-			while (child != NULL)
-			{
-				// 자식들은 재귀적으로 값을 저장한다.
-				getJson(child, value["child"][i]);
-				child = child->getSibling();
-				i++;
-			}
-		}
+		virtual void write(I4ProfileNode* node, const wchar_t* fname) = 0;
 	};
-
+	
 #define PROFILE(name)	I4ProfileSample __profile(name)
 
 }

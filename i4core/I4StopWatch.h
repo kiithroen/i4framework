@@ -7,33 +7,26 @@ namespace i4core
 	class I4CORE_API I4StopWatch
 	{
 	public:
-		void		reset()
+		void reset()
 		{
-			LARGE_INTEGER time;
-			QueryPerformanceCounter(&time);
-			startTime = time.QuadPart;
+			QueryPerformanceCounter(&startTime);
 		}
 
-		float		getElapsedTime()
+		float getElapsedTime()
 		{
-			LARGE_INTEGER time;
-			QueryPerformanceCounter(&time);
+			QueryPerformanceCounter(&endTime);
 
-			return (float)((double)(time.QuadPart - startTime)/ticksPerSec);
+			return (float)((double)(endTime.QuadPart - startTime.QuadPart)/ticksPerSec);
 		}
 		
 	private:
-		LONGLONG		startTime;
+		LARGE_INTEGER		startTime;
+		LARGE_INTEGER		endTime;
 
 	public:		
-		static void initialize()
-		{
-			LARGE_INTEGER freq;
-			QueryPerformanceFrequency(&freq);
-			ticksPerSec = (double)freq.QuadPart;
-		}
+		static void initialize();
 
 	private:
-		static double		ticksPerSec;
+		static double	ticksPerSec;
 	};
 }

@@ -54,6 +54,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;I4CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../dependency/jsoncpp/include;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -79,6 +80,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;I4CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../dependency/jsoncpp/include;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -98,10 +100,21 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="I4AABB.h" />
     <ClInclude Include="i4core.h" />
     <ClInclude Include="I4Log.h" />
+    <ClInclude Include="I4MathUtil.h" />
+    <ClInclude Include="I4Matrix4x4.h" />
+    <ClInclude Include="I4Plane.h" />
     <ClInclude Include="I4Profile.h" />
+    <ClInclude Include="I4ProfileWriterJson.h" />
+    <ClInclude Include="I4Quaternion.h" />
+    <ClInclude Include="I4Ray.h" />
+    <ClInclude Include="I4Sphere.h" />
     <ClInclude Include="I4StopWatch.h" />
+    <ClInclude Include="I4Vector2.h" />
+    <ClInclude Include="I4Vector3.h" />
+    <ClInclude Include="I4Vector4.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +129,7 @@
     <ClCompile Include="i4core.cpp" />
     <ClCompile Include="I4Log.cpp" />
     <ClCompile Include="I4Profile.cpp" />
+    <ClCompile Include="I4ProfileWriterJson.cpp" />
     <ClCompile Include="I4StopWatch.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

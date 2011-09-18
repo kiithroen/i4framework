@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "i4core.h"
 
 namespace i4core
@@ -28,52 +26,13 @@ namespace i4core
 		};
 
 	public:
-		I4Log(void)
-		{
-		}
+		I4Log(void);
+		~I4Log(void);
 
-		~I4Log(void)
-		{
-			oss << std::endl;
+		std::wostringstream& get(Level level, const char* file, const char* func, int line);
 
-			if (reportFlag & FLAG_CONSOLE)
-			{
-				fwprintf(stderr, L"%s", oss.str().c_str());
-				fflush(stderr);
-			}
-
-			if (reportFlag & FLAG_DEBUGGER)
-			{
-				OutputDebugString(oss.str().c_str());
-			}
-
-			if (reportFlag & FLAG_FILE)
-			{
-				ofs << oss.str().c_str();
-			}
-		}
-
-		std::wostringstream& get(Level level, const char* file, const char* func, int line)
-		{
-			oss << L"[" << getLevelString(level) << L"]";
-			oss << L" ";
-
-			return oss;
-		}
-
-		const wchar_t* getLevelString(Level level) const
-		{
-			static const wchar_t* LEVEL_STRING[] =
-			{
-				L"DEBUG",
-				L"INFO",
-				L"WARNING",
-				L"ERROR",
-				L"FATAL",
-			};
-
-			return LEVEL_STRING[level];
-		}
+	private:
+		const wchar_t* getLevelString(Level level) const;
 
 	private:
 		I4Log(const I4Log&);
@@ -86,24 +45,8 @@ namespace i4core
 		static const int getReportFlag()			{ return reportFlag; }
 		static const Level&	getReportLevel()		{ return reportLevel; }
 
-		static void initialize(int flag, Level level, const wchar_t* fname = L"i4.log")
-		{
-			reportFlag = flag;
-			reportLevel = level;
-
-			if (reportFlag & FLAG_FILE)
-			{
-				ofs.open(fname);
-			}
-		}
-
-		static void finalize()
-		{
-			if (reportFlag & FLAG_FILE)
-			{
-				ofs.close();
-			}
-		}
+		static void initialize(int flag, Level level, const wchar_t* fname = L"i4.log");
+		static void finalize();
 
 	private:
 		static int				reportFlag;

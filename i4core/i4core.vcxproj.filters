@@ -13,6 +13,9 @@
     <Filter Include="debug\profile">
       <UniqueIdentifier>{f77eb1c2-80cf-4dca-84b5-980d6f293f03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{52ad5d74-58dd-454e-9431-efc5eaedecf2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -33,6 +36,39 @@
     <ClInclude Include="I4StopWatch.h">
       <Filter>debug\profile</Filter>
     </ClInclude>
+    <ClInclude Include="I4Vector2.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Vector3.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Vector4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Matrix4x4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Ray.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4AABB.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Plane.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Sphere.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ProfileWriterJson.h">
+      <Filter>debug\profile</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Quaternion.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4MathUtil.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -48,6 +84,9 @@
       <Filter>debug\profile</Filter>
     </ClCompile>
     <ClCompile Include="I4StopWatch.cpp">
+      <Filter>debug\profile</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ProfileWriterJson.cpp">
       <Filter>debug\profile</Filter>
     </ClCompile>
   </ItemGroup>

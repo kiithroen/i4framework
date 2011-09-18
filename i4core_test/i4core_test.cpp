@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "I4Log.h"
 #include "I4StopWatch.h"
-#include "I4Profile.h"
 
 using namespace i4core;
 
