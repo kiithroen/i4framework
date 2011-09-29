@@ -14,7 +14,7 @@ void I4ProfileWriterJson::write(I4ProfileNode* node, const wchar_t* fname)
 	writer.write(os, root);
 
 	// 파일에 쓴다.
-	std::wofstream ofs;
+	std::ofstream ofs;
 	ofs.open(fname);
 	ofs << os.str().c_str();
 	ofs.close();

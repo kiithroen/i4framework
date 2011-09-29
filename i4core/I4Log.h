@@ -20,7 +20,7 @@ namespace i4core
 		{
 			LEVEL_DEBUG		= 0,
 			LEVEL_INFO		= 1,
-			LEVEL_WARNING	= 2,
+			LEVEL_WARN		= 2,
 			LEVEL_ERROR		= 3,
 			LEVEL_FATAL		= 4,
 		};
@@ -51,7 +51,7 @@ namespace i4core
 	private:
 		static int				reportFlag;
 		static Level			reportLevel;
-		static std::wofstream	ofs;
+		static std::ofstream	ofs;
 	};
 
 #define I4LOG(level, file, func, line) \
@@ -60,7 +60,7 @@ namespace i4core
 
 #define I4LOG_DEBUG		I4LOG(I4Log::LEVEL_DEBUG, __FILE__, __FUNCTION__, __LINE__)
 #define I4LOG_INFO		I4LOG(I4Log::LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__)
-#define I4LOG_WARNING	I4LOG(I4Log::LEVEL_WARNING, __FILE__, __FUNCTION__, __LINE__)
+#define I4LOG_WARN		I4LOG(I4Log::LEVEL_WARN, __FILE__, __FUNCTION__, __LINE__)
 #define I4LOG_ERROR		I4LOG(I4Log::LEVEL_ERROR, __FILE__, __FUNCTION__, __LINE__)
 #define I4LOG_FATAL		I4LOG(I4Log::LEVEL_FATAL, __FILE__, __FUNCTION__, __LINE__)
 

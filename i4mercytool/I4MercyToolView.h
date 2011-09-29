@@ -1,0 +1,64 @@
+
+// I4MercyToolView.h : CI4MercyToolView 클래스의 인터페이스
+//
+
+#pragma once
+
+namespace i4graphics
+{
+	class I4VertexBuffer;
+	class I4IndexBuffer;
+}
+using namespace i4graphics;
+
+class CI4MercyToolView : public CView
+{
+protected: // serialization에서만 만들어집니다.
+	CI4MercyToolView();
+	DECLARE_DYNCREATE(CI4MercyToolView)
+
+// 특성입니다.
+public:
+	CI4MercyToolDoc* GetDocument() const;
+
+// 작업입니다.
+public:
+	bool	initialize();
+	void	finalize();
+	void	onIdle();
+
+private:
+	I4VertexBuffer*		box_VB;
+	I4IndexBuffer*		box_IB;
+
+// 재정의입니다.
+public:
+	virtual void OnDraw(CDC* pDC);  // 이 뷰를 그리기 위해 재정의되었습니다.
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+protected:
+
+// 구현입니다.
+public:
+	virtual ~CI4MercyToolView();
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+protected:
+
+// 생성된 메시지 맵 함수
+protected:
+	afx_msg void OnFilePrintPreview();
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	DECLARE_MESSAGE_MAP()
+public:
+	virtual void OnInitialUpdate();
+};
+
+#ifndef _DEBUG  // I4MercyToolView.cpp의 디버그 버전
+inline CI4MercyToolDoc* CI4MercyToolView::GetDocument() const
+   { return reinterpret_cast<CI4MercyToolDoc*>(m_pDocument); }
+#endif
+
