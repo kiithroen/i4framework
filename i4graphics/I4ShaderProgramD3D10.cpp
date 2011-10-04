@@ -83,9 +83,9 @@ namespace i4graphics {
 			mapShaderMatrixArray((ShaderMatrixArray)i, SHADER_MATRIX_ARRAY_NAME[i]);
 		}
 
-		for (int i = 0; i < SHADER_RESOURCE_TOTAL_NUM; ++i)
+		for (int i = 0; i < SHADER_TEXTURE_TOTAL_NUM; ++i)
 		{
-			mapShaderResource((ShaderTexture)i, SHADER_RESOURCE_NAME[i]);
+			mapShaderResource((ShaderTexture)i, SHADER_TEXTURE_NAME[i]);
 		}
 
 		return true;

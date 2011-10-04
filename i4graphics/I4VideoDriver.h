@@ -9,7 +9,7 @@ namespace i4graphics
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 	class I4Texture;
-	class I4Camera;
+	class I4RenderTarget;
 	
 	enum I4VideoDriverMode
 	{
@@ -33,8 +33,11 @@ namespace i4graphics
 		virtual void				endScene();
 
 		virtual void				clearScreen(unsigned char r, unsigned char g, unsigned char b);
+		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b);
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget);
 
 		virtual I4ShaderProgram*	createShaderProgram();
 
@@ -42,6 +45,8 @@ namespace i4graphics
 		virtual I4IndexBuffer*		createIndexBuffer();
 
 		virtual I4Texture*			createTexture();
+
+		virtual I4RenderTarget*		createRenderTarget();
 		
 		void						setActiveSahderProgram(I4ShaderProgram* shader)	{ activeShaderProgram = shader; }
 		I4ShaderProgram*			getActiveSahderProgram() const					{ return activeShaderProgram; }

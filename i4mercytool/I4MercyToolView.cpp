@@ -13,10 +13,12 @@
 #include "I4MercyToolView.h"
 
 #include "I4Log.h"
+#include "I4MathUtil.h"
 #include "I4VideoDriver.h"
 #include "I4ShaderMgr.h"
 #include "I4GeometryBuffer.h"
-#include "I4MathUtil.h"
+#include "I4RenderTarget.h"
+#include "I4Texture.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -128,28 +130,47 @@ bool CI4MercyToolView::initialize()
 		return false;
 	}
 
-	I4ShaderMgr::createShaderMgr(I4SHADER_MGR_TYPE_UBER);
-	I4ShaderMgr* shaderMgr = I4ShaderMgr::getShaderMgr();
-	if (!shaderMgr->initialize(L"render.fx"))
+	if (!I4ShaderMgr::addShaderMgr(L"deffered_render_g.fx"))
 	{
-		MessageBox(L"shader manager initialize failed.");
+		MessageBox(L"shader manager add failed.");
 		return false;
 	}
 	
-	const I4Vertex_Pos_Col box[] =
+	const I4Vertex_Pos_Normal_Tex box[] =
 	{
-		{-1,  1,  1, 0xffff0000},
-		{ 1,  1,  1, 0xff000000},
-		{ 1,  1, -1, 0xff0000ff},
-		{-1,  1, -1, 0xffffff00},
-		{-1, -1,  1, 0xff00ffff},
-		{ 1, -1,  1, 0xffff00ff},
-		{ 1, -1, -1, 0xff000000},
-		{-1, -1, -1, 0xffffffff},
+		{ I4Vector3( -1.0f, 1.0f, -1.0f ), I4Vector3( 0.0f, 1.0f, 0.0f ), I4Vector2( 0.0f, 0.0f ) },
+        { I4Vector3( 1.0f, 1.0f, -1.0f ), I4Vector3( 0.0f, 1.0f, 0.0f ), I4Vector2( 1.0f, 0.0f ) },
+        { I4Vector3( 1.0f, 1.0f, 1.0f ), I4Vector3( 0.0f, 1.0f, 0.0f ), I4Vector2( 1.0f, 1.0f ) },
+        { I4Vector3( -1.0f, 1.0f, 1.0f ), I4Vector3( 0.0f, 1.0f, 0.0f ), I4Vector2( 0.0f, 1.0f ) },
+
+        { I4Vector3( -1.0f, -1.0f, -1.0f ), I4Vector3( 0.0f, -1.0f, 0.0f ),  I4Vector2( 0.0f, 0.0f ) },
+        { I4Vector3( 1.0f, -1.0f, -1.0f ), I4Vector3( 0.0f, -1.0f, 0.0f ),  I4Vector2( 1.0f, 0.0f ) },
+        { I4Vector3( 1.0f, -1.0f, 1.0f ), I4Vector3( 0.0f, -1.0f, 0.0f ),  I4Vector2( 1.0f, 1.0f ) },
+        { I4Vector3( -1.0f, -1.0f, 1.0f ), I4Vector3( 0.0f, -1.0f, 0.0f ),  I4Vector2( 0.0f, 1.0f ) },
+
+        { I4Vector3( -1.0f, -1.0f, 1.0f ), I4Vector3( -1.0f, 0.0f, 0.0f ),  I4Vector2( 0.0f, 0.0f ) },
+        { I4Vector3( -1.0f, -1.0f, -1.0f ), I4Vector3( -1.0f, 0.0f, 0.0f ), I4Vector2( 1.0f, 0.0f ) },
+        { I4Vector3( -1.0f, 1.0f, -1.0f ), I4Vector3( -1.0f, 0.0f, 0.0f ),  I4Vector2( 1.0f, 1.0f ) },
+        { I4Vector3( -1.0f, 1.0f, 1.0f ), I4Vector3( -1.0f, 0.0f, 0.0f ),  I4Vector2( 0.0f, 1.0f ) },
+
+        { I4Vector3( 1.0f, -1.0f, 1.0f ), I4Vector3( 1.0f, 0.0f, 0.0f ),   I4Vector2( 0.0f, 0.0f ) },
+        { I4Vector3( 1.0f, -1.0f, -1.0f ), I4Vector3( 1.0f, 0.0f, 0.0f ),   I4Vector2( 1.0f, 0.0f ) },
+        { I4Vector3( 1.0f, 1.0f, -1.0f ), I4Vector3( 1.0f, 0.0f, 0.0f ),   I4Vector2( 1.0f, 1.0f ) },
+        { I4Vector3( 1.0f, 1.0f, 1.0f ), I4Vector3( 1.0f, 0.0f, 0.0f ),	   I4Vector2( 0.0f, 1.0f ) },
+
+        { I4Vector3( -1.0f, -1.0f, -1.0f ), I4Vector3( 0.0f, 0.0f, -1.0f ), I4Vector2( 0.0f, 0.0f ) },
+        { I4Vector3( 1.0f, -1.0f, -1.0f ), I4Vector3( 0.0f, 0.0f, -1.0f ),  I4Vector2( 1.0f, 0.0f ) },
+        { I4Vector3( 1.0f, 1.0f, -1.0f ), I4Vector3( 0.0f, 0.0f, -1.0f ),  I4Vector2( 1.0f, 1.0f ) },
+        { I4Vector3( -1.0f, 1.0f, -1.0f ), I4Vector3( 0.0f, 0.0f, -1.0f ),  I4Vector2( 0.0f, 1.0f ) },
+
+        { I4Vector3( -1.0f, -1.0f, 1.0f ), I4Vector3( 0.0f, 0.0f, 1.0f ),   I4Vector2( 0.0f, 0.0f ) },
+        { I4Vector3( 1.0f, -1.0f, 1.0f ), I4Vector3( 0.0f, 0.0f, 1.0f ),   I4Vector2( 1.0f, 0.0f ) },
+        { I4Vector3( 1.0f, 1.0f, 1.0f ), I4Vector3( 0.0f, 0.0f, 1.0f ),	   I4Vector2( 1.0f, 1.0f ) },
+        { I4Vector3( -1.0f, 1.0f, 1.0f ), I4Vector3( 0.0f, 0.0f, 1.0f ),   I4Vector2( 0.0f, 1.0f ) },
 	};
 
 	box_VB = videoDriver->createVertexBuffer();
-	if (!box_VB->create(_countof(box), sizeof(I4Vertex_Pos_Col), box))
+	if (!box_VB->create(_countof(box), sizeof(I4Vertex_Pos_Normal_Tex), box))
 	{
 		MessageBox(L"vertex buffer create failed.");
 		return false;
@@ -157,18 +178,57 @@ bool CI4MercyToolView::initialize()
 
 	const static unsigned long indices[] =
 	{
-		0, 1, 2, 0, 2, 3,
-		4, 6, 5, 4, 7, 6,
-		0, 3, 7, 0, 7, 4,
-		1, 5, 6, 1, 6, 2,
-		3, 2, 6, 3, 6, 7,
-		0, 4, 5, 0, 5, 1,
+		3,1,0,
+        2,1,3,
+
+        6,4,5,
+        7,4,6,
+
+        11,9,8,
+        10,9,11,
+
+        14,12,13,
+        15,12,14,
+
+        19,17,16,
+        18,17,19,
+
+        22,20,21,
+        23,20,22
 	};
 
 	box_IB = videoDriver->createIndexBuffer();
 	if (!box_IB->create(_countof(indices), sizeof(unsigned short), indices))
 	{
 		MessageBox(L"index buffer create failed.");
+		return false;
+	}
+
+	renderTarget[0] = videoDriver->createRenderTarget();
+	if (!renderTarget[0]->create(800, 600, I4FORMAT_R8G8B8A8_UNORM))
+	{
+		MessageBox(L"render target create failed.");
+		return false;
+	}
+
+	renderTarget[1] = videoDriver->createRenderTarget();
+	if (!renderTarget[1]->create(800, 600, I4FORMAT_R8G8B8A8_UNORM))
+	{
+		MessageBox(L"render target create failed.");
+		return false;
+	}
+
+	renderTarget[2] = videoDriver->createRenderTarget();
+	if (!renderTarget[2]->create(800, 600, I4FORMAT_R32_FLOAT))
+	{
+		MessageBox(L"render target create failed.");
+		return false;
+	}
+
+	diffuseMap = videoDriver->createTexture();
+	if (!diffuseMap->load("seafloor.dds"))
+	{
+		MessageBox(L"diffuse map create failed.");
 		return false;
 	}
 
@@ -192,9 +252,19 @@ void CI4MercyToolView::onIdle()
 		if (videoDriver->beginScene())
 		{
 			videoDriver->clearScreen(0, 32, 76);
-			I4ShaderMgr* shaderMgr = I4ShaderMgr::getShaderMgr();
 
-			shaderMgr->begin(I4SHADER_MASK_VERTEX_COLOR, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
+			unsigned int numRT = _countof(renderTarget);
+			for (unsigned int i = 0; i < numRT; ++i)
+			{
+				videoDriver->clearRenderTarget(renderTarget[i], 255, 0, 255);
+			}
+
+			videoDriver->setViewport(0, 0, 800, 600);
+			videoDriver->setRenderTarget(numRT, renderTarget);
+
+			I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr(L"deffered_render_g.fx");
+
+			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX));
 
 			I4Matrix4x4 matBox;
 			matBox.makeTranslation(0.0f, 0.0f, -3.0f);
@@ -203,13 +273,14 @@ void CI4MercyToolView::onIdle()
 			matProjection.makePerspectiveFovLH(PI/4.0f, (float)videoDriver->getWidth()/(float)videoDriver->getHeight(), 1.0f, 1000.0f);
 
 			I4Matrix4x4 matView;
-			matView.makeCameraLookAtLH(I4Vector3(5.0f, 5.0f, -15.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+			matView.makeCameraLookAtLH(I4Vector3(3.0f, 5.0f, -15.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
 			I4Matrix4x4 matWVP = matBox*matView*matProjection;
 
 			shaderMgr->setMatrix(SHADER_MATRIX_WORLD, matBox.arr);
 			shaderMgr->setMatrix(SHADER_MATRIX_VIEW, matView.arr);
 			shaderMgr->setMatrix(SHADER_MATRIX_PROJECTION, matProjection.arr);
+			shaderMgr->setTexture(SHADER_TEXTURE_DIFFUSEMAP, diffuseMap);
 
 			box_VB->bind();
 			box_IB->bind();

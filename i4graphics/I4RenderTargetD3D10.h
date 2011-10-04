@@ -1,0 +1,32 @@
+#pragma once
+
+#include "i4graphics.h"
+#include "I4VideoDriverD3D10.h"
+#include "I4RenderTarget.h"
+
+namespace i4graphics
+{
+	class I4RenderTargetD3D10 : public I4RenderTarget
+	{
+		friend class I4VideoDriverD3D10;
+	public:
+		virtual ~I4RenderTargetD3D10();
+
+		virtual bool				create(unsigned int width, unsigned int height, I4FORMAT format) override;
+
+		ID3D10RenderTargetView*		get() const	{ return renderTargetView; }
+
+	private:
+		void						unload();
+
+	private:
+		I4RenderTargetD3D10(ID3D10Device* d3dDevice);
+
+	private:
+		ID3D10Device*				d3dDevice;
+		ID3D10Texture2D*			renderTargetTex;
+		ID3D10RenderTargetView*		renderTargetView;
+		ID3D10ShaderResourceView*	shaderResourceView;
+	};
+
+}

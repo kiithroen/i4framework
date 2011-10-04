@@ -12,16 +12,16 @@ namespace i4graphics
 		I4ShaderProgramD3D10(ID3D10Device* device);
 		virtual ~I4ShaderProgramD3D10();
 
-		virtual bool	createFromString(const char* code, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
+		virtual bool	createFromString(const char* code, const I4INPUT_ELEMENT* inputElements, unsigned int numElements) override;
 
-		virtual bool	begin();
-		virtual void	end();
+		virtual bool	begin() override;
+		virtual void	end() override;
 
-		virtual void	setVector(ShaderVector sv, float* v);
-		virtual void	setVectorArray(ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count);
-		virtual void	setMatrix(ShaderMatrix sm, float* v);
-		virtual void	setMatrixArray(ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count);
-		virtual void	setTexture(ShaderTexture st, I4Texture* tex);
+		virtual void	setVector(ShaderVector sv, float* v) override;
+		virtual void	setVectorArray(ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count) override;
+		virtual void	setMatrix(ShaderMatrix sm, float* v) override;
+		virtual void	setMatrixArray(ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count) override;
+		virtual void	setTexture(ShaderTexture st, I4Texture* tex) override;
 
 	private:
 		void	mapShaderVector(ShaderVector sv, const char* name);
@@ -42,7 +42,7 @@ namespace i4graphics
 		ID3D10EffectVectorVariable* 		shaderVectorArray[SHADER_VECTOR_ARRAY_TOTAL_NUM];
 		ID3D10EffectMatrixVariable* 		shaderMatrix[SHADER_MATRIX_TOTAL_NUM];
 		ID3D10EffectMatrixVariable* 		shaderMatrixArray[SHADER_MATRIX_ARRAY_TOTAL_NUM];
-		ID3D10EffectShaderResourceVariable*	shaderResource[SHADER_RESOURCE_TOTAL_NUM];
+		ID3D10EffectShaderResourceVariable*	shaderResource[SHADER_TEXTURE_TOTAL_NUM];
 	};
 
 }

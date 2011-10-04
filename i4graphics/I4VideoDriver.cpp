@@ -3,6 +3,7 @@
 #include "I4ShaderProgram.h"
 #include "I4GeometryBuffer.h"
 #include "I4Texture.h"
+#include "I4RenderTarget.h"
 #include "I4MathUtil.h"
 #include "I4Log.h"
 
@@ -47,12 +48,18 @@ namespace i4graphics
 
 	void I4VideoDriver::clearScreen(unsigned char r, unsigned char g, unsigned char b)
 	{
+	}
 
+	void I4VideoDriver::clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b)
+	{
 	}
 
 	void I4VideoDriver::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 	{
+	}
 
+	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	{
 	}
 
 	I4ShaderProgram* I4VideoDriver::createShaderProgram()
@@ -73,6 +80,11 @@ namespace i4graphics
 	I4Texture* I4VideoDriver::createTexture()
 	{
 		return new I4Texture;
+	}
+
+	I4RenderTarget* I4VideoDriver::createRenderTarget()
+	{
+		return new I4RenderTarget;
 	}
 
 	//------------------------------------------------------------

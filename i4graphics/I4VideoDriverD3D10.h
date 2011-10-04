@@ -14,24 +14,29 @@ namespace i4graphics
 	public:
 		~I4VideoDriverD3D10();
 
-		virtual I4VideoDriverMode	getVideoDriverMode() const	{ return I4VIDEO_DRIVER_MODE_D3D10; }
+		virtual I4VideoDriverMode	getVideoDriverMode() const override	{ return I4VIDEO_DRIVER_MODE_D3D10; }
 		
-		virtual bool				initialize(void* windowID, unsigned int width, unsigned int height);
-		virtual bool				setupEnvironment();
+		virtual bool				initialize(void* windowID, unsigned int width, unsigned int height) override;
+		virtual bool				setupEnvironment() override;
 		
-		virtual bool				beginScene();
-		virtual void				endScene();
+		virtual bool				beginScene() override;
+		virtual void				endScene() override;
 
-		virtual void				clearScreen(unsigned char r, unsigned char g, unsigned char b);
+		virtual void				clearScreen(unsigned char r, unsigned char g, unsigned char b) override;
+		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b) override;
 
-		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 
-		virtual I4ShaderProgram*	createShaderProgram();
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget) override;
 
-		virtual I4VertexBuffer*		createVertexBuffer();
-		virtual I4IndexBuffer*		createIndexBuffer();
+		virtual I4ShaderProgram*	createShaderProgram() override;
 
-		virtual I4Texture*			createTexture();
+		virtual I4VertexBuffer*		createVertexBuffer() override;
+		virtual I4IndexBuffer*		createIndexBuffer() override;
+
+		virtual I4Texture*			createTexture() override;
+
+		virtual I4RenderTarget*		createRenderTarget() override;
 
 	private:
 		I4VideoDriverD3D10();
@@ -41,7 +46,7 @@ namespace i4graphics
 		ID3D10Device*				d3dDevice;
 		IDXGISwapChain*				swapChain;
 		ID3D10RenderTargetView*		renderTargetView;
-		ID3D10Texture2D*			depthStencil;
+		ID3D10Texture2D*			depthStencilTex;
 		ID3D10DepthStencilView*		depthStencilView;
 	};
 

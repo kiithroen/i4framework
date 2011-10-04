@@ -58,11 +58,11 @@ namespace i4graphics
 
 	enum ShaderTexture
 	{
-		SHADER_RESOURCE_DIFFUSEMAP = 0,
-		SHADER_RESOURCE_TOTAL_NUM,
+		SHADER_TEXTURE_DIFFUSEMAP = 0,
+		SHADER_TEXTURE_TOTAL_NUM,
 	};
 
-	static const char* SHADER_RESOURCE_NAME[] = 
+	static const char* SHADER_TEXTURE_NAME[] = 
 	{
 		"DIFFUSEMAP",
 	};

@@ -5,7 +5,7 @@ namespace i4graphics
 {
 	I4TextureD3D10::I4TextureD3D10(ID3D10Device* d3dDevice)
 		: d3dDevice(d3dDevice)
-		, texture(NULL)
+		, shaderResourceView(NULL)
 	{
 	}
 
@@ -16,7 +16,7 @@ namespace i4graphics
 
 	bool I4TextureD3D10::load(const char* fname)
 	{
-		if (FAILED(D3DX10CreateShaderResourceViewFromFileA(d3dDevice, fname, NULL, NULL, &texture, NULL)))
+		if (FAILED(D3DX10CreateShaderResourceViewFromFileA(d3dDevice, fname, NULL, NULL, &shaderResourceView, NULL)))
 		{
 			I4LOG_WARN << L"texture load failed. : " << fname;
 			return false;
@@ -27,10 +27,10 @@ namespace i4graphics
 
 	void I4TextureD3D10::unload()
 	{
-		if (texture)
+		if (shaderResourceView)
 		{
-			texture->Release();
-			texture = NULL;
+			shaderResourceView->Release();
+			shaderResourceView = NULL;
 		}
 	}
 

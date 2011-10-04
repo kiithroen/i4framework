@@ -6,6 +6,7 @@
 namespace i4graphics
 {
 	class I4ShaderProgram;
+	class I4ShaderMgr;
 
 	enum I4ShaderMgrType
 	{
@@ -19,13 +20,14 @@ namespace i4graphics
 		I4SHADER_MASK_VERTEX_COLOR		= 1 << 1,
 	};
 
+
+	typedef std::map<std::wstring, I4ShaderMgr*>		I4ShaderMgrMap;
+
 	class I4GRAPHICS_API I4ShaderMgr
 	{
 		typedef std::map<unsigned int, I4ShaderProgram*>	I4ShaderProgramMap;
 	public:
 		virtual ~I4ShaderMgr();
-
-		virtual bool		initialize(const wchar_t* fname);
 
 		bool 				begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		void 				end();
@@ -35,15 +37,15 @@ namespace i4graphics
 		void				setMatrix(ShaderMatrix sm, float* v);
 		void				setMatrixArray(ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count);
 		void				setTexture(ShaderTexture st, I4Texture* tex);
-		
-	public:
-		static I4ShaderMgr*	getShaderMgr()		{ return shaderMgr; }
-
-		static void			createShaderMgr(I4ShaderMgrType type);
-		static void			destroyShaderMgr();
 
 	protected:
-		virtual I4ShaderProgram*	createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
+		bool				load(const wchar_t* fname);
+		I4ShaderProgram*	createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
+		
+	public:
+		static bool			addShaderMgr(const std::wstring& fx);
+		static I4ShaderMgr*	findShaderMgr(const std::wstring& fx);
+		static void			destroyShaderMgr();
 
 	protected:
 		I4ShaderMgr();
@@ -54,6 +56,6 @@ namespace i4graphics
 		 I4ShaderProgramMap	mapShaderProgram;
 
 	private:
-		static I4ShaderMgr*	shaderMgr;
+		static I4ShaderMgrMap		mapShaderMgr;
 	};
 }

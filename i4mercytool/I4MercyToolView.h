@@ -8,6 +8,8 @@ namespace i4graphics
 {
 	class I4VertexBuffer;
 	class I4IndexBuffer;
+	class I4RenderTarget;
+	class I4Texture;
 }
 using namespace i4graphics;
 
@@ -30,6 +32,8 @@ public:
 private:
 	I4VertexBuffer*		box_VB;
 	I4IndexBuffer*		box_IB;
+	I4RenderTarget*		renderTarget[3];
+	I4Texture*			diffuseMap;
 
 // 재정의입니다.
 public:

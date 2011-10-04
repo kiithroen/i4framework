@@ -12,17 +12,17 @@ namespace i4graphics
 		I4VertexBufferD3D10(ID3D10Device* device);
 		virtual ~I4VertexBufferD3D10();
 
-		virtual bool	create(unsigned int count, unsigned int stride, const void* vertices = 0);
+		virtual bool	create(unsigned int count, unsigned int stride, const void* vertices = 0) override;
 		void			destroy();
 
-		virtual bool	copyFrom(const void* data);
+		virtual bool	copyFrom(const void* data) override;
 
-		virtual bool	lock(void** data);
-		virtual void	unlock();
+		virtual bool	lock(void** data) override;
+		virtual void	unlock() override;
 
-		virtual void	bind();
+		virtual void	bind() override;
 
-		virtual void	draw(I4PrimitiveType type);
+		virtual void	draw(I4PrimitiveType type) override;
 
 	private:
 		ID3D10Device*				d3dDevice;
@@ -38,17 +38,17 @@ namespace i4graphics
 		I4IndexBufferD3D10(ID3D10Device* device);
 		~I4IndexBufferD3D10();
 
-		virtual bool	create(unsigned int count, unsigned int stride, const void* indices = 0);	
+		virtual bool	create(unsigned int count, unsigned int stride, const void* indices = 0) override;	
 		void			destroy();
 
-		virtual bool	copyFrom(const void* data);
+		virtual bool	copyFrom(const void* data) override;
 
-		virtual bool	lock(void** data);
-		virtual void	unlock();
+		virtual bool	lock(void** data) override;
+		virtual void	unlock() override;
 
-		virtual void	bind();
+		virtual void	bind() override;
 
-		virtual void	draw(I4PrimitiveType pt, unsigned int verticeCount);
+		virtual void	draw(I4PrimitiveType pt, unsigned int verticeCount) override;
 
 	private:
 		ID3D10Device*		d3dDevice;

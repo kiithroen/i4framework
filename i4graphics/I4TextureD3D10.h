@@ -12,9 +12,9 @@ namespace i4graphics
 	public:
 		virtual ~I4TextureD3D10();
 
-		virtual bool				load(const char* fname);
+		virtual bool				load(const char* fname) override;
 		
-		ID3D10ShaderResourceView*	get() const	{ return texture; }
+		ID3D10ShaderResourceView*	get() const	{ return shaderResourceView; }
 
 	private:
 		void						unload();
@@ -24,7 +24,7 @@ namespace i4graphics
 
 	private:
 		ID3D10Device*				d3dDevice;
-		ID3D10ShaderResourceView*	texture;	
+		ID3D10ShaderResourceView*	shaderResourceView;	
 	};
 
 }

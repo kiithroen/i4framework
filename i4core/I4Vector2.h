@@ -88,7 +88,7 @@ namespace i4core
 
 		bool operator == (const I4Vector2& rhs) const
 		{
-			return (x == rhs.x) && rhs.y));
+			return (x == rhs.x) && (y == rhs.y);
 		}
 
 		bool operator != (const I4Vector2& rhs) const

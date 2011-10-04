@@ -3,6 +3,7 @@
 #include "I4GeometryBufferD3D10.h"
 #include "I4ShaderProgramD3D10.h"
 #include "I4TextureD3D10.h"
+#include "I4RenderTargetD3D10.h"
 
 #pragma comment(lib, "d3d10.lib")
 
@@ -21,7 +22,7 @@ namespace i4graphics
 		, d3dDevice(NULL)
 		, swapChain(NULL)
 		, renderTargetView(NULL)
-		, depthStencil(NULL)
+		, depthStencilTex(NULL)
 		, depthStencilView(NULL)
 	{
 	}
@@ -33,10 +34,10 @@ namespace i4graphics
 			d3dDevice->ClearState();
 		}
 
-		if (depthStencil) 
+		if (depthStencilTex) 
 		{
-			depthStencil->Release();
-			depthStencil = NULL;
+			depthStencilTex->Release();
+			depthStencilTex = NULL;
 		}
 
 		if (depthStencilView) 
@@ -105,12 +106,13 @@ namespace i4graphics
 			if (SUCCEEDED(hr))
 				break;
 		}
+
 		if (FAILED(hr))
 			return false;
 
 		ID3D10Texture2D* pBuffer;
 		hr = swapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&pBuffer);
-		if( FAILED( hr ) )
+		if (FAILED(hr))
 			return false;
 
 		hr = d3dDevice->CreateRenderTargetView(pBuffer, NULL, &renderTargetView);
@@ -130,7 +132,7 @@ namespace i4graphics
 		descDepth.BindFlags = D3D10_BIND_DEPTH_STENCIL;
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
-		hr = d3dDevice->CreateTexture2D(&descDepth, NULL, &depthStencil);
+		hr = d3dDevice->CreateTexture2D(&descDepth, NULL, &depthStencilTex);
 		if (FAILED(hr))
 			return false;
 
@@ -138,7 +140,7 @@ namespace i4graphics
 		descDSV.Format = descDepth.Format;
 		descDSV.ViewDimension = D3D10_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0;
-		hr = d3dDevice->CreateDepthStencilView(depthStencil, &descDSV, &depthStencilView);
+		hr = d3dDevice->CreateDepthStencilView(depthStencilTex, &descDSV, &depthStencilView);
 		if (FAILED(hr))
 			return false;
 
@@ -186,6 +188,23 @@ namespace i4graphics
 		d3dDevice->RSSetViewports(1, &vp);
 	}
 
+	void I4VideoDriverD3D10::clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b)
+	{
+		float clearColor[4] = { (float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f };
+		d3dDevice->ClearRenderTargetView(static_cast<I4RenderTargetD3D10*>(renderTarget)->get(), clearColor);
+	}
+
+	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	{
+		ID3D10RenderTargetView* arrRTViews[8] = { 0, };
+
+		for (unsigned int i = 0; i < num; ++i)
+		{
+			arrRTViews[i] = static_cast<I4RenderTargetD3D10*>(arrRenderTarget[i])->get();
+		}
+		d3dDevice->OMSetRenderTargets(num, arrRTViews, NULL);
+	}
+
 	I4ShaderProgram* I4VideoDriverD3D10::createShaderProgram()
 	{
 		return new I4ShaderProgramD3D10(d3dDevice);
@@ -206,5 +225,8 @@ namespace i4graphics
 		return new I4TextureD3D10(d3dDevice);
 	}
 
-
+	I4RenderTarget* I4VideoDriverD3D10::createRenderTarget()
+	{
+		return new I4RenderTargetD3D10(d3dDevice);
+	}
 }

@@ -39,9 +39,6 @@
     <ClInclude Include="I4ShaderMgr.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="I4UberShaderMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="I4GeometryBufferD3D10.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -52,6 +49,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="I4VideoDriverD3D10.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="I4RenderTarget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="I4RenderTargetD3D10.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Format.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,9 +77,6 @@
     <ClCompile Include="I4ShaderMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="I4UberShaderMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="I4GeometryBufferD3D10.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -84,6 +87,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="I4VideoDriverD3D10.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="I4RenderTargetD3D10.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

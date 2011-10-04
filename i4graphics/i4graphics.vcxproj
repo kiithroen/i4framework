@@ -94,7 +94,10 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="I4Format.h" />
     <ClInclude Include="I4GeometryBufferD3D10.h" />
+    <ClInclude Include="I4RenderTarget.h" />
+    <ClInclude Include="I4RenderTargetD3D10.h" />
     <ClInclude Include="I4ShaderProgramD3D10.h" />
     <ClInclude Include="I4TextureD3D10.h" />
     <ClInclude Include="I4VideoDriverD3D10.h" />
@@ -102,7 +105,6 @@
     <ClInclude Include="I4ShaderMgr.h" />
     <ClInclude Include="I4ShaderProgram.h" />
     <ClInclude Include="I4Texture.h" />
-    <ClInclude Include="I4UberShaderMgr.h" />
     <ClInclude Include="I4VideoDriver.h" />
     <ClInclude Include="i4graphics.h" />
     <ClInclude Include="targetver.h" />
@@ -117,12 +119,12 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="I4GeometryBufferD3D10.cpp" />
+    <ClCompile Include="I4RenderTargetD3D10.cpp" />
     <ClCompile Include="I4ShaderProgramD3D10.cpp" />
     <ClCompile Include="I4TextureD3D10.cpp" />
     <ClCompile Include="I4VideoDriverD3D10.cpp" />
     <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="I4ShaderMgr.cpp" />
-    <ClCompile Include="I4UberShaderMgr.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
     <ClCompile Include="i4graphics.cpp" />
   </ItemGroup>
