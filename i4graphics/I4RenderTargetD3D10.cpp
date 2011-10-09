@@ -50,7 +50,7 @@ namespace i4graphics
 		D3D10_SHADER_RESOURCE_VIEW_DESC srvDesc;
 		ZeroMemory(&srvDesc, sizeof(srvDesc));
 		srvDesc.Format = texDesc.Format;
-		srvDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2DARRAY;
+		srvDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2DArray.ArraySize = 1;
 		srvDesc.Texture2DArray.FirstArraySlice = 0;
 		srvDesc.Texture2DArray.MipLevels = 1;

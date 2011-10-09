@@ -4,12 +4,20 @@
 
 #pragma once
 
+namespace i4core
+{
+	class I4StopWatch;
+}
+using namespace i4core;
+
 namespace i4graphics
 {
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 	class I4RenderTarget;
 	class I4Texture;
+	class I4QuadMesh;
+	class I4SphereMesh;
 }
 using namespace i4graphics;
 
@@ -32,8 +40,17 @@ public:
 private:
 	I4VertexBuffer*		box_VB;
 	I4IndexBuffer*		box_IB;
-	I4RenderTarget*		renderTarget[3];
+	I4RenderTarget*		rtDiffuse;
+	I4RenderTarget*		rtNormal;
+	I4RenderTarget*		rtDepth;
+	I4RenderTarget*		rtLight;
 	I4Texture*			diffuseMap;
+	I4Texture*			specularMap;
+	I4Texture*			normalMap;
+	I4QuadMesh*			quadMesh;
+	I4SphereMesh*		sphereMesh;
+	I4StopWatch*		stopWatch;
+	unsigned int		frameCount;
 
 // 재정의입니다.
 public:

@@ -26,24 +26,44 @@ namespace i4graphics
 
 	bool I4VertexBufferD3D10::create(unsigned int count, unsigned int stride, const void* vertices)
 	{
-		I4VertexBuffer::create(count, stride, vertices);
-
-		D3D10_BUFFER_DESC bd;
-		bd.Usage = D3D10_USAGE_DEFAULT;
-		bd.ByteWidth = stride*count;
-		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
-		D3D10_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = vertices;
-
-		if (FAILED(d3dDevice->CreateBuffer(&bd, &InitData, &vertexBuffer)))
-		{
-			I4LOG_WARN << L"vertext buffer create failed.";
+		if (I4VertexBuffer::create(count, stride, vertices) == false)
 			return false;
+
+		if (vertices != NULL)
+		{
+			D3D10_BUFFER_DESC bd;
+			bd.Usage = D3D10_USAGE_DEFAULT;
+			bd.ByteWidth = stride*count;
+			bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			bd.MiscFlags = 0;
+
+			D3D10_SUBRESOURCE_DATA InitData;
+			InitData.pSysMem = vertices;
+
+			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, &InitData, &vertexBuffer)))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			D3D10_BUFFER_DESC bd;
+			bd.Usage = D3D10_USAGE_DYNAMIC;
+			bd.ByteWidth = stride*count;
+			bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+			bd.MiscFlags = 0;
+
+			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, NULL, &vertexBuffer)))
+			{
+				return true;
+			}
 		}
 
-		return true;
+		
+		I4LOG_WARN << L"vertext buffer create failed.";
+		return false;
 	}
 
 
@@ -113,23 +133,46 @@ namespace i4graphics
 
 	bool I4IndexBufferD3D10::create(unsigned int count, unsigned int stride, const void* indices)
 	{
-		I4IndexBuffer::create(count, stride, indices);
-
-		D3D10_BUFFER_DESC bd;
-		bd.Usage = D3D10_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(DWORD)*count;
-		bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
-		D3D10_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = indices;
-		if (FAILED(d3dDevice->CreateBuffer(&bd, &InitData, &indexBuffer)))
-		{
-			I4LOG_WARN << L"index buffer create failed.";
+		if (I4IndexBuffer::create(count, stride, indices) == false)
 			return false;
-		}
 
-		return true;
+		if (indices != NULL)
+		{
+			D3D10_BUFFER_DESC bd;
+			bd.Usage = D3D10_USAGE_DEFAULT;
+			bd.ByteWidth = stride*count;
+			bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			bd.MiscFlags = 0;
+
+			D3D10_SUBRESOURCE_DATA InitData;
+			InitData.pSysMem = indices;
+		
+			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, &InitData, &indexBuffer)))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			D3D10_BUFFER_DESC bd;
+			bd.Usage = D3D10_USAGE_DYNAMIC;
+			bd.ByteWidth = stride*count;
+			bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+			bd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+			bd.MiscFlags = 0;
+
+			D3D10_SUBRESOURCE_DATA InitData;
+			InitData.pSysMem = indices;
+
+			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, NULL, &indexBuffer)))
+			{
+				return true;
+			}
+		}		
+
+		I4LOG_WARN << L"index buffer create failed.";
+		return false;
 	}
 
 	void I4IndexBufferD3D10::destroy()
@@ -173,10 +216,10 @@ namespace i4graphics
 
 	void I4IndexBufferD3D10::bind()
 	{
-		d3dDevice->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		d3dDevice->IASetIndexBuffer(indexBuffer, (DXGI_FORMAT)format, 0);
 	}
 
-	void I4IndexBufferD3D10::draw(I4PrimitiveType pt, unsigned int verticeCount)
+	void I4IndexBufferD3D10::draw(I4PrimitiveType pt)
 	{
 		d3dDevice->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		d3dDevice->DrawIndexed(count, 0, 0);

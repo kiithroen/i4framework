@@ -23,11 +23,12 @@ namespace i4graphics
 		virtual void				endScene() override;
 
 		virtual void				clearScreen(unsigned char r, unsigned char g, unsigned char b) override;
-		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b) override;
+		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a) override;
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 
 		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget) override;
+		virtual void				resetRenderTarget() override;
 
 		virtual I4ShaderProgram*	createShaderProgram() override;
 

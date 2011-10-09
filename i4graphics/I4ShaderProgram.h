@@ -5,69 +5,133 @@
 
 namespace i4graphics
 {
-	
-	enum ShaderVector
+	enum I4ShaderBool
 	{
-		SHADER_VECTOR_DUMMY = 0,
-		SHADER_VECTOR_TOTAL_NUM,
+		I4SHADER_BOOL_DUMMY = 0,
+		I4SHADER_BOOL_TOTAL_NUM,
 	};
 
-	static const char* SHADER_VECTOR_NAME[] = 
+	static const char* I4SHADER_BOOL_NAME[] = 
 	{
 		"DUMMY",
 	};
 
-	enum ShaderVectorArray
+	enum I4ShaderInt
 	{
-		SHADER_VECTOR_ARRAY_LIGHTDIR = 0,
-		SHADER_VECTOR_ARRAY_LIGHTCOLOR,
-		SHADER_VECTOR_ARRAY_TOTAL_NUM,
+		I4SHADER_INT_DUMMY = 0,
+		I4SHADER_INT_TOTAL_NUM,
 	};
 
-	static const char* SHADER_VECTOR_ARRAY_NAME[] = 
+	static const char* I4SHADER_INT_NAME[] = 
 	{
-		"LIGHTDIR",
-		"LIGHTCOLOR",
+		"DUMMY",
 	};
 
-	enum ShaderMatrix
-	{
-		SHADER_MATRIX_WORLD = 0,
-		SHADER_MATRIX_VIEW,
-		SHADER_MATRIX_PROJECTION,
-		SHADER_MATRIX_TOTAL_NUM,
+	enum I4ShaderFloat
+	{		
+		I4SHADER_FLOAT_SPECULAR_POWER = 0,
+		I4SHADER_FLOAT_SPECULAR_INTENSITY,
+		I4SHADER_FLOAT_FAR_DISTANCE,
+		I4SHADER_FLOAT_TOTAL_NUM
 	};
 
-	static const char* SHADER_MATRIX_NAME[] = 
+	static const char* I4SHADER_FLOAT_NAME[] = 
+	{
+		"SPECULAR_POWER",
+		"SPECULAR_INTENSITY",
+		"FAR_DISTANCE",
+	};
+	
+	enum I4ShaderVector
+	{
+		I4SHADER_VECTOR_LIGHT_POINT_RADIUS = 0,
+		I4SHADER_VECTOR_LIGHT_DIRECTION,
+		I4SHADER_VECTOR_LIGHT_COLOR,
+		I4SHADER_VECTOR_CAMERA_POSITION,
+		I4SHADER_VECTOR_FAR_TOP_RIGHT,
+		I4SHADER_VECTOR_TOTAL_NUM,
+	};
+
+	static const char* I4SHADER_VECTOR_NAME[] = 
+	{
+		"LIGHT_POINT_RADIUS",
+		"LIGHT_DIRECTION",
+		"LIGHT_COLOR",
+		"CAMERA_POSITION",
+		"FAR_TOP_RIGHT",
+	};
+
+	enum I4ShaderVectorArray
+	{
+		I4SHADER_VECTOR_ARRAY_DUMMY = 0,
+		I4SHADER_VECTOR_ARRAY_TOTAL_NUM,
+	};
+
+	static const char* I4SHADER_VECTOR_ARRAY_NAME[] = 
+	{
+		"DUMMY",
+	};
+
+	enum I4ShaderMatrix
+	{
+		I4SHADER_MATRIX_WORLD = 0,
+		I4SHADER_MATRIX_VIEW,
+		I4SHADER_MATRIX_PROJECTION,
+		I4SHADER_MATRIX_TOTAL_NUM,
+	};
+
+	static const char* I4SHADER_MATRIX_NAME[] = 
 	{
 		"WORLD",
 		"VIEW",
 		"PROJECTION",
 	};
 
-	enum ShaderMatrixArray
+	enum I4ShaderMatrixArray
 	{
-		SHADER_MATRIX_ARRAY_PALETTE = 0,
-		SHADER_MATRIX_ARRAY_TOTAL_NUM,
+		I4SHADER_MATRIX_ARRAY_PALETTE = 0,
+		I4SHADER_MATRIX_ARRAY_TOTAL_NUM,
 	};
 
-	static const char* SHADER_MATRIX_ARRAY_NAME[] = 
+	static const char* I4SHADER_MATRIX_ARRAY_NAME[] = 
 	{
 		"PALETTE",
 	};
-
-	enum ShaderTexture
+	
+	enum I4ShaderTexture
 	{
-		SHADER_TEXTURE_DIFFUSEMAP = 0,
-		SHADER_TEXTURE_TOTAL_NUM,
+		I4SHADER_TEXTURE_DIFFUSEMAP = 0,
+		I4SHADER_TEXTURE_NORMALMAP,
+		I4SHADER_TEXTURE_SPECULARMAP,
+		I4SHADER_TEXTURE_TOTAL_NUM,
 	};
 
-	static const char* SHADER_TEXTURE_NAME[] = 
+	static const char* I4SHADER_TEXTURE_NAME[] = 
 	{
 		"DIFFUSEMAP",
+		"NORMALMAP",
+		"SPECULARMAP",
+	};
+
+	enum I4ShaderRenderTarget
+	{
+		I4SHADER_RENDER_TARGET_DIFFUSE = 0,
+		I4SHADER_RENDER_TARGET_NORMAL,
+		I4SHADER_RENDER_TARGET_DEPTH,
+		I4SHADER_RENDER_TARGET_LIGHT,
+		I4SHADER_RENDER_TARGET_TOTAL_NUM,
+	};
+
+	static const char* I4SHADER_RENDER_TARGET_NAME[] = 
+	{
+		"RT_DIFFUSE",
+		"RT_NORMAL",
+		"RT_DEPTH",
+		"RT_LIGHT",
 	};
 
 	class I4Texture;
+	class I4RenderTarget;
 
 	class I4ShaderProgram
 	{
@@ -79,12 +143,19 @@ namespace i4graphics
 
 		virtual bool	begin()	{ return true; }
 		virtual void	end()	{}
+		virtual void	apply()	{}
 
-		virtual void	setVector(ShaderVector sv, float* v)	{}
-		virtual void	setVectorArray(ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count) {}
-		virtual void	setMatrix(ShaderMatrix sm, float* v) {}
-		virtual void	setMatrixArray(ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count) {}
-		virtual void	setTexture(ShaderTexture st, I4Texture* tex) {}
+		virtual void	setBool(I4ShaderBool sb, bool v) {}
+		virtual void	setInt(I4ShaderInt si, int v) {}
+		virtual void	setFloat(I4ShaderFloat sf, float v) {}
+		virtual void	setVector(I4ShaderVector sv, float* v)	{}
+		virtual void	setVectorArray(I4ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count) {}
+		virtual void	setMatrix(I4ShaderMatrix sm, float* v) {}
+		virtual void	setMatrixArray(I4ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count) {}
+		virtual void	setTexture(unsigned int stage, I4Texture* tex) {}
+		virtual void	setRenderTarget(unsigned int stage, I4RenderTarget* rt) {}
+		virtual void	setTexture(I4ShaderTexture st, I4Texture* tex) {}
+		virtual void	setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt) {}
+
 	};
 }
-

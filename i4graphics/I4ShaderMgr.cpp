@@ -96,7 +96,39 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setVector(ShaderVector sv, float* v)
+	void I4ShaderMgr::apply()
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->apply();
+		}
+	}
+
+	void I4ShaderMgr::setBool(I4ShaderBool sb, bool v)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setBool(sb, v);
+		}
+	}
+
+	void I4ShaderMgr::setInt(I4ShaderInt si, int v)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setInt(si, v);
+		}
+	}
+
+	void I4ShaderMgr::setFloat(I4ShaderFloat sf, float v)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setFloat(sf, v);
+		}
+	}
+
+	void I4ShaderMgr::setVector(I4ShaderVector sv, float* v)
 	{
 		if (activeShaderProgram)
 		{
@@ -104,7 +136,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setVectorArray(ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count)
+	void I4ShaderMgr::setVectorArray(I4ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count)
 	{
 		if (activeShaderProgram)
 		{
@@ -112,7 +144,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setMatrix(ShaderMatrix sm, float* v)
+	void I4ShaderMgr::setMatrix(I4ShaderMatrix sm, float* v)
 	{
 		if (activeShaderProgram)
 		{
@@ -120,7 +152,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setMatrixArray(ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count)
+	void I4ShaderMgr::setMatrixArray(I4ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count)
 	{
 		if (activeShaderProgram)
 		{
@@ -128,7 +160,23 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setTexture(ShaderTexture st, I4Texture* tex)
+	void I4ShaderMgr::setTexture(unsigned int stage, I4Texture* tex)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setTexture(stage, tex);
+		}
+	}
+
+	void I4ShaderMgr::setRenderTarget(unsigned int stage, I4RenderTarget* rt)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setRenderTarget(stage, rt);
+		}
+	}
+	
+	void I4ShaderMgr::setTexture(I4ShaderTexture st, I4Texture* tex)
 	{
 		if (activeShaderProgram)
 		{
@@ -136,14 +184,31 @@ namespace i4graphics
 		}
 	}
 
-	
+	void I4ShaderMgr::setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setRenderTarget(srt, rt);
+		}
+	}
+
 	I4ShaderProgram* I4ShaderMgr::createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
 		std::string finalShaderCode = "";
 
-		if (mask & I4SHADER_MASK_VERTEX_COLOR)
+		if (mask & I4SHADER_MASK_DIFFUSEMAP)
 		{
-			finalShaderCode += "#define VERTEX_COLOR_MASK\r\n";
+			finalShaderCode += "#define MASK_DIFFUSEMAP\r\n";
+		}
+
+		if (mask & I4SHADER_MASK_SPECULARMAP)
+		{
+			finalShaderCode += "#define MASK_SPECULARMAP\r\n";
+		}
+
+		if (mask & I4SHADER_MASK_NORMALMAP)
+		{
+			finalShaderCode += "#define MASK_NORMALMAP\r\n";
 		}
 	
 		finalShaderCode += baseShaderCode;
@@ -171,9 +236,9 @@ namespace i4graphics
 			shaderMgr = new I4ShaderMgr;
 			if (shaderMgr->load(fx.c_str()) == false)
 			{
-				I4LOG_ERROR << L"shaderMgr load failed.(" << fx << L")";
+				I4LOG_WARN << L"shaderMgr load failed.(" << fx << L")";
 				delete shaderMgr;
-				return false;
+				shaderMgr = NULL;
 			}
 			mapShaderMgr.insert(std::make_pair(fx, shaderMgr));
 		}
@@ -193,7 +258,7 @@ namespace i4graphics
 			return itr->second;
 		}
 
-		I4LOG_ERROR << L"can't find shader mgr.(" << fx << L")";
+		I4LOG_WARN << L"can't find shader mgr.(" << fx << L")";
 		return NULL;
 	}
 

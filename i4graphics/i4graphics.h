@@ -6,6 +6,7 @@
 namespace i4core
 {
 	class I4Log;
+	class I4StopWatch;
 	class I4Profile;
 	class I4ProfileJson;
 	class I4StopWatch;

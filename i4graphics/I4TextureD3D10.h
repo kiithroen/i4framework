@@ -14,7 +14,7 @@ namespace i4graphics
 
 		virtual bool				load(const char* fname) override;
 		
-		ID3D10ShaderResourceView*	get() const	{ return shaderResourceView; }
+		ID3D10ShaderResourceView*	getShaderResourceView() const	{ return shaderResourceView; }
 
 	private:
 		void						unload();

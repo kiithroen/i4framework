@@ -80,7 +80,7 @@ namespace i4core
 		const I4AABB transformInto(const I4Matrix4x4& mat) const
 		{
 			I4Matrix4x4 matInv;
-			matInv.makeInverse(mat);
+			mat.getInversePrimitive(matInv);
 
 			return transform(matInv);
 		}

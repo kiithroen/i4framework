@@ -1,4 +1,5 @@
 #include "I4GeometryBuffer.h"
+#include "I4Log.h"
 
 namespace i4graphics
 {
@@ -73,6 +74,20 @@ namespace i4graphics
 		count = _count;
 		stride = _stride;
 
+		if (stride == sizeof(unsigned int))
+		{
+			format = I4FORMAT_R32_UINT;
+		}
+		else if (stride == sizeof(unsigned short))
+		{
+			format = I4FORMAT_R16_UINT;
+		}
+		else
+		{
+			I4LOG_WARN << L"unsupported format";
+			return false;
+		}
+
 		return true;
 	}
 
@@ -101,7 +116,7 @@ namespace i4graphics
 
 	}
 
-	void I4IndexBuffer::draw(I4PrimitiveType pt, unsigned int verticeCount)
+	void I4IndexBuffer::draw(I4PrimitiveType pt)
 	{
 
 	}

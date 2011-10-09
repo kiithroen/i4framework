@@ -50,7 +50,7 @@ namespace i4graphics
 	{
 	}
 
-	void I4VideoDriver::clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b)
+	void I4VideoDriver::clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a)
 	{
 	}
 
@@ -59,6 +59,10 @@ namespace i4graphics
 	}
 
 	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	{
+	}
+
+	void I4VideoDriver::resetRenderTarget()
 	{
 	}
 
@@ -104,8 +108,7 @@ namespace i4graphics
 			videoDriver = new I4VideoDriverD3D10;
 			break;
 		default:
-			I4LOG_ERROR << "Undefined Video Driver Mode : " << mode;
-			assert(false);
+			I4LOG_WARN << "Undefined Video Driver Mode : " << mode;
 			videoDriver = new I4VideoDriver;
 			break;
 		}

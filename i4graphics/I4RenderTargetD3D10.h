@@ -14,7 +14,8 @@ namespace i4graphics
 
 		virtual bool				create(unsigned int width, unsigned int height, I4FORMAT format) override;
 
-		ID3D10RenderTargetView*		get() const	{ return renderTargetView; }
+		ID3D10RenderTargetView*		getRenderTargetView() const	{ return renderTargetView; }
+		ID3D10ShaderResourceView*	getShaderResourceView() const { return shaderResourceView; }
 
 	private:
 		void						unload();

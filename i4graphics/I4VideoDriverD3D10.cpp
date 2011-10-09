@@ -188,10 +188,10 @@ namespace i4graphics
 		d3dDevice->RSSetViewports(1, &vp);
 	}
 
-	void I4VideoDriverD3D10::clearRenderTarget(I4RenderTarget* renderTarget, unsigned char r, unsigned char g, unsigned char b)
+	void I4VideoDriverD3D10::clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a)
 	{
-		float clearColor[4] = { (float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f };
-		d3dDevice->ClearRenderTargetView(static_cast<I4RenderTargetD3D10*>(renderTarget)->get(), clearColor);
+		float clearColor[4] = { r, g, b, a };
+		d3dDevice->ClearRenderTargetView(static_cast<I4RenderTargetD3D10*>(renderTarget)->getRenderTargetView(), clearColor);
 	}
 
 	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
@@ -200,9 +200,14 @@ namespace i4graphics
 
 		for (unsigned int i = 0; i < num; ++i)
 		{
-			arrRTViews[i] = static_cast<I4RenderTargetD3D10*>(arrRenderTarget[i])->get();
+			arrRTViews[i] = static_cast<I4RenderTargetD3D10*>(arrRenderTarget[i])->getRenderTargetView();
 		}
 		d3dDevice->OMSetRenderTargets(num, arrRTViews, NULL);
+	}
+
+	void I4VideoDriverD3D10::resetRenderTarget()
+	{
+		d3dDevice->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 	}
 
 	I4ShaderProgram* I4VideoDriverD3D10::createShaderProgram()

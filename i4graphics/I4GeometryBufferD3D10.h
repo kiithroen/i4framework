@@ -48,7 +48,7 @@ namespace i4graphics
 
 		virtual void	bind() override;
 
-		virtual void	draw(I4PrimitiveType pt, unsigned int verticeCount) override;
+		virtual void	draw(I4PrimitiveType pt) override;
 
 	private:
 		ID3D10Device*		d3dDevice;

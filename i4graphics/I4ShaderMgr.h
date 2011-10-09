@@ -17,7 +17,9 @@ namespace i4graphics
 	enum I4ShaderMask
 	{
 		I4SHADER_MASK_NONE				= 1 << 0,
-		I4SHADER_MASK_VERTEX_COLOR		= 1 << 1,
+		I4SHADER_MASK_DIFFUSEMAP		= 1 << 1,
+		I4SHADER_MASK_SPECULARMAP		= 1 << 2,
+		I4SHADER_MASK_NORMALMAP			= 1 << 3,
 	};
 
 
@@ -31,12 +33,19 @@ namespace i4graphics
 
 		bool 				begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		void 				end();
+		void				apply();
 
-		void				setVector(ShaderVector sv, float* v);
-		void				setVectorArray(ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count);
-		void				setMatrix(ShaderMatrix sm, float* v);
-		void				setMatrixArray(ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count);
-		void				setTexture(ShaderTexture st, I4Texture* tex);
+		void				setBool(I4ShaderBool sb, bool v);
+		void				setInt(I4ShaderInt si, int v);
+		void				setFloat(I4ShaderFloat sf, float v);
+		void				setVector(I4ShaderVector sv, float* v);
+		void				setVectorArray(I4ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count);
+		void				setMatrix(I4ShaderMatrix sm, float* v);
+		void				setMatrixArray(I4ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count);
+		void				setTexture(unsigned int stage, I4Texture* tex);
+		void				setRenderTarget(unsigned int stage, I4RenderTarget* rt);
+		void				setTexture(I4ShaderTexture st, I4Texture* tex);
+		void				setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt);
 
 	protected:
 		bool				load(const wchar_t* fname);

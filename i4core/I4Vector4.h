@@ -137,7 +137,7 @@ namespace i4core
 		};
 	};
 
-	inline const I4Vector4 operator * (const float& val, const I4Vector4& rhs)
+	inline const I4Vector4 operator * (float val, const I4Vector4& rhs)
 	{
 		return I4Vector4(rhs.x*val, rhs.y*val, rhs.z*val, rhs.w*val);
 	}
