@@ -87,7 +87,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 p = ray*depthVal;
 	float3 lightVector = lightPointRadius.xyz - p;
 	float lightDist = length(lightVector);
-	float attenuation = saturate(0.9f - lightDist/lightPointRadius.w);
+	float attenuation = saturate(1.0f - lightDist/lightPointRadius.w);
 	lightVector = normalize(lightVector);
 	float NdL = max(0, dot(normal, lightVector));
 	float3 diffuseLight = NdL*lightColor.rgb;

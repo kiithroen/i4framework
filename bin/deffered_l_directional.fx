@@ -76,12 +76,25 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 p = ray*depthVal;
 
 	float3 lightVector = -normalize(lightDirection);
-	float NdL = max(0, dot(normal, lightVector));
-	float3 diffuseLight = NdL*lightColor.rgb;
 
-	float3 reflectVector = normalize(reflect(-lightVector, normal));
+	// ------ lambert -----
+//	float NdL = max(0, dot(normal, lightVector));
+//	float3 diffuseLight = NdL*lightColor.rgb;
+
+	// ------ half lambert -----
+	float NdL = dot(normal, lightVector);
+	float3 diffuseLight = saturate(pow(NdL*0.5 + 0.5, 2.0))*lightColor.rgb;
+
+	// ------ reflect vector specular -----
+//	float3 dirToCamera = -normalize(p);
+//	float3 reflectVector = normalize(reflect(-lightVector, normal));
+//	float specularLight = specularIntensity*NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+
+	// ------ half vector specular ----
 	float3 dirToCamera = -normalize(p);
-	float specularLight = specularIntensity*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	float3 halfVector = normalize(lightVector + dirToCamera);
+	float NdH = dot(normal, halfVector);
+	float specularLight = specularIntensity*NdL*pow(saturate(NdH), specularPower);
 
 	return float4(diffuseLight.rgb, specularLight);
 }
