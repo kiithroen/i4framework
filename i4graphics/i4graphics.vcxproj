@@ -96,11 +96,13 @@
   <ItemGroup>
     <ClInclude Include="I4Format.h" />
     <ClInclude Include="I4GeometryBufferD3D10.h" />
+    <ClInclude Include="I4ModelMgr.h" />
     <ClInclude Include="I4QuadMesh.h" />
     <ClInclude Include="I4RenderTarget.h" />
     <ClInclude Include="I4RenderTargetD3D10.h" />
     <ClInclude Include="I4ShaderProgramD3D10.h" />
     <ClInclude Include="I4SphereMesh.h" />
+    <ClInclude Include="I4StaticMesh.h" />
     <ClInclude Include="I4TextureD3D10.h" />
     <ClInclude Include="I4VideoDriverD3D10.h" />
     <ClInclude Include="I4GeometryBuffer.h" />
@@ -121,10 +123,12 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="I4GeometryBufferD3D10.cpp" />
+    <ClCompile Include="I4ModelMgr.cpp" />
     <ClCompile Include="I4QuadMesh.cpp" />
     <ClCompile Include="I4RenderTargetD3D10.cpp" />
     <ClCompile Include="I4ShaderProgramD3D10.cpp" />
     <ClCompile Include="I4SphereMesh.cpp" />
+    <ClCompile Include="I4StaticMesh.cpp" />
     <ClCompile Include="I4TextureD3D10.cpp" />
     <ClCompile Include="I4VideoDriverD3D10.cpp" />
     <ClCompile Include="I4GeometryBuffer.cpp" />

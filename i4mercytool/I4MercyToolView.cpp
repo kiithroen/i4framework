@@ -16,13 +16,14 @@
 #include "I4MathUtil.h"
 #include "I4VideoDriver.h"
 #include "I4ShaderMgr.h"
+#include "I4ModelMgr.h"
+#include "I4StaticMesh.h"
 #include "I4GeometryBuffer.h"
 #include "I4RenderTarget.h"
 #include "I4Texture.h"
 #include "I4QuadMesh.h"
 #include "I4SphereMesh.h"
 #include "I4StopWatch.h"
-
 #include <D3DX10.h>
 
 
@@ -43,7 +44,9 @@ END_MESSAGE_MAP()
 // CI4MercyToolView »ý¼º/¼Ò¸ê
 
 CI4MercyToolView::CI4MercyToolView()
-	: box_VB(NULL)
+	: modelMgr(NULL)
+	, modelInstance(NULL)
+	, box_VB(NULL)
 	, box_IB(NULL)
 	, rtDiffuse(NULL)
 	, rtNormal(NULL)
@@ -149,25 +152,25 @@ bool CI4MercyToolView::initialize()
 		return false;
 	}
 	
-	if (!I4ShaderMgr::addShaderMgr(L"deffered_g.fx"))
+	if (!I4ShaderMgr::addShaderMgr("deffered_g.fx"))
 	{
 		MessageBox(L"shader manager add failed.");
 		return false;
 	}
 	
-	if (!I4ShaderMgr::addShaderMgr(L"deffered_l_directional.fx"))
+	if (!I4ShaderMgr::addShaderMgr("deffered_l_directional.fx"))
 	{
 		MessageBox(L"shader manager add failed.");
 		return false;
 	}
 
-	if (!I4ShaderMgr::addShaderMgr(L"deffered_l_point.fx"))
+	if (!I4ShaderMgr::addShaderMgr("deffered_l_point.fx"))
 	{
 		MessageBox(L"shader manager add failed.");
 		return false;
 	}
 
-	if (!I4ShaderMgr::addShaderMgr(L"deffered_m.fx"))
+	if (!I4ShaderMgr::addShaderMgr("deffered_m.fx"))
 	{
 		MessageBox(L"shader manager add failed.");
 		return false;
@@ -217,35 +220,35 @@ bool CI4MercyToolView::initialize()
 		vecTextureUV.push_back(box[i].uv);
 	}
 
-	const static I4Triangle16 indices[] =
+	const static I4Index16 indices[] =
 	{
-		I4Triangle16(3,1,0),
-        I4Triangle16(2,1,3),
+		I4Index16(3,1,0),
+        I4Index16(2,1,3),
 
-        I4Triangle16(6,4,5),
-        I4Triangle16(7,4,6),
+        I4Index16(6,4,5),
+        I4Index16(7,4,6),
 
-        I4Triangle16(11,9,8),
-        I4Triangle16(10,9,11),
+        I4Index16(11,9,8),
+        I4Index16(10,9,11),
 
-        I4Triangle16(14,12,13),
-        I4Triangle16(15,12,14),
+        I4Index16(14,12,13),
+        I4Index16(15,12,14),
 
-        I4Triangle16(19,17,16),
-        I4Triangle16(18,17,19),
+        I4Index16(19,17,16),
+        I4Index16(18,17,19),
 
-        I4Triangle16(22,20,21),
-        I4Triangle16(23,20,22),
+        I4Index16(22,20,21),
+        I4Index16(23,20,22),
 	};
 
-	std::vector<I4Triangle16> vecTriangle;
+	std::vector<I4Index16> vecIndex;
 	for (int i = 0; i < _countof(indices); ++i)
 	{
-		vecTriangle.push_back(indices[i]);
+		vecIndex.push_back(indices[i]);
 	}
 
 	std::vector<I4Vector4> vecTangent;
-	calculateTangentArray(vecPosition, vecNormal, vecTextureUV, vecTriangle, vecTangent);
+	calculateTangentArray(vecPosition, vecNormal, vecTextureUV, vecIndex, vecTangent);
 
 	box_VB = videoDriver->createVertexBuffer();
 	int size = sizeof(I4Vertex_Pos_Normal_Tex_Tan);
@@ -267,7 +270,7 @@ bool CI4MercyToolView::initialize()
 	box_VB->unlock();
 
 	box_IB = videoDriver->createIndexBuffer();
-	if (!box_IB->create(vecTriangle.size()*3, sizeof(unsigned short), (void*)&vecTriangle[0]))
+	if (!box_IB->create(vecIndex.size()*3, sizeof(unsigned short), (void*)&vecIndex[0]))
 	{
 		MessageBox(L"index buffer create failed.");
 		return false;
@@ -328,6 +331,9 @@ bool CI4MercyToolView::initialize()
 		return false;
 	}
 
+	modelMgr = new I4ModelMgr;
+	modelInstance = modelMgr->createInstance("cybermon.mesh.xml", "cybermon_1");
+
 	stopWatch = new I4StopWatch;
 	stopWatch->reset();
 
@@ -336,6 +342,9 @@ bool CI4MercyToolView::initialize()
 
 void CI4MercyToolView::finalize()
 {
+	modelMgr->destroyInstance(modelInstance);
+
+	delete modelMgr;
 	delete stopWatch;
 	delete sphereMesh;
 	delete quadMesh;
@@ -390,18 +399,18 @@ void CI4MercyToolView::onIdle()
 			videoDriver->clearRenderTarget(rtLight, 0.0f, 0.0f, 0.0f, 0.0f);
 			
 			// -------------------------------------------------------------------------------
-			shaderMgr = I4ShaderMgr::findShaderMgr(L"deffered_g.fx");
+			shaderMgr = I4ShaderMgr::findShaderMgr("deffered_g.fx");
 			shaderMgr->begin(I4SHADER_MASK_DIFFUSEMAP|I4SHADER_MASK_SPECULARMAP|I4SHADER_MASK_NORMALMAP, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 
 			I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
-			videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
+			videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, true);
 
 			I4Matrix4x4 matProjection;
 			matProjection.makePerspectiveFovLH(PI/4.0f, (float)videoDriver->getWidth()/(float)videoDriver->getHeight(), 1.0f, 1000.0f);			
 			shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, matProjection.arr);
 
 			I4Matrix4x4 matView;
-			matView.makeCameraLookAtLH(I4Vector3(1.0f, 5.0f, -12.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+			matView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -11.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 			shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, matView.arr);
 			shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, 1000.0f);
 			shaderMgr->apply();
@@ -464,13 +473,45 @@ void CI4MercyToolView::onIdle()
 			box_IB->unbind();
 			box_VB->unbind();
 
+			I4Matrix4x4 matModel;
+			matModel.makeTranslation(-2.0f, -3.0f, -3.0f);
+
+			I4Matrix4x4 matScale;
+			matScale.makeScale(0.03f, 0.03f, 0.03f);
+
+			modelInstance->setModelTM(matScale*matModel);
+			for (unsigned int i = 0; i < modelInstance->getSubCount(); ++i)
+			{
+				I4MeshInstance& meshInstance = modelInstance->getSubMeshInstance(i);
+				I4StaticMesh* mesh = modelMgr->findMesh(meshInstance.meshID);
+				mesh->bind();
+				
+				I4Texture* diffuse = modelMgr->findTexture(meshInstance.diffuseMapID);
+				I4Texture* specular = modelMgr->findTexture(meshInstance.specularMapID);
+				I4Texture* normal = modelMgr->findTexture(meshInstance.normalMapID);
+
+				I4Matrix4x4::multiply(meshInstance.resultTM, meshInstance.meshLocalTM, modelInstance->getModelTM());
+				shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, meshInstance.resultTM.arr);
+				shaderMgr->setTexture(I4SHADER_TEXTURE_DIFFUSEMAP, diffuse);
+				shaderMgr->setTexture(I4SHADER_TEXTURE_SPECULARMAP, specular);
+				shaderMgr->setTexture(I4SHADER_TEXTURE_NORMALMAP, normal);
+
+				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_INTENSITY, meshInstance.specularInensity);
+				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_POWER, meshInstance.specularPower);
+
+				shaderMgr->apply();
+				mesh->draw();
+
+				mesh->unbind();
+			}
+
 			shaderMgr->end();
 			
 
 			// -------------------------------------------------------------------------------
-			videoDriver->setRenderTarget(1, &rtLight);
+			videoDriver->setRenderTarget(1, &rtLight, false);
 			{
-				shaderMgr = I4ShaderMgr::findShaderMgr(L"deffered_l_directional.fx");
+				shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_directional.fx");
 				shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));			
 
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
@@ -481,33 +522,40 @@ void CI4MercyToolView::onIdle()
 				shaderMgr->apply();
 
 				I4Vector3 lightDirection[] =
-				{
-					I4Vector3(1.0f, 0.0f, 0.0f),
-					I4Vector3(-0.5f, -0.25f, 1.0f),
-					I4Vector3(1.0f, 0.0f, 1.0f),
+				{					
+					I4Vector3(-1.0f, -1.0f, 0.0f),
+					I4Vector3(1.0f, 0.5f, 0.5f),
 				};
 
 				I4Vector3 lightColor[] =
-				{
-					I4Vector3(0.5f, 0.0f, 0.0f),
-					I4Vector3(0.0f, 0.35f, 0.5f),
-					I4Vector3(0.4f, 0.2f, 0.0f),
+				{										
+					I4Vector3(1.0f, 1.0f, 1.0f)*0.55f,
+					I4Vector3(0.6f, 0.725f, 1.0f)*0.9f,
 				};
 
-				static float lightAng = 0;
-				lightAng += 0.2f;
-				if (lightAng > 360)
-				{
-					lightAng = 0;
-				}
-				I4Matrix4x4 matWorld;
-				matWorld.makeRotationAxis(I4Vector3(0.5f, 1, 0.5f), degreeToRadian(lightAng));
-
 				quadMesh->bind();
-				for (int i = 0; i < 3; ++i)
+
+				I4Matrix4x4 matLight;
+				for (int i = 0; i < 2; ++i)
 				{
+					if (i == 0)
+					{						
+						matLight.makeIdentity();
+					}
+					else
+					{
+						static float lightAng = 0;
+						lightAng += 0.2f;
+						if (lightAng > 360)
+						{
+							lightAng = 0;
+						}
+
+						matLight.makeRotationY(degreeToRadian(lightAng));
+					}
+
 					I4Matrix4x4 matLightView;
-					I4Matrix4x4::multiply(matLightView, matWorld, matView);
+					I4Matrix4x4::multiply(matLightView, matLight, matView);
 					I4Vector3 lightDir = matLightView.transformVector(lightDirection[i]);
 					shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_DIRECTION, lightDir.xyz);
 					shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, lightColor[i].xyz);			
@@ -526,7 +574,7 @@ void CI4MercyToolView::onIdle()
 			}
 
 			{
-				shaderMgr = I4ShaderMgr::findShaderMgr(L"deffered_l_point.fx");
+				shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_point.fx");
 				shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
 
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
@@ -538,7 +586,7 @@ void CI4MercyToolView::onIdle()
 				shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, matProjection.arr);
 
 				I4Matrix4x4 matView;
-				matView.makeCameraLookAtLH(I4Vector3(1.0f, 5.0f, -12.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+				matView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -11.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 				shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, matView.arr);
 
 				shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, farTopRight.xyz);
@@ -546,20 +594,20 @@ void CI4MercyToolView::onIdle()
 
 				I4Vector4 lightPointRadius[] =
 				{
-					I4Vector4(0.0f, 5.0f, -5.0f, 2.0f),
-					I4Vector4(1.5f, 5.0f, -3.0f, 2.0f),
-					I4Vector4(5.5f, 0.0f, -3.5f, 1.0f),
-					I4Vector4(0.0f, 1.5f, 0.0f, 3.0),
-					I4Vector4(0.0f, 0.0f, -1.5f, 4.0),
+					I4Vector4(2.0f, 2.0f, -6.0f, 4.0f),
+					I4Vector4(-2.0f, -3.0f, -5.0f, 4.0f),
+					I4Vector4(4.5f, 3.0f, -4.5f, 3.0f),
+					I4Vector4(4.0f, -1.5f, -7.0f, 4.0),
+					I4Vector4(4.0f, -3.0f, -4.5f, 6.0),
 				};
 
 				I4Vector3 lightColor[] =
 				{
-					I4Vector3(0.5f, 1.0f, 0.25f),
+					I4Vector3(1.0f, 0.125f, 0.93f),
 					I4Vector3(1.0f, 0.0f, 0.0f),
 					I4Vector3(0.0f, 0.8f, 0.8f),
-					I4Vector3(1.0f, 1.0f, 1.0f),
-					I4Vector3(1.0f, 1.0f, 0.25f),
+					I4Vector3(1.0f, 1.0f, 0.0f),
+					I4Vector3(1.0f, 0.5f, 0.25f),
 				};
 
 				sphereMesh->bind();
@@ -568,21 +616,46 @@ void CI4MercyToolView::onIdle()
 					I4Matrix4x4 matScale;
 					matScale.makeScale(lightPointRadius[i].w, lightPointRadius[i].w, lightPointRadius[i].w);
 
+					
+					I4Matrix4x4 matRot;
+					if (i%2 ==  0)
+					{
+						static float lightAng = 0;
+						lightAng += 0.1f;
+						matRot.makeRotationAxis(I4Vector3(0.0f, 0.2f, 1.0f), degreeToRadian(lightAng));
+						if (lightAng > 360)
+						{
+							lightAng = 0;
+						}
+					}
+					else
+					{
+						static float lightAng = 0;
+						lightAng += 0.2f;
+						matRot.makeRotationAxis(I4Vector3(1.0f, 0.5f, 0.5f), degreeToRadian(-lightAng));
+						if (lightAng > 360)
+						{
+							lightAng = 0;
+						}
+					}
+
 					I4Matrix4x4 matTrans;
 					matTrans.makeTranslation(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
 
-					I4Matrix4x4 matWorld;
-					I4Matrix4x4::multiply(matWorld, matScale, matTrans);
+					I4Matrix4x4 matLight = matScale*matRot*matTrans;
 
 					I4Vector3 lightPos(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
-					lightPos = matView.transformCoord(lightPos);
+					shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
+
+					I4Matrix4x4 matLightView = matRot*matTrans*matView;
+					lightPos = matLightView.transformCoord(lightPos);
 					I4Vector4 light;
 					light.x = lightPos.x;
 					light.y = lightPos.y;
 					light.z = lightPos.z;
 					light.w = lightPointRadius[i].w;
 
-					shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matWorld.arr);
+					
 					shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_POINT_RADIUS, light.xyzw);
 					shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, lightColor[i].xyz);			
 
@@ -600,7 +673,7 @@ void CI4MercyToolView::onIdle()
 			}
 			
 			// -------------------------------------------------------------------------------
-			shaderMgr = I4ShaderMgr::findShaderMgr(L"deffered_m.fx");
+			shaderMgr = I4ShaderMgr::findShaderMgr("deffered_m.fx");
 			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
 
 			videoDriver->resetRenderTarget();
@@ -639,6 +712,5 @@ void CI4MercyToolView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 
-	finalize();
 	initialize();
 }

@@ -58,7 +58,7 @@ namespace i4graphics
 	{
 	}
 
-	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil)
 	{
 	}
 

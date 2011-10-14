@@ -56,22 +56,20 @@ namespace i4graphics
 		float u, v;
 	};
 
-	struct I4Triangle16
+	struct I4Index16
 	{
-		I4Triangle16()
+		I4Index16()
 		{
 		}
 
-		I4Triangle16(unsigned short _i1, unsigned short _i2, unsigned short _i3)
-			: i1(_i1)
-			, i2(_i2)
-			, i3(_i3)
-		{
+		I4Index16(unsigned short _i1, unsigned short _i2, unsigned short _i3)
+		{			
+			i[0] = _i1;
+			i[1] = _i2;
+			i[2] = _i3;
 		}
 
-		unsigned short i1;
-		unsigned short i2;
-		unsigned short i3;
+		unsigned short i[3];
 	};
 	
 	struct I4Vertex_Pos
@@ -159,7 +157,7 @@ namespace i4graphics
 	};
 
 	inline void calculateTangentArray(const std::vector<I4Vector3>& vecPosition, const std::vector<I4Vector3>& vecNormal,
-		const std::vector<I4TextureUV>& vecTexUV, const std::vector<I4Triangle16>& vecTriangle, std::vector<I4Vector4>& vecTangent)
+		const std::vector<I4TextureUV>& vecTexUV, const std::vector<I4Index16>& vecIndex, std::vector<I4Vector4>& vecTangent)
 	{
 		std::vector<I4Vector3> tan1;
 		tan1.resize(vecPosition.size());
@@ -169,11 +167,11 @@ namespace i4graphics
 		tan2.resize(vecPosition.size());
 		memset(&tan2[0], 0, sizeof(I4Vector3)*tan2.size());
 		
-		for (unsigned int i = 0; i < vecTriangle.size(); ++i)
+		for (unsigned int i = 0; i < vecIndex.size(); ++i)
 		{
-			unsigned short i1 = vecTriangle[i].i1;
-			unsigned short i2 = vecTriangle[i].i2;
-			unsigned short i3 = vecTriangle[i].i3;
+			unsigned short i1 = vecIndex[i].i[0];
+			unsigned short i2 = vecIndex[i].i[1];
+			unsigned short i3 = vecIndex[i].i[2];
 
 			const I4Vector3& v1 = vecPosition[i1];
 			const I4Vector3& v2 = vecPosition[i2];

@@ -20,7 +20,7 @@ namespace i4graphics
 	}
 
 
-	bool I4ShaderMgr::load(const wchar_t* fname)
+	bool I4ShaderMgr::load(const char* fname)
 	{
 		std::ifstream ifs;
 
@@ -227,38 +227,38 @@ namespace i4graphics
 
 	I4ShaderMgrMap I4ShaderMgr::mapShaderMgr;
 
-	bool I4ShaderMgr::addShaderMgr(const std::wstring& fx)
+	bool I4ShaderMgr::addShaderMgr(const std::string& fxName)
 	{
 		I4ShaderMgr* shaderMgr = NULL;
-		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fx);
+		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fxName);
 		if (itr == mapShaderMgr.end())
 		{
 			shaderMgr = new I4ShaderMgr;
-			if (shaderMgr->load(fx.c_str()) == false)
+			if (shaderMgr->load(fxName.c_str()) == false)
 			{
-				I4LOG_WARN << L"shaderMgr load failed.(" << fx << L")";
+				I4LOG_WARN << L"shaderMgr load failed.(" << fxName.c_str() << L")";
 				delete shaderMgr;
 				shaderMgr = NULL;
 			}
-			mapShaderMgr.insert(std::make_pair(fx, shaderMgr));
+			mapShaderMgr.insert(std::make_pair(fxName, shaderMgr));
 		}
 		else
 		{
-			I4LOG_WARN << L"shaderMgr already added.(" << fx << L")";
+			I4LOG_WARN << L"shaderMgr already added.(" << fxName.c_str() << L")";
 		}
 
 		return true;
 	}
 
-	I4ShaderMgr* I4ShaderMgr::findShaderMgr(const std::wstring& fx)
+	I4ShaderMgr* I4ShaderMgr::findShaderMgr(const std::string& fxName)
 	{
-		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fx);
+		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fxName);
 		if (itr != mapShaderMgr.end())
 		{
 			return itr->second;
 		}
 
-		I4LOG_WARN << L"can't find shader mgr.(" << fx << L")";
+		I4LOG_WARN << L"can't find shader mgr.(" << fxName.c_str() << L")";
 		return NULL;
 	}
 

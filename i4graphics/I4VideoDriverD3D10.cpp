@@ -194,7 +194,7 @@ namespace i4graphics
 		d3dDevice->ClearRenderTargetView(static_cast<I4RenderTargetD3D10*>(renderTarget)->getRenderTargetView(), clearColor);
 	}
 
-	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil)
 	{
 		ID3D10RenderTargetView* arrRTViews[8] = { 0, };
 
@@ -202,7 +202,14 @@ namespace i4graphics
 		{
 			arrRTViews[i] = static_cast<I4RenderTargetD3D10*>(arrRenderTarget[i])->getRenderTargetView();
 		}
-		d3dDevice->OMSetRenderTargets(num, arrRTViews, NULL);
+		if (isDepthStencil)
+		{
+			d3dDevice->OMSetRenderTargets(num, arrRTViews, depthStencilView);
+		}
+		else
+		{
+			d3dDevice->OMSetRenderTargets(num, arrRTViews, NULL);
+		}
 	}
 
 	void I4VideoDriverD3D10::resetRenderTarget()

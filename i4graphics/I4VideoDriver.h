@@ -37,7 +37,7 @@ namespace i4graphics
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 
-		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget);
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil);
 		virtual void				resetRenderTarget();
 
 		virtual I4ShaderProgram*	createShaderProgram();

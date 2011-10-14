@@ -32,7 +32,7 @@ namespace i4graphics
 		if (vertices != NULL)
 		{
 			D3D10_BUFFER_DESC bd;
-			bd.Usage = D3D10_USAGE_DEFAULT;
+			bd.Usage = D3D10_USAGE_IMMUTABLE;
 			bd.ByteWidth = stride*count;
 			bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 			bd.CPUAccessFlags = 0;
@@ -139,7 +139,7 @@ namespace i4graphics
 		if (indices != NULL)
 		{
 			D3D10_BUFFER_DESC bd;
-			bd.Usage = D3D10_USAGE_DEFAULT;
+			bd.Usage = D3D10_USAGE_IMMUTABLE;
 			bd.ByteWidth = stride*count;
 			bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
 			bd.CPUAccessFlags = 0;

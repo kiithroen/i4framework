@@ -12,6 +12,8 @@ using namespace i4core;
 
 namespace i4graphics
 {
+	class I4ModelMgr;
+	class I4ModelInstance;
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 	class I4RenderTarget;
@@ -19,6 +21,7 @@ namespace i4graphics
 	class I4QuadMesh;
 	class I4SphereMesh;
 }
+
 using namespace i4graphics;
 
 class CI4MercyToolView : public CView
@@ -38,6 +41,8 @@ public:
 	void	onIdle();
 
 private:
+	I4ModelMgr*			modelMgr;
+	I4ModelInstance*	modelInstance;
 	I4VertexBuffer*		box_VB;
 	I4IndexBuffer*		box_IB;
 	I4RenderTarget*		rtDiffuse;

@@ -23,7 +23,7 @@ namespace i4graphics
 	};
 
 
-	typedef std::map<std::wstring, I4ShaderMgr*>		I4ShaderMgrMap;
+	typedef std::map<std::string, I4ShaderMgr*>		I4ShaderMgrMap;
 
 	class I4GRAPHICS_API I4ShaderMgr
 	{
@@ -48,12 +48,12 @@ namespace i4graphics
 		void				setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt);
 
 	protected:
-		bool				load(const wchar_t* fname);
+		bool				load(const char* fname);
 		I4ShaderProgram*	createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		
 	public:
-		static bool			addShaderMgr(const std::wstring& fx);
-		static I4ShaderMgr*	findShaderMgr(const std::wstring& fx);
+		static bool			addShaderMgr(const std::string& fxName);
+		static I4ShaderMgr*	findShaderMgr(const std::string& fxName);
 		static void			destroyShaderMgr();
 
 	protected:

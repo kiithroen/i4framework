@@ -16,6 +16,9 @@ namespace i4graphics
 
 	bool I4TextureD3D10::load(const char* fname)
 	{
+		if (I4Texture::load(fname) == false)
+			return false;
+
 		if (FAILED(D3DX10CreateShaderResourceViewFromFileA(d3dDevice, fname, NULL, NULL, &shaderResourceView, NULL)))
 		{
 			I4LOG_WARN << L"texture load failed. : " << fname;

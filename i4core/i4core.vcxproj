@@ -52,7 +52,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;I4CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../dependency/jsoncpp/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dependency/jsoncpp/include;../dependency/rapidxml;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;I4CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../dependency/jsoncpp/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dependency/jsoncpp/include;../dependency/rapidxml;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -102,6 +102,7 @@
   <ItemGroup>
     <ClInclude Include="I4AABB.h" />
     <ClInclude Include="i4core.h" />
+    <ClInclude Include="I4Hash.h" />
     <ClInclude Include="I4Log.h" />
     <ClInclude Include="I4MathUtil.h" />
     <ClInclude Include="I4Matrix4x4.h" />
@@ -115,6 +116,7 @@
     <ClInclude Include="I4Vector2.h" />
     <ClInclude Include="I4Vector3.h" />
     <ClInclude Include="I4Vector4.h" />
+    <ClInclude Include="I4XmlData.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +133,7 @@
     <ClCompile Include="I4Profile.cpp" />
     <ClCompile Include="I4ProfileWriterJson.cpp" />
     <ClCompile Include="I4StopWatch.cpp" />
+    <ClCompile Include="I4XmlData.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

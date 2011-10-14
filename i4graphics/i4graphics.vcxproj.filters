@@ -66,6 +66,12 @@
     <ClInclude Include="I4SphereMesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="I4StaticMesh.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ModelMgr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="i4graphics.cpp">
@@ -102,6 +108,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="I4SphereMesh.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="I4StaticMesh.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ModelMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

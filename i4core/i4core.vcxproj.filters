@@ -69,6 +69,8 @@
     <ClInclude Include="I4MathUtil.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="I4XmlData.h" />
+    <ClInclude Include="I4Hash.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -89,5 +91,6 @@
     <ClCompile Include="I4ProfileWriterJson.cpp">
       <Filter>debug\profile</Filter>
     </ClCompile>
+    <ClCompile Include="I4XmlData.cpp" />
   </ItemGroup>
 </Project>
