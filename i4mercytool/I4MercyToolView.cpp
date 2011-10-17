@@ -543,7 +543,7 @@ void CI4MercyToolView::onIdle()
 				quadMesh->bind();
 
 				I4Matrix4x4 matLight;
-				for (int i = 0; i < 0; ++i)
+				for (int i = 0; i < 2; ++i)
 				{
 					if (i == 0)
 					{						
@@ -601,11 +601,11 @@ void CI4MercyToolView::onIdle()
 
 				I4Vector4 lightPointRadius[] =
 				{
-					I4Vector4(2.0f, 2.0f, -6.0f, 2.0f),
-					I4Vector4(-2.0f, -3.0f, -5.0f, 3.0f),
-					I4Vector4(4.5f, 3.0f, -4.5f, 3.0f),
-					I4Vector4(4.0f, -1.5f, -7.0f, 2.0),
-					I4Vector4(4.0f, -3.0f, -4.5f, 3.0),
+					I4Vector4(0.0f, 3.0f, -2.0f, 7.0f),
+					I4Vector4(-1.0f, 3.0f, -5.0f, 7.0f),
+					I4Vector4(3.5f, 6.0f, -4.5f, 7.0f),
+					I4Vector4(1.0f, 5.5f, -7.0f, 7.0),
+					I4Vector4(2.0f, 3.0f, -4.5f, 7.0),
 				};
 
 				I4Vector3 lightColor[] =
@@ -649,10 +649,10 @@ void CI4MercyToolView::onIdle()
 					I4Matrix4x4 matTrans;
 					matTrans.makeTranslation(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
 
-					I4Matrix4x4 matLight = matScale*matRot*matTrans;
+					I4Matrix4x4 matLight = matScale*matTrans*matRot;					
+					shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
 
 					I4Vector3 lightPos(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
-					shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
 
 					I4Matrix4x4 matLightView = matRot*matTrans*matView;
 					lightPos = matLightView.transformCoord(lightPos);
