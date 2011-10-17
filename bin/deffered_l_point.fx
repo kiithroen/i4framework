@@ -94,7 +94,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	float3 reflectVector = normalize(reflect(-lightVector, normal));
 	float3 dirToCamera = -normalize(p);
-	float specularLight = specularIntensity*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	float specularLight = specularIntensity*NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
 	return attenuation*float4(diffuseLight.rgb, specularLight);
 }

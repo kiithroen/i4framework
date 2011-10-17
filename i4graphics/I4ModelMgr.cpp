@@ -569,10 +569,10 @@ namespace i4graphics
 		}
 	}
 
-	bool I4ModelMgr::parseMeshWeight(ParsedMeshData& out, I4XmlData& xml)
+	void I4ModelMgr::parseMeshWeight(ParsedMeshData& out, I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("weight") == false)
-			return true;
+			return;
 		
 		int size;
 		xml.getAttrValue(size, "count");
@@ -619,8 +619,6 @@ namespace i4graphics
 
 			xml.selectParentNode();
 		}
-
-		return true;
 	}
 
 

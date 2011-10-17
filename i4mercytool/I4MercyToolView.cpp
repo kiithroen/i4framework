@@ -332,7 +332,7 @@ bool CI4MercyToolView::initialize()
 	}
 
 	modelMgr = new I4ModelMgr;
-	modelInstance = modelMgr->createInstance("cybermon.mesh.xml", "cybermon_1");
+	modelInstance = modelMgr->createInstance("test.mesh.xml", "test_1");
 
 	stopWatch = new I4StopWatch;
 	stopWatch->reset();
@@ -407,10 +407,11 @@ void CI4MercyToolView::onIdle()
 
 			I4Matrix4x4 matProjection;
 			matProjection.makePerspectiveFovLH(PI/4.0f, (float)videoDriver->getWidth()/(float)videoDriver->getHeight(), 1.0f, 1000.0f);			
-			shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, matProjection.arr);
 
 			I4Matrix4x4 matView;
-			matView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -11.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+			matView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+
+			shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, matProjection.arr);
 			shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, matView.arr);
 			shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, 1000.0f);
 			shaderMgr->apply();
@@ -473,11 +474,17 @@ void CI4MercyToolView::onIdle()
 			box_IB->unbind();
 			box_VB->unbind();
 
+			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
+			shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, matProjection.arr);
+			shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, matView.arr);
+			shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, 1000.0f);
+			shaderMgr->apply();
+
 			I4Matrix4x4 matModel;
 			matModel.makeTranslation(-2.0f, -3.0f, -3.0f);
 
 			I4Matrix4x4 matScale;
-			matScale.makeScale(0.03f, 0.03f, 0.03f);
+			matScale.makeScale(0.15f, 0.15f, 0.15f);
 
 			modelInstance->setModelTM(matScale*matModel);
 			for (unsigned int i = 0; i < modelInstance->getSubCount(); ++i)
@@ -536,7 +543,7 @@ void CI4MercyToolView::onIdle()
 				quadMesh->bind();
 
 				I4Matrix4x4 matLight;
-				for (int i = 0; i < 2; ++i)
+				for (int i = 0; i < 0; ++i)
 				{
 					if (i == 0)
 					{						
@@ -586,7 +593,7 @@ void CI4MercyToolView::onIdle()
 				shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, matProjection.arr);
 
 				I4Matrix4x4 matView;
-				matView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -11.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+				matView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 				shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, matView.arr);
 
 				shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, farTopRight.xyz);
@@ -594,11 +601,11 @@ void CI4MercyToolView::onIdle()
 
 				I4Vector4 lightPointRadius[] =
 				{
-					I4Vector4(2.0f, 2.0f, -6.0f, 4.0f),
-					I4Vector4(-2.0f, -3.0f, -5.0f, 4.0f),
+					I4Vector4(2.0f, 2.0f, -6.0f, 2.0f),
+					I4Vector4(-2.0f, -3.0f, -5.0f, 3.0f),
 					I4Vector4(4.5f, 3.0f, -4.5f, 3.0f),
-					I4Vector4(4.0f, -1.5f, -7.0f, 4.0),
-					I4Vector4(4.0f, -3.0f, -4.5f, 6.0),
+					I4Vector4(4.0f, -1.5f, -7.0f, 2.0),
+					I4Vector4(4.0f, -3.0f, -4.5f, 3.0),
 				};
 
 				I4Vector3 lightColor[] =

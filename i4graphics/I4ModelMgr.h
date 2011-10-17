@@ -114,7 +114,7 @@ namespace i4graphics
 		void					parseMeshIndex(ParsedMeshData& out,I4XmlData& xml);		
 		void					parseMeshTexUV(ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshTexIndex(ParsedMeshData& out,I4XmlData& xml);
-		bool					parseMeshWeight(ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshWeight(ParsedMeshData& out,I4XmlData& xml);
 		void					mergeMeshTextureUV(ParsedMeshData& out,I4XmlData& xml);
 		I4StaticMesh*			buildMesh(ParsedMeshData &parsedMeshData);
 
