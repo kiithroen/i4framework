@@ -654,7 +654,7 @@ void CI4MercyToolView::onIdle()
 
 					I4Vector3 lightPos(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
 
-					I4Matrix4x4 matLightView = matRot*matTrans*matView;
+					I4Matrix4x4 matLightView = matRot*matView;
 					lightPos = matLightView.transformCoord(lightPos);
 					I4Vector4 light;
 					light.x = lightPos.x;

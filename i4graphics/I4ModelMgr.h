@@ -37,10 +37,10 @@ namespace i4graphics
 		I4Matrix4x4		resultTM;
 		I4Matrix4x4		meshLocalTM;
 		I4Matrix4x4		meshWorldTM;
-		I4HashID			meshID;
-		I4HashID			diffuseMapID;
-		I4HashID			specularMapID;
-		I4HashID			normalMapID;
+		I4HashID		meshID;
+		I4HashID		diffuseMapID;
+		I4HashID		specularMapID;
+		I4HashID		normalMapID;
 		float  			specularInensity;
 		float			specularPower;
 	};
@@ -86,7 +86,7 @@ namespace i4graphics
 	{
 		typedef std::map<I4HashID, I4ModelPrototype*>	I4ModelPrototypeMap;
 		typedef std::map<I4HashID, I4ModelInstance*>	I4ModelInstanceMap;
-		typedef std::map<I4HashID, I4Texture*>		I4TextureMap;
+		typedef std::map<I4HashID, I4Texture*>			I4TextureMap;
 		typedef std::map<I4HashID, I4StaticMesh*>		I4StaticMeshMap;
 
 	public:
