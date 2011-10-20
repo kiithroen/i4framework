@@ -58,7 +58,6 @@ CI4MercyToolView::CI4MercyToolView()
 	, quadMesh(NULL)
 	, sphereMesh(NULL)
 	, stopWatch(NULL)
-	, camera(NULL)
 	, frameCount(0)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
@@ -372,23 +371,6 @@ void CI4MercyToolView::onIdle()
 	I4VideoDriver* videoDriver = I4VideoDriver::getVideoDriver();
 	if (videoDriver)
 	{
-		float zFar = 1000.0f;
-		float fov = PI/4.0f;
-		float Hfar = 2 * tan(fov / 2) * zFar;
-		float ratio = (float)videoDriver->getWidth()/(float)videoDriver->getHeight();
-		float Wfar = Hfar * ratio;
-				
-		I4Vector3 mPosition = I4Vector3(0, 0, 0);
-		I4Vector3 mLook = I4Vector3(0, 0, 1);
-		I4Vector3 mRight = I4Vector3(1, 0, 0);
-		I4Vector3 mUp = I4Vector3(0, 1, 0);
-		I4Vector3 farCenter = mPosition + mLook * zFar;
-
-		I4Vector3 farTopLeft = farCenter + (mUp * Hfar/2) - (mRight * Wfar/2);
-		I4Vector3 farTopRight = farCenter + (mUp * Hfar/2) + (mRight * Wfar/2);
-		I4Vector3 farDownLeft = farCenter - (mUp * Hfar/2) - (mRight * Wfar/2);
-		I4Vector3 farDownRight = farCenter - (mUp * Hfar/2) + (mRight * Wfar/2);
-
 		if (videoDriver->beginScene())
 		{
 			I4ShaderMgr* shaderMgr = NULL;
@@ -409,10 +391,10 @@ void CI4MercyToolView::onIdle()
 
 			I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
 			videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, true);
-
+			
 			shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
 			shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, camera->getViewMatrix().arr);
-			shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, 1000.0f);
+			shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, camera->getZFar());
 			shaderMgr->apply();
 
 			box_VB->bind();
@@ -473,7 +455,7 @@ void CI4MercyToolView::onIdle()
 			box_IB->unbind();
 			box_VB->unbind();
 
-			shaderMgr->begin(I4SHADER_MASK_SPECULARMAP|I4SHADER_MASK_NORMALMAP, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
+			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 			shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
 			shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, camera->getViewMatrix().arr);
 			shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, camera->getZFar());
@@ -498,9 +480,9 @@ void CI4MercyToolView::onIdle()
 
 				I4Matrix4x4::multiply(meshInstance.resultTM, meshInstance.meshLocalTM, modelInstance->getModelTM());
 				shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, meshInstance.resultTM.arr);
-				shaderMgr->setTexture(I4SHADER_TEXTURE_DIFFUSEMAP, diffuseMap);
-				shaderMgr->setTexture(I4SHADER_TEXTURE_SPECULARMAP, specularMap);
-				shaderMgr->setTexture(I4SHADER_TEXTURE_NORMALMAP, normalMap);
+				shaderMgr->setTexture(I4SHADER_TEXTURE_DIFFUSEMAP, diffuse);
+				shaderMgr->setTexture(I4SHADER_TEXTURE_SPECULARMAP, specular);
+				shaderMgr->setTexture(I4SHADER_TEXTURE_NORMALMAP, normal);
 
 				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_INTENSITY, meshInstance.specularInensity);
 				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_POWER, meshInstance.specularPower);
@@ -524,7 +506,7 @@ void CI4MercyToolView::onIdle()
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
 				
-				shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, farTopRight.xyz);
+				shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
 				shaderMgr->apply();
 
 				I4Vector3 lightDirection[] =
@@ -586,7 +568,10 @@ void CI4MercyToolView::onIdle()
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
 				shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
-				shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, farTopRight.xyz);
+		
+				shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
+				shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, camera->getViewMatrix().arr);
+				shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
 				shaderMgr->apply();
 
 				I4Vector4 lightPointRadius[] =

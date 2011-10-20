@@ -25,12 +25,16 @@ namespace i4core
 		const I4Matrix4x4&	getViewMatrix()	const							{ return viewMatrix; }
 		const I4Matrix4x4&	getWorldMatrix()	const						{ return worldMatrix; }
 		const I4Matrix4x4&	getViewProjectionMatrix()	const				{ return viewProjectionMatrix; }
-		
+		const I4Quaternion&	getRotation() const								{ return rotation; }
 		const I4Vector3&	getPosition() const								{ return position; }
 		const I4Vector3&	getRight() const								{ return right; }
 		const I4Vector3&	getUp() const									{ return up; }
 		const I4Vector3&	getDirection() const							{ return direction; }
-		const I4Quaternion&	getRotation() const								{ return rotation; }
+		
+		const I4Vector3&	getFarTopLeft() const							{ return farTopLeft; }
+		const I4Vector3&	getFarTopRight() const							{ return farTopRight; }
+		const I4Vector3&	getFarDownLeft() const							{ return farDownLeft; }
+		const I4Vector3&	getFarDownRight() const							{ return farDownRight; }
 
 		float				getFovY() const									{ return fovY; }
 		float				getAspect() const								{ return aspect; }
@@ -51,6 +55,14 @@ namespace i4core
 		I4Vector3			right;
 		I4Vector3			direction;
 		I4Vector3			up;
+		I4Vector3			nearTopLeft;
+		I4Vector3			nearTopRight;
+		I4Vector3			nearDownLeft;
+		I4Vector3			nearDownRight;
+		I4Vector3			farTopLeft;
+		I4Vector3			farTopRight;
+		I4Vector3			farDownLeft;
+		I4Vector3			farDownRight;
 		float				fovY;
 		float				aspect;
 		float				zNear;

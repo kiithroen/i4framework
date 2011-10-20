@@ -19,6 +19,30 @@ namespace i4core
 
 		projectionMatrix.makePerspectiveFovLH(fovY, aspect, zNear, zFar);
 
+		I4Vector3 axisX = I4Vector3(1, 0, 0);
+		I4Vector3 axisY = I4Vector3(0, 1, 0);
+		I4Vector3 axisZ = I4Vector3(0, 0, 1);
+
+		float hNear = 2*tan(fovY/2)*zNear;
+		float wNear = hNear * aspect;
+
+		I4Vector3 nearCenter = axisZ * zNear;
+
+		nearTopLeft = nearCenter + (axisY * hNear/2) - (axisX * wNear/2);
+		nearTopRight = nearCenter + (axisY * hNear/2) + (axisX * wNear/2);
+		nearDownLeft = nearCenter - (axisY * hNear/2) - (axisX * wNear/2);
+		nearDownRight = nearCenter - (axisY * hNear/2) + (axisX * wNear/2);
+
+		float hFar = 2*tan(fovY/2)*zFar;
+		float wFar = hFar * aspect;
+
+		I4Vector3 farCenter = axisZ * zFar;
+
+		farTopLeft = farCenter + (axisY * hFar/2) - (axisX * wFar/2);
+		farTopRight = farCenter + (axisY * hFar/2) + (axisX * wFar/2);
+		farDownLeft = farCenter - (axisY * hFar/2) - (axisX * wFar/2);
+		farDownRight = farCenter - (axisY * hFar/2) + (axisX * wFar/2);
+
 		updateVariable();
 	}
 	
