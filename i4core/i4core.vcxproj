@@ -101,7 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="I4AABB.h" />
+    <ClInclude Include="I4Camera.h" />
     <ClInclude Include="i4core.h" />
+    <ClInclude Include="I4Frustum.h" />
     <ClInclude Include="I4Hash.h" />
     <ClInclude Include="I4Log.h" />
     <ClInclude Include="I4MathUtil.h" />
@@ -128,6 +130,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="I4Camera.cpp" />
     <ClCompile Include="i4core.cpp" />
     <ClCompile Include="I4Log.cpp" />
     <ClCompile Include="I4Profile.cpp" />

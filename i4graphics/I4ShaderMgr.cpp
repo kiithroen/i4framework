@@ -128,7 +128,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setVector(I4ShaderVector sv, float* v)
+	void I4ShaderMgr::setVector(I4ShaderVector sv, const float* v)
 	{
 		if (activeShaderProgram)
 		{
@@ -136,7 +136,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setVectorArray(I4ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count)
+	void I4ShaderMgr::setVectorArray(I4ShaderVectorArray sva, const float* v, unsigned int offset, unsigned int count)
 	{
 		if (activeShaderProgram)
 		{
@@ -144,7 +144,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setMatrix(I4ShaderMatrix sm, float* v)
+	void I4ShaderMgr::setMatrix(I4ShaderMatrix sm, const float* v)
 	{
 		if (activeShaderProgram)
 		{
@@ -152,7 +152,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setMatrixArray(I4ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count)
+	void I4ShaderMgr::setMatrixArray(I4ShaderMatrixArray sva, const float* v, unsigned int offset, unsigned int count)
 	{
 		if (activeShaderProgram)
 		{
@@ -160,23 +160,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setTexture(unsigned int stage, I4Texture* tex)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setTexture(stage, tex);
-		}
-	}
-
-	void I4ShaderMgr::setRenderTarget(unsigned int stage, I4RenderTarget* rt)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setRenderTarget(stage, rt);
-		}
-	}
-	
-	void I4ShaderMgr::setTexture(I4ShaderTexture st, I4Texture* tex)
+	void I4ShaderMgr::setTexture(I4ShaderTexture st, const I4Texture* tex)
 	{
 		if (activeShaderProgram)
 		{
@@ -184,7 +168,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt)
+	void I4ShaderMgr::setRenderTarget(I4ShaderRenderTarget srt, const I4RenderTarget* rt)
 	{
 		if (activeShaderProgram)
 		{

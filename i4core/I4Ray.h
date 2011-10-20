@@ -38,7 +38,7 @@ namespace i4core
 		const I4Ray transformInto(const I4Matrix4x4& mat) const
 		{
 			I4Matrix4x4 matInv;
-			mat.getInversePrimitive(matInv);
+			mat.extractInversePrimitive(matInv);
 
 			return transform(matInv);
 		}

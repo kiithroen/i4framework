@@ -71,6 +71,12 @@
     </ClInclude>
     <ClInclude Include="I4XmlData.h" />
     <ClInclude Include="I4Hash.h" />
+    <ClInclude Include="I4Frustum.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Camera.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -92,5 +98,8 @@
       <Filter>debug\profile</Filter>
     </ClCompile>
     <ClCompile Include="I4XmlData.cpp" />
+    <ClCompile Include="I4Camera.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

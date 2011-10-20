@@ -194,7 +194,7 @@ namespace i4core
 		}
 
 		
-		void getInversePrimitive(I4Matrix4x4& mat) const
+		void extractInversePrimitive(I4Matrix4x4& mat) const
 		{
 			// 회전 이동 반사로만 구성된 행렬일때 역행렬은 다음과 같다.
 
@@ -220,7 +220,7 @@ namespace i4core
 			mat._44 = 1.0f;
 		}
 
-		bool getInverse(I4Matrix4x4& mat) const
+		bool extractInverse(I4Matrix4x4& mat) const
 		{
 			float d = (_11*_22 - _12*_21)*(_33*_44 - _34*_43) -
 						(_11*_23 - _13*_21)*(_32*_44 - _34*_42) +

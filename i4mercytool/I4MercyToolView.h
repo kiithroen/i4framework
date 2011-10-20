@@ -7,6 +7,7 @@
 namespace i4core
 {
 	class I4StopWatch;
+	class I4Camera;
 }
 using namespace i4core;
 
@@ -55,6 +56,7 @@ private:
 	I4QuadMesh*			quadMesh;
 	I4SphereMesh*		sphereMesh;
 	I4StopWatch*		stopWatch;
+	I4Camera*			camera;
 	unsigned int		frameCount;
 
 // 재정의입니다.

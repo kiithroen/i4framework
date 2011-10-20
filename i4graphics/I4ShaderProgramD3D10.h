@@ -21,14 +21,12 @@ namespace i4graphics
 		virtual void	setBool(I4ShaderBool sb, bool v) override;
 		virtual void	setInt(I4ShaderInt si, int v) override;
 		virtual void	setFloat(I4ShaderFloat sf, float v) override;
-		virtual void	setVector(I4ShaderVector sv, float* v) override;
-		virtual void	setVectorArray(I4ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count) override;
-		virtual void	setMatrix(I4ShaderMatrix sm, float* v) override;
-		virtual void	setMatrixArray(I4ShaderMatrixArray sva, float* v, unsigned int offset, unsigned int count) override;
-		virtual void	setTexture(unsigned int stage, I4Texture* tex) override;
-		virtual void	setRenderTarget(unsigned int stage, I4RenderTarget* rt) override;
-		virtual void	setTexture(I4ShaderTexture st, I4Texture* tex) override;
-		virtual void	setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt) override;
+		virtual void	setVector(I4ShaderVector sv, const float* v) override;
+		virtual void	setVectorArray(I4ShaderVectorArray sva, const float* v, unsigned int offset, unsigned int count) override;
+		virtual void	setMatrix(I4ShaderMatrix sm, const float* v) override;
+		virtual void	setMatrixArray(I4ShaderMatrixArray sva, const float* v, unsigned int offset, unsigned int count) override;
+		virtual void	setTexture(I4ShaderTexture st, const I4Texture* tex) override;
+		virtual void	setRenderTarget(I4ShaderRenderTarget srt, const I4RenderTarget* rt) override;
 
 	private:
 		void	mapShaderBool(I4ShaderBool sb, const char* name);
