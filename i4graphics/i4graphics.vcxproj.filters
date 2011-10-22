@@ -1,120 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="dllmain">
+      <UniqueIdentifier>{677e9aca-f85e-4010-b958-ef5a882026b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="I4VideoDriverD3D10.h" />
+    <ClInclude Include="I4Format.h" />
+    <ClInclude Include="I4GeometryBuffer.h" />
+    <ClInclude Include="I4GeometryBufferD3D10.h" />
+    <ClInclude Include="i4graphics.h" />
+    <ClInclude Include="I4ModelMgr.h" />
+    <ClInclude Include="I4QuadMesh.h" />
+    <ClInclude Include="I4RenderTarget.h" />
+    <ClInclude Include="I4RenderTargetD3D10.h" />
+    <ClInclude Include="I4ShaderMgr.h" />
+    <ClInclude Include="I4ShaderProgram.h" />
+    <ClInclude Include="I4ShaderProgramD3D10.h" />
+    <ClInclude Include="I4SphereMesh.h" />
+    <ClInclude Include="I4StaticMesh.h" />
+    <ClInclude Include="I4Texture.h" />
+    <ClInclude Include="I4TextureD3D10.h" />
+    <ClInclude Include="I4VideoDriver.h" />
     <ClInclude Include="targetver.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="i4graphics.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4VideoDriver.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4Texture.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4ShaderProgram.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4GeometryBuffer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4ShaderMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4GeometryBufferD3D10.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4ShaderProgramD3D10.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4TextureD3D10.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4VideoDriverD3D10.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4RenderTarget.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4RenderTargetD3D10.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4Format.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4QuadMesh.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4SphereMesh.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4StaticMesh.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="I4ModelMgr.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>dllmain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="i4graphics.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>dllmain</Filter>
     </ClCompile>
-    <ClCompile Include="I4VideoDriver.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4GeometryBuffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4ShaderMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4GeometryBufferD3D10.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4ShaderProgramD3D10.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4TextureD3D10.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4VideoDriverD3D10.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4RenderTargetD3D10.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4QuadMesh.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4SphereMesh.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4StaticMesh.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="I4ModelMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
+    <ClCompile Include="I4VideoDriverD3D10.cpp" />
+    <ClCompile Include="I4GeometryBuffer.cpp" />
+    <ClCompile Include="I4GeometryBufferD3D10.cpp" />
+    <ClCompile Include="i4graphics.cpp" />
+    <ClCompile Include="I4ModelMgr.cpp" />
+    <ClCompile Include="I4QuadMesh.cpp" />
+    <ClCompile Include="I4RenderTargetD3D10.cpp" />
+    <ClCompile Include="I4ShaderMgr.cpp" />
+    <ClCompile Include="I4ShaderProgramD3D10.cpp" />
+    <ClCompile Include="I4SphereMesh.cpp" />
+    <ClCompile Include="I4StaticMesh.cpp" />
+    <ClCompile Include="I4TextureD3D10.cpp" />
+    <ClCompile Include="I4VideoDriver.cpp" />
   </ItemGroup>
 </Project>

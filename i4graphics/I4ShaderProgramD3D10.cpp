@@ -154,73 +154,45 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderProgramD3D10::setVector(I4ShaderVector sv, float* v)
+	void I4ShaderProgramD3D10::setVector(I4ShaderVector sv, const float* v)
 	{
 		if (shaderVector[sv] != NULL)
 		{
-			shaderVector[sv]->SetFloatVector(v);
+			shaderVector[sv]->SetFloatVector(const_cast<float*>(v));
 		}
 	}
 
-	void I4ShaderProgramD3D10::setVectorArray(I4ShaderVectorArray sva, float* v, unsigned int offset, unsigned int count)
+	void I4ShaderProgramD3D10::setVectorArray(I4ShaderVectorArray sva, const float* v, unsigned int offset, unsigned int count)
 	{
 		if (shaderVectorArray[sva] != NULL)
 		{
-			shaderVectorArray[sva]->SetFloatVectorArray(v, offset, count);
+			shaderVectorArray[sva]->SetFloatVectorArray(const_cast<float*>(v), offset, count);
 		}
 	}
 	
-	void I4ShaderProgramD3D10::setMatrix(I4ShaderMatrix sm, float* v)
+	void I4ShaderProgramD3D10::setMatrix(I4ShaderMatrix sm, const float* v)
 	{
 		if (shaderMatrix[sm] != NULL)
 		{
-			shaderMatrix[sm]->SetMatrix(v);
+			shaderMatrix[sm]->SetMatrix(const_cast<float*>(v));
 		}
 	}
 
-	void I4ShaderProgramD3D10::setMatrixArray(I4ShaderMatrixArray sma, float* m, unsigned int offset, unsigned int count)
+	void I4ShaderProgramD3D10::setMatrixArray(I4ShaderMatrixArray sma, const float* v, unsigned int offset, unsigned int count)
 	{
 		if (shaderMatrixArray[sma] != NULL)
 		{
-			shaderMatrixArray[sma]->SetMatrixArray(m, offset, count);
+			shaderMatrixArray[sma]->SetMatrixArray(const_cast<float*>(v), offset, count);
 		}
 	}
 	
-	void I4ShaderProgramD3D10::setTexture(unsigned int stage, I4Texture* tex)
-	{
-		if (tex != NULL)
-		{
-			ID3D10ShaderResourceView* shaderResourceView = static_cast<I4TextureD3D10*>(tex)->getShaderResourceView();
-			d3dDevice->PSSetShaderResources(stage, 1, &shaderResourceView);
-		}
-		else
-		{
-			ID3D10ShaderResourceView* shaderResourceView = NULL;
-			d3dDevice->PSSetShaderResources(stage, 1, &shaderResourceView);
-		}
-	}	
-	
-	void I4ShaderProgramD3D10::setRenderTarget(unsigned int stage, I4RenderTarget* rt)
-	{
-		if (rt != NULL)
-		{
-			ID3D10ShaderResourceView* shaderResourceView = static_cast<I4RenderTargetD3D10*>(rt)->getShaderResourceView();
-			d3dDevice->PSSetShaderResources(stage, 1, &shaderResourceView);
-		}
-		else
-		{
-			ID3D10ShaderResourceView* shaderResourceView = NULL;
-			d3dDevice->PSSetShaderResources(stage, 1, &shaderResourceView);
-		}
-	}	
-
-	void I4ShaderProgramD3D10::setTexture(I4ShaderTexture st, I4Texture* tex)
+	void I4ShaderProgramD3D10::setTexture(I4ShaderTexture st, const I4Texture* tex)
 	{
 		if (shaderTexture[st] != NULL)
 		{
 			if (tex != NULL)
 			{
-				shaderTexture[st]->SetResource(static_cast<I4TextureD3D10*>(tex)->getShaderResourceView());
+				shaderTexture[st]->SetResource(static_cast<const I4TextureD3D10*>(tex)->getShaderResourceView());
 			}
 			else
 			{
@@ -229,13 +201,13 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderProgramD3D10::setRenderTarget(I4ShaderRenderTarget srt, I4RenderTarget* rt)
+	void I4ShaderProgramD3D10::setRenderTarget(I4ShaderRenderTarget srt, const I4RenderTarget* rt)
 	{
 		if (shaderRenderTarget[srt] != NULL)
 		{
 			if (rt != NULL)
 			{
-				shaderRenderTarget[srt]->SetResource(static_cast<I4RenderTargetD3D10*>(rt)->getShaderResourceView());
+				shaderRenderTarget[srt]->SetResource(static_cast<const I4RenderTargetD3D10*>(rt)->getShaderResourceView());
 			}
 			else
 			{
