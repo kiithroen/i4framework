@@ -17,7 +17,7 @@ namespace i4core
 		zNear = _zNear;
 		zFar = _zFar;
 
-		projectionMatrix.makePerspectiveFovLH(fovY, aspect, zNear, zFar);
+		projectionMatrix.makePerspectiveFovLH(_fovY, _aspect, _zNear, _zFar);
 
 		I4Vector3 axisX = I4Vector3(1, 0, 0);
 		I4Vector3 axisY = I4Vector3(0, 1, 0);
@@ -43,32 +43,47 @@ namespace i4core
 		farDownLeft = farCenter - (axisY * hFar/2) - (axisX * wFar/2);
 		farDownRight = farCenter - (axisY * hFar/2) + (axisX * wFar/2);
 
-		updateVariable();
-	}
-	
-	void I4Camera::setLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
-	{		
-		viewMatrix.makeCameraLookAtLH(eye, at, up);
-
-		updateVariable();
-	}
-
-	void I4Camera::updateVariable()
-	{
 		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
 
+		frustum.make(viewProjectionMatrix);
+	}
+	
+	void I4Camera::setLookAt(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
+	{
+		eye = _eye;
+		up = _up;
+
+		viewMatrix.makeCameraLookAtLH(_eye, _lookAt, _up);
 		viewMatrix.extractInversePrimitive(worldMatrix);
 
-		worldMatrix.extractTranslation(position);
 		worldMatrix.extractAxisX(right);
-		worldMatrix.extractAxisY(up);
 		worldMatrix.extractAxisZ(direction);
 
 		I4Matrix4x4 rotationMatrix;
 		worldMatrix.decompose(NULL, &rotationMatrix, NULL);
 		rotation.makeRotationMatrix(rotationMatrix);
 
-		frustum.make(getViewProjectionMatrix());
+		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+
+		frustum.make(viewProjectionMatrix);
+	}
+
+	void I4Camera::setTransform(const I4Quaternion& _rotation, const I4Vector3& _eye)
+	{
+		rotation = _rotation;
+		eye = _eye;
+
+		rotation.extractRotationMatrix(worldMatrix);
+		worldMatrix.setTranslation(eye);
+		worldMatrix.extractInversePrimitive(viewMatrix);
+
+		worldMatrix.extractAxisX(right);
+		worldMatrix.extractAxisY(up);
+		worldMatrix.extractAxisZ(direction);
+
+		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+
+		frustum.make(viewProjectionMatrix);
 	}
 
 }

@@ -4,6 +4,9 @@
 
 namespace i4core
 {
+
+namespace mathutil
+{
 	static const float	EPSILON		= 0.001f;
 	static const float	PI			= 3.141592654f;
 	static const float	DEGTORAD	= PI / 180.0f;
@@ -39,5 +42,7 @@ namespace i4core
 	{
 		return (val - a)/(b - a);
 	}
+
+}
 
 }

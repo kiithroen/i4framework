@@ -229,7 +229,7 @@ namespace i4core
 						(_12*_24 - _14*_22)*(_31*_43 - _33*_41) +
 						(_13*_24 - _14*_23)*(_31*_42 - _32*_41);
 
-			if (isEpsilonZero(d))
+			if (mathutil::isEpsilonZero(d))
 				return false;
 
 			float invD = 1.0f/d;
@@ -404,9 +404,9 @@ namespace i4core
 			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _41 = _42 = _44 = 0.0f;
 		}
 
-		void makeObjectLookAtLH(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
+		void makeObjectLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
 		{
-			I4Vector3 zAxis = at - eye;
+			I4Vector3 zAxis = lookAt - eye;
 			zAxis.normalize();
 
 			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
@@ -424,9 +424,9 @@ namespace i4core
 			_44 = 1.0f;
 		}
 
-		void makeCameraLookAtLH(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
+		void makeCameraLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
 		{
-			I4Vector3 zAxis = at - eye;
+			I4Vector3 zAxis = lookAt - eye;
 			zAxis.normalize();
 
 			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);

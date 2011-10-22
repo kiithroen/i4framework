@@ -112,7 +112,7 @@ PS_OUTPUT PS( PS_INPUT	input	)
 #ifdef MASK_DIFFUSEMAP
 	output.diffuse.rgb = texDiffuseMap.Sample(samLinear, input.uv).rgb;
 #else
-	output.diffuse.rgb = float3(0.75f, 0.75f, 0.75f);
+	output.diffuse.rgb = float3(1.0f, 1.0f, 1.0f);
 #endif
 
 #ifdef MASK_SPECULARMAP

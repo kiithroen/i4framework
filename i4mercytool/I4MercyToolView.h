@@ -57,7 +57,20 @@ private:
 	I4SphereMesh*		sphereMesh;
 	I4StopWatch*		stopWatch;
 	I4Camera*			camera;
-	unsigned int		frameCount;
+	float				camYaw;
+	float				camPitch;
+	float				camRoll;
+
+	unsigned int		frameCount;	
+	
+	int					prevMouseX;
+	int					prevMouseY;
+
+	bool				isLButtonDown;
+	bool				isRButtonDown;
+	bool				isMButtonDown;
+
+	bool				isKeyDown[256];
 
 // 재정의입니다.
 public:
@@ -83,6 +96,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual void OnInitialUpdate();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // I4MercyToolView.cpp의 디버그 버전

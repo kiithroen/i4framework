@@ -227,6 +227,31 @@ namespace i4core
 			}
 		}
 
+		void extractYawPitchRoll(float& yaw, float& pitch, float& roll) const
+		{
+			float test = x*y + z*w;
+			if (test > 0.499)
+			{
+				yaw = 2.0f * atan2f(x,w);
+				roll = mathutil::PI/2;
+				pitch = 0.0f;
+				return;
+			}
+			if (test < -0.499)
+			{
+				yaw = -2.0f * atan2f(x,w);
+				roll = -mathutil::PI/2;
+				pitch = 0.0f;
+				return;
+			}
+			float sqx = x*x;
+			float sqy = y*y;
+			float sqz = z*z;
+			yaw = atan2f(2.0f*y*w-2.0f*x*z , 1.0f - 2.0f*sqy - 2.0f*sqz);
+			roll = asinf(2.0f*test);
+			pitch = atan2f(2.0f*x*w-2.0f*y*z , 1.0f - 2.0f*sqx - 2.0f*sqz);
+		}
+
 		void extractRotationMatrix(I4Matrix4x4& mat) const
 		{
 			float x2 = x + x;
@@ -311,8 +336,8 @@ namespace i4core
 				b.z = -a.w;
 				b.w = a.z;
 
-				scale = sinf(PI * (0.5f - t));
-				invscale = sinf(PI * t);
+				scale = sinf(mathutil::PI * (0.5f - t));
+				invscale = sinf(mathutil::PI * t);
 			}
 
 			out = (a*scale) + (b*invscale);
