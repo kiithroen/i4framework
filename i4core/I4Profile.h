@@ -204,6 +204,7 @@ namespace i4core
 		virtual void write(I4ProfileNode* node, const wchar_t* fname) = 0;
 	};
 	
-#define PROFILE(name)	I4ProfileSample __profile(name)
+#define PROFILE_BLOCK(name)	I4ProfileSample __profile(name)
+#define PROFILE_THISFUNC	I4ProfileSample __profile(__FUNCTION__)
 
 }

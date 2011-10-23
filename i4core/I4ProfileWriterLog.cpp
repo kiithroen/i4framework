@@ -6,10 +6,10 @@ namespace i4core
 {
 	void I4ProfileWriterLog::write(I4ProfileNode* node)
 	{
-		writeRecursive(node, 0);
+		writeRecursive(node, 0, 0);
 	}
 
-	void I4ProfileWriterLog::writeRecursive(I4ProfileNode* node, int depth)
+	void I4ProfileWriterLog::writeRecursive(I4ProfileNode* node, float siblingTotalTime, int depth)
 	{
 		if (depth != 0)
 		{
@@ -18,14 +18,24 @@ namespace i4core
 			{
 				depthStr += L"\t";
 			}
-
-			I4LOG_INFO << depthStr << node->getName() << L" : " << node->getTotalTime() << L" sec : " << node->getTotalCalls();
+			
+			I4LOG_INFO << depthStr << node->getName() << L" : " << node->getTotalTime() << L" sec : " << node->getTotalTime()/siblingTotalTime*100.0f << " % : " << node->getTotalCalls() << L" calls";
 		}
 
-		I4ProfileNode* child = node->getChild();
+		float childSiblingTotalTime = 0;
+		I4ProfileNode* child = NULL;
+
+		child = node->getChild();
 		while (child != NULL)
 		{
-			writeRecursive(child, depth + 1);
+			childSiblingTotalTime += child->getTotalTime();
+			child = child->getSibling();
+		}
+
+		child = node->getChild();
+		while (child != NULL)
+		{
+			writeRecursive(child, childSiblingTotalTime, depth + 1);
 			child = child->getSibling();
 		}
 	}

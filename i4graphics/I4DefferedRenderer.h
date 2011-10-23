@@ -49,6 +49,16 @@ namespace i4graphics
 		void				postRender(I4Camera* camera);
 
 	private:
+		void				clearAllRenderTarget();
+
+		void				renderStageGeometry(I4Camera* camera);
+		void				renderStageLight(I4Camera* camera);
+		void				renderStageMerge(I4Camera* camera);
+
+		void				renderDirectionalLight(I4Camera* camera);
+		void				renderPointLight(I4Camera* camera);
+
+	private:
 		I4VideoDriver*					videoDriver;
 		I4ShaderMgr*					shaderMgr;
 		I4ModelMgr*						modelMgr;

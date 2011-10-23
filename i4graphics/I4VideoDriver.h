@@ -31,7 +31,7 @@ namespace i4graphics
 		virtual bool				beginScene();
 		virtual void				endScene();
 
-		virtual void				clearScreen(unsigned char r, unsigned char g, unsigned char b);
+		virtual void				clearBackBuffer(unsigned char r, unsigned char g, unsigned char b);
 		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a);
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);

@@ -4,12 +4,12 @@ using namespace i4core;
 
 void foo()
 {
-	PROFILE("foo()");
+	PROFILE_THISFUNC;
 }
 
 void funcA()
 {
-	PROFILE("funcA()");
+	PROFILE_THISFUNC;
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -19,7 +19,7 @@ void funcA()
 
 void funcB()
 {
-	PROFILE("funcB()");
+	PROFILE_THISFUNC;
 }
 
 // 프로파일러에서 계층구조와 콜수만 테스트한다.
@@ -27,31 +27,31 @@ void funcB()
 TEST(I4Profile, Test)
 {	
 	{
-		PROFILE("A");
+		PROFILE_BLOCK("A");
 
 		for (int i = 0; i < 2; i++)
 		{
 			{
-				PROFILE("a");
+				PROFILE_BLOCK("a");
 
 				for (int j = 0; j < 2; j++)
 				{
-					PROFILE("1");
+					PROFILE_BLOCK("1");
 				}
 			}
 
 			{
-				PROFILE("b");
+				PROFILE_BLOCK("b");
 			}
 
 			{
-				PROFILE("c");
+				PROFILE_BLOCK("c");
 			}
 		}
 	}
 
 	{
-		PROFILE("B");
+		PROFILE_BLOCK("B");
 
 		for (int j = 0; j < 2; j++)
 		{
@@ -83,18 +83,18 @@ TEST(I4Profile, Test)
 	EXPECT_STREQ("B", itr.getCurName());
 
 	itr.firstChild();
-	EXPECT_STREQ("funcB()", itr.getCurChildName());
+	EXPECT_STREQ("funcB", itr.getCurChildName());
 	EXPECT_EQ(2, itr.getCurChildTotalCalls());
 
 	itr.nextChild();
-	EXPECT_STREQ("funcA()", itr.getCurChildName());
+	EXPECT_STREQ("funcA", itr.getCurChildName());
 	EXPECT_EQ(2, itr.getCurChildTotalCalls());
 
 	itr.enterChild(1);
-	EXPECT_STREQ("funcA()", itr.getCurName());
+	EXPECT_STREQ("funcA", itr.getCurName());
 
 	itr.firstChild();
-	EXPECT_STREQ("foo()", itr.getCurChildName());
+	EXPECT_STREQ("foo", itr.getCurChildName());
 	EXPECT_EQ(6, itr.getCurChildTotalCalls());
 
 	itr.nextChild();

@@ -12,7 +12,7 @@ namespace i4core
 		void write(I4ProfileNode* node);
 
 	private:
-		static void writeRecursive(I4ProfileNode* node, int depth);
+		static void writeRecursive(I4ProfileNode* node, float parentTotalTime, int depth);
 	};
 
 }

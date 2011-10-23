@@ -21,7 +21,7 @@ namespace i4graphics
 		: driverType(D3D10_DRIVER_TYPE_NULL)
 		, d3dDevice(NULL)
 		, swapChain(NULL)
-		, renderTargetView(NULL)
+		, backBufferRenderTargetView(NULL)
 		, depthStencilTex(NULL)
 		, depthStencilView(NULL)
 	{
@@ -47,10 +47,10 @@ namespace i4graphics
 
 		}
 
-		if (renderTargetView) 
+		if (backBufferRenderTargetView) 
 		{
-			renderTargetView->Release();
-			renderTargetView = NULL;
+			backBufferRenderTargetView->Release();
+			backBufferRenderTargetView = NULL;
 		}
 
 		if (swapChain) 
@@ -115,7 +115,7 @@ namespace i4graphics
 		if (FAILED(hr))
 			return false;
 
-		hr = d3dDevice->CreateRenderTargetView(pBuffer, NULL, &renderTargetView);
+		hr = d3dDevice->CreateRenderTargetView(pBuffer, NULL, &backBufferRenderTargetView);
 		pBuffer->Release();
 		if (FAILED(hr))
 			return false;
@@ -144,7 +144,7 @@ namespace i4graphics
 		if (FAILED(hr))
 			return false;
 
-		d3dDevice->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, depthStencilView);
 
 		setViewport(0, 0, width, height);
 
@@ -169,10 +169,10 @@ namespace i4graphics
 		swapChain->Present(0, 0);
 	}
 
-	void I4VideoDriverD3D10::clearScreen(unsigned char r, unsigned char g, unsigned char b)
+	void I4VideoDriverD3D10::clearBackBuffer(unsigned char r, unsigned char g, unsigned char b)
 	{
 		float clearColor[4] = { (float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f };
-		d3dDevice->ClearRenderTargetView(renderTargetView, clearColor);
+		d3dDevice->ClearRenderTargetView(backBufferRenderTargetView, clearColor);
 		d3dDevice->ClearDepthStencilView(depthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
 	}
 
@@ -214,7 +214,7 @@ namespace i4graphics
 
 	void I4VideoDriverD3D10::resetRenderTarget()
 	{
-		d3dDevice->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, depthStencilView);
 	}
 
 	I4ShaderProgram* I4VideoDriverD3D10::createShaderProgram()

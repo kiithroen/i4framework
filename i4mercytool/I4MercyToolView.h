@@ -43,6 +43,14 @@ public:
 	void	onIdle();
 
 private:
+	float 	updateTimer();
+	void	update(float deltaTime);
+	void	render(float deltaTime);
+
+	void	updateObject(float deltaTime);
+	void	updateCamera(float deltaTime);
+
+private:
 	I4DefferedRenderer*	renderer;
 	I4ModelInstance*	testModelInstance[100];
 	I4StopWatch*		stopWatch;

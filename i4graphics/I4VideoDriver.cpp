@@ -46,7 +46,7 @@ namespace i4graphics
 
 	}
 
-	void I4VideoDriver::clearScreen(unsigned char r, unsigned char g, unsigned char b)
+	void I4VideoDriver::clearBackBuffer(unsigned char r, unsigned char g, unsigned char b)
 	{
 	}
 

@@ -22,7 +22,7 @@ namespace i4graphics
 		virtual bool				beginScene() override;
 		virtual void				endScene() override;
 
-		virtual void				clearScreen(unsigned char r, unsigned char g, unsigned char b) override;
+		virtual void				clearBackBuffer(unsigned char r, unsigned char g, unsigned char b) override;
 		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a) override;
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
@@ -46,7 +46,7 @@ namespace i4graphics
 		D3D10_DRIVER_TYPE			driverType;
 		ID3D10Device*				d3dDevice;
 		IDXGISwapChain*				swapChain;
-		ID3D10RenderTargetView*		renderTargetView;
+		ID3D10RenderTargetView*		backBufferRenderTargetView;
 		ID3D10Texture2D*			depthStencilTex;
 		ID3D10DepthStencilView*		depthStencilView;
 	};
