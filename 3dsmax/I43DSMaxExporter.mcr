@@ -17,13 +17,6 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		return localTM
 	)
 	
-	
-	fn getWorldTM obj =
-	(
-		return obj.transform
-	)
-	
-	
 	fn isBone obj =
 	(
 		return (classof obj == Biped_Object) or (classof obj == Bone) or (classof obj == BoneGeometry) or (classof obj == Dummy) 
@@ -133,14 +126,12 @@ macroScript I43DSMaxExporter category:"I4Framework"
 	fn writeMesh f obj depth =
 	(
 		local depthStr = getDepthStr depth
-		local localTM = getLocalTM obj
-		local worldTM = getWorldTM obj		
+		local localTM = getLocalTM obj	
 		local tmesh = snapshotAsMesh obj
 		
 		format "%<mesh name=\"%\" parent_name=\"\">\n" depthStr obj.name to:f
 		
 		writeTM f "localTM" localTM (depth + 1)
-		writeTM f "worldTM" worldTM (depth + 1)
 		writeVertex f tmesh obj (depth + 1)
 		writeNormal f tmesh (depth + 1)
 		writeIndex f tmesh (depth + 1)
@@ -163,7 +154,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 	
 	local exportName = "test"
 	local exportType = "mesh"
-	local exportFullName = "c:\\" + exportName + "." + exportType + ".xml"
+	local exportFullName = "d:\\" + exportName + "." + exportType + ".xml"
 	local version = 100
 	
 	local rootObjects = getRootObjects()

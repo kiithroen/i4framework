@@ -1,7 +1,7 @@
 #pragma once
 
 #include "i4core.h"
-#include "I4Matrix4x4.h"
+#include "I4AABB.h"
 
 namespace i4core
 {		
@@ -24,6 +24,19 @@ namespace i4core
 			radius = rhs.radius;
 
 			return *this;
+		}
+
+		void fromAABB(const I4AABB& aabb)
+		{
+			// 반지름벡터
+			center = aabb.maxEdge - aabb.minEdge;
+			center *= 0.5f;
+
+			// 반지름길이
+			radius = center.getLength();
+
+			// 중점
+			center += aabb.minEdge;
 		}
 
 		const I4Sphere transform(const I4Matrix4x4& mat) const

@@ -3,6 +3,8 @@
 #include "i4graphics.h"
 #include "I4GeometryBuffer.h"
 #include "I4Matrix4x4.h"
+#include "I4Sphere.h"
+#include "I4AABB.h"
 #include "I4Hash.h"
 
 namespace i4graphics
@@ -19,7 +21,7 @@ namespace i4graphics
 		std::vector<I4Vector4>		vecBlendIndices;
 		std::vector<I4Vector4>		vecBlendWeight;
 		I4Matrix4x4					localTM;
-		I4Matrix4x4					worldTM;
+		I4AABB						localAABB;
 		I4HashID					diffuseMapID;
 		I4HashID					specularMapID;
 		I4HashID					normalMapID;
@@ -35,7 +37,7 @@ namespace i4graphics
 	{
 	public:
 		I4Matrix4x4		meshLocalTM;
-		I4Matrix4x4		meshWorldTM;
+		I4AABB			meshLocalAABB;
 		I4HashID		meshID;
 		I4HashID		diffuseMapID;
 		I4HashID		specularMapID;

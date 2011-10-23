@@ -228,7 +228,7 @@ namespace i4graphics
 				watch.reset();
 				I4MeshInstance meshInstance;
 				meshInstance.meshLocalTM = parsedMeshData.localTM;
-				meshInstance.meshWorldTM = parsedMeshData.worldTM;
+				meshInstance.meshLocalAABB = parsedMeshData.localAABB;
 				meshInstance.meshID = meshID;
 				meshInstance.diffuseMapID = parsedMeshData.diffuseMapID;
 				meshInstance.specularMapID = parsedMeshData.specularMapID;
@@ -264,29 +264,6 @@ namespace i4graphics
 
 				out.localTM._14 = out.localTM._24 = out.localTM._34 = 0.0f;
 				out.localTM._44 = 1.0f;
-
-				xml.selectParentNode();
-			}
-
-			xml.selectParentNode();
-		}
-
-		if (xml.selectFirstChildNode("worldTM"))
-		{
-			if (xml.selectFirstChildNode("val") == true)
-			{
-				int i = 0;
-				do
-				{
-					const char* val = NULL;
-					xml.getNodeValue(val);
-					sscanf_s(val, "%f %f %f", &out.worldTM.m[i][0], &out.worldTM.m[i][1], &out.worldTM.m[i][2]);
-
-					++i;
-				} while (xml.selectNextSiblingNode("val"));
-
-				out.worldTM._14 = out.worldTM._24 = out.worldTM._34 = 0.0f;
-				out.worldTM._44 = 1.0f;
 
 				xml.selectParentNode();
 			}
@@ -440,11 +417,21 @@ namespace i4graphics
 			if (xml.selectFirstChildNode("val"))
 			{
 				int i = 0;
+
 				do
 				{
 					xml.getAttrValue(out.vecPosition[i].x, "x");
 					xml.getAttrValue(out.vecPosition[i].y, "y");
 					xml.getAttrValue(out.vecPosition[i].z, "z");
+
+					if (i == 0)
+					{
+						out.localAABB.init(out.vecPosition[i]);
+					}
+					else
+					{
+						out.localAABB.merge(out.vecPosition[i]);
+					}
 
 					++i;
 

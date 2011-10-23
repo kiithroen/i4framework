@@ -234,7 +234,8 @@ void CI4MercyToolView::update(float deltaTime)
 	PROFILE_THISFUNC;
 
 	updateObject(deltaTime);
-	updateCamera(deltaTime);	
+	updateCamera(deltaTime);
+	commitToRenderer(deltaTime);
 }
 
 void CI4MercyToolView::render(float deltaTime)
@@ -250,21 +251,6 @@ void CI4MercyToolView::render(float deltaTime)
 void CI4MercyToolView::updateObject(float deltaTime)
 {
 	PROFILE_THISFUNC;
-
-	I4Matrix4x4 matModel;
-	I4Matrix4x4 matScale;
-
-	for (int i = 0; i < _countof(testModelInstance)/10; ++i)
-	{
-		for (int j = 0; j < 10; ++j)
-		{
-			int idx = i*10 + j;
-			matModel.makeTranslation(-250.0f + i*50.0f, 0.0f, -250.0f + j*50.0f);
-			matScale.makeScale(0.15f, 0.15f, 0.15f);
-			testModelInstance[idx]->setModelTM(matScale*matModel);
-			renderer->commitModelInstance(testModelInstance[idx]);
-		}
-	}
 }
 
 void CI4MercyToolView::updateCamera(float deltaTime)
@@ -339,6 +325,27 @@ void CI4MercyToolView::updateCamera(float deltaTime)
 	}
 
 	camera->setTransform(newCamRotation, newCamEye);
+}
+
+
+void CI4MercyToolView::commitToRenderer(float deltaTime)
+{
+	PROFILE_THISFUNC;
+
+	I4Matrix4x4 matModel;
+	I4Matrix4x4 matScale;
+
+	for (int i = 0; i < _countof(testModelInstance)/10; ++i)
+	{
+		for (int j = 0; j < 10; ++j)
+		{
+			int idx = i*10 + j;
+			matModel.makeTranslation(-250.0f + i*50.0f, 0.0f, -250.0f + j*50.0f);
+			matScale.makeScale(0.15f, 0.15f, 0.15f);
+			testModelInstance[idx]->setModelTM(matScale*matModel);
+			renderer->commitModelInstance(testModelInstance[idx]);
+		}
+	}
 }
 
 void CI4MercyToolView::OnInitialUpdate()

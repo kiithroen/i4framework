@@ -49,6 +49,7 @@ private:
 
 	void	updateObject(float deltaTime);
 	void	updateCamera(float deltaTime);
+	void	commitToRenderer(float deltaTime);
 
 private:
 	I4DefferedRenderer*	renderer;

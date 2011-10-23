@@ -1,7 +1,8 @@
 #pragma once
 
 #include "i4graphics.h"
-#include "I4Matrix4x4.h"
+#include "I4AABB.h"
+#include "I4Sphere.h"
 
 namespace i4core
 {	
@@ -22,9 +23,10 @@ namespace i4graphics
 	struct I4MeshInstanceRenderItem
 	{
 		I4Matrix4x4			worldTM;
+		I4Sphere			worldSpehere;
 		I4MeshInstance*		meshInstance;
 
-		bool operator < (I4MeshInstanceRenderItem& other) const;
+		bool operator < (const I4MeshInstanceRenderItem& other) const;
 	};
 
 	class I4GRAPHICS_API I4DefferedRenderer
@@ -55,6 +57,9 @@ namespace i4graphics
 		void				renderStageLight(I4Camera* camera);
 		void				renderStageMerge(I4Camera* camera);
 
+		void				cullAndSortMeshInstanceRenderItem(I4Camera* camera);
+		void				renderMeshInstanceRenderItem(I4Camera* camera);
+
 		void				renderDirectionalLight(I4Camera* camera);
 		void				renderPointLight(I4Camera* camera);
 
@@ -71,7 +76,8 @@ namespace i4graphics
 		I4QuadMesh*						quadMesh;
 		I4SphereMesh*					sphereMesh;
 
-		I4MeshInstnaceRenderItemVector	vecMeshInstnaceRenderItem;
+		I4MeshInstnaceRenderItemVector	vecSceneMeshInstnaceRenderItem;
+		I4MeshInstnaceRenderItemVector	vecCulledMeshInstnaceRenderItem;
 	};
 
 }

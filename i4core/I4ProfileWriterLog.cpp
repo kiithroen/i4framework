@@ -19,7 +19,11 @@ namespace i4core
 				depthStr += L"\t";
 			}
 			
-			I4LOG_INFO << depthStr << node->getName() << L" : " << node->getTotalTime() << L" sec : " << node->getTotalTime()/siblingTotalTime*100.0f << " % : " << node->getTotalCalls() << L" calls";
+			float nodeTotalTimeSec = node->getTotalTime();
+			float nodePercentPerSibling = nodeTotalTimeSec/siblingTotalTime*100.0f;
+			float nodeTimePerCalls = nodeTotalTimeSec/(float)node->getTotalCalls();
+
+			I4LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f << L"ms/sec : " << nodePercentPerSibling << " % : " << nodeTimePerCalls*1000.0f << L" ms/call";
 		}
 
 		float childSiblingTotalTime = 0;

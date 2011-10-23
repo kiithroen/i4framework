@@ -12,7 +12,7 @@
 
 namespace i4graphics
 {
-	bool I4MeshInstanceRenderItem::operator < (I4MeshInstanceRenderItem& other) const
+	bool I4MeshInstanceRenderItem::operator < (const I4MeshInstanceRenderItem& other) const
 	{
 		if (meshInstance->diffuseMapID < other.meshInstance->diffuseMapID)
 			return true;
@@ -167,11 +167,13 @@ namespace i4graphics
 	{
 		for (unsigned int i = 0; i < modelInstance->getSubCount(); ++i)
 		{
-			vecMeshInstnaceRenderItem.push_back(I4MeshInstanceRenderItem());
-			I4MeshInstanceRenderItem& item = *vecMeshInstnaceRenderItem.rbegin();
+			vecSceneMeshInstnaceRenderItem.push_back(I4MeshInstanceRenderItem());
+			I4MeshInstanceRenderItem& item = *vecSceneMeshInstnaceRenderItem.rbegin();
 
 			I4MeshInstance& meshInstance = modelInstance->getSubMeshInstance(i);			
 			I4Matrix4x4::multiply(item.worldTM, meshInstance.meshLocalTM, modelInstance->getModelTM());
+			item.worldSpehere.fromAABB(meshInstance.meshLocalAABB.transform(item.worldTM));
+
 			item.meshInstance = &meshInstance;			
 		}
 	}
@@ -180,7 +182,6 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		std::sort(vecMeshInstnaceRenderItem.begin(), vecMeshInstnaceRenderItem.end());
 		videoDriver->beginScene();
 	}
 
@@ -200,7 +201,7 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		videoDriver->endScene();
-		vecMeshInstnaceRenderItem.clear();;
+		vecSceneMeshInstnaceRenderItem.clear();
 	}
 
 	void I4DefferedRenderer::clearAllRenderTarget()
@@ -222,6 +223,34 @@ namespace i4graphics
 		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, true);
 
+		cullAndSortMeshInstanceRenderItem(camera);
+		renderMeshInstanceRenderItem(camera);		
+	}
+
+	void I4DefferedRenderer::cullAndSortMeshInstanceRenderItem(I4Camera* camera)
+	{
+		PROFILE_THISFUNC;
+
+		vecCulledMeshInstnaceRenderItem.clear();
+
+		I4MeshInstnaceRenderItemVector::iterator itrSource = vecSceneMeshInstnaceRenderItem.begin();
+		const I4MeshInstnaceRenderItemVector::iterator itrSourceEnd = vecSceneMeshInstnaceRenderItem.end();
+
+		for (; itrSource != itrSourceEnd; ++itrSource)
+		{
+			if (camera->isVisibleSphere(itrSource->worldSpehere) == true)
+			{
+				vecCulledMeshInstnaceRenderItem.push_back(*itrSource);
+			}
+		}
+
+		std::sort(vecCulledMeshInstnaceRenderItem.begin(), vecCulledMeshInstnaceRenderItem.end());
+	}
+
+	void I4DefferedRenderer::renderMeshInstanceRenderItem(I4Camera* camera)
+	{
+		PROFILE_THISFUNC;
+
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_g.fx");
 		//shaderMgr->begin(I4SHADER_MASK_DIFFUSEMAP|I4SHADER_MASK_SPECULARMAP|I4SHADER_MASK_NORMALMAP, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
@@ -236,11 +265,11 @@ namespace i4graphics
 		I4StaticMesh* prevMesh = NULL;
 		I4StaticMesh* curMesh = NULL;
 
-		I4MeshInstnaceRenderItemVector::iterator itr = vecMeshInstnaceRenderItem.begin();
-		const I4MeshInstnaceRenderItemVector::iterator itrEnd = vecMeshInstnaceRenderItem.end();
-		for (; itr != itrEnd; ++itr)
+		I4MeshInstnaceRenderItemVector::iterator itrCulled = vecCulledMeshInstnaceRenderItem.begin();
+		const I4MeshInstnaceRenderItemVector::iterator itrCulledEnd = vecCulledMeshInstnaceRenderItem.end();
+		for (; itrCulled != itrCulledEnd; ++itrCulled)
 		{
-			curMeshInstance = itr->meshInstance;					
+			curMeshInstance = itrCulled->meshInstance;					
 			bool isChangedDiffuseMap = false;
 			bool isChangedSpecularMap = false;
 			bool isChangedNormalMap = false;
@@ -324,7 +353,7 @@ namespace i4graphics
 				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_INTENSITY, curMeshInstance->specularInensity);
 				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_POWER, curMeshInstance->specularPower);		
 
-				shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, itr->worldTM.arr);
+				shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, itrCulled->worldTM.arr);
 				shaderMgr->apply();
 
 				curMesh->draw();
