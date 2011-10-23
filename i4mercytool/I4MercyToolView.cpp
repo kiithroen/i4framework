@@ -12,8 +12,9 @@
 #include "I4MercyToolDoc.h"
 #include "I4MercyToolView.h"
 #include "I4DefferedRenderer.h"
-
 #include "I4Log.h"
+#include "I4Profile.h"
+#include "I4ProfileWriterLog.h"
 #include "I4MathUtil.h"
 #include "I4VideoDriver.h"
 #include "I4ShaderMgr.h"
@@ -151,7 +152,13 @@ bool CI4MercyToolView::initialize()
 		return false;
 	}
 	
-	modelInstance = renderer->createModelInstance("test.mesh.xml", "test_1");
+	for (int i = 0; i < _countof(testModelInstance); ++i)
+	{
+		char buff[256] = {0, };
+		sprintf(buff, "test_%d", i);
+
+		testModelInstance[i] = renderer->createModelInstance("test.mesh.xml", buff);
+	}
 
 	stopWatch = new I4StopWatch;
 	stopWatch->reset();
@@ -174,6 +181,10 @@ bool CI4MercyToolView::initialize()
 
 void CI4MercyToolView::finalize()
 {
+	for (int i = 0; i < _countof(testModelInstance); ++i)
+	{
+	//	renderer->destroyModelInstance(testModelInstance[i]);
+	}
 	delete renderer;
 	delete camera;
 	delete stopWatch;
@@ -181,116 +192,133 @@ void CI4MercyToolView::finalize()
 
 void CI4MercyToolView::onIdle()
 {
-	++frameCount;
+	PROFILE("main");
 
-	static float elapsed = 0;
-
-	float frameDeltaTime = stopWatch->getElapsedTime();	
-	stopWatch->reset();
-
-	elapsed += frameDeltaTime;
-
-	if (elapsed >= 1.0f)
 	{
-		float fps = (float)frameCount/elapsed;
-		I4LOG_INFO << L"fps = " << fps;
+		PROFILE("update");
 
-		elapsed = 0;
-		frameCount = 0;
-	}
+		{
+			PROFILE("camera");
 
-	float camMoveSpeed = 100.0f*frameDeltaTime;
-	I4Vector3 newCamEye = camera->getEye();
-	I4Quaternion newCamRotation = camera->getRotation();
+			++frameCount;
 
-	if (isKeyDown['w'] || isKeyDown['W'])
-	{
-		newCamEye += camera->getDirection()*camMoveSpeed;
-	}
+			static float elapsed = 0;
 
-	if (isKeyDown['s'] || isKeyDown['S'])
-	{
-		newCamEye -= camera->getDirection()*camMoveSpeed;
-	}
+			float frameDeltaTime = stopWatch->getElapsedTime();	
+			stopWatch->reset();
 
-	if (isKeyDown['a'] || isKeyDown['A'])
-	{
-		newCamEye -= camera->getRight()*camMoveSpeed;
-	}
+			elapsed += frameDeltaTime;
 
-	if (isKeyDown['d'] || isKeyDown['D'])
-	{
-		newCamEye += camera->getRight()*camMoveSpeed;
-	}
+			if (elapsed >= 1.0f)
+			{
+				float fps = (float)frameCount/elapsed;
+
+				I4LOG_INFO << L"fps = " << fps;
+				I4ProfileWriterLog	writer;
+				writer.write(I4ProfileManager::getRootNode());
+
+				elapsed = 0;
+				frameCount = 0;			
+				I4ProfileManager::reset();
+			}
+
+			float camMoveSpeed = 100.0f*frameDeltaTime;
+			I4Vector3 newCamEye = camera->getEye();
+			I4Quaternion newCamRotation = camera->getRotation();
+
+			if (isKeyDown['w'] || isKeyDown['W'])
+			{
+				newCamEye += camera->getDirection()*camMoveSpeed;
+			}
+
+			if (isKeyDown['s'] || isKeyDown['S'])
+			{
+				newCamEye -= camera->getDirection()*camMoveSpeed;
+			}
+
+			if (isKeyDown['a'] || isKeyDown['A'])
+			{
+				newCamEye -= camera->getRight()*camMoveSpeed;
+			}
+
+			if (isKeyDown['d'] || isKeyDown['D'])
+			{
+				newCamEye += camera->getRight()*camMoveSpeed;
+			}
 
 	
-	if (isRButtonDown)
-	{
-		POINT pt;
-		GetCursorPos(&pt);
+			if (isRButtonDown)
+			{
+				POINT pt;
+				GetCursorPos(&pt);
 
-		int curMouseX = pt.x;
-		int curMouseY = pt.y;
+				int curMouseX = pt.x;
+				int curMouseY = pt.y;
 
-		int dx = curMouseX - prevMouseX;
-		int dy = curMouseY - prevMouseY;
+				int dx = curMouseX - prevMouseX;
+				int dy = curMouseY - prevMouseY;
 
-		const float CAMERA_SENSITIVE = 0.35f;
-		camYaw += dx*CAMERA_SENSITIVE;
-		camPitch += dy*CAMERA_SENSITIVE;
+				const float CAMERA_SENSITIVE = 0.35f;
+				camYaw += dx*CAMERA_SENSITIVE;
+				camPitch += dy*CAMERA_SENSITIVE;
 
-		if (camYaw > 360)
-		{
-			camYaw -= 360;
-		}
+				if (camYaw > 360)
+				{
+					camYaw -= 360;
+				}
 
-		if (camPitch < -90)
-		{
-			camPitch = -90;
-		}
+				if (camPitch < -90)
+				{
+					camPitch = -90;
+				}
 		
-		if (camPitch > 90)
-		{
-			camPitch = 90;
+				if (camPitch > 90)
+				{
+					camPitch = 90;
+				}
+
+				RECT rc;	
+				GetClientRect(&rc);
+				pt.x = (rc.right - rc.left)/2;
+				pt.y = (rc.bottom - rc.top)/2;	
+				ClientToScreen(&pt);
+				SetCursorPos(pt.x, pt.y);
+				prevMouseX = pt.x;
+				prevMouseY = pt.y;
+
+				newCamRotation.makeRotationYawPitchRoll(mathutil::degreeToRadian(camYaw), mathutil::degreeToRadian(camPitch), mathutil::degreeToRadian(camRoll));
+			}
+
+			camera->setTransform(newCamRotation, newCamEye);
 		}
 
-		RECT rc;	
-		GetClientRect(&rc);
-		pt.x = (rc.right - rc.left)/2;
-		pt.y = (rc.bottom - rc.top)/2;	
-		ClientToScreen(&pt);
-		SetCursorPos(pt.x, pt.y);
-		prevMouseX = pt.x;
-		prevMouseY = pt.y;
+		{
+			PROFILE("commit");
 
-		newCamRotation.makeRotationYawPitchRoll(mathutil::degreeToRadian(camYaw), mathutil::degreeToRadian(camPitch), mathutil::degreeToRadian(camRoll));
+			I4Matrix4x4 matModel;
+			I4Matrix4x4 matScale;
+
+			for (int i = 0; i < _countof(testModelInstance)/10; ++i)
+			{
+				for (int j = 0; j < 10; ++j)
+				{
+					int idx = i*10 + j;
+					matModel.makeTranslation(-250.0f + i*50.0f, 0.0f, -250.0f + j*50.0f);
+					matScale.makeScale(0.15f, 0.15f, 0.15f);
+					testModelInstance[idx]->setModelTM(matScale*matModel);
+					renderer->commitModelInstance(testModelInstance[idx]);
+				}
+			}
+		}
 	}
 
-	camera->setTransform(newCamRotation, newCamEye);
+	{
+		PROFILE("render");
 
-	// update
-	I4Matrix4x4 matModel;
-	I4Matrix4x4 matScale;
-
-	matModel.makeTranslation(0.0f, -3.0f, 0.0f);
-	matScale.makeScale(0.15f, 0.15f, 0.15f);
-	modelInstance->setModelTM(matScale*matModel);
-	renderer->commitModelInstance(modelInstance);
-
-	matModel.makeTranslation(-10.0f, -3.0f, 0.0f);
-	matScale.makeScale(0.15f, 0.15f, 0.15f);
-	modelInstance->setModelTM(matScale*matModel);
-	renderer->commitModelInstance(modelInstance);
-
-	matModel.makeTranslation(0.0f, -3.0f, -10.0f);
-	matScale.makeScale(0.15f, 0.15f, 0.15f);
-	modelInstance->setModelTM(matScale*matModel);
-	renderer->commitModelInstance(modelInstance);
-
-	// render
-	renderer->preRender(camera);
-	renderer->render(camera);
-	renderer->postRender(camera);
+		renderer->preRender(camera);
+		renderer->render(camera);
+		renderer->postRender(camera);
+	}
 }
 
 void CI4MercyToolView::OnInitialUpdate()

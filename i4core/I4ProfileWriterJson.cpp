@@ -1,4 +1,6 @@
 #include "I4ProfileWriterJson.h"
+#include "I4Profile.h"
+#include <json/json.h>
 
 namespace i4core
 {

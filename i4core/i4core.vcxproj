@@ -111,6 +111,7 @@
     <ClInclude Include="I4Plane.h" />
     <ClInclude Include="I4Profile.h" />
     <ClInclude Include="I4ProfileWriterJson.h" />
+    <ClInclude Include="I4ProfileWriterLog.h" />
     <ClInclude Include="I4Quaternion.h" />
     <ClInclude Include="I4Ray.h" />
     <ClInclude Include="I4Sphere.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="I4Log.cpp" />
     <ClCompile Include="I4Profile.cpp" />
     <ClCompile Include="I4ProfileWriterJson.cpp" />
+    <ClCompile Include="I4ProfileWriterLog.cpp" />
     <ClCompile Include="I4StopWatch.cpp" />
     <ClCompile Include="I4XmlData.cpp" />
   </ItemGroup>

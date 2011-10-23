@@ -44,9 +44,8 @@ public:
 
 private:
 	I4DefferedRenderer*	renderer;
-	I4ModelInstance*	modelInstance;
+	I4ModelInstance*	testModelInstance[100];
 	I4StopWatch*		stopWatch;
-
 	I4Camera*			camera;
 	float				camYaw;
 	float				camPitch;

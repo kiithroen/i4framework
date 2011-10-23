@@ -13,8 +13,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	I4Log::initialize(I4Log::FLAG_CONSOLE|I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE, I4Log::LEVEL_DEBUG, L"i4.log");
 	I4StopWatch::initialize();
 
-	I4ProfileWriterJson json;
-
 	::testing::InitGoogleTest(&argc, argv);
 
 	return RUN_ALL_TESTS();

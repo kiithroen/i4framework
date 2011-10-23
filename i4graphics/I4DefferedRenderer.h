@@ -23,11 +23,13 @@ namespace i4graphics
 	{
 		I4Matrix4x4			worldTM;
 		I4MeshInstance*		meshInstance;
+
+		bool operator < (I4MeshInstanceRenderItem& other) const;
 	};
 
 	class I4GRAPHICS_API I4DefferedRenderer
 	{
-		typedef std::list<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemList;
+		typedef std::vector<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemVector;
 	public:
 		I4DefferedRenderer();
 		~I4DefferedRenderer(void);
@@ -59,7 +61,7 @@ namespace i4graphics
 		I4QuadMesh*						quadMesh;
 		I4SphereMesh*					sphereMesh;
 
-		I4MeshInstnaceRenderItemList	listMeshInstnaceRenderItem;
+		I4MeshInstnaceRenderItemVector	vecMeshInstnaceRenderItem;
 	};
 
 }

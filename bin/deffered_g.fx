@@ -6,9 +6,16 @@ cbuffer	cbChageOnResize
 
 cbuffer	cbChangesEveryFrame
 {
-	matrix world			: WORLD;
 	matrix view				: VIEW;
 };
+
+cbuffer	cbChangesEveryMeshInstance
+{
+	matrix world			: WORLD;
+	float specularIntensity 	: SPECULAR_INTENSITY;
+	float specularPower 		: SPECULAR_POWER;
+};
+
 
 #ifdef MASK_DIFFUSEMAP
 Texture2D texDiffuseMap		: DIFFUSEMAP;
@@ -17,9 +24,6 @@ Texture2D texDiffuseMap		: DIFFUSEMAP;
 #ifdef MASK_SPECULARMAP
 Texture2D texSpecularMap	: SPECULARMAP;
 #endif
-
-float specularIntensity 	: SPECULAR_INTENSITY;
-float specularPower 		: SPECULAR_POWER;
 
 #ifdef MASK_NORMALMAP
 Texture2D texNormalMap		: NORMALMAP;

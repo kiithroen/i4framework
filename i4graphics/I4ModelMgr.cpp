@@ -221,6 +221,7 @@ namespace i4graphics
 
 				watch.reset();
 				mesh = buildMesh(parsedMeshData);
+				mesh->setName(strFullName);
 				mapStaticMesh.insert(std::make_pair(meshID, mesh));
 				I4LOG_INFO << "build mesh : " << (int)(watch.getElapsedTime()*1000) << " ms";
 
@@ -328,8 +329,8 @@ namespace i4graphics
 					texture = I4VideoDriver::getVideoDriver()->createTexture();					
 					if (texture->load(texturePath))
 					{
-						texture->setName(texturePath);
 						out.diffuseMapID = textureID;
+						texture->setName(texturePath);
 						mapTexture.insert(std::make_pair(textureID, texture));
 					}
 					else
@@ -369,8 +370,8 @@ namespace i4graphics
 					texture = I4VideoDriver::getVideoDriver()->createTexture();
 					if (texture->load(texturePath))
 					{
-						texture->setName(texturePath);
 						out.specularMapID = textureID;
+						texture->setName(texturePath);
 						mapTexture.insert(std::make_pair(textureID, texture));
 					}
 					else
@@ -410,8 +411,8 @@ namespace i4graphics
 					texture = I4VideoDriver::getVideoDriver()->createTexture();
 					if (texture->load(texturePath))
 					{
-						texture->setName(texturePath);						
 						out.normalMapID = textureID;
+						texture->setName(texturePath);
 						mapTexture.insert(std::make_pair(textureID, texture));
 					}
 					else
