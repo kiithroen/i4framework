@@ -29,6 +29,7 @@
     <ClInclude Include="targetver.h">
       <Filter>dllmain</Filter>
     </ClInclude>
+    <ClInclude Include="I4DefferedRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -47,5 +48,6 @@
     <ClCompile Include="I4StaticMesh.cpp" />
     <ClCompile Include="I4TextureD3D10.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
+    <ClCompile Include="I4DefferedRenderer.cpp" />
   </ItemGroup>
 </Project>

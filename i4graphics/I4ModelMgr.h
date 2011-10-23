@@ -34,7 +34,6 @@ namespace i4graphics
 	class I4MeshInstance
 	{
 	public:
-		I4Matrix4x4		resultTM;
 		I4Matrix4x4		meshLocalTM;
 		I4Matrix4x4		meshWorldTM;
 		I4HashID		meshID;

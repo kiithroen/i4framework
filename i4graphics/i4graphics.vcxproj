@@ -98,6 +98,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="I4DefferedRenderer.h" />
     <ClInclude Include="I4Format.h" />
     <ClInclude Include="I4GeometryBufferD3D10.h" />
     <ClInclude Include="I4ModelMgr.h" />
@@ -126,6 +127,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="I4DefferedRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D10.cpp" />
     <ClCompile Include="I4ModelMgr.cpp" />
     <ClCompile Include="I4QuadMesh.cpp" />

@@ -4,8 +4,6 @@
 
 namespace i4core
 {
-	
-
 	I4XmlData::I4XmlData()
 		: xmlDoc(NULL)
 		, selNode(NULL)		

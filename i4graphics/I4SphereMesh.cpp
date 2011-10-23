@@ -13,7 +13,7 @@ namespace i4graphics
 		destroy();
 	}
 
-	void I4SphereMesh::create()
+	bool I4SphereMesh::create()
 	{		
 		const static I4Vertex_Pos sphere[] =
 		{			
@@ -502,7 +502,11 @@ namespace i4graphics
 		};
 
 		vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-		vertexBuffer->create(_countof(sphere), sizeof(I4Vertex_Pos), sphere);
+		if (vertexBuffer->create(_countof(sphere), sizeof(I4Vertex_Pos), sphere) == false)
+		{
+			destroy();
+			return false;
+		}
 
 		const static unsigned short indices[] =
 		{
@@ -1469,7 +1473,13 @@ namespace i4graphics
 		};
 
 		indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
-		indexBuffer->create(_countof(indices), sizeof(unsigned short), indices);
+		if (indexBuffer->create(_countof(indices), sizeof(unsigned short), indices) == false)
+		{
+			destroy();
+			return false;
+		}
+
+		return true;
 	}
 
 	void I4SphereMesh::destroy()

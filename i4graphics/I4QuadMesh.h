@@ -12,7 +12,7 @@ namespace i4graphics
 		I4QuadMesh(void);
 		~I4QuadMesh(void);
 
-		void	create();
+		bool	create();
 		void	destroy();
 
 		void	bind();

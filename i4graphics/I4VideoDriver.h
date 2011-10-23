@@ -20,7 +20,6 @@ namespace i4graphics
 	class I4GRAPHICS_API I4VideoDriver
 	{
 	public:
-		I4VideoDriver();
 		virtual ~I4VideoDriver();
 
 		virtual I4VideoDriverMode	getVideoDriverMode() const	{ return I4VIDEO_DRIVER_MODE_NULL; }
@@ -60,6 +59,9 @@ namespace i4graphics
 
 		static void					createVideoDriver(I4VideoDriverMode mode);
 		static void					destroyVideoDriver();
+
+	protected:		
+		I4VideoDriver();
 
 	protected:
 		void*						windowID;

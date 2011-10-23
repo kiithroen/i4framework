@@ -12,7 +12,7 @@ namespace i4graphics
 		I4SphereMesh(void);
 		~I4SphereMesh(void);
 
-		void	create();
+		bool	create();
 		void	destroy();
 
 		void	bind();

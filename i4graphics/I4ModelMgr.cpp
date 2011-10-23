@@ -226,7 +226,6 @@ namespace i4graphics
 
 				watch.reset();
 				I4MeshInstance meshInstance;
-				meshInstance.resultTM = parsedMeshData.localTM;
 				meshInstance.meshLocalTM = parsedMeshData.localTM;
 				meshInstance.meshWorldTM = parsedMeshData.worldTM;
 				meshInstance.meshID = meshID;

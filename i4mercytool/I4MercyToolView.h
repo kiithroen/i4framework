@@ -13,6 +13,7 @@ using namespace i4core;
 
 namespace i4graphics
 {
+	class I4DefferedRenderer;
 	class I4ModelMgr;
 	class I4ModelInstance;
 	class I4VertexBuffer;
@@ -42,20 +43,10 @@ public:
 	void	onIdle();
 
 private:
-	I4ModelMgr*			modelMgr;
+	I4DefferedRenderer*	renderer;
 	I4ModelInstance*	modelInstance;
-	I4VertexBuffer*		box_VB;
-	I4IndexBuffer*		box_IB;
-	I4RenderTarget*		rtDiffuse;
-	I4RenderTarget*		rtNormal;
-	I4RenderTarget*		rtDepth;
-	I4RenderTarget*		rtLight;
-	I4Texture*			diffuseMap;
-	I4Texture*			specularMap;
-	I4Texture*			normalMap;
-	I4QuadMesh*			quadMesh;
-	I4SphereMesh*		sphereMesh;
 	I4StopWatch*		stopWatch;
+
 	I4Camera*			camera;
 	float				camYaw;
 	float				camPitch;
