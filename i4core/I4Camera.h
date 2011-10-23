@@ -18,36 +18,37 @@ namespace i4core
 		void				setLookAt(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up);
 		void				setTransform(const I4Quaternion& rotation, const I4Vector3& eye);
 
-		bool				isVisiblePoint(const I4Vector3& p) const		{ return frustum.isInPoint(p); }
-		bool				isVisibleSphere(const I4Sphere& sphere) const	{ return frustum.isInSphere(sphere); }
-		bool				isVisibleAABB(const I4AABB& aabb) const			{ return frustum.isInAABB(aabb); }
+		bool				isVisiblePoint(const I4Vector3& p) const			{ return frustum.isInPoint(p); }
+		bool				isVisibleSphere(const I4Vector3& p, float r) const	{ return frustum.isInSphere(p, r); }
+		bool				isVisibleSphere(const I4Sphere& sphere) const		{ return frustum.isInSphere(sphere); }
+		bool				isVisibleAABB(const I4AABB& aabb) const				{ return frustum.isInAABB(aabb); }
 
-		const I4Matrix4x4&	getProjectionMatrix() const						{ return projectionMatrix; }
-		const I4Matrix4x4&	getViewMatrix()	const							{ return viewMatrix; }
-		const I4Matrix4x4&	getWorldMatrix()	const						{ return worldMatrix; }
-		const I4Matrix4x4&	getViewProjectionMatrix()	const				{ return viewProjectionMatrix; }
+		const I4Matrix4x4&	getProjectionMatrix() const							{ return projectionMatrix; }
+		const I4Matrix4x4&	getViewMatrix()	const								{ return viewMatrix; }
+		const I4Matrix4x4&	getWorldMatrix()	const							{ return worldMatrix; }
+		const I4Matrix4x4&	getViewProjectionMatrix()	const					{ return viewProjectionMatrix; }
 
-		const I4Quaternion&	getRotation() const								{ return rotation; }
+		const I4Quaternion&	getRotation() const									{ return rotation; }
 
-		const I4Vector3&	getEye() const									{ return eye; }
-		const I4Vector3&	getRight() const								{ return right; }
-		const I4Vector3&	getUp() const									{ return up; }
-		const I4Vector3&	getDirection() const							{ return direction; }
+		const I4Vector3&	getEye() const										{ return eye; }
+		const I4Vector3&	getRight() const									{ return right; }
+		const I4Vector3&	getUp() const										{ return up; }
+		const I4Vector3&	getDirection() const								{ return direction; }
 		
-		const I4Vector3&	getNearTopLeft() const							{ return nearTopLeft; }
-		const I4Vector3&	getNearTopRight() const							{ return nearTopRight; }
-		const I4Vector3&	getNearDownLeft() const							{ return nearDownLeft; }
-		const I4Vector3&	getNearDownRight() const						{ return nearDownRight; }
+		const I4Vector3&	getNearTopLeft() const								{ return nearTopLeft; }
+		const I4Vector3&	getNearTopRight() const								{ return nearTopRight; }
+		const I4Vector3&	getNearDownLeft() const								{ return nearDownLeft; }
+		const I4Vector3&	getNearDownRight() const							{ return nearDownRight; }
 
-		const I4Vector3&	getFarTopLeft() const							{ return farTopLeft; }
-		const I4Vector3&	getFarTopRight() const							{ return farTopRight; }
-		const I4Vector3&	getFarDownLeft() const							{ return farDownLeft; }
-		const I4Vector3&	getFarDownRight() const							{ return farDownRight; }
+		const I4Vector3&	getFarTopLeft() const								{ return farTopLeft; }
+		const I4Vector3&	getFarTopRight() const								{ return farTopRight; }
+		const I4Vector3&	getFarDownLeft() const								{ return farDownLeft; }
+		const I4Vector3&	getFarDownRight() const								{ return farDownRight; }
 
-		float				getFovY() const									{ return fovY; }
-		float				getAspect() const								{ return aspect; }
-		float				getZNear() const								{ return zNear; }
-		float				getZFar() const									{ return zFar; }
+		float				getFovY() const										{ return fovY; }
+		float				getAspect() const									{ return aspect; }
+		float				getZNear() const									{ return zNear; }
+		float				getZFar() const										{ return zFar; }
 
 	private:
 		void				updateVariable();

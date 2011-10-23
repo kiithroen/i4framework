@@ -84,15 +84,20 @@ namespace i4core
 			return true;
 		}
 
-		bool isInSphere(const I4Sphere& sphere) const
+		bool isInSphere(const I4Vector3& p, float r) const
 		{
 			for (int i = 0; i < 6; i++)
 			{
-				if (planes[i].testSphere(sphere.center, sphere.radius) == I4PL_FRONT)
+				if (planes[i].testSphere(p, r) == I4PL_BACK)
 					return false;
 			}
 
 			return true;
+		}
+
+		bool isInSphere(const I4Sphere& sphere) const
+		{
+			return isInSphere(sphere.center, sphere.radius);
 		}
 
 		bool isInAABB(const I4AABB& aabb) const

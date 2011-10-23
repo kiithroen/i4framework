@@ -739,17 +739,22 @@ void CI4MercyToolView::onIdle()
 					I4Matrix4x4 matTrans;
 					matTrans.makeTranslation(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
 
-					I4Matrix4x4 matLight = matScale*matTrans*matRot;					
+					I4Matrix4x4 matLight = matScale*matTrans*matRot;	
+
+					I4Vector3 lightWorldPos;
+					matLight.extractTranslation(lightWorldPos);
+
+					if (camera->isVisibleSphere(lightWorldPos, lightPointRadius[i].w) == false)
+						continue;
+
 					shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
-
-					I4Vector3 lightPos(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
-
-					I4Matrix4x4 matLightView = matRot*camera->getViewMatrix();
-					lightPos = matLightView.transformCoord(lightPos);
+					
+					I4Matrix4x4 matLightView = camera->getViewMatrix();
+					I4Vector3 lightViewPos = matLightView.transformCoord(lightWorldPos);
 					I4Vector4 light;
-					light.x = lightPos.x;
-					light.y = lightPos.y;
-					light.z = lightPos.z;
+					light.x = lightViewPos.x;
+					light.y = lightViewPos.y;
+					light.z = lightViewPos.z;
 					light.w = lightPointRadius[i].w;
 
 					
