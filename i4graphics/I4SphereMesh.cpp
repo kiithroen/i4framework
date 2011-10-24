@@ -1502,12 +1502,6 @@ namespace i4graphics
 
 	void I4SphereMesh::draw()
 	{
-		vertexBuffer->bind();
-		indexBuffer->bind();
-
 		indexBuffer->draw(I4PT_TRIANGLELIST);
-
-		indexBuffer->unbind();
-		vertexBuffer->unbind();
 	}
 }
