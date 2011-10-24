@@ -16,18 +16,6 @@ SamplerState samPoint
     AddressV = CLAMP;
 };
 
-BlendState BlendingAdd
-{
-	BlendEnable[0] = TRUE;
-	SrcBlend = ONE;
-	DestBlend = ONE;
-	BlendOp = ADD;
-	SrcBlendAlpha = ONE;
-	DestBlendAlpha = ONE;
-	BlendOpAlpha = ADD;
-	RenderTargetWriteMask[0] = 0x0F;
-};
-
 cbuffer cbChangeOnResize
 {
 	float3 farTopRight	: FAR_TOP_RIGHT;
@@ -100,6 +88,5 @@ technique10	Render
 		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
 		SetGeometryShader( NULL	);
 		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-		SetBlendState(BlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

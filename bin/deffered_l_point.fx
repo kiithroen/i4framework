@@ -16,18 +16,6 @@ SamplerState samPoint
     AddressV = CLAMP;
 };
 
-BlendState BlendingAdd
-{
-	BlendEnable[0] = TRUE;
-	SrcBlend = ONE;
-	DestBlend = ONE;
-	BlendOp = ADD;
-	SrcBlendAlpha = ONE;
-	DestBlendAlpha = ONE;
-	BlendOpAlpha = ADD;
-	RenderTargetWriteMask[0] = 0x0F;
-};
-
 cbuffer cbChangeOnResize
 {
 	matrix projection		: PROJECTION;
@@ -36,8 +24,9 @@ cbuffer cbChangeOnResize
 
 cbuffer cbChangeEachLight
 {
-	float4 lightPointRadius	: LIGHT_POINT_RADIUS;
-	float3 lightColor 		: LIGHT_COLOR;
+	float3	lightPosition	: LIGHT_POSITION;
+	float	lightRadius		: LIGHT_RADIUS;
+	float3	lightColor 		: LIGHT_COLOR;
 };
 
 cbuffer cbChangeEveryFrame
@@ -85,9 +74,9 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	ray.y = lerp(farTopRight.y, -farTopRight.y, texCoord.y);
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
-	float3 lightVector = lightPointRadius.xyz - p;
+	float3 lightVector = lightPosition - p;
 	float lightDist = length(lightVector);
-	float attenuation = saturate(1.0f - lightDist/lightPointRadius.w);
+	float attenuation = saturate(1.0f - lightDist/lightRadius);
 	lightVector = normalize(lightVector);
 	float NdL = max(0, dot(normal, lightVector));
 	float3 diffuseLight = NdL*lightColor.rgb;
@@ -107,6 +96,5 @@ technique10	Render
 		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
 		SetGeometryShader( NULL	);
 		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-		SetBlendState(BlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

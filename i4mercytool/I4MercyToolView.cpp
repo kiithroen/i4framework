@@ -343,7 +343,65 @@ void CI4MercyToolView::commitToRenderer(float deltaTime)
 			matModel.makeTranslation(-250.0f + i*50.0f, 0.0f, -250.0f + j*50.0f);
 			matScale.makeScale(0.15f, 0.15f, 0.15f);
 			testModelInstance[idx]->setModelTM(matScale*matModel);
-			renderer->commitModelInstance(testModelInstance[idx]);
+			renderer->commitToScene(testModelInstance[idx]);
+		}
+	}
+
+	I4DirectionalLight directionalLight[2] =
+	{
+		{ I4Vector3(-1.0f, -1.0f, 0.0f), I4Vector3(1.0f, 1.0f, 1.0f) },
+		{ I4Vector3(1.0f, 0.3f, 0.3f), I4Vector3(1.0f, 1.0f, 1.0f) },
+	};
+
+	for (int i = 0; i < _countof(directionalLight); ++i)
+	{
+		renderer->commitToScene(&directionalLight[i]);
+	}
+
+	I4PointLight pointLight[200];
+	
+	I4Vector3 lightPointColor[] =
+	{
+		I4Vector3(1.0f, 0.125f, 0.93f),
+		I4Vector3(1.0f, 0.0f, 0.0f),
+		I4Vector3(0.0f, 0.8f, 0.8f),
+		I4Vector3(1.0f, 1.0f, 0.0f),
+		I4Vector3(1.0f, 0.5f, 0.25f),
+		I4Vector3(0.0f, 0.125f, 0.93f),
+		I4Vector3(1.0f, 0.0f, 0.5f),
+		I4Vector3(1.0f, 0.8f, 0.8f),
+		I4Vector3(0.5f, 1.0f, 0.3f),
+		I4Vector3(0.7f, 0.5f, 0.25f),
+		I4Vector3(0.0f, 1.0f, 0.0f),
+		I4Vector3(0.7f, 0.9f, 0.75f),
+		I4Vector3(0.5f, 0.7f, 0.7f),
+	};
+
+	static float degree = 0;
+	degree += 30*deltaTime;
+	if (degree > 360.0f)
+	{
+		degree -= 360.0f;
+	}
+
+	for (int i = 0; i < _countof(pointLight)/10; ++i)
+	{
+		for (int j = 0; j < 10; ++j)
+		{
+			int sign = 1;
+			if (i%2 == 1)
+			{
+				sign = -1;
+			}
+
+			int idx = i*10 + j;
+			pointLight[idx].position.x = -250.0f + i*25.0f + sign*45*cos(mathutil::degreeToRadian(degree));
+			pointLight[idx].position.y = 10.0f;
+			pointLight[idx].position.z = -250.0f + j*50.0f + sign*15*sin(mathutil::degreeToRadian(degree));
+			pointLight[idx].radius = 25.0f;
+			pointLight[idx].color = lightPointColor[idx%13];
+
+			renderer->commitToScene(&pointLight[idx]);
 		}
 	}
 }

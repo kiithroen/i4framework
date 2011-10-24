@@ -67,12 +67,12 @@ namespace i4graphics
 		friend class I4ModelMgr;
 		friend class I4ModelPrototype;
 	public:		
-		I4MeshInstance&		getSubMeshInstance(unsigned int i)	{ return vecSubMeshInstance[i]; }
+		I4MeshInstance&			getSubMeshInstance(unsigned int i)			{ return vecSubMeshInstance[i]; }
 		
-		const I4Matrix4x4&	getModelTM()						{ return modelTM; }
-		void				setModelTM(const I4Matrix4x4& mat)	{ modelTM = mat; }
+		const I4Matrix4x4&		getModelTM() const							{ return modelTM; }
+		void					setModelTM(const I4Matrix4x4& mat)			{ modelTM = mat; }
 
-		unsigned int		getSubCount()						{ return vecSubMeshInstance.size(); }
+		unsigned int			getSubCount() const							{ return vecSubMeshInstance.size(); }
 
 	private:
 		I4ModelInstance()	{}

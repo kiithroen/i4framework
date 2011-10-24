@@ -12,7 +12,8 @@ namespace i4graphics
 	I4VideoDriver::I4VideoDriver()
 		: width(0)
 		, height(0)
-		, activeShaderProgram(NULL)
+		, curRasterizerMode(I4RASTERIZER_MODE_INVALID)
+		, curBlendMode(I4BLEND_MODE_INVALID)
 	{
 	}
 
@@ -65,6 +66,16 @@ namespace i4graphics
 	void I4VideoDriver::resetRenderTarget()
 	{
 	}
+
+	void I4VideoDriver::setRasterizerMode(I4RasterizerMode mode)
+	{
+		curRasterizerMode = mode;
+	}
+
+	 void I4VideoDriver::setBlendMode(I4BlendMode mode)
+	 {
+		 curBlendMode = mode;
+	 }
 
 	I4ShaderProgram* I4VideoDriver::createShaderProgram()
 	{

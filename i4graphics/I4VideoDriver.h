@@ -17,6 +17,27 @@ namespace i4graphics
 		I4VIDEO_DRIVER_MODE_D3D10,
 	};
 
+	enum I4RasterizerMode
+	{		
+		I4RASTERIZER_MODE_INVALID		= -1,
+		I4RASTERIZER_MODE_SOLID_NONE	= 0,
+		I4RASTERIZER_MODE_SOLID_FRONT,
+		I4RASTERIZER_MODE_SOLID_BACK,
+		I4RASTERIZER_MODE_WIRE_NONE,
+		I4RASTERIZER_MODE_WIRE_FRONT,
+		I4RASTERIZER_MODE_WIRE_BACK,
+		I4RASTERIZER_MODE_NUM,
+	};
+
+	enum I4BlendMode
+	{		
+		I4BLEND_MODE_INVALID		= -1,
+		I4BLEND_MODE_NONE			= 0,
+		I4BLEND_MODE_ALPHA,
+		I4BLEND_MODE_ADD,
+		I4BLEND_MODE_NUM,
+	};
+
 	class I4GRAPHICS_API I4VideoDriver
 	{
 	public:
@@ -39,6 +60,9 @@ namespace i4graphics
 		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil);
 		virtual void				resetRenderTarget();
 
+		virtual void				setRasterizerMode(I4RasterizerMode mode);
+		virtual void				setBlendMode(I4BlendMode mode);
+
 		virtual I4ShaderProgram*	createShaderProgram();
 
 		virtual I4VertexBuffer*		createVertexBuffer();
@@ -47,9 +71,6 @@ namespace i4graphics
 		virtual I4Texture*			createTexture();
 
 		virtual I4RenderTarget*		createRenderTarget();
-		
-		void						setActiveSahderProgram(I4ShaderProgram* shader)	{ activeShaderProgram = shader; }
-		I4ShaderProgram*			getActiveSahderProgram() const					{ return activeShaderProgram; }
 
 		unsigned int				getWidth() const		{ return width; }
 		unsigned int				getHeight() const		{ return height; }
@@ -66,8 +87,9 @@ namespace i4graphics
 	protected:
 		void*						windowID;
 		unsigned int				width;
-		unsigned int				height;
-		I4ShaderProgram*			activeShaderProgram;
+		unsigned int				height;		
+		I4RasterizerMode			curRasterizerMode;
+		I4BlendMode					curBlendMode;
 
 	private:
 		static I4VideoDriver*		videoDriver;

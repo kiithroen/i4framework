@@ -30,6 +30,9 @@ namespace i4graphics
 		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil) override;
 		virtual void				resetRenderTarget() override;
 
+		virtual void				setRasterizerMode(I4RasterizerMode mode) override;
+		virtual void				setBlendMode(I4BlendMode mode) override;
+
 		virtual I4ShaderProgram*	createShaderProgram() override;
 
 		virtual I4VertexBuffer*		createVertexBuffer() override;
@@ -49,6 +52,8 @@ namespace i4graphics
 		ID3D10RenderTargetView*		backBufferRenderTargetView;
 		ID3D10Texture2D*			depthStencilTex;
 		ID3D10DepthStencilView*		depthStencilView;
+		ID3D10RasterizerState*		rasterizerStates[I4RASTERIZER_MODE_NUM];
+		ID3D10BlendState*			blendStates[I4BLEND_MODE_NUM];
 	};
 
 }

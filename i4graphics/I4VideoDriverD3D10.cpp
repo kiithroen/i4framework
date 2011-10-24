@@ -148,6 +148,73 @@ namespace i4graphics
 
 		setViewport(0, 0, width, height);
 
+		D3D10_FILL_MODE fill[I4RASTERIZER_MODE_NUM] = 
+		{ 
+			D3D10_FILL_SOLID,
+			D3D10_FILL_SOLID,
+			D3D10_FILL_SOLID,
+			D3D10_FILL_WIREFRAME,
+			D3D10_FILL_WIREFRAME,
+			D3D10_FILL_WIREFRAME
+		};
+		D3D10_CULL_MODE cull[I4RASTERIZER_MODE_NUM] = 
+		{
+			D3D10_CULL_NONE,
+			D3D10_CULL_FRONT,
+			D3D10_CULL_BACK,
+			D3D10_CULL_NONE,
+			D3D10_CULL_FRONT,
+			D3D10_CULL_BACK
+		};
+
+		for( UINT i=0; i<I4RASTERIZER_MODE_NUM; i++ )
+		{
+			D3D10_RASTERIZER_DESC rasterizerDesc;
+			rasterizerDesc.FillMode = fill[i];
+			rasterizerDesc.CullMode = cull[i];
+			rasterizerDesc.FrontCounterClockwise = true;
+			rasterizerDesc.DepthBias = false;
+			rasterizerDesc.DepthBiasClamp = 0;
+			rasterizerDesc.SlopeScaledDepthBias = 0;
+			rasterizerDesc.DepthClipEnable = true;
+			rasterizerDesc.ScissorEnable = false;
+			rasterizerDesc.MultisampleEnable = false;
+			rasterizerDesc.AntialiasedLineEnable = false;
+			d3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerStates[i]);
+		}
+
+		// default
+		blendStates[I4BLEND_MODE_NONE] = NULL;
+
+		// alpha
+		D3D10_BLEND_DESC alphaBlendDesc = {0};
+		alphaBlendDesc.AlphaToCoverageEnable = false;
+		alphaBlendDesc.BlendEnable[0] = true;
+		alphaBlendDesc.SrcBlend = D3D10_BLEND_SRC_COLOR;
+		alphaBlendDesc.DestBlend = D3D10_BLEND_INV_SRC_COLOR;
+		alphaBlendDesc.BlendOp = D3D10_BLEND_OP_ADD;
+		alphaBlendDesc.SrcBlendAlpha = D3D10_BLEND_ONE;
+		alphaBlendDesc.DestBlendAlpha = D3D10_BLEND_ZERO;
+		alphaBlendDesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
+		alphaBlendDesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
+		d3dDevice->CreateBlendState(&alphaBlendDesc, &blendStates[I4BLEND_MODE_ALPHA]);
+
+		// add
+		D3D10_BLEND_DESC addBlendDesc = {0};
+		addBlendDesc.AlphaToCoverageEnable = false;
+		addBlendDesc.BlendEnable[0] = true;
+		addBlendDesc.SrcBlend = D3D10_BLEND_ONE;
+		addBlendDesc.DestBlend = D3D10_BLEND_ONE;
+		addBlendDesc.BlendOp = D3D10_BLEND_OP_ADD;
+		addBlendDesc.SrcBlendAlpha = D3D10_BLEND_ONE;
+		addBlendDesc.DestBlendAlpha = D3D10_BLEND_ONE;
+		addBlendDesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
+		addBlendDesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
+		d3dDevice->CreateBlendState(&addBlendDesc, &blendStates[I4BLEND_MODE_ADD]);
+
+		setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);		
+		setBlendMode(I4BLEND_MODE_NONE);
+
 		return true;
 	}
 
@@ -215,6 +282,26 @@ namespace i4graphics
 	void I4VideoDriverD3D10::resetRenderTarget()
 	{
 		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, depthStencilView);
+	}
+
+	void I4VideoDriverD3D10::setRasterizerMode(I4RasterizerMode mode)
+	{
+		if (curRasterizerMode != mode)
+		{
+			I4VideoDriver::setRasterizerMode(mode);
+
+			d3dDevice->RSSetState(rasterizerStates[mode]);
+		}
+	}
+
+	void I4VideoDriverD3D10::setBlendMode(I4BlendMode mode)
+	{
+		if (curBlendMode != mode)
+		{
+			I4VideoDriver::setBlendMode(mode);
+
+			d3dDevice->OMSetBlendState(blendStates[mode], NULL, 0xffffffff);
+		}
 	}
 
 	I4ShaderProgram* I4VideoDriverD3D10::createShaderProgram()

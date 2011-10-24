@@ -8,11 +8,6 @@ SamplerState samLinear
     AddressV = CLAMP;
 };
 
-BlendState BlendingNone
-{
-	BlendEnable[0] = FALSE;
-};
-
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
@@ -55,6 +50,5 @@ technique10	Render
 		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
 		SetGeometryShader( NULL	);
 		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-		SetBlendState(BlendingNone, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

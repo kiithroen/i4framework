@@ -163,7 +163,7 @@ namespace i4graphics
 		modelMgr->destroyInstance(modelInstance);
 	}
 
-	void I4DefferedRenderer::commitModelInstance(I4ModelInstance* modelInstance)
+	void I4DefferedRenderer::commitToScene(I4ModelInstance* modelInstance)
 	{
 		for (unsigned int i = 0; i < modelInstance->getSubCount(); ++i)
 		{
@@ -176,6 +176,16 @@ namespace i4graphics
 
 			item.meshInstance = &meshInstance;			
 		}
+	}
+
+	void I4DefferedRenderer::commitToScene(I4DirectionalLight* light)
+	{
+		vecSceneDirectionalLight.push_back(*light);
+	}
+
+	void I4DefferedRenderer::commitToScene(I4PointLight* light)
+	{
+		vecScenePointLight.push_back(*light);
 	}
 
 	void I4DefferedRenderer::preRender(I4Camera* camera)
@@ -202,6 +212,8 @@ namespace i4graphics
 
 		videoDriver->endScene();
 		vecSceneMeshInstnaceRenderItem.clear();
+		vecSceneDirectionalLight.clear();
+		vecScenePointLight.clear();
 	}
 
 	void I4DefferedRenderer::clearAllRenderTarget()
@@ -222,6 +234,7 @@ namespace i4graphics
 
 		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, true);
+		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
 		cullAndSortMeshInstanceRenderItem(camera);
 		renderMeshInstanceRenderItem(camera);		
@@ -233,14 +246,14 @@ namespace i4graphics
 
 		vecCulledMeshInstnaceRenderItem.clear();
 
-		I4MeshInstnaceRenderItemVector::iterator itrSource = vecSceneMeshInstnaceRenderItem.begin();
-		const I4MeshInstnaceRenderItemVector::iterator itrSourceEnd = vecSceneMeshInstnaceRenderItem.end();
+		I4MeshInstnaceRenderItemVector::iterator itrScene = vecSceneMeshInstnaceRenderItem.begin();
+		const I4MeshInstnaceRenderItemVector::iterator itrSceneEnd = vecSceneMeshInstnaceRenderItem.end();
 
-		for (; itrSource != itrSourceEnd; ++itrSource)
+		for (; itrScene != itrSceneEnd; ++itrScene)
 		{
-			if (camera->isVisibleAABB(itrSource->worldAABB) == true)
+			if (camera->isVisibleAABB(itrScene->worldAABB) == true)
 			{
-				vecCulledMeshInstnaceRenderItem.push_back(*itrSource);
+				vecCulledMeshInstnaceRenderItem.push_back(*itrScene);
 			}
 		}
 
@@ -376,9 +389,30 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		videoDriver->setRenderTarget(1, &rtLight, false);
+		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
+		cullAndSortDirectionalLight(camera);
 		renderDirectionalLight(camera);
+
+		cullAndSortPointLight(camera);
 		renderPointLight(camera);
+	}
+
+	void I4DefferedRenderer::cullAndSortDirectionalLight(I4Camera* camera)
+	{
+		PROFILE_THISFUNC;
+
+		// 일단 그냥 옮겨 담음. 현재로서는 특별한 정책이 없지만 추후에 너무 많은 라이트가 있으면 잘라낸다던가 병합한다던가...
+
+		vecCulledDirectionalLight.clear();
+
+		I4DirectionalLightVector::iterator itrScene = vecSceneDirectionalLight.begin();
+		const I4DirectionalLightVector::iterator itrSceneEnd = vecSceneDirectionalLight.end();
+
+		for (; itrScene != itrSceneEnd; ++itrScene)
+		{
+			vecCulledDirectionalLight.push_back(*itrScene);
+		}
 	}
 
 	void I4DefferedRenderer::renderDirectionalLight(I4Camera* camera)
@@ -390,49 +424,20 @@ namespace i4graphics
 
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
-				
+		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);				
 		shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
-		shaderMgr->apply();
-
-		I4Vector3 lightDirection[] =
-		{					
-			I4Vector3(-1.0f, -1.0f, 0.0f),
-			I4Vector3(1.0f, 0.5f, 0.5f),
-		};
-
-		I4Vector3 lightColor[] =
-		{										
-			I4Vector3(1.0f, 1.0f, 1.0f),
-			I4Vector3(0.6f, 0.725f, 1.0f)*0.9f,
-		};
 
 		quadMesh->bind();
 
-		I4Matrix4x4 matLight;
-		for (int i = 0; i < 2; ++i)
+		I4DirectionalLightVector::iterator itrCulled = vecCulledDirectionalLight.begin();
+		const I4DirectionalLightVector::iterator itrCulledEnd = vecCulledDirectionalLight.end();
+		for ( ; itrCulled != itrCulledEnd; ++itrCulled)
 		{
-			if (i == 0)
-			{						
-				matLight.makeIdentity();
-			}
-			else
-			{
-				static float lightAng = 0;
-				lightAng += 0.2f;
-				if (lightAng > 360)
-				{
-					lightAng -= 360;
-				}
+			const I4DirectionalLight& light = *itrCulled;
 
-				matLight.makeRotationY(mathutil::degreeToRadian(lightAng));
-			}
-
-			I4Matrix4x4 matLightView;
-			I4Matrix4x4::multiply(matLightView, matLight, camera->getViewMatrix());
-			I4Vector3 lightDir = matLightView.transformVector(lightDirection[i]);
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_DIRECTION, lightDir.xyz);
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, lightColor[i].xyz);			
+			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
+			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_DIRECTION, lightViewDir.xyz);
+			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, light.color.xyz);			
 
 			shaderMgr->apply();
 			quadMesh->draw();
@@ -445,6 +450,24 @@ namespace i4graphics
 		shaderMgr->apply();
 
 		shaderMgr->end();
+	}
+
+	void I4DefferedRenderer::cullAndSortPointLight(I4Camera* camera)
+	{
+		PROFILE_THISFUNC;
+
+		vecCulledPointLight.clear();
+
+		I4PointLightVector::iterator itrScene = vecScenePointLight.begin();
+		const I4PointLightVector::iterator itrSceneEnd = vecScenePointLight.end();
+
+		for (; itrScene != itrSceneEnd; ++itrScene)
+		{
+			if (camera->isVisibleSphere(itrScene->position, itrScene->radius) == true)
+			{
+				vecCulledPointLight.push_back(*itrScene);
+			}
+		}
 	}
 
 	void I4DefferedRenderer::renderPointLight(I4Camera* camera)
@@ -461,79 +484,35 @@ namespace i4graphics
 		shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
 		shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, camera->getViewMatrix().arr);
 		shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
-		shaderMgr->apply();
-
-		I4Vector4 lightPointRadius[] =
-		{
-			I4Vector4(0.0f, 3.0f, -2.0f, 7.0f),
-			I4Vector4(-1.0f, 3.0f, -5.0f, 7.0f),
-			I4Vector4(3.5f, 6.0f, -4.5f, 7.0f),
-			I4Vector4(1.0f, 5.5f, -7.0f, 7.0),
-			I4Vector4(2.0f, 3.0f, -4.5f, 7.0),
-		};
-
-		I4Vector3 lightPointColor[] =
-		{
-			I4Vector3(1.0f, 0.125f, 0.93f),
-			I4Vector3(1.0f, 0.0f, 0.0f),
-			I4Vector3(0.0f, 0.8f, 0.8f),
-			I4Vector3(1.0f, 1.0f, 0.0f),
-			I4Vector3(1.0f, 0.5f, 0.25f),
-		};
-
+		
 		sphereMesh->bind();
-		for (int i = 0; i < 5; ++i)
+
+		I4Matrix4x4 matLight;
+
+		I4PointLightVector::iterator itrCulled = vecCulledPointLight.begin();
+		const I4PointLightVector::iterator itrCulledEnd = vecCulledPointLight.end();
+		for ( ; itrCulled != itrCulledEnd; ++itrCulled)
 		{
-			I4Matrix4x4 matScale;
-			matScale.makeScale(lightPointRadius[i].w, lightPointRadius[i].w, lightPointRadius[i].w);
+			const I4PointLight& light = *itrCulled;
 
-					
-			I4Matrix4x4 matRot;
-			if (i%2 ==  0)
-			{
-				static float lightAng = 0;
-				lightAng += 0.1f;
-				matRot.makeRotationAxis(I4Vector3(0.0f, 0.2f, 1.0f), mathutil::degreeToRadian(lightAng));
-				if (lightAng > 360)
-				{
-					lightAng -= 360;
-				}
-			}
-			else
-			{
-				static float lightAng = 0;
-				lightAng += 0.2f;
-				matRot.makeRotationAxis(I4Vector3(1.0f, 0.5f, 0.5f), mathutil::degreeToRadian(-lightAng));
-				if (lightAng > 360)
-				{
-					lightAng -= 360;
-				}
-			}
-
-			I4Matrix4x4 matTrans;
-			matTrans.makeTranslation(lightPointRadius[i].x, lightPointRadius[i].y, lightPointRadius[i].z);
-
-			I4Matrix4x4 matLight = matScale*matTrans*matRot;	
-
-			I4Vector3 lightWorldPos;
-			matLight.extractTranslation(lightWorldPos);
-
-			if (camera->isVisibleSphere(lightWorldPos, lightPointRadius[i].w) == false)
-				continue;
+			matLight.makeScale(light.radius, light.radius, light.radius);					
+			matLight.setTranslation(light.position);
 
 			shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
 					
-			I4Matrix4x4 matLightView = camera->getViewMatrix();
-			I4Vector3 lightViewPos = matLightView.transformCoord(lightWorldPos);
-			I4Vector4 light;
-			light.x = lightViewPos.x;
-			light.y = lightViewPos.y;
-			light.z = lightViewPos.z;
-			light.w = lightPointRadius[i].w;
+			const I4Vector3 lightViewPos =  camera->getViewMatrix().transformCoord(light.position);
+			if (lightViewPos.getLengthSq() >= light.radius*light.radius)
+			{
+				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
+			}
+			else
+			{
+				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_BACK);
+			}
 
-					
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_POINT_RADIUS, light.xyzw);
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, lightPointColor[i].xyz);			
+			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_POSITION, lightViewPos.xyz);
+			shaderMgr->setFloat(I4SHADER_FLOAT_LIGHT_RADIUS, light.radius);
+			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, light.color.xyz);			
 
 			shaderMgr->apply();
 			sphereMesh->draw();
@@ -546,6 +525,8 @@ namespace i4graphics
 		shaderMgr->apply();
 
 		shaderMgr->end();
+
+		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 	}
 
 	void I4DefferedRenderer::renderStageMerge(I4Camera* camera)
@@ -553,6 +534,7 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		videoDriver->resetRenderTarget();
+		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_m.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
