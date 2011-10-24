@@ -102,15 +102,14 @@ namespace i4core
 
 		bool isInAABB(const I4AABB& aabb) const
 		{
-			I4Vector3 edges[8];
-			aabb.getEdges(edges);
-
+			I4Vector3 edge;
 			for (int i = 0; i < 6; ++i)
 			{
 				bool inside = false;
-				for (int j=0; j<8; ++j)
+				for (int j = 0; j < 8; ++j)
 				{
-					if (planes[i].testPoint(edges[j]) == I4PL_FRONT)
+					aabb.extractEdge(edge, j);
+					if (planes[i].testPoint(edge) == I4PL_FRONT)
 					{
 						inside = true;
 						break;

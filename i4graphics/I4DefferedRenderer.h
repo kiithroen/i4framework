@@ -23,7 +23,7 @@ namespace i4graphics
 	struct I4MeshInstanceRenderItem
 	{
 		I4Matrix4x4			worldTM;
-		I4Sphere			worldSpehere;
+		I4AABB				worldAABB;
 		I4MeshInstance*		meshInstance;
 
 		bool operator < (const I4MeshInstanceRenderItem& other) const;

@@ -85,17 +85,17 @@ namespace i4core
 			return transform(matInv);
 		}
 
-		void I4AABB::getEdges(I4Vector3* edges) const
-		{
-			// 		  /5--------/6
-			// 		 /  |      / |
-			// 		/   |     /  |
-			// 		1---------2  |
-			// 		|   4- - -| -7
-			// 		|  /      |  /
-			// 		|/        | /
-			// 		0---------3/ 
+		// 		  /5--------/6
+		// 		 /  |      / |
+		// 		/   |     /  |
+		// 		1---------2  |
+		// 		|   4- - -| -7
+		// 		|  /      |  /
+		// 		|/        | /
+		// 		0---------3/ 
 
+		void I4AABB::extractEdges(I4Vector3* edges) const
+		{
 			edges[0].set(minEdge.x, minEdge.y, minEdge.z);
 			edges[1].set(minEdge.x, maxEdge.y, minEdge.z);
 			edges[2].set(maxEdge.x, maxEdge.y, minEdge.z);
@@ -104,6 +104,40 @@ namespace i4core
 			edges[5].set(minEdge.x, maxEdge.y, maxEdge.z);
 			edges[6].set(maxEdge.x, maxEdge.y, maxEdge.z);
 			edges[7].set(maxEdge.x, minEdge.y, maxEdge.z);
+		}
+
+		void I4AABB::extractEdge(I4Vector3& edge, unsigned int i) const
+		{
+			switch (i)
+			{
+			case 0:
+				edge.set(minEdge.x, minEdge.y, minEdge.z);
+				break;
+			case 1:
+				edge.set(minEdge.x, maxEdge.y, minEdge.z);
+				break;
+			case 2:
+				edge.set(maxEdge.x, maxEdge.y, minEdge.z);
+				break;
+			case 3:
+				edge.set(maxEdge.x, minEdge.y, minEdge.z);
+				break;
+			case 4:
+				edge.set(minEdge.x, minEdge.y, maxEdge.z);
+				break;
+			case 5:
+				edge.set(minEdge.x, maxEdge.y, maxEdge.z);
+				break;
+			case 6:
+				edge.set(maxEdge.x, maxEdge.y, maxEdge.z);
+				break;
+			case 7:
+				edge.set(maxEdge.x, minEdge.y, maxEdge.z);
+				break;
+			default:
+				assert(false);
+				break;
+			}
 		}
 
 	public:

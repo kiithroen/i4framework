@@ -172,7 +172,7 @@ namespace i4graphics
 
 			I4MeshInstance& meshInstance = modelInstance->getSubMeshInstance(i);			
 			I4Matrix4x4::multiply(item.worldTM, meshInstance.meshLocalTM, modelInstance->getModelTM());
-			item.worldSpehere.fromAABB(meshInstance.meshLocalAABB.transform(item.worldTM));
+			item.worldAABB = meshInstance.meshLocalAABB.transform(item.worldTM);
 
 			item.meshInstance = &meshInstance;			
 		}
@@ -238,7 +238,7 @@ namespace i4graphics
 
 		for (; itrSource != itrSourceEnd; ++itrSource)
 		{
-			if (camera->isVisibleSphere(itrSource->worldSpehere) == true)
+			if (camera->isVisibleAABB(itrSource->worldAABB) == true)
 			{
 				vecCulledMeshInstnaceRenderItem.push_back(*itrSource);
 			}
