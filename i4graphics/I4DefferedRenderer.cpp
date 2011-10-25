@@ -499,14 +499,20 @@ namespace i4graphics
 			matLight.setTranslation(light.position);
 
 			shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
-					
+			
 			const I4Vector3 lightViewPos =  camera->getViewMatrix().transformCoord(light.position);
-			if (lightViewPos.getLengthSq() >= light.radius*light.radius)
+
+			// 카메라와 라이트의 관계를 찾는데 near plane 을 고려해서 생각해야한다.
+			// 안그러면 카메라가 라이트의 외부에 있지만 near plane 안쪽에 있을때 깜박이는 현상이 생긴다.
+			float lightRadiusPlusZNear = light.radius + camera->getZNear();
+			if (lightViewPos.getLengthSq() - lightRadiusPlusZNear*lightRadiusPlusZNear > 0)
 			{
+				// 카메라가 라이트의 외부에 있으므로 일반 방식으로 그리면 된다. 
 				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 			}
 			else
 			{
+				// 카메라가 라이트의 안쪽에 있으므로 뒤집어서 그려야한다.
 				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_BACK);
 			}
 
