@@ -91,6 +91,7 @@ namespace i4graphics
 		I4RenderTarget*					rtNormal;
 		I4RenderTarget*					rtDepth;
 		I4RenderTarget*					rtLight;
+		I4RenderTarget*					rtShadow;
 
 		I4QuadMesh*						quadMesh;
 		I4SphereMesh*					sphereMesh;

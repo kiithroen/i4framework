@@ -17,16 +17,16 @@ cbuffer	cbChangesEveryMeshInstance
 };
 
 
-#ifdef MASK_DIFFUSEMAP
-Texture2D texDiffuseMap		: DIFFUSEMAP;
+#ifdef MASK_TEX_DIFFUSE
+Texture2D texDiffuseMap		: TEX_DIFFUSE;
 #endif
 
-#ifdef MASK_SPECULARMAP
-Texture2D texSpecularMap	: SPECULARMAP;
+#ifdef MASK_TEX_SPECULAR
+Texture2D texSpecularMap	: TEX_SPECULAR;
 #endif
 
-#ifdef MASK_NORMALMAP
-Texture2D texNormalMap		: NORMALMAP;
+#ifdef MASK_TEX_NORMAL
+Texture2D texNormalMap		: TEX_NORMAL;
 #endif
 
 
@@ -45,7 +45,7 @@ struct VS_INPUT
 	float3 normal	:	NORMAL;
 	float2 uv		:	TEXCOORD0;
 
-#ifdef MASK_NORMALMAP
+#ifdef MASK_TEX_NORMAL
 	float4 tan		:	TANGENT;
 #endif
 };
@@ -56,7 +56,7 @@ struct PS_INPUT
 	float2 uv			:	TEXCOORD0;
 	float depth			:	TEXCOORD1;
 
-#ifdef MASK_NORMALMAP
+#ifdef MASK_TEX_NORMAL
 	float3x3 tangentToView	: TEXCOORD2;
 #else
 	float3 viewNormal	:	TEXCOORD2;
@@ -76,7 +76,7 @@ PS_INPUT VS( VS_INPUT	input	)
 
 	output.uv = input.uv;
 
-#ifdef MASK_NORMALMAP
+#ifdef MASK_TEX_NORMAL
 	float3 N = mul(input.normal, (float3x3)world);
 	N = mul(N, (float3x3)view);
 	N = normalize(N);
@@ -108,20 +108,20 @@ PS_OUTPUT PS( PS_INPUT	input	)
 {
 	PS_OUTPUT output = (PS_OUTPUT)0;
 
-#ifdef MASK_DIFFUSEMAP
+#ifdef MASK_TEX_DIFFUSE
 	output.diffuse.rgb = texDiffuseMap.Sample(samLinear, input.uv).rgb;
 #else
 	output.diffuse.rgb = float3(1.0f, 1.0f, 1.0f);
 #endif
 
-#ifdef MASK_SPECULARMAP
+#ifdef MASK_TEX_SPECULAR
 	output.diffuse.a = texSpecularMap.Sample(samLinear, input.uv).r*specularIntensity;
 #else
 	output.diffuse.a = specularIntensity;
 #endif
 
 	float3 viewNormal;
-#ifdef MASK_NORMALMAP
+#ifdef MASK_TEX_NORMAL
 	viewNormal = 2.0f*texNormalMap.Sample(samLinear, input.uv) - 1.0f;
 	viewNormal = mul(viewNormal, input.tangentToView);
 #else

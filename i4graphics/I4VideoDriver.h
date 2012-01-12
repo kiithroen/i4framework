@@ -53,11 +53,13 @@ namespace i4graphics
 		virtual void				endScene();
 
 		virtual void				clearBackBuffer(unsigned char r, unsigned char g, unsigned char b);
-		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a);
+		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a);		
+		virtual void				clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil);
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 
-		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil);
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget);
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil);
 		virtual void				resetRenderTarget();
 
 		virtual void				setRasterizerMode(I4RasterizerMode mode);

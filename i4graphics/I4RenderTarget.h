@@ -11,8 +11,8 @@ namespace i4graphics
 	public:
 		virtual ~I4RenderTarget()	{}
 
-		virtual bool	create(unsigned int width, unsigned int height, I4FORMAT format)		{ return true; }
-
+		virtual bool	create(unsigned int width, unsigned int height, I4FORMAT format)														{ return true; }
+		virtual bool	createDepthStencil(unsigned int width, unsigned int height, I4FORMAT texFormat, I4FORMAT dsvFormat, I4FORMAT srvFormat)	{ return true; }
 	protected:
 		I4RenderTarget()			{}
 	};

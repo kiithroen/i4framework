@@ -62,16 +62,16 @@ PS_INPUT VS( VS_INPUT	input	)
 float4 PS( PS_INPUT	input	) : SV_Target
 {
 	input.projPos.xy /= input.projPos.w;
-	float2 texCoord = 0.5f*(float2(input.projPos.x, -input.projPos.y) + 1);
-	float4 normalData = texRTNormal.Sample(samPoint, texCoord);
+	float2 uv = 0.5f*(float2(input.projPos.x, -input.projPos.y) + 1);
+	float4 normalData = texRTNormal.Sample(samPoint, uv);
 	float3 normal = 2.0f * normalData.xyz - 1.0f;
 	float specularPower = normalData.a * 255;
-	float specularIntensity = texRTDiffuse.Sample(samLinear, texCoord).a;
-	float depthVal = texRTDepth.Sample(samPoint, texCoord).r;
+	float specularIntensity = texRTDiffuse.Sample(samLinear, uv).a;
+	float depthVal = texRTDepth.Sample(samPoint, uv).r;
 
 	float3 ray;
-	ray.x = lerp(-farTopRight.x, farTopRight.x, texCoord.x);
-	ray.y = lerp(farTopRight.y, -farTopRight.y, texCoord.y);
+	ray.x = lerp(-farTopRight.x, farTopRight.x, uv.x);
+	ray.y = lerp(farTopRight.y, -farTopRight.y, uv.y);
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
 	float3 lightVector = lightPosition - p;

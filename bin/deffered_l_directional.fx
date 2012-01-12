@@ -1,6 +1,10 @@
 Texture2D texRTDiffuse	: RT_DIFFUSE;
 Texture2D texRTNormal	: RT_NORMAL;
 Texture2D texRTDepth	: RT_DEPTH;
+Texture2D texRTShadow	: RT_SHADOW;
+
+float4x4	lightViewProjection	: LIGHT_VIEW_PROJECTION;
+float4x4	viewInvLightViewProjection : VIEWINV_LIGHT_VIEW_PROJECTION;
 
 SamplerState samLinear
 {
@@ -63,6 +67,19 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
 
+	//--------------------
+	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection);
+	float depthInLight = posInLight.z/posInLight.w;
+
+	float2 shadowUV = 0.5f*(float2(posInLight.x, -posInLight.y)/posInLight.w + 1.0f);
+	float depthInShadow = texRTShadow.Sample(samPoint, shadowUV).r;
+	
+	float4 shadow = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	if (depthInLight > depthInShadow + 0.00002f)
+		shadow = float4(0.15f, 0.15f, 0.15f, 0.0f);
+		
+	//--------------------
+
 	float3 lightVector = -normalize(lightDirection);
 
 	// ------ lambert -----
@@ -77,7 +94,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 reflectVector = normalize(reflect(-lightVector, normal));
 	float specularLight = specularIntensity*NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
-	return float4(diffuseLight.rgb, specularLight);
+	return shadow*float4(diffuseLight.rgb, specularLight);
 }
 
 //--------------------------------------------------------------------------------------

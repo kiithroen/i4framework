@@ -180,19 +180,19 @@ namespace i4graphics
 	{
 		std::string finalShaderCode = "";
 
-		if (mask & I4SHADER_MASK_DIFFUSEMAP)
+		if (mask & I4SHADER_MASK_TEX_DIFFUSE)
 		{
-			finalShaderCode += "#define MASK_DIFFUSEMAP\r\n";
+			finalShaderCode += "#define MASK_TEX_DIFFUSE\r\n";
 		}
 
-		if (mask & I4SHADER_MASK_SPECULARMAP)
+		if (mask & I4SHADER_MASK_TEX_SPECULAR)
 		{
-			finalShaderCode += "#define MASK_SPECULARMAP\r\n";
+			finalShaderCode += "#define MASK_TEX_SPECULAR\r\n";
 		}
 
-		if (mask & I4SHADER_MASK_NORMALMAP)
+		if (mask & I4SHADER_MASK_TEX_NORMAL)
 		{
-			finalShaderCode += "#define MASK_NORMALMAP\r\n";
+			finalShaderCode += "#define MASK_TEX_NORMAL\r\n";
 		}
 	
 		finalShaderCode += baseShaderCode;

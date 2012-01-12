@@ -64,9 +64,9 @@ namespace i4core
 		void repair()
 		{
 			// 변환이 이루어지고 나서는 최대 최소가 바낄수 있으므로 확인해서 고쳐준다.
-			if (minEdge.x > maxEdge.x) std::swap(minEdge.x, minEdge.x);
-			if (minEdge.y > maxEdge.y) std::swap(minEdge.y, minEdge.y);
-			if (minEdge.z > maxEdge.z) std::swap(minEdge.z, minEdge.z);
+			if (minEdge.x > maxEdge.x) std::swap(minEdge.x, maxEdge.x);
+			if (minEdge.y > maxEdge.y) std::swap(minEdge.y, maxEdge.y);
+			if (minEdge.z > maxEdge.z) std::swap(minEdge.z, maxEdge.z);
 		}
 
 		const I4AABB transform(const I4Matrix4x4& mat) const

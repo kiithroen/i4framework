@@ -17,9 +17,9 @@ namespace i4graphics
 	enum I4ShaderMask
 	{
 		I4SHADER_MASK_NONE				= 1 << 0,
-		I4SHADER_MASK_DIFFUSEMAP		= 1 << 1,
-		I4SHADER_MASK_SPECULARMAP		= 1 << 2,
-		I4SHADER_MASK_NORMALMAP			= 1 << 3,
+		I4SHADER_MASK_TEX_DIFFUSE		= 1 << 1,
+		I4SHADER_MASK_TEX_SPECULAR		= 1 << 2,
+		I4SHADER_MASK_TEX_NORMAL			= 1 << 3,
 	};
 
 

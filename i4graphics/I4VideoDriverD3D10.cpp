@@ -22,8 +22,8 @@ namespace i4graphics
 		, d3dDevice(NULL)
 		, swapChain(NULL)
 		, backBufferRenderTargetView(NULL)
-		, depthStencilTex(NULL)
-		, depthStencilView(NULL)
+		, backBufferDepthStencilTex(NULL)
+		, backBufferDepthStencilView(NULL)
 	{
 	}
 
@@ -34,16 +34,16 @@ namespace i4graphics
 			d3dDevice->ClearState();
 		}
 
-		if (depthStencilTex) 
+		if (backBufferDepthStencilTex) 
 		{
-			depthStencilTex->Release();
-			depthStencilTex = NULL;
+			backBufferDepthStencilTex->Release();
+			backBufferDepthStencilTex = NULL;
 		}
 
-		if (depthStencilView) 
+		if (backBufferDepthStencilView) 
 		{
-			depthStencilView->Release();
-			depthStencilView = NULL;
+			backBufferDepthStencilView->Release();
+			backBufferDepthStencilView = NULL;
 
 		}
 
@@ -121,6 +121,7 @@ namespace i4graphics
 			return false;
 
 		D3D10_TEXTURE2D_DESC descDepth;
+		ZeroMemory(&descDepth, sizeof(descDepth));
 		descDepth.Width = width;
 		descDepth.Height = height;
 		descDepth.MipLevels = 1;
@@ -132,19 +133,20 @@ namespace i4graphics
 		descDepth.BindFlags = D3D10_BIND_DEPTH_STENCIL;
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
-		hr = d3dDevice->CreateTexture2D(&descDepth, NULL, &depthStencilTex);
+		hr = d3dDevice->CreateTexture2D(&descDepth, NULL, &backBufferDepthStencilTex);
 		if (FAILED(hr))
 			return false;
 
 		D3D10_DEPTH_STENCIL_VIEW_DESC descDSV;
+		ZeroMemory(&descDSV, sizeof(descDSV));
 		descDSV.Format = descDepth.Format;
 		descDSV.ViewDimension = D3D10_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0;
-		hr = d3dDevice->CreateDepthStencilView(depthStencilTex, &descDSV, &depthStencilView);
+		hr = d3dDevice->CreateDepthStencilView(backBufferDepthStencilTex, &descDSV, &backBufferDepthStencilView);
 		if (FAILED(hr))
 			return false;
 
-		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, depthStencilView);
+		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 
 		setViewport(0, 0, width, height);
 
@@ -240,7 +242,7 @@ namespace i4graphics
 	{
 		float clearColor[4] = { (float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f };
 		d3dDevice->ClearRenderTargetView(backBufferRenderTargetView, clearColor);
-		d3dDevice->ClearDepthStencilView(depthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
+		d3dDevice->ClearDepthStencilView(backBufferDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
 	}
 
 	void I4VideoDriverD3D10::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
@@ -261,7 +263,12 @@ namespace i4graphics
 		d3dDevice->ClearRenderTargetView(static_cast<I4RenderTargetD3D10*>(renderTarget)->getRenderTargetView(), clearColor);
 	}
 
-	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil)
+	void I4VideoDriverD3D10::clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil)
+	{
+		d3dDevice->ClearDepthStencilView(static_cast<I4RenderTargetD3D10*>(renderTarget)->getDepthStencilView(), D3D10_CLEAR_DEPTH, depth, stencil);
+	}
+
+	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
 	{
 		ID3D10RenderTargetView* arrRTViews[8] = { 0, };
 
@@ -269,9 +276,20 @@ namespace i4graphics
 		{
 			arrRTViews[i] = static_cast<I4RenderTargetD3D10*>(arrRenderTarget[i])->getRenderTargetView();
 		}
-		if (isDepthStencil)
+		d3dDevice->OMSetRenderTargets(num, arrRTViews, backBufferDepthStencilView);
+	}
+
+	void I4VideoDriverD3D10::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil)
+	{
+		ID3D10RenderTargetView* arrRTViews[8] = { 0, };
+
+		for (unsigned int i = 0; i < num; ++i)
 		{
-			d3dDevice->OMSetRenderTargets(num, arrRTViews, depthStencilView);
+			arrRTViews[i] = static_cast<I4RenderTargetD3D10*>(arrRenderTarget[i])->getRenderTargetView();
+		}
+		if (depthStencil)
+		{
+			d3dDevice->OMSetRenderTargets(num, arrRTViews, static_cast<I4RenderTargetD3D10*>(depthStencil)->getDepthStencilView());
 		}
 		else
 		{
@@ -281,7 +299,7 @@ namespace i4graphics
 
 	void I4VideoDriverD3D10::resetRenderTarget()
 	{
-		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, depthStencilView);
+		d3dDevice->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 	}
 
 	void I4VideoDriverD3D10::setRasterizerMode(I4RasterizerMode mode)

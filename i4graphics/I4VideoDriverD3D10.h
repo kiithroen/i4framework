@@ -24,10 +24,11 @@ namespace i4graphics
 
 		virtual void				clearBackBuffer(unsigned char r, unsigned char g, unsigned char b) override;
 		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a) override;
-
+		virtual void				clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil) override;
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 
-		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil) override;
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget) override;
+		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil) override;
 		virtual void				resetRenderTarget() override;
 
 		virtual void				setRasterizerMode(I4RasterizerMode mode) override;
@@ -50,8 +51,8 @@ namespace i4graphics
 		ID3D10Device*				d3dDevice;
 		IDXGISwapChain*				swapChain;
 		ID3D10RenderTargetView*		backBufferRenderTargetView;
-		ID3D10Texture2D*			depthStencilTex;
-		ID3D10DepthStencilView*		depthStencilView;
+		ID3D10Texture2D*			backBufferDepthStencilTex;
+		ID3D10DepthStencilView*		backBufferDepthStencilView;
 		ID3D10RasterizerState*		rasterizerStates[I4RASTERIZER_MODE_NUM];
 		ID3D10BlendState*			blendStates[I4BLEND_MODE_NUM];
 	};

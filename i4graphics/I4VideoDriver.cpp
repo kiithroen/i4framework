@@ -55,11 +55,19 @@ namespace i4graphics
 	{
 	}
 
+	void I4VideoDriver::clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil)
+	{
+	}
+
 	void I4VideoDriver::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 	{
 	}
 
-	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, bool isDepthStencil)
+	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	{
+	}
+
+	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil)
 	{
 	}
 

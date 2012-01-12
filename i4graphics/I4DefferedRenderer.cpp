@@ -36,6 +36,7 @@ namespace i4graphics
 		, rtNormal(NULL)
 		, rtDepth(NULL)
 		, rtLight(NULL)
+		, rtShadow(NULL)
 		, quadMesh(NULL)
 		, sphereMesh(NULL)
 	{
@@ -67,28 +68,34 @@ namespace i4graphics
 		// shader mgr
 		if (I4ShaderMgr::addShaderMgr("deffered_g.fx") == false)
 		{
-			I4LOG_ERROR << L"shader manager add failed.";
+			I4LOG_ERROR << L"shader deffered_g add failed.";
 			return false;
 		}
 	
 		if (I4ShaderMgr::addShaderMgr("deffered_l_directional.fx") == false)
 		{
-			I4LOG_ERROR << L"shader manager add failed.";
+			I4LOG_ERROR << L"shader deffered_l_directional add failed.";
 			return false;
 		}
 
 		if (I4ShaderMgr::addShaderMgr("deffered_l_point.fx") == false)
 		{
-			I4LOG_ERROR << L"shader manager add failed.";
+			I4LOG_ERROR << L"shader deffered_l_point add failed.";
 			return false;
 		}
 
 		if (I4ShaderMgr::addShaderMgr("deffered_m.fx") == false)
 		{
-			I4LOG_ERROR << L"shader manager add failed.";
+			I4LOG_ERROR << L"shader deffered_m add failed.";
 			return false;
 		}
 		
+		if (I4ShaderMgr::addShaderMgr("shadow.fx") == false)
+		{
+			I4LOG_ERROR << L"shader shadow add failed.";
+			return false;
+		}
+
 		// model mgr
 		modelMgr = new I4ModelMgr;
 
@@ -96,28 +103,35 @@ namespace i4graphics
 		rtDiffuse = videoDriver->createRenderTarget();
 		if (rtDiffuse->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target create failed.";
+			I4LOG_ERROR << L"render target diffuse create failed.";
 			return false;
 		}
 
 		rtNormal = videoDriver->createRenderTarget();
 		if (rtNormal->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target create failed.";
+			I4LOG_ERROR << L"render target normal create failed.";
 			return false;
 		}
 
 		rtDepth = videoDriver->createRenderTarget();
 		if (rtDepth->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R32_FLOAT) == false)
 		{
-			I4LOG_ERROR << L"render target create failed.";
+			I4LOG_ERROR << L"render target depth create failed.";
 			return false;
 		}
 
 		rtLight = videoDriver->createRenderTarget();
 		if (rtLight->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target create failed.";
+			I4LOG_ERROR << L"render target light create failed.";
+			return false;
+		}
+
+		rtShadow = videoDriver->createRenderTarget();
+		if (rtShadow->createDepthStencil(1024, 1024, I4FORMAT_R32_TYPELESS, I4FORMAT_D32_FLOAT, I4FORMAT_R32_FLOAT) == false)
+		{
+			I4LOG_ERROR << L"render target shadow create failed.";
 			return false;
 		}
 
@@ -144,6 +158,7 @@ namespace i4graphics
 		delete modelMgr;
 		delete sphereMesh;
 		delete quadMesh;
+		delete rtShadow;
 		delete rtLight;
 		delete rtDepth;
 		delete rtNormal;
@@ -233,7 +248,7 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
-		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, true);
+		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
 		cullAndSortMeshInstanceRenderItem(camera);
@@ -265,7 +280,7 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_g.fx");
-		//shaderMgr->begin(I4SHADER_MASK_DIFFUSEMAP|I4SHADER_MASK_SPECULARMAP|I4SHADER_MASK_NORMALMAP, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
+		//shaderMgr->begin(I4SHADER_MASK_TEX_DIFFUSE|I4SHADER_MASK_TEX_SPECULAR|I4SHADER_MASK_TEX_NORMAL, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 				
 		shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
@@ -348,19 +363,19 @@ namespace i4graphics
 				if (isChangedDiffuseMap == true)
 				{
 					I4Texture* diffuse = modelMgr->findTexture(curMeshInstance->diffuseMapID);
-					shaderMgr->setTexture(I4SHADER_TEXTURE_DIFFUSEMAP, diffuse);
+					shaderMgr->setTexture(I4SHADER_TEXTURE_DIFFUSE, diffuse);
 				}
 						
 				if (isChangedSpecularMap == true)
 				{
 					I4Texture* specular = modelMgr->findTexture(curMeshInstance->specularMapID);
-					shaderMgr->setTexture(I4SHADER_TEXTURE_SPECULARMAP, specular);
+					shaderMgr->setTexture(I4SHADER_TEXTURE_SPECULAR, specular);
 				}
 
 				if (isChangedNormalMap == true)
 				{
 					I4Texture* normal = modelMgr->findTexture(curMeshInstance->normalMapID);
-					shaderMgr->setTexture(I4SHADER_TEXTURE_NORMALMAP, normal);
+					shaderMgr->setTexture(I4SHADER_TEXTURE_NORMAL, normal);
 				}
 
 				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_INTENSITY, curMeshInstance->specularInensity);
@@ -387,6 +402,46 @@ namespace i4graphics
 	void I4DefferedRenderer::renderStageLight(I4Camera* camera)
 	{
 		PROFILE_THISFUNC;
+
+		I4RenderTarget* nullRT = NULL;
+		videoDriver->setRenderTarget(0, &nullRT, rtShadow);
+		videoDriver->setViewport(0, 0, 1024, 1024);
+		videoDriver->clearDepthStencil(rtShadow, 1.0f, 0);
+		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
+
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shadow.fx");
+		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));	
+
+		I4Matrix4x4 matLightProj;
+		matLightProj.makePerspectiveFovLH(mathutil::PI/4.0f, 1.0f, 1.0f, 1000.0f);
+		I4Matrix4x4 matLightView;
+		matLightView.makeCameraLookAtLH(-vecSceneDirectionalLight[0].direction*300, -vecSceneDirectionalLight[0].direction*299, I4Vector3(0, 1, 0));
+		//matLightView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+		I4Matrix4x4 matLightViewProj;
+		I4Matrix4x4::multiply(matLightViewProj, matLightView, matLightProj);
+
+		shaderMgr->setMatrix(I4SHADER_MATRIX_LIGHT_VIEW_PROJECTION, matLightViewProj.arr);
+		
+
+		I4MeshInstnaceRenderItemVector::iterator itrScene = vecSceneMeshInstnaceRenderItem.begin();
+		const I4MeshInstnaceRenderItemVector::iterator itrSceneEnd = vecSceneMeshInstnaceRenderItem.end();
+
+		for (; itrScene != itrSceneEnd; ++itrScene)
+		{
+			shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, itrScene->worldTM.arr);
+			shaderMgr->apply();
+			I4StaticMesh* curMesh = modelMgr->findMesh(itrScene->meshInstance->meshID);
+
+			if (curMesh != NULL)
+			{
+				curMesh->bind();
+				curMesh->draw();
+				curMesh->unbind();
+			}
+		}
+
+		shaderMgr->end();
+		videoDriver->setViewport(0, 0, videoDriver->getWidth(), videoDriver->getHeight());
 
 		videoDriver->setRenderTarget(1, &rtLight, false);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
@@ -419,12 +474,13 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_directional.fx");
+		shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_directional.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));			
 
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);				
+		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
+		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_SHADOW, rtShadow);
 		shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
 
 		quadMesh->bind();
@@ -434,6 +490,23 @@ namespace i4graphics
 		for ( ; itrCulled != itrCulledEnd; ++itrCulled)
 		{
 			const I4DirectionalLight& light = *itrCulled;
+
+			//-----------
+			I4Matrix4x4 matLightProj;
+			matLightProj.makePerspectiveFovLH(mathutil::PI/4.0f, 1.0f, 1.0f, 1000.0f);
+			I4Matrix4x4 matLightView;
+			matLightView.makeCameraLookAtLH(-vecSceneDirectionalLight[0].direction*300, -vecSceneDirectionalLight[0].direction*299, I4Vector3(0, 1, 0));
+			//matLightView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+			I4Matrix4x4 matLightViewProj;
+			I4Matrix4x4::multiply(matLightViewProj, matLightView, matLightProj);			
+			shaderMgr->setMatrix(I4SHADER_MATRIX_LIGHT_VIEW_PROJECTION, matLightViewProj.arr);
+
+			I4Matrix4x4 matViewInv;
+			camera->getViewMatrix().extractInversePrimitive(matViewInv);
+			I4Matrix4x4 matViewInvLightViewProj;
+			I4Matrix4x4::multiply(matViewInvLightViewProj, matViewInv, matLightViewProj);			
+			shaderMgr->setMatrix(I4SHADER_MATRIX_VIEWINV_LIGHT_VIEW_PROJECTION, matViewInvLightViewProj.arr);
+			//-----------
 
 			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
 			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_DIRECTION, lightViewDir.xyz);
@@ -447,6 +520,7 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, NULL);
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, NULL);
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, NULL);
+		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_SHADOW, NULL);
 		shaderMgr->apply();
 
 		shaderMgr->end();
