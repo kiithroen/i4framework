@@ -297,45 +297,41 @@ namespace i4graphics
 			bool isChangedNormalMap = false;
 			bool isChangedMesh = false;
 
-			if (prevMeshInstance != curMeshInstance)
+			if (prevMeshInstance == NULL)
 			{
-				if (prevMeshInstance == NULL)
+				isChangedDiffuseMap = true;
+				isChangedSpecularMap = true;
+				isChangedNormalMap = true;
+			}
+			else
+			{
+				if (prevMeshInstance->diffuseMapID != curMeshInstance->diffuseMapID)
 				{
 					isChangedDiffuseMap = true;
+				}
+
+				if (prevMeshInstance->specularMapID != curMeshInstance->specularMapID)
+				{
 					isChangedSpecularMap = true;
-					isChangedNormalMap = true;
-				}
-				else
-				{
-					if (prevMeshInstance->diffuseMapID != curMeshInstance->diffuseMapID)
-					{
-						isChangedDiffuseMap = true;
-					}
-
-					if (prevMeshInstance->specularMapID != curMeshInstance->specularMapID)
-					{
-						isChangedSpecularMap = true;
-					}
-
-					if (prevMeshInstance->specularMapID != curMeshInstance->specularMapID)
-					{
-						isChangedNormalMap = true;
-								
-					}
 				}
 
-				if (prevMesh == NULL)
+				if (prevMeshInstance->specularMapID != curMeshInstance->specularMapID)
 				{
-					isChangedMesh = true;
+					isChangedNormalMap = true;								
 				}
-				else
+			}
+
+			if (prevMesh == NULL)
+			{
+				isChangedMesh = true;
+			}
+			else
+			{
+				if (prevMesh->getID() != curMeshInstance->meshID)
 				{
-					if (prevMesh->getID() != curMeshInstance->meshID)
-					{
-						isChangedMesh = true;					
-					}
+					isChangedMesh = true;					
 				}
-			}					
+			}
 					
 			if (isChangedMesh == true)
 			{
