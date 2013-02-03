@@ -89,12 +89,6 @@ namespace i4graphics
 			I4LOG_ERROR << L"shader deffered_m add failed.";
 			return false;
 		}
-		
-		if (I4ShaderMgr::addShaderMgr("shadow.fx") == false)
-		{
-			I4LOG_ERROR << L"shader shadow add failed.";
-			return false;
-		}
 
 		// model mgr
 		modelMgr = new I4ModelMgr;
@@ -403,46 +397,6 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		I4RenderTarget* nullRT = NULL;
-		videoDriver->setRenderTarget(0, &nullRT, rtShadow);
-		videoDriver->setViewport(0, 0, 1024, 1024);
-		videoDriver->clearDepthStencil(rtShadow, 1.0f, 0);
-		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
-
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shadow.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));	
-
-		I4Matrix4x4 matLightProj;
-		matLightProj.makePerspectiveFovLH(mathutil::PI/4.0f, 1.0f, 1.0f, 1000.0f);
-		I4Matrix4x4 matLightView;
-		matLightView.makeCameraLookAtLH(-vecSceneDirectionalLight[0].direction*300, -vecSceneDirectionalLight[0].direction*299, I4Vector3(0, 1, 0));
-		//matLightView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-		I4Matrix4x4 matLightViewProj;
-		I4Matrix4x4::multiply(matLightViewProj, matLightView, matLightProj);
-
-		//shaderMgr->setMatrix(I4SHADER_MATRIX_LIGHT_VIEW_PROJECTION, matLightViewProj.arr);
-		
-
-		I4MeshInstnaceRenderItemVector::iterator itrScene = vecSceneMeshInstnaceRenderItem.begin();
-		const I4MeshInstnaceRenderItemVector::iterator itrSceneEnd = vecSceneMeshInstnaceRenderItem.end();
-
-		for (; itrScene != itrSceneEnd; ++itrScene)
-		{
-			//shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, itrScene->worldTM.arr);
-			
-			I4StaticMesh* curMesh = modelMgr->findMesh(itrScene->meshInstance->meshID);
-
-			if (curMesh != NULL)
-			{
-				curMesh->bind();
-				curMesh->draw();
-				curMesh->unbind();
-			}
-		}
-
-		shaderMgr->end();
-		videoDriver->setViewport(0, 0, videoDriver->getWidth(), videoDriver->getHeight());
-
 		videoDriver->setRenderTarget(1, &rtLight, false);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
@@ -480,7 +434,6 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
 		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_SHADOW, rtShadow);
 		shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
 		*/
 		quadMesh->bind();

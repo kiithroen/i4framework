@@ -82,7 +82,7 @@ namespace i4graphics
 			return false;
 		}
 
-		data = &resource.pData;
+		*data = resource.pData;
 
 		return true;
 	}
@@ -194,7 +194,7 @@ namespace i4graphics
 			return false;
 		}
 
-		data = &resource.pData;
+		*data = resource.pData;
 
 
 		return true;
