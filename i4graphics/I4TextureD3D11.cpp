@@ -1,0 +1,43 @@
+#include "I4TextureD3D11.h"
+#include "DDSTextureLoader.h"
+#include "I4Log.h"
+#include "I4StringUtil.h"
+
+namespace i4graphics
+{
+	I4TextureD3D11::I4TextureD3D11(ID3D11Device* d3dDevice)
+		: d3dDevice(d3dDevice)
+		, shaderResourceView(NULL)
+	{
+	}
+
+	I4TextureD3D11::~I4TextureD3D11()
+	{
+		unload();
+	}
+
+	bool I4TextureD3D11::load(const char* fname)
+	{
+		if (I4Texture::load(fname) == false)
+			return false;
+
+		const wchar_t* wfname = I4StringUtil::to_wchar_t(fname);
+		if (FAILED(CreateDDSTextureFromFile(d3dDevice, wfname, NULL, &shaderResourceView)))
+		{
+			I4LOG_WARN << L"texture load failed. : " << wfname;
+			return false;
+		}
+
+		return true;
+	}
+
+	void I4TextureD3D11::unload()
+	{
+		if (shaderResourceView)
+		{
+			shaderResourceView->Release();
+			shaderResourceView = NULL;
+		}
+	}
+
+}

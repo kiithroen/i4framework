@@ -96,83 +96,28 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::apply()
+	bool I4ShaderMgr::mapConstantBuffer(const char* name, unsigned int size)
 	{
 		if (activeShaderProgram)
 		{
-			activeShaderProgram->apply();
+			return activeShaderProgram->mapConstantBuffer(name, size);
+		}
+		return true;
+	}
+
+	void I4ShaderMgr::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, void* buffer)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setConstantBuffer(type, slot, name, buffer);
 		}
 	}
 
-	void I4ShaderMgr::setBool(I4ShaderBool sb, bool v)
+	void I4ShaderMgr::setTexture(unsigned int slot, const I4Texture* tex)
 	{
 		if (activeShaderProgram)
 		{
-			activeShaderProgram->setBool(sb, v);
-		}
-	}
-
-	void I4ShaderMgr::setInt(I4ShaderInt si, int v)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setInt(si, v);
-		}
-	}
-
-	void I4ShaderMgr::setFloat(I4ShaderFloat sf, float v)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setFloat(sf, v);
-		}
-	}
-
-	void I4ShaderMgr::setVector(I4ShaderVector sv, const float* v)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setVector(sv, v);
-		}
-	}
-
-	void I4ShaderMgr::setVectorArray(I4ShaderVectorArray sva, const float* v, unsigned int offset, unsigned int count)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setVectorArray(sva, v, offset, count);
-		}
-	}
-
-	void I4ShaderMgr::setMatrix(I4ShaderMatrix sm, const float* v)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setMatrix(sm, v);
-		}
-	}
-
-	void I4ShaderMgr::setMatrixArray(I4ShaderMatrixArray sva, const float* v, unsigned int offset, unsigned int count)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setMatrixArray(sva, v, offset, count);
-		}
-	}
-
-	void I4ShaderMgr::setTexture(I4ShaderTexture st, const I4Texture* tex)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setTexture(st, tex);
-		}
-	}
-
-	void I4ShaderMgr::setRenderTarget(I4ShaderRenderTarget srt, const I4RenderTarget* rt)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setRenderTarget(srt, rt);
+			activeShaderProgram->setTexture(slot, tex);
 		}
 	}
 

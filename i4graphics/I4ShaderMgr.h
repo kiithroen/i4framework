@@ -33,17 +33,11 @@ namespace i4graphics
 
 		bool 				begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		void 				end();
-		void				apply();
 
-		void				setBool(I4ShaderBool sb, bool v);
-		void				setInt(I4ShaderInt si, int v);
-		void				setFloat(I4ShaderFloat sf, float v);
-		void				setVector(I4ShaderVector sv, const float* v);
-		void				setVectorArray(I4ShaderVectorArray sva, const float* v, unsigned int offset, unsigned int count);
-		void				setMatrix(I4ShaderMatrix sm, const float* v);
-		void				setMatrixArray(I4ShaderMatrixArray sva, const float* v, unsigned int offset, unsigned int count);
-		void				setTexture(I4ShaderTexture st, const I4Texture* tex);
-		void				setRenderTarget(I4ShaderRenderTarget srt, const I4RenderTarget* rt);
+		bool				mapConstantBuffer(const char* name, unsigned int size);
+
+		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, void* buffer);
+		void				setTexture(unsigned int slot, const I4Texture* tex);
 
 	protected:
 		bool				load(const char* fname);

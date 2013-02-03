@@ -1,5 +1,5 @@
 #include "I4VideoDriver.h"
-#include "I4VideoDriverD3D10.h"
+#include "I4VideoDriverD3D11.h"
 #include "I4ShaderProgram.h"
 #include "I4GeometryBuffer.h"
 #include "I4Texture.h"
@@ -123,8 +123,8 @@ namespace i4graphics
 		case I4VIDEO_DRIVER_MODE_NULL:
 			videoDriver = new I4VideoDriver;
 			break;
-		case I4VIDEO_DRIVER_MODE_D3D10:
-			videoDriver = new I4VideoDriverD3D10;
+		case I4VIDEO_DRIVER_MODE_D3D11:
+			videoDriver = new I4VideoDriverD3D11;
 			break;
 		default:
 			I4LOG_WARN << "Undefined Video Driver Mode : " << mode;

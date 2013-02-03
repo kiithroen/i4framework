@@ -20,12 +20,14 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,14 +43,14 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_d</TargetName>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -56,7 +58,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;I4GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../i4core</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../dependency/DirectXTex</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -78,7 +80,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;I4GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../i4core</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../dependency/DirectXTex</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -98,27 +100,29 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependency\DirectXTex\DDSTextureLoader.h" />
     <ClInclude Include="I4DefferedRenderer.h" />
     <ClInclude Include="I4Format.h" />
-    <ClInclude Include="I4GeometryBufferD3D10.h" />
+    <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4ModelMgr.h" />
     <ClInclude Include="I4QuadMesh.h" />
     <ClInclude Include="I4RenderTarget.h" />
-    <ClInclude Include="I4RenderTargetD3D10.h" />
-    <ClInclude Include="I4ShaderProgramD3D10.h" />
+    <ClInclude Include="I4RenderTargetD3D11.h" />
+    <ClInclude Include="I4ShaderProgramD3D11.h" />
     <ClInclude Include="I4SphereMesh.h" />
     <ClInclude Include="I4StaticMesh.h" />
-    <ClInclude Include="I4TextureD3D10.h" />
-    <ClInclude Include="I4VideoDriverD3D10.h" />
     <ClInclude Include="I4GeometryBuffer.h" />
     <ClInclude Include="I4ShaderMgr.h" />
     <ClInclude Include="I4ShaderProgram.h" />
     <ClInclude Include="I4Texture.h" />
+    <ClInclude Include="I4TextureD3D11.h" />
     <ClInclude Include="I4VideoDriver.h" />
     <ClInclude Include="i4graphics.h" />
+    <ClInclude Include="I4VideoDriverD3D11.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -128,19 +132,19 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="I4DefferedRenderer.cpp" />
-    <ClCompile Include="I4GeometryBufferD3D10.cpp" />
+    <ClCompile Include="I4GeometryBufferD3D11.cpp" />
     <ClCompile Include="I4ModelMgr.cpp" />
     <ClCompile Include="I4QuadMesh.cpp" />
-    <ClCompile Include="I4RenderTargetD3D10.cpp" />
-    <ClCompile Include="I4ShaderProgramD3D10.cpp" />
+    <ClCompile Include="I4RenderTargetD3D11.cpp" />
+    <ClCompile Include="I4ShaderProgramD3D11.cpp" />
     <ClCompile Include="I4SphereMesh.cpp" />
     <ClCompile Include="I4StaticMesh.cpp" />
-    <ClCompile Include="I4TextureD3D10.cpp" />
-    <ClCompile Include="I4VideoDriverD3D10.cpp" />
     <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="I4ShaderMgr.cpp" />
+    <ClCompile Include="I4TextureD3D11.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
     <ClCompile Include="i4graphics.cpp" />
+    <ClCompile Include="I4VideoDriverD3D11.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

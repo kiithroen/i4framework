@@ -14,7 +14,7 @@ namespace i4graphics
 	enum I4VideoDriverMode
 	{
 		I4VIDEO_DRIVER_MODE_NULL	= 0,
-		I4VIDEO_DRIVER_MODE_D3D10,
+		I4VIDEO_DRIVER_MODE_D3D11,
 	};
 
 	enum I4RasterizerMode

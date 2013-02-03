@@ -27,9 +27,6 @@
     <ClInclude Include="I4Log.h">
       <Filter>debug\log</Filter>
     </ClInclude>
-    <ClInclude Include="i4core.h">
-      <Filter>dllmain</Filter>
-    </ClInclude>
     <ClInclude Include="I4Profile.h">
       <Filter>debug\profile</Filter>
     </ClInclude>
@@ -60,9 +57,6 @@
     <ClInclude Include="I4Sphere.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="I4ProfileWriterJson.h">
-      <Filter>debug\profile</Filter>
-    </ClInclude>
     <ClInclude Include="I4Quaternion.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -80,12 +74,11 @@
     <ClInclude Include="I4ProfileWriterLog.h">
       <Filter>debug\profile</Filter>
     </ClInclude>
+    <ClInclude Include="I4StringUtil.h" />
+    <ClInclude Include="i4core.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
-      <Filter>dllmain</Filter>
-    </ClCompile>
-    <ClCompile Include="i4core.cpp">
       <Filter>dllmain</Filter>
     </ClCompile>
     <ClCompile Include="I4Log.cpp">
@@ -97,9 +90,6 @@
     <ClCompile Include="I4StopWatch.cpp">
       <Filter>debug\profile</Filter>
     </ClCompile>
-    <ClCompile Include="I4ProfileWriterJson.cpp">
-      <Filter>debug\profile</Filter>
-    </ClCompile>
     <ClCompile Include="I4XmlData.cpp" />
     <ClCompile Include="I4Camera.cpp">
       <Filter>math</Filter>
@@ -107,5 +97,7 @@
     <ClCompile Include="I4ProfileWriterLog.cpp">
       <Filter>debug\profile</Filter>
     </ClCompile>
+    <ClCompile Include="I4StringUtil.cpp" />
+    <ClCompile Include="i4core.cpp" />
   </ItemGroup>
 </Project>
