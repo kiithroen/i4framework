@@ -44,8 +44,7 @@ namespace i4graphics
 
 		// Compile the vertex shader
 		ID3DBlob* pVSBlob = NULL;
-		hr = compileShaderFromString(code, "VS", "vs_4_0", &pVSBlob);
-		if (FAILED(hr))
+		if (compileShaderFromString(code, "VS", "vs_4_0", &pVSBlob) == false)
 			return false;
 
 		// Create the vertex shader
@@ -91,56 +90,48 @@ namespace i4graphics
 	{
 	}
 
-	bool I4ShaderProgramD3D11::mapConstantBuffer(const char* name, unsigned int size)
+	void I4ShaderProgramD3D11::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer)
 	{
 		auto itr = constantBufferMap.find(name);
+		
+		ID3D11Buffer* constantBuffer = NULL;
+
 		if (itr == constantBufferMap.end())
 		{
-			ID3D11Buffer* constantBuffer = NULL;
+			
 			D3D11_BUFFER_DESC bd;
 			ZeroMemory( &bd, sizeof(bd) );
 			bd.Usage = D3D11_USAGE_DEFAULT;
 			bd.ByteWidth = size;
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			bd.CPUAccessFlags = 0;
 			HRESULT hr = d3dDevice->CreateBuffer(&bd, NULL, &constantBuffer);
 			if (FAILED(hr))
 			{
 				I4LOG_WARN << L"can't create constant buffer : " << name;
-				return false;
+				return;
 			}
 
 			constantBufferMap.insert(std::make_pair(name, constantBuffer));
 		}
 		else
 		{
-			I4LOG_WARN << L"duplicated constant buffer mapping" << name;
-			return false;
+			constantBuffer = itr->second;
 		}
 
-		return true;
-	}
+		immediateContext->UpdateSubresource(constantBuffer, 0, NULL, buffer, 0, 0);
 
-	void I4ShaderProgramD3D11::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, void* buffer)
-	{
-		auto itr = constantBufferMap.find(name);
-		
-		if (itr != constantBufferMap.end())
+		if (type == I4SHADER_PROGRAM_TYPE_VS)
 		{
-			immediateContext->UpdateSubresource(itr->second, 0, NULL, buffer, 0, 0);
-
-			if (type == I4SHADER_PROGRAM_TYPE_VS)
-			{
-				immediateContext->VSSetConstantBuffers(slot, 1, &itr->second);
-			}
-			else if (type == I4SHADER_PROGRAM_TYPE_PS)
-			{
-				immediateContext->PSSetConstantBuffers(slot, 1, &itr->second);
-			}
-			else if (type == I4SHADER_PROGRAM_TYPE_GS)
-			{
-				immediateContext->GSSetConstantBuffers(slot, 1, &itr->second);
-			}
+			immediateContext->VSSetConstantBuffers(slot, 1, &constantBuffer);
+		}
+		else if (type == I4SHADER_PROGRAM_TYPE_PS)
+		{
+			immediateContext->PSSetConstantBuffers(slot, 1, &constantBuffer);
+		}
+		else if (type == I4SHADER_PROGRAM_TYPE_GS)
+		{
+			immediateContext->GSSetConstantBuffers(slot, 1, &constantBuffer);
 		}
 	}
 
@@ -149,19 +140,35 @@ namespace i4graphics
 		if (tex != NULL)
 		{
 			ID3D11ShaderResourceView* texRV = ((I4TextureD3D11*)tex)->getShaderResourceView();
-			immediateContext->PSSetShaderResources(0, 1, &texRV);
+			immediateContext->PSSetShaderResources(slot, 1, &texRV);
 		}
 		else
 		{
-			immediateContext->PSSetShaderResources(0, 1, NULL);
+			ID3D11ShaderResourceView * const nullRes[1] = {NULL};
+			immediateContext->PSSetShaderResources(slot, 1, nullRes);
 		}
 	}
+
+	void I4ShaderProgramD3D11::setRenderTarget(unsigned int slot, const I4RenderTarget* tex)
+	{
+		if (tex != NULL)
+		{
+			ID3D11ShaderResourceView* texRV = ((I4RenderTargetD3D11*)tex)->getShaderResourceView();
+			immediateContext->PSSetShaderResources(slot, 1, &texRV);
+		}
+		else
+		{
+			ID3D11ShaderResourceView * const nullRes[1] = {NULL};
+			immediateContext->PSSetShaderResources(slot, 1, nullRes);
+		}
+	}
+
 
 	bool I4ShaderProgramD3D11::compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut)
 	{
 		HRESULT hr = S_OK;
 
-		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS|D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
 	#if defined( DEBUG ) || defined( _DEBUG )
 		dwShaderFlags |= D3DCOMPILE_DEBUG|D3DCOMPILE_SKIP_OPTIMIZATION;
 	#endif
@@ -184,6 +191,6 @@ namespace i4graphics
 			pErrorBlob->Release();
 		}
 
-		return S_OK;
+		return true;
 	}
 }

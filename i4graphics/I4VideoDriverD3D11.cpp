@@ -129,13 +129,13 @@ namespace i4graphics
 		if (FAILED(hr))
 			return false;
 
-		ID3D11Texture2D* pBuffer;
-		hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBuffer);
+		ID3D11Texture2D* pBackBuffer;
+		hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 		if (FAILED(hr))
 			return false;
 
-		hr = d3dDevice->CreateRenderTargetView(pBuffer, NULL, &backBufferRenderTargetView);
-		pBuffer->Release();
+		hr = d3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &backBufferRenderTargetView);
+		pBackBuffer->Release();
 		if (FAILED(hr))
 			return false;
 
@@ -145,7 +145,7 @@ namespace i4graphics
 		descDepth.Height = height;
 		descDepth.MipLevels = 1;
 		descDepth.ArraySize = 1;
-		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		descDepth.SampleDesc.Count = 1;
 		descDepth.SampleDesc.Quality = 0;
 		descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -166,7 +166,6 @@ namespace i4graphics
 			return false;
 
 		immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
-
 		setViewport(0, 0, width, height);
 
 		D3D11_FILL_MODE fill[I4RASTERIZER_MODE_NUM] = 

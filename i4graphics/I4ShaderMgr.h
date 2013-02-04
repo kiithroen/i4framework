@@ -34,10 +34,9 @@ namespace i4graphics
 		bool 				begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		void 				end();
 
-		bool				mapConstantBuffer(const char* name, unsigned int size);
-
-		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, void* buffer);
+		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer);
 		void				setTexture(unsigned int slot, const I4Texture* tex);
+		void				setRenderTarget(unsigned int slot, const I4RenderTarget* tex);
 
 	protected:
 		bool				load(const char* fname);

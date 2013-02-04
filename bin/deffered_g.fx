@@ -1,37 +1,37 @@
-cbuffer	cbChageOnResize
+cbuffer	cbChageOnResize_G : register(b0)
 {
-	matrix projection		: PROJECTION;
-	float farDistance		: FAR_DISTANCE;
+	matrix projection;
+	float farDistance;
 };
 
-cbuffer	cbChangesEveryFrame
+cbuffer	cbChangesEveryFrame_G : register(b1)
 {
-	matrix view				: VIEW;
+	matrix view;
 };
 
-cbuffer	cbChangesEveryMeshInstance
+cbuffer	cbEachEveryMeshInstance_G : register(b2)
 {
-	matrix world			: WORLD;
-	float specularIntensity 	: SPECULAR_INTENSITY;
-	float specularPower 		: SPECULAR_POWER;
+	matrix world;
+	float specularIntensity;
+	float specularPower;
 };
 
 
 #ifdef MASK_TEX_DIFFUSE
-Texture2D texDiffuseMap		: TEX_DIFFUSE;
+Texture2D texDiffuseMap : register(t0);
 #endif
 
 #ifdef MASK_TEX_SPECULAR
-Texture2D texSpecularMap	: TEX_SPECULAR;
+Texture2D texSpecularMap : register(t1);
 #endif
 
 #ifdef MASK_TEX_NORMAL
-Texture2D texNormalMap		: TEX_NORMAL;
+Texture2D texNormalMap : register(t2);
 #endif
 
 
 
-SamplerState samLinear
+SamplerState samLinear : register(s0)
 {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = Wrap;

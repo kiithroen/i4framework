@@ -1,7 +1,7 @@
-Texture2D texRTDiffuse	: RT_DIFFUSE;
-Texture2D texRTLight	: RT_LIGHT;
+Texture2D texRTDiffuse : register(t0);
+Texture2D texRTLight : register(t1);
 
-SamplerState samLinear
+SamplerState samLinear : register(s0)
 {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = CLAMP;

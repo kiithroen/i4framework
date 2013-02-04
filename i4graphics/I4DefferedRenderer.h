@@ -43,6 +43,74 @@ namespace i4graphics
 		I4Vector3	color;
 	};
 
+	__declspec(align(16))
+	struct CBChageOnResize_G
+	{
+		I4Matrix4x4 projection;
+		float farDistance;
+	};
+
+	__declspec(align(16))
+	struct CBChangesEveryFrame_G
+	{
+		I4Matrix4x4 view;
+	};
+
+	__declspec(align(16))
+	struct CBChangesEachMeshInstance_G
+	{
+		I4Matrix4x4 world;
+		float specularIntensity;
+		float specularPower;
+	};
+
+	__declspec(align(16))
+	struct CBChangeOnResize_L_directional
+	{
+		I4Vector3 farTopRight;
+	};
+
+	__declspec(align(16))
+	struct CBChangeEachLight_L_directional
+	{
+		I4Matrix4x4 lightViewProjection;
+		I4Matrix4x4 viewInvLightViewProjection;
+		I4Vector3 lightViewDirection;
+		I4Vector3 lightColor;
+	};
+
+	__declspec(align(16))
+	struct CBChangeOnResize_L_point
+	{
+		I4Matrix4x4 projection;
+		I4Vector3 farTopRight;
+	};
+	
+	__declspec(align(16))
+	struct CBChangeEveryFrame_L_point
+	{
+		I4Matrix4x4 view;
+	};
+
+	__declspec(align(16))
+	struct CBChangeEachLight_L_point
+	{
+		I4Matrix4x4 world;
+		I4Vector3	lightPosition;
+		float		lightRadius;
+		I4Vector3	lightColor;
+	};
+
+	__declspec(align(16))
+	struct ConstantBuffer
+	{
+		I4Matrix4x4 World;
+		I4Matrix4x4 View;
+		I4Matrix4x4 Projection;
+	};
+
+	class I4VertexBuffer;
+
 	class I4GRAPHICS_API I4DefferedRenderer
 	{
 		typedef std::vector<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemVector;
@@ -103,6 +171,19 @@ namespace i4graphics
 		I4MeshInstnaceRenderItemVector	vecCulledMeshInstnaceRenderItem;
 		I4DirectionalLightVector		vecCulledDirectionalLight;
 		I4PointLightVector				vecCulledPointLight;
+
+		CBChageOnResize_G				cbChageOnResize_G;
+		CBChangesEveryFrame_G			cbChangesEveryFrame_G;
+		CBChangesEachMeshInstance_G		cbChangesEachMeshInstance_G;
+
+		CBChangeOnResize_L_directional	cbChangeOnResize_L_directional;
+		CBChangeEachLight_L_directional	cbChangeEachLight_L_directional;
+
+		CBChangeOnResize_L_point		cbChangeOnResize_L_point;
+		CBChangeEveryFrame_L_point		cbChangeEveryFrame_L_point;
+		CBChangeEachLight_L_point		cbChangeEachLight_L_point;
+
+		ConstantBuffer cb;
 	};
 
 }

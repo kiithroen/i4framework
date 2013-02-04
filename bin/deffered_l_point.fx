@@ -1,38 +1,38 @@
-Texture2D texRTDiffuse	: RT_DIFFUSE;
-Texture2D texRTNormal	: RT_NORMAL;
-Texture2D texRTDepth	: RT_DEPTH;
+Texture2D texRTDiffuse : register(t0);
+Texture2D texRTNormal : register(t1);
+Texture2D texRTDepth : register(t2);
 
-SamplerState samLinear
+SamplerState samLinear : register(s0)
 {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = CLAMP;
     AddressV = CLAMP;
 };
 
-SamplerState samPoint
+SamplerState samPoint : register(s1)
 {
     Filter = MIN_MAG_MIP_POINT;
     AddressU = CLAMP;
     AddressV = CLAMP;
 };
 
-cbuffer cbChangeOnResize
+cbuffer cbChangeOnResize_L_point : register(b0)
 {
-	matrix projection		: PROJECTION;
-	float3 farTopRight		: FAR_TOP_RIGHT;
+	matrix projection;
+	float3 farTopRight;
 };
 
-cbuffer cbChangeEachLight
+cbuffer cbChangeEveryFrame : register(b1)
 {
-	float3	lightPosition	: LIGHT_POSITION;
-	float	lightRadius		: LIGHT_RADIUS;
-	float3	lightColor 		: LIGHT_COLOR;
+	matrix view;
 };
 
-cbuffer cbChangeEveryFrame
+cbuffer cbChangeEachLight_L_point : register(b2)
 {
-	matrix world			: WORLD;
-	matrix view				: VIEW;
+	matrix world;
+	float3	lightPosition;
+	float	lightRadius;
+	float3	lightColor;
 };
 
 //--------------------------------------------------------------------------------------

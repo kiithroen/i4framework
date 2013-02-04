@@ -1,33 +1,34 @@
-Texture2D texRTDiffuse	: RT_DIFFUSE;
-Texture2D texRTNormal	: RT_NORMAL;
-Texture2D texRTDepth	: RT_DEPTH;
+Texture2D texRTDiffuse : register(t0);
+Texture2D texRTNormal : register(t1);
+Texture2D texRTDepth : register(t2);
 
-float4x4	lightViewProjection	: LIGHT_VIEW_PROJECTION;
-float4x4	viewInvLightViewProjection : VIEWINV_LIGHT_VIEW_PROJECTION;
 
-SamplerState samLinear
+
+SamplerState samLinear : register(s0)
 {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = CLAMP;
     AddressV = CLAMP;
 };
 
-SamplerState samPoint
+SamplerState samPoint : register(s1)
 {
     Filter = MIN_MAG_MIP_POINT;
     AddressU = CLAMP;
     AddressV = CLAMP;
 };
 
-cbuffer cbChangeOnResize
+cbuffer cbChangeOnResize_L_directional : register(b0)
 {
 	float3 farTopRight	: FAR_TOP_RIGHT;
 };
 
-cbuffer cbChangeEachLight
+cbuffer cbChangeEachLight_L_directional : register(b1)
 {
-	float3 lightDirection	: LIGHT_DIRECTION;
-	float3 lightColor		: LIGHT_COLOR;
+	matrix lightViewProjection;
+	matrix viewInvLightViewProjection;
+	float3 lightViewDirection;
+	float3 lightColor;
 };
 
 //--------------------------------------------------------------------------------------
@@ -66,7 +67,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
 	
-	float3 lightVector = -normalize(lightDirection);
+	float3 lightVector = -normalize(lightViewDirection);
 
 	// ------ lambert -----
 //	float NdL = max(0, dot(normal, lightVector));

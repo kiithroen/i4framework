@@ -95,21 +95,12 @@ namespace i4graphics
 			activeShaderProgram->end();
 		}
 	}
-
-	bool I4ShaderMgr::mapConstantBuffer(const char* name, unsigned int size)
+	
+	void I4ShaderMgr::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer)
 	{
 		if (activeShaderProgram)
 		{
-			return activeShaderProgram->mapConstantBuffer(name, size);
-		}
-		return true;
-	}
-
-	void I4ShaderMgr::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, void* buffer)
-	{
-		if (activeShaderProgram)
-		{
-			activeShaderProgram->setConstantBuffer(type, slot, name, buffer);
+			activeShaderProgram->setConstantBuffer(type, slot, name, size, buffer);
 		}
 	}
 
@@ -118,6 +109,14 @@ namespace i4graphics
 		if (activeShaderProgram)
 		{
 			activeShaderProgram->setTexture(slot, tex);
+		}
+	}
+
+	void I4ShaderMgr::setRenderTarget(unsigned int slot, const I4RenderTarget* tex)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setRenderTarget(slot, tex);
 		}
 	}
 

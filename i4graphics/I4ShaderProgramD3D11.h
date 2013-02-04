@@ -17,11 +17,10 @@ namespace i4graphics
 
 		virtual bool	begin() override;
 		virtual void	end() override;
-
-		virtual bool	mapConstantBuffer(const char* name, unsigned int size) override;
-
-		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, void* buffer) override;
+		
+		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer) override;
 		virtual void	setTexture(unsigned int slot, const I4Texture* tex)	override;
+		virtual void	setRenderTarget(unsigned int slot, const I4RenderTarget* tex) override;
 
 	private:
 		bool compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut);

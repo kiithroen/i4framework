@@ -12,6 +12,7 @@
 
 namespace i4graphics
 {
+	
 	bool I4MeshInstanceRenderItem::operator < (const I4MeshInstanceRenderItem& other) const
 	{
 		if (meshInstance->diffuseMapID < other.meshInstance->diffuseMapID)
@@ -90,6 +91,12 @@ namespace i4graphics
 			return false;
 		}
 
+		if (I4ShaderMgr::addShaderMgr("default.fx") == false)
+		{
+			I4LOG_ERROR << L"shader default add failed.";
+			return false;
+		}
+
 		// model mgr
 		modelMgr = new I4ModelMgr;
 
@@ -143,7 +150,7 @@ namespace i4graphics
 			I4LOG_ERROR << L"sphere mesh create failed.";
 			return false;
 		}
-
+		
 		return true;
 	}
 
@@ -207,12 +214,24 @@ namespace i4graphics
 	void I4DefferedRenderer::render(I4Camera* camera)
 	{
 		PROFILE_THISFUNC;
-
 		clearAllRenderTarget();
 
 		renderStageGeometry(camera);
 		renderStageLight(camera);
 		renderStageMerge(camera);
+		/*
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("default.fx");
+		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
+
+		cb.Projection=camera->getProjectionMatrix();
+		cb.View=camera->getViewMatrix();
+		cb.World.makeIdentity();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cb", sizeof(ConstantBuffer), &cb);
+		sphereMesh->bind();
+		sphereMesh->draw();
+		sphereMesh->unbind();
+		shaderMgr->end();
+		*/
 	}
 
 	void I4DefferedRenderer::postRender(I4Camera* camera)
@@ -276,12 +295,14 @@ namespace i4graphics
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_g.fx");
 		//shaderMgr->begin(I4SHADER_MASK_TEX_DIFFUSE|I4SHADER_MASK_TEX_SPECULAR|I4SHADER_MASK_TEX_NORMAL, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
-		/*
-		shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
-		shaderMgr->setFloat(I4SHADER_FLOAT_FAR_DISTANCE, camera->getZFar());
 
-		shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, camera->getViewMatrix().arr);
-		*/
+		cbChageOnResize_G.projection = camera->getProjectionMatrix(); 
+		cbChageOnResize_G.farDistance = camera->getZFar();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChageOnResize_G", sizeof(cbChageOnResize_G), &cbChageOnResize_G);
+
+		cbChangesEveryFrame_G.view = camera->getViewMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangesEveryFrame_G", sizeof(cbChangesEveryFrame_G), &cbChangesEveryFrame_G);
+
 		I4MeshInstance* prevMeshInstance = NULL;
 		I4MeshInstance* curMeshInstance = NULL;
 		I4StaticMesh* prevMesh = NULL;
@@ -353,26 +374,25 @@ namespace i4graphics
 				if (isChangedDiffuseMap == true)
 				{
 					I4Texture* diffuse = modelMgr->findTexture(curMeshInstance->diffuseMapID);
-					//shaderMgr->setTexture(I4SHADER_TEXTURE_DIFFUSE, diffuse);
+					shaderMgr->setTexture(0, diffuse);
 				}
 						
 				if (isChangedSpecularMap == true)
 				{
 					I4Texture* specular = modelMgr->findTexture(curMeshInstance->specularMapID);
-					//shaderMgr->setTexture(I4SHADER_TEXTURE_SPECULAR, specular);
+					shaderMgr->setTexture(1, specular);
 				}
 
 				if (isChangedNormalMap == true)
 				{
 					I4Texture* normal = modelMgr->findTexture(curMeshInstance->normalMapID);
-					//shaderMgr->setTexture(I4SHADER_TEXTURE_NORMAL, normal);
+					shaderMgr->setTexture(2, normal);
 				}
-				/*
-				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_INTENSITY, curMeshInstance->specularInensity);
-				shaderMgr->setFloat(I4SHADER_FLOAT_SPECULAR_POWER, curMeshInstance->specularPower);		
 
-				shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, itrCulled->worldTM.arr);
-				*/
+				cbChangesEachMeshInstance_G.specularIntensity = curMeshInstance->specularInensity; 
+				cbChangesEachMeshInstance_G.specularPower = curMeshInstance->specularPower;
+				cbChangesEachMeshInstance_G.world = itrCulled->worldTM;
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, "cbChangesEachMeshInstance_G", sizeof(cbChangesEachMeshInstance_G), &cbChangesEachMeshInstance_G);
 
 				curMesh->draw();
 			}
@@ -425,13 +445,15 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_directional.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));			
-		/*
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
-		shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
-		*/
+		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
+
+		shaderMgr->setRenderTarget(0, rtDiffuse);
+		shaderMgr->setRenderTarget(1, rtNormal);
+		shaderMgr->setRenderTarget(2, rtDepth);
+
+		cbChangeOnResize_L_directional.farTopRight = camera->getFarTopRight();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChangeOnResize_L_directional", sizeof(cbChangeOnResize_L_directional), &cbChangeOnResize_L_directional);
+
 		quadMesh->bind();
 
 		I4DirectionalLightVector::iterator itrCulled = vecCulledDirectionalLight.begin();
@@ -445,32 +467,30 @@ namespace i4graphics
 			matLightProj.makePerspectiveFovLH(mathutil::PI/4.0f, 1.0f, 1.0f, 1000.0f);
 			I4Matrix4x4 matLightView;
 			matLightView.makeCameraLookAtLH(-vecSceneDirectionalLight[0].direction*300, -vecSceneDirectionalLight[0].direction*299, I4Vector3(0, 1, 0));
-			//matLightView.makeCameraLookAtLH(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+
 			I4Matrix4x4 matLightViewProj;
-			I4Matrix4x4::multiply(matLightViewProj, matLightView, matLightProj);			
-			//shaderMgr->setMatrix(I4SHADER_MATRIX_LIGHT_VIEW_PROJECTION, matLightViewProj.arr);
+			I4Matrix4x4::multiply(matLightViewProj, matLightView, matLightProj);
 
 			I4Matrix4x4 matViewInv;
 			camera->getViewMatrix().extractInversePrimitive(matViewInv);
 			I4Matrix4x4 matViewInvLightViewProj;
-			I4Matrix4x4::multiply(matViewInvLightViewProj, matViewInv, matLightViewProj);			
-			//shaderMgr->setMatrix(I4SHADER_MATRIX_VIEWINV_LIGHT_VIEW_PROJECTION, matViewInvLightViewProj.arr);
-			//-----------
+			I4Matrix4x4::multiply(matViewInvLightViewProj, matViewInv, matLightViewProj);
 
 			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
-			/*
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_DIRECTION, lightViewDir.xyz);
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, light.color.xyz);			
-			*/
+
+			cbChangeEachLight_L_directional.lightViewProjection = matLightViewProj;
+			cbChangeEachLight_L_directional.viewInvLightViewProjection = matViewInvLightViewProj;
+			cbChangeEachLight_L_directional.lightViewDirection = lightViewDir;
+			cbChangeEachLight_L_directional.lightColor = light.color;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangeEachLight_L_directional", sizeof(cbChangeEachLight_L_directional), &cbChangeEachLight_L_directional);
+
 			quadMesh->draw();
 		}
 		quadMesh->unbind();
-		/*
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, NULL);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, NULL);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, NULL);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_SHADOW, NULL);
-		*/
+
+		shaderMgr->setRenderTarget(0, NULL);
+		shaderMgr->setRenderTarget(1, NULL);
+		shaderMgr->setRenderTarget(2, NULL);
 
 		shaderMgr->end();
 	}
@@ -499,15 +519,19 @@ namespace i4graphics
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_point.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
-		/*
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, rtNormal);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, rtDepth);
 		
-		shaderMgr->setMatrix(I4SHADER_MATRIX_PROJECTION, camera->getProjectionMatrix().arr);
-		shaderMgr->setMatrix(I4SHADER_MATRIX_VIEW, camera->getViewMatrix().arr);
-		shaderMgr->setVector(I4SHADER_VECTOR_FAR_TOP_RIGHT, camera->getFarTopRight().xyz);
-		*/
+
+		shaderMgr->setRenderTarget(0, rtDiffuse);
+		shaderMgr->setRenderTarget(1, rtNormal);
+		shaderMgr->setRenderTarget(2, rtDepth);
+		
+		cbChangeOnResize_L_point.projection = camera->getProjectionMatrix();
+		cbChangeOnResize_L_point.farTopRight = camera->getFarTopRight();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChangeOnResize_L_point", sizeof(cbChangeOnResize_L_point), &cbChangeOnResize_L_point);
+
+		cbChangeEveryFrame_L_point.view = camera->getViewMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangeEveryFrame_L_point", sizeof(cbChangeOnResize_L_point), &cbChangeOnResize_L_point);
+
 		sphereMesh->bind();
 
 		I4Matrix4x4 matLight;
@@ -521,7 +545,6 @@ namespace i4graphics
 			matLight.makeScale(light.radius, light.radius, light.radius);					
 			matLight.setTranslation(light.position);
 
-			//shaderMgr->setMatrix(I4SHADER_MATRIX_WORLD, matLight.arr);
 			
 			const I4Vector3 lightViewPos =  camera->getViewMatrix().transformCoord(light.position);
 
@@ -538,19 +561,21 @@ namespace i4graphics
 				// 카메라가 라이트의 안쪽에 있으므로 뒤집어서 그려야한다.
 				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_BACK);
 			}
-			/*
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_POSITION, lightViewPos.xyz);
-			shaderMgr->setFloat(I4SHADER_FLOAT_LIGHT_RADIUS, light.radius);
-			shaderMgr->setVector(I4SHADER_VECTOR_LIGHT_COLOR, light.color.xyz);			
-			*/
+
+			cbChangeEachLight_L_point.world = matLight;
+			cbChangeEachLight_L_point.lightPosition = lightViewPos;
+			cbChangeEachLight_L_point.lightRadius = light.radius;
+			cbChangeEachLight_L_point.lightColor = light.color;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, "cbChangeEachLight_L_point", sizeof(cbChangeEachLight_L_point), &cbChangeEachLight_L_point);
+
 			sphereMesh->draw();
 		}
 		sphereMesh->unbind();
-		/*
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, NULL);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_NORMAL, NULL);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DEPTH, NULL);
-		*/
+		
+		shaderMgr->setRenderTarget(0, NULL);
+		shaderMgr->setRenderTarget(1, NULL);
+		shaderMgr->setRenderTarget(2, NULL);
+		
 
 		shaderMgr->end();
 
@@ -566,16 +591,15 @@ namespace i4graphics
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_m.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
-		/*
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, rtDiffuse);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_LIGHT, rtLight);
-		*/
+		
+		shaderMgr->setRenderTarget(0, rtDiffuse);
+		shaderMgr->setRenderTarget(1, rtLight);
+		
 		quadMesh->bind();
 		quadMesh->draw();
 		quadMesh->unbind();
-		/*
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_DIFFUSE, NULL);
-		shaderMgr->setRenderTarget(I4SHADER_RENDER_TARGET_LIGHT, NULL);
-		*/
+		
+		shaderMgr->setRenderTarget(0, NULL);
+		shaderMgr->setRenderTarget(1, NULL);		
 	}
 }
