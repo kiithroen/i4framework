@@ -8,7 +8,6 @@ namespace i4graphics
 {
 	class I4ShaderProgramD3D11 : public I4ShaderProgram
 	{
-		typedef std::map<std::string, ID3D11Buffer*>	ConstantBufferMap;
 	public:
 		I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context);
 		virtual ~I4ShaderProgramD3D11();
@@ -21,6 +20,7 @@ namespace i4graphics
 		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer) override;
 		virtual void	setTexture(unsigned int slot, const I4Texture* tex)	override;
 		virtual void	setRenderTarget(unsigned int slot, const I4RenderTarget* tex) override;
+		virtual void	setSamplerState(unsigned int slot, I4SamplerState state) override;
 
 	private:
 		bool compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut);
@@ -31,7 +31,6 @@ namespace i4graphics
 		ID3D11VertexShader*		vertexShader;
 		ID3D11PixelShader*		pixelShader;
 		ID3D11InputLayout*		vertexLayout;
-		ConstantBufferMap		constantBufferMap;
 	};
 
 }

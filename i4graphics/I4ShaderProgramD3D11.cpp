@@ -7,7 +7,12 @@
 #include <d3dcompiler.h>
 
 namespace i4graphics
-{	
+{
+	
+	typedef std::map<std::string, ID3D11Buffer*>	ConstantBufferMap;
+	ConstantBufferMap		constantBufferMap;
+	ID3D11SamplerState*		sampler[I4SAMPLER_STATE_NUM];
+
 	I4ShaderProgramD3D11::I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
 		: d3dDevice(device)
 		, immediateContext(context)
@@ -97,8 +102,7 @@ namespace i4graphics
 		ID3D11Buffer* constantBuffer = NULL;
 
 		if (itr == constantBufferMap.end())
-		{
-			
+		{			
 			D3D11_BUFFER_DESC bd;
 			ZeroMemory( &bd, sizeof(bd) );
 			bd.Usage = D3D11_USAGE_DEFAULT;
@@ -163,6 +167,50 @@ namespace i4graphics
 		}
 	}
 
+	void I4ShaderProgramD3D11::setSamplerState(unsigned int slot, I4SamplerState state)
+	{
+		if (sampler[state] == NULL)
+		{
+			if (state == I4SAMPLER_STATE_POINT)
+			{
+				D3D11_SAMPLER_DESC sampDescPoint;
+				ZeroMemory( &sampDescPoint, sizeof(sampDescPoint) );
+				sampDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+				sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+				sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+				sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+				sampDescPoint.ComparisonFunc = D3D11_COMPARISON_NEVER;
+				sampDescPoint.MinLOD = 0;
+				sampDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
+				HRESULT hr = d3dDevice->CreateSamplerState(&sampDescPoint, &sampler[I4SAMPLER_STATE_POINT]);
+				if (FAILED(hr))
+				{
+					I4LOG_WARN << L"can't create sampler state point";
+					return;
+				}
+			}
+			else if (state == I4SAMPLER_STATE_LINEAR)
+			{
+				D3D11_SAMPLER_DESC sampDescLinear;
+				ZeroMemory( &sampDescLinear, sizeof(sampDescLinear) );
+				sampDescLinear.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+				sampDescLinear.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+				sampDescLinear.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+				sampDescLinear.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+				sampDescLinear.ComparisonFunc = D3D11_COMPARISON_NEVER;
+				sampDescLinear.MinLOD = 0;
+				sampDescLinear.MaxLOD = D3D11_FLOAT32_MAX;
+				HRESULT hr = d3dDevice->CreateSamplerState(&sampDescLinear, &sampler[I4SAMPLER_STATE_LINEAR]);
+				if (FAILED(hr))
+				{
+					I4LOG_WARN << L"can't create sampler state linear";
+					return;
+				}
+			}
+		}
+
+		immediateContext->PSSetSamplers(slot, 1, &sampler[state]);
+	}
 
 	bool I4ShaderProgramD3D11::compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut)
 	{

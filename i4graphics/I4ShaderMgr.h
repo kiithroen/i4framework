@@ -22,6 +22,7 @@ namespace i4graphics
 		I4SHADER_MASK_TEX_NORMAL			= 1 << 3,
 	};
 
+	
 
 	typedef std::map<std::string, I4ShaderMgr*>		I4ShaderMgrMap;
 
@@ -37,7 +38,7 @@ namespace i4graphics
 		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer);
 		void				setTexture(unsigned int slot, const I4Texture* tex);
 		void				setRenderTarget(unsigned int slot, const I4RenderTarget* tex);
-
+		void				setSamplerState(unsigned int slot, I4SamplerState state);
 	protected:
 		bool				load(const char* fname);
 		I4ShaderProgram*	createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);

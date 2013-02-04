@@ -76,6 +76,7 @@ namespace i4graphics
 		I4Matrix4x4 lightViewProjection;
 		I4Matrix4x4 viewInvLightViewProjection;
 		I4Vector3 lightViewDirection;
+		float		padding;
 		I4Vector3 lightColor;
 	};
 

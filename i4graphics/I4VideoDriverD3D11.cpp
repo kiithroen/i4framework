@@ -200,11 +200,21 @@ namespace i4graphics
 			rasterizerDesc.ScissorEnable = false;
 			rasterizerDesc.MultisampleEnable = false;
 			rasterizerDesc.AntialiasedLineEnable = false;
-			d3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerStates[i]);
+			hr = d3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerStates[i]);
+			if (FAILED(hr))
+				return false;
 		}
 
 		// default
-		blendStates[I4BLEND_MODE_NONE] = NULL;
+		D3D11_BLEND_DESC BlendState;
+		ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+		BlendState.AlphaToCoverageEnable = false;
+		BlendState.IndependentBlendEnable = false;
+		BlendState.RenderTarget[0].BlendEnable = false;
+		BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		hr = d3dDevice->CreateBlendState(&BlendState, &blendStates[I4BLEND_MODE_NONE]);
+		if (FAILED(hr))
+			return false;
 
 		// alpha
 		D3D11_BLEND_DESC alphaBlendDesc = {0};
@@ -218,12 +228,14 @@ namespace i4graphics
 		alphaBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		alphaBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		alphaBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		d3dDevice->CreateBlendState(&alphaBlendDesc, &blendStates[I4BLEND_MODE_ALPHA]);
+		hr = d3dDevice->CreateBlendState(&alphaBlendDesc, &blendStates[I4BLEND_MODE_ALPHA]);
+		if (FAILED(hr))
+			return false;
 
 		// add
 		D3D11_BLEND_DESC addBlendDesc = {0};
 		addBlendDesc.AlphaToCoverageEnable = false;
-		alphaBlendDesc.IndependentBlendEnable = false;
+		addBlendDesc.IndependentBlendEnable = false;
 		addBlendDesc.RenderTarget[0].BlendEnable = true;
 		addBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 		addBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
@@ -232,7 +244,9 @@ namespace i4graphics
 		addBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 		addBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		addBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		d3dDevice->CreateBlendState(&addBlendDesc, &blendStates[I4BLEND_MODE_ADD]);
+		hr = d3dDevice->CreateBlendState(&addBlendDesc, &blendStates[I4BLEND_MODE_ADD]);
+		if (FAILED(hr))
+			return false;
 
 		setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);		
 		setBlendMode(I4BLEND_MODE_NONE);
@@ -337,8 +351,8 @@ namespace i4graphics
 		if (curBlendMode != mode)
 		{
 			I4VideoDriver::setBlendMode(mode);
-
-			immediateContext->OMSetBlendState(blendStates[mode], NULL, 0xffffffff);
+			float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			immediateContext->OMSetBlendState(blendStates[mode], blendFactor, 0xffffffff);
 		}
 	}
 

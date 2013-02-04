@@ -295,6 +295,7 @@ namespace i4graphics
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_g.fx");
 		//shaderMgr->begin(I4SHADER_MASK_TEX_DIFFUSE|I4SHADER_MASK_TEX_SPECULAR|I4SHADER_MASK_TEX_NORMAL, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
+		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 
 		cbChageOnResize_G.projection = camera->getProjectionMatrix(); 
 		cbChageOnResize_G.farDistance = camera->getZFar();
@@ -413,14 +414,14 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		videoDriver->setRenderTarget(1, &rtLight, false);
+		videoDriver->setRenderTarget(1, &rtLight, NULL);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
 		cullAndSortDirectionalLight(camera);
 		renderDirectionalLight(camera);
 
-		cullAndSortPointLight(camera);
-		renderPointLight(camera);
+//		cullAndSortPointLight(camera);
+//		renderPointLight(camera);
 	}
 
 	void I4DefferedRenderer::cullAndSortDirectionalLight(I4Camera* camera)
@@ -446,13 +447,15 @@ namespace i4graphics
 
 		shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_directional.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
+		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
 
 		shaderMgr->setRenderTarget(0, rtDiffuse);
 		shaderMgr->setRenderTarget(1, rtNormal);
 		shaderMgr->setRenderTarget(2, rtDepth);
 
 		cbChangeOnResize_L_directional.farTopRight = camera->getFarTopRight();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChangeOnResize_L_directional", sizeof(cbChangeOnResize_L_directional), &cbChangeOnResize_L_directional);
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, "cbChangeOnResize_L_directional", sizeof(cbChangeOnResize_L_directional), &cbChangeOnResize_L_directional);
 
 		quadMesh->bind();
 
@@ -482,7 +485,7 @@ namespace i4graphics
 			cbChangeEachLight_L_directional.viewInvLightViewProjection = matViewInvLightViewProj;
 			cbChangeEachLight_L_directional.lightViewDirection = lightViewDir;
 			cbChangeEachLight_L_directional.lightColor = light.color;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangeEachLight_L_directional", sizeof(cbChangeEachLight_L_directional), &cbChangeEachLight_L_directional);
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, "cbChangeEachLight_L_directional", sizeof(cbChangeEachLight_L_directional), &cbChangeEachLight_L_directional);
 
 			quadMesh->draw();
 		}
@@ -519,7 +522,8 @@ namespace i4graphics
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_point.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
-		
+		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
 
 		shaderMgr->setRenderTarget(0, rtDiffuse);
 		shaderMgr->setRenderTarget(1, rtNormal);
@@ -528,9 +532,11 @@ namespace i4graphics
 		cbChangeOnResize_L_point.projection = camera->getProjectionMatrix();
 		cbChangeOnResize_L_point.farTopRight = camera->getFarTopRight();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChangeOnResize_L_point", sizeof(cbChangeOnResize_L_point), &cbChangeOnResize_L_point);
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, "cbChangeOnResize_L_point", sizeof(cbChangeOnResize_L_point), &cbChangeOnResize_L_point);
 
 		cbChangeEveryFrame_L_point.view = camera->getViewMatrix();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangeEveryFrame_L_point", sizeof(cbChangeOnResize_L_point), &cbChangeOnResize_L_point);
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, "cbChangeEveryFrame_L_point", sizeof(cbChangeOnResize_L_point), &cbChangeOnResize_L_point);
 
 		sphereMesh->bind();
 
@@ -567,6 +573,7 @@ namespace i4graphics
 			cbChangeEachLight_L_point.lightRadius = light.radius;
 			cbChangeEachLight_L_point.lightColor = light.color;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, "cbChangeEachLight_L_point", sizeof(cbChangeEachLight_L_point), &cbChangeEachLight_L_point);
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 2, "cbChangeEachLight_L_point", sizeof(cbChangeEachLight_L_point), &cbChangeEachLight_L_point);
 
 			sphereMesh->draw();
 		}
@@ -591,7 +598,8 @@ namespace i4graphics
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_m.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
-		
+		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+
 		shaderMgr->setRenderTarget(0, rtDiffuse);
 		shaderMgr->setRenderTarget(1, rtLight);
 		

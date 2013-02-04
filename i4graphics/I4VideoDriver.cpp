@@ -80,11 +80,11 @@ namespace i4graphics
 		curRasterizerMode = mode;
 	}
 
-	 void I4VideoDriver::setBlendMode(I4BlendMode mode)
-	 {
-		 curBlendMode = mode;
-	 }
-
+	void I4VideoDriver::setBlendMode(I4BlendMode mode)
+	{
+		curBlendMode = mode;
+	}
+	
 	I4ShaderProgram* I4VideoDriver::createShaderProgram()
 	{
 		return new I4ShaderProgram;

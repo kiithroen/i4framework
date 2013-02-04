@@ -15,6 +15,7 @@ namespace i4graphics
 
 	class I4Texture;
 	class I4RenderTarget;
+	enum I4SamplerState;
 
 	class I4ShaderProgram
 	{
@@ -30,6 +31,7 @@ namespace i4graphics
 		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer)		{}
 		virtual void	setTexture(unsigned int slot, const I4Texture* tex)				{}
 		virtual void	setRenderTarget(unsigned int slot, const I4RenderTarget* tex)	{}
+		virtual void	setSamplerState(unsigned int slot, I4SamplerState state)		{}
 
 	};
 }

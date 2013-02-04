@@ -135,7 +135,22 @@ PS_OUTPUT PS( PS_INPUT	input	)
 
 	return output;
 }
+/*
 
+float4 PS( PS_INPUT	input	) : SV_Target
+{
+
+		float3 viewNormal = input.viewNormal;
+		
+		float4 normal;
+		normal.rgb = 0.5f*(normalize(viewNormal) + 1.0f);
+		normal.a = specularPower;
+
+		//output.depth = input.depth;
+
+		return normal;
+}
+*/
 //--------------------------------------------------------------------------------------
 technique10	Render
 {

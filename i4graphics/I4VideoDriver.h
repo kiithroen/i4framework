@@ -38,6 +38,15 @@ namespace i4graphics
 		I4BLEND_MODE_NUM,
 	};
 
+
+	enum I4SamplerState
+	{		
+		I4SAMPLER_STATE_INVALID		= -1,
+		I4SAMPLER_STATE_POINT		= 0,
+		I4SAMPLER_STATE_LINEAR,
+		I4SAMPLER_STATE_NUM,
+	};
+
 	class I4GRAPHICS_API I4VideoDriver
 	{
 	public:

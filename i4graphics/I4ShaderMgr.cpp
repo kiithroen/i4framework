@@ -120,6 +120,14 @@ namespace i4graphics
 		}
 	}
 
+	void I4ShaderMgr::setSamplerState(unsigned int slot, I4SamplerState state)
+	{
+		if (activeShaderProgram)
+		{
+			activeShaderProgram->setSamplerState(slot, state);
+		}
+	}
+
 	I4ShaderProgram* I4ShaderMgr::createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
 		std::string finalShaderCode = "";
