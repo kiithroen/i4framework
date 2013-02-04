@@ -81,9 +81,14 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBChangeOnResize_L_point
+	struct CBChangeOnResize_L_point_VS
 	{
 		I4Matrix4x4 projection;
+	};
+
+	__declspec(align(16))
+	struct CBChangeOnResize_L_point_PS
+	{
 		I4Vector3 farTopRight;
 	};
 	
@@ -94,9 +99,14 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBChangeEachLight_L_point
+	struct CBChangeEachLight_L_point_VS
 	{
 		I4Matrix4x4 world;
+	};
+
+	__declspec(align(16))
+	struct CBChangeEachLight_L_point_PS
+	{
 		I4Vector3	lightPosition;
 		float		lightRadius;
 		I4Vector3	lightColor;
@@ -180,9 +190,11 @@ namespace i4graphics
 		CBChangeOnResize_L_directional	cbChangeOnResize_L_directional;
 		CBChangeEachLight_L_directional	cbChangeEachLight_L_directional;
 
-		CBChangeOnResize_L_point		cbChangeOnResize_L_point;
+		CBChangeOnResize_L_point_VS		cbChangeOnResize_L_point_VS;
+		CBChangeOnResize_L_point_PS		cbChangeOnResize_L_point_PS;
 		CBChangeEveryFrame_L_point		cbChangeEveryFrame_L_point;
-		CBChangeEachLight_L_point		cbChangeEachLight_L_point;
+		CBChangeEachLight_L_point_VS	cbChangeEachLight_L_point_VS;
+		CBChangeEachLight_L_point_PS	cbChangeEachLight_L_point_PS;
 
 		ConstantBuffer cb;
 	};

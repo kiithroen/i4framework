@@ -350,7 +350,7 @@ void CI4MercyToolView::commitToRenderer(float deltaTime)
 	I4DirectionalLight directionalLight[2] =
 	{
 		{ I4Vector3(-1.0f, -1.0f, 1.0f), I4Vector3(1.0f, 1.0f, 1.0f) },
-		{ I4Vector3(1.0f, 0.3f, 0.3f), I4Vector3(1.0f, 1.0f, 1.0f) },
+		{ I4Vector3(1.0f, 0.3f, 0.3f), I4Vector3(1.0f, 0.0f, 0.0f) },
 	};
 
 	for (int i = 0; i < _countof(directionalLight); ++i)
