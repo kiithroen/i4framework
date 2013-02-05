@@ -2,8 +2,6 @@ Texture2D texRTDiffuse : register(t0);
 Texture2D texRTNormal : register(t1);
 Texture2D texRTDepth : register(t2);
 
-
-
 SamplerState samLinear : register(s0)
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -32,7 +30,6 @@ cbuffer cbChangeEachLight_L_directional : register(b1)
 	float3 lightColor;
 };
 
-//--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
 	float3 pos		:	POSITION;
@@ -71,8 +68,10 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 lightVector = -normalize(lightViewDirection);
 
 	// ------ lambert -----
-//	float NdL = max(0, dot(normal, lightVector));
-//	float3 diffuseLight = NdL*lightColor.rgb;
+	/*
+	float NdL = max(0, dot(normal, lightVector));
+	float3 diffuseLight = NdL*lightColor.rgb;
+	*/
 
 	// ------ half lambert -----
 	float NdL = dot(normal, lightVector);
@@ -83,15 +82,4 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float specularLight = specularIntensity*NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
 	return float4(diffuseLight.rgb, specularLight);
-}
-
-//--------------------------------------------------------------------------------------
-technique10	Render
-{
-	pass P0
-	{
-		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
-		SetGeometryShader( NULL	);
-		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-	}
 }

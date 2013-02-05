@@ -95,14 +95,3 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	return attenuation*float4(diffuseLight.rgb, specularLight);
 }
-
-//--------------------------------------------------------------------------------------
-technique10	Render
-{
-	pass P0
-	{
-		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
-		SetGeometryShader( NULL	);
-		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-	}
-}

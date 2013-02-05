@@ -8,7 +8,6 @@ SamplerState samLinear : register(s0)
     AddressV = CLAMP;
 };
 
-//--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
 	float3 pos		:	POSITION;
@@ -40,15 +39,4 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	float3 finalColor = diffuseColor*diffuseLight + specularLight;
 	return float4(finalColor, 1);
-}
-
-//--------------------------------------------------------------------------------------
-technique10	Render
-{
-	pass P0
-	{
-		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
-		SetGeometryShader( NULL	);
-		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-	}
 }

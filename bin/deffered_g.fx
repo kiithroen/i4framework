@@ -38,7 +38,6 @@ SamplerState samLinear : register(s0)
     AddressV = Wrap;
 };
 
-//--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
 	float3 pos		:	POSITION;
@@ -134,30 +133,4 @@ PS_OUTPUT PS( PS_INPUT	input	)
 	output.depth = input.depth;
 
 	return output;
-}
-/*
-
-float4 PS( PS_INPUT	input	) : SV_Target
-{
-
-		float3 viewNormal = input.viewNormal;
-		
-		float4 normal;
-		normal.rgb = 0.5f*(normalize(viewNormal) + 1.0f);
-		normal.a = specularPower;
-
-		//output.depth = input.depth;
-
-		return normal;
-}
-*/
-//--------------------------------------------------------------------------------------
-technique10	Render
-{
-	pass P0
-	{
-		SetVertexShader( CompileShader(	vs_4_0,	VS() ) );
-		SetGeometryShader( NULL	);
-		SetPixelShader(	CompileShader( ps_4_0, PS()	)	);
-	}
 }
