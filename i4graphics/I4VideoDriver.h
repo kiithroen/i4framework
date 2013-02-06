@@ -13,7 +13,7 @@ namespace i4graphics
 	
 	enum I4VideoDriverMode
 	{
-		I4VIDEO_DRIVER_MODE_nullptr	= 0,
+		I4VIDEO_DRIVER_MODE_NULL	= 0,
 		I4VIDEO_DRIVER_MODE_D3D11,
 	};
 
@@ -52,7 +52,7 @@ namespace i4graphics
 	public:
 		virtual ~I4VideoDriver();
 
-		virtual I4VideoDriverMode	getVideoDriverMode() const	{ return I4VIDEO_DRIVER_MODE_nullptr; }
+		virtual I4VideoDriverMode	getVideoDriverMode() const	{ return I4VIDEO_DRIVER_MODE_NULL; }
 
 		virtual bool				initialize(void* windowID, unsigned int width, unsigned int height);
 

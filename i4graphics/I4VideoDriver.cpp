@@ -120,7 +120,7 @@ namespace i4graphics
 
 		switch (mode)
 		{
-		case I4VIDEO_DRIVER_MODE_nullptr:
+		case I4VIDEO_DRIVER_MODE_NULL:
 			videoDriver = new I4VideoDriver;
 			break;
 		case I4VIDEO_DRIVER_MODE_D3D11:

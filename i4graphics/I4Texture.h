@@ -2,6 +2,7 @@
 
 #include "i4graphics.h"
 #include "I4Hash.h"
+using namespace i4core;
 
 namespace i4graphics
 {

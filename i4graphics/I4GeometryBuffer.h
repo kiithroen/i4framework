@@ -5,6 +5,7 @@
 #include "I4Vector3.h"
 #include "I4Vector4.h"
 #include "I4Format.h"
+using namespace i4core;
 
 namespace i4graphics
 {

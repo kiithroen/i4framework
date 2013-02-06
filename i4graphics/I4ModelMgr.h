@@ -7,6 +7,13 @@
 #include "I4AABB.h"
 #include "I4Hash.h"
 
+namespace i4core
+{
+	class I4XmlData;
+}
+
+using namespace i4core;
+
 namespace i4graphics
 {
 	struct ParsedMeshData

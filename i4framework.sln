@@ -9,6 +9,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "i4graphics", "i4graphics\i4
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "i4minigame", "i4minigame\i4minigame.vcxproj", "{073664ED-8509-499A-BFCF-7C36D924BC3B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7F0A03B8-CD7E-4F3B-B0CB-552781E0B0D2} = {7F0A03B8-CD7E-4F3B-B0CB-552781E0B0D2}
+		{8E9A4BDF-F1AB-40BD-A290-8440A8837B42} = {8E9A4BDF-F1AB-40BD-A290-8440A8837B42}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,22 +7,16 @@ namespace i4core
 	class I4CORE_API I4StopWatch
 	{
 	public:
-		void reset()
-		{
-			QueryPerformanceCounter(&startTime);
-		}
+		I4StopWatch();
 
-		float getElapsedTime()
-		{
-			QueryPerformanceCounter(&endTime);
-
-			return (float)((double)(endTime.QuadPart - startTime.QuadPart)/ticksPerSec);
-		}
+		void reset();
+		float getElapsedTime();
 		
 	private:
+#ifdef _WIN32
 		LARGE_INTEGER		startTime;
 		LARGE_INTEGER		endTime;
-
+#endif
 	public:		
 		static void initialize();
 

@@ -1,5 +1,6 @@
 #include "I4RenderTargetD3D11.h"
 #include "I4Log.h"
+using namespace i4core;
 
 namespace i4graphics
 {

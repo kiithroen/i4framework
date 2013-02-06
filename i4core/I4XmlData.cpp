@@ -68,7 +68,7 @@ namespace i4core
 		}
 		catch (...)
 		{
-			I4LOG_WARN << "unknown error\n";
+			I4LOG_WARN << "unknown error";
 			return false;
 		}
 
@@ -77,7 +77,7 @@ namespace i4core
 
 	bool I4XmlData::selectNodeByPath(const char* path)
 	{
-		I4XmlNode* node = nullptr;
+		I4XmlNode* node = NULL;
 		getNode(node, path);
 		if (node == nullptr)
 			return false;

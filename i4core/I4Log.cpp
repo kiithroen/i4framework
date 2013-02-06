@@ -63,6 +63,8 @@ namespace i4core
 		{
 			ofs.open(fname);
 		}
+
+		I4LOG_INFO << "log initialized.";
 	}
 
 	void I4Log::finalize()

@@ -3,11 +3,11 @@
 #include "i4graphics.h"
 #include "I4AABB.h"
 #include "I4Sphere.h"
-
 namespace i4core
 {	
 	class I4Camera;
 }
+using namespace i4core;
 
 namespace i4graphics
 {
@@ -43,19 +43,20 @@ namespace i4graphics
 		I4Vector3	color;
 	};
 
-	#pragma pack(push, 16)	// 상수버퍼는 16바이트 정렬이 되어있어야한다.
-
+	__declspec(align(16))
 	struct CBChageOnResize_G
 	{
 		I4Matrix4x4 projection;
 		float farDistance;
 	};
 
+	__declspec(align(16))
 	struct CBChangesEveryFrame_G
 	{
 		I4Matrix4x4 view;
 	};
 
+	__declspec(align(16))
 	struct CBChangesEachMeshInstance_G
 	{
 		I4Matrix4x4 world;
@@ -63,11 +64,13 @@ namespace i4graphics
 		float specularPower;
 	};
 
+	__declspec(align(16))
 	struct CBChangeOnResize_L_directional
 	{
 		I4Vector3 farTopRight;
 	};
 
+	__declspec(align(16))
 	struct CBChangeEachLight_L_directional
 	{
 		I4Matrix4x4 lightViewProjection;
@@ -77,26 +80,31 @@ namespace i4graphics
 		I4Vector3 lightColor;
 	};
 
+	__declspec(align(16))
 	struct CBChangeOnResize_L_point_VS
 	{
 		I4Matrix4x4 projection;
 	};
 
+	__declspec(align(16))
 	struct CBChangeOnResize_L_point_PS
 	{
 		I4Vector3 farTopRight;
 	};
 	
+	__declspec(align(16))
 	struct CBChangeEveryFrame_L_point
 	{
 		I4Matrix4x4 view;
 	};
 
+	__declspec(align(16))
 	struct CBChangeEachLight_L_point_VS
 	{
 		I4Matrix4x4 world;
 	};
 
+	__declspec(align(16))
 	struct CBChangeEachLight_L_point_PS
 	{
 		I4Vector3	lightPosition;
@@ -104,15 +112,14 @@ namespace i4graphics
 		I4Vector3	lightColor;
 	};
 
+	__declspec(align(16))
 	struct ConstantBuffer
 	{
 		I4Matrix4x4 World;
 		I4Matrix4x4 View;
 		I4Matrix4x4 Projection;
 	};
-
-	#pragma pack(pop)
-
+	
 	class I4VertexBuffer;
 
 	class I4GRAPHICS_API I4DefferedRenderer

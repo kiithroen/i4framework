@@ -77,7 +77,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <Optimization>MinSpace</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;I4CORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -107,6 +107,13 @@
     <ClInclude Include="I4AABB.h" />
     <ClInclude Include="I4Camera.h" />
     <ClInclude Include="i4core.h" />
+    <ClInclude Include="I4FrameCallback.h" />
+    <ClInclude Include="I4FrameState.h" />
+    <ClInclude Include="I4FrameStateMgr.h" />
+    <ClInclude Include="I4FrameTimer.h" />
+    <ClInclude Include="I4FrameTimerWin.h" />
+    <ClInclude Include="I4Framework.h" />
+    <ClInclude Include="I4FrameworkWin.h" />
     <ClInclude Include="I4Frustum.h" />
     <ClInclude Include="I4Hash.h" />
     <ClInclude Include="I4Log.h" />
@@ -137,6 +144,11 @@
     </ClCompile>
     <ClCompile Include="I4Camera.cpp" />
     <ClCompile Include="i4core.cpp" />
+    <ClCompile Include="I4FrameStateMgr.cpp" />
+    <ClCompile Include="I4FrameTimer.cpp" />
+    <ClCompile Include="I4FrameTimerWin.cpp" />
+    <ClCompile Include="I4Framework.cpp" />
+    <ClCompile Include="I4FrameworkWin.cpp" />
     <ClCompile Include="I4Log.cpp" />
     <ClCompile Include="I4Profile.cpp" />
     <ClCompile Include="I4ProfileWriterLog.cpp" />

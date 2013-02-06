@@ -30,12 +30,24 @@
     <ClInclude Include="i4minigame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="I4MiniGameFrameCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="I4MiniGameState_Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="i4minigame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="I4MiniGameFrameCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="I4MiniGameState_Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
