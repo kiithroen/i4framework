@@ -67,31 +67,31 @@ namespace i4graphics
 		}
 	
 		// shader mgr
-		if (I4ShaderMgr::addShaderMgr("deffered_g.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deffered_g.fx") == false)
 		{
 			I4LOG_ERROR << L"shader deffered_g add failed.";
 			return false;
 		}
 	
-		if (I4ShaderMgr::addShaderMgr("deffered_l_directional.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deffered_l_directional.fx") == false)
 		{
 			I4LOG_ERROR << L"shader deffered_l_directional add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("deffered_l_point.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deffered_l_point.fx") == false)
 		{
 			I4LOG_ERROR << L"shader deffered_l_point add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("deffered_m.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deffered_m.fx") == false)
 		{
 			I4LOG_ERROR << L"shader deffered_m add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("default.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/default.fx") == false)
 		{
 			I4LOG_ERROR << L"shader default add failed.";
 			return false;
@@ -274,14 +274,11 @@ namespace i4graphics
 
 		vecCulledMeshInstnaceRenderItem.clear();
 
-		I4MeshInstnaceRenderItemVector::iterator itrScene = vecSceneMeshInstnaceRenderItem.begin();
-		const I4MeshInstnaceRenderItemVector::iterator itrSceneEnd = vecSceneMeshInstnaceRenderItem.end();
-
-		for (; itrScene != itrSceneEnd; ++itrScene)
+		for (auto &itr : vecSceneMeshInstnaceRenderItem)
 		{
-			if (camera->isVisibleAABB(itrScene->worldAABB) == true)
+			if (camera->isVisibleAABB(itr.worldAABB) == true)
 			{
-				vecCulledMeshInstnaceRenderItem.push_back(*itrScene);
+				vecCulledMeshInstnaceRenderItem.push_back(itr);
 			}
 		}
 
@@ -292,7 +289,7 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_g.fx");
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_g.fx");
 		//shaderMgr->begin(I4SHADER_MASK_TEX_DIFFUSE|I4SHADER_MASK_TEX_SPECULAR|I4SHADER_MASK_TEX_NORMAL, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
@@ -309,11 +306,9 @@ namespace i4graphics
 		I4StaticMesh* prevMesh = NULL;
 		I4StaticMesh* curMesh = NULL;
 
-		I4MeshInstnaceRenderItemVector::iterator itrCulled = vecCulledMeshInstnaceRenderItem.begin();
-		const I4MeshInstnaceRenderItemVector::iterator itrCulledEnd = vecCulledMeshInstnaceRenderItem.end();
-		for (; itrCulled != itrCulledEnd; ++itrCulled)
+		for (auto &itr : vecCulledMeshInstnaceRenderItem)
 		{
-			curMeshInstance = itrCulled->meshInstance;					
+			curMeshInstance = itr.meshInstance;					
 			bool isChangedDiffuseMap = false;
 			bool isChangedSpecularMap = false;
 			bool isChangedNormalMap = false;
@@ -392,7 +387,7 @@ namespace i4graphics
 
 				cbChangesEachMeshInstance_G.specularIntensity = curMeshInstance->specularInensity; 
 				cbChangesEachMeshInstance_G.specularPower = curMeshInstance->specularPower;
-				cbChangesEachMeshInstance_G.world = itrCulled->worldTM;
+				cbChangesEachMeshInstance_G.world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, "cbChangesEachMeshInstance_G", sizeof(cbChangesEachMeshInstance_G), &cbChangesEachMeshInstance_G);
 
 				curMesh->draw();
@@ -431,13 +426,9 @@ namespace i4graphics
 		// 일단 그냥 옮겨 담음. 현재로서는 특별한 정책이 없지만 추후에 너무 많은 라이트가 있으면 잘라낸다던가 병합한다던가...
 
 		vecCulledDirectionalLight.clear();
-
-		I4DirectionalLightVector::iterator itrScene = vecSceneDirectionalLight.begin();
-		const I4DirectionalLightVector::iterator itrSceneEnd = vecSceneDirectionalLight.end();
-
-		for (; itrScene != itrSceneEnd; ++itrScene)
+		for (auto &itr : vecSceneDirectionalLight)
 		{
-			vecCulledDirectionalLight.push_back(*itrScene);
+			vecCulledDirectionalLight.push_back(itr);
 		}
 	}
 
@@ -445,7 +436,7 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_directional.fx");
+		shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_l_directional.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
@@ -459,11 +450,9 @@ namespace i4graphics
 
 		quadMesh->bind();
 
-		I4DirectionalLightVector::iterator itrCulled = vecCulledDirectionalLight.begin();
-		const I4DirectionalLightVector::iterator itrCulledEnd = vecCulledDirectionalLight.end();
-		for ( ; itrCulled != itrCulledEnd; ++itrCulled)
+		for (auto &itr : vecCulledDirectionalLight)
 		{
-			const I4DirectionalLight& light = *itrCulled;
+			const I4DirectionalLight& light = itr;
 
 			//-----------
 			I4Matrix4x4 matLightProj;
@@ -503,15 +492,12 @@ namespace i4graphics
 		PROFILE_THISFUNC;
 
 		vecCulledPointLight.clear();
-
-		I4PointLightVector::iterator itrScene = vecScenePointLight.begin();
-		const I4PointLightVector::iterator itrSceneEnd = vecScenePointLight.end();
-
-		for (; itrScene != itrSceneEnd; ++itrScene)
+		
+		for (auto &itr : vecScenePointLight)
 		{
-			if (camera->isVisibleSphere(itrScene->position, itrScene->radius) == true)
+			if (camera->isVisibleSphere(itr.position, itr.radius) == true)
 			{
-				vecCulledPointLight.push_back(*itrScene);
+				vecCulledPointLight.push_back(itr);
 			}
 		}
 	}
@@ -520,7 +506,7 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_l_point.fx");
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_l_point.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
@@ -542,11 +528,9 @@ namespace i4graphics
 
 		I4Matrix4x4 matLight;
 
-		I4PointLightVector::iterator itrCulled = vecCulledPointLight.begin();
-		const I4PointLightVector::iterator itrCulledEnd = vecCulledPointLight.end();
-		for ( ; itrCulled != itrCulledEnd; ++itrCulled)
+		for (auto &itr : vecCulledPointLight)
 		{
-			const I4PointLight& light = *itrCulled;
+			const I4PointLight& light = itr;
 
 			matLight.makeScale(light.radius, light.radius, light.radius);
 			matLight.setTranslation(light.position);
@@ -598,7 +582,7 @@ namespace i4graphics
 		videoDriver->resetRenderTarget();
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("deffered_m.fx");
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_m.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 

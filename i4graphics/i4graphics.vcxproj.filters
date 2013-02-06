@@ -7,6 +7,9 @@
     <Filter Include="DirectXTex">
       <UniqueIdentifier>{2ed0821f-bb8a-4ad9-9969-4c7109676765}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{0c32637f-028b-4be2-91b6-69cf8c7dea34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -58,5 +61,22 @@
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
       <Filter>DirectXTex</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\bin\shader\default.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\shader\deffered_g.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\shader\deffered_l_directional.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\shader\deffered_l_point.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\shader\deffered_m.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
