@@ -43,20 +43,19 @@ namespace i4graphics
 		I4Vector3	color;
 	};
 
-	__declspec(align(16))
+	#pragma pack(push, 16)	// 상수버퍼는 16바이트 정렬이 되어있어야한다.
+
 	struct CBChageOnResize_G
 	{
 		I4Matrix4x4 projection;
 		float farDistance;
 	};
 
-	__declspec(align(16))
 	struct CBChangesEveryFrame_G
 	{
 		I4Matrix4x4 view;
 	};
 
-	__declspec(align(16))
 	struct CBChangesEachMeshInstance_G
 	{
 		I4Matrix4x4 world;
@@ -64,47 +63,40 @@ namespace i4graphics
 		float specularPower;
 	};
 
-	__declspec(align(16))
 	struct CBChangeOnResize_L_directional
 	{
 		I4Vector3 farTopRight;
 	};
 
-	__declspec(align(16))
 	struct CBChangeEachLight_L_directional
 	{
 		I4Matrix4x4 lightViewProjection;
 		I4Matrix4x4 viewInvLightViewProjection;
 		I4Vector3 lightViewDirection;
-		float		padding;
+		float		padding;	// 4바이트 얼라인을 안하니 셰이더에 넘어간 데이타가 꼬이는 현상이 생겼다.
 		I4Vector3 lightColor;
 	};
 
-	__declspec(align(16))
 	struct CBChangeOnResize_L_point_VS
 	{
 		I4Matrix4x4 projection;
 	};
 
-	__declspec(align(16))
 	struct CBChangeOnResize_L_point_PS
 	{
 		I4Vector3 farTopRight;
 	};
 	
-	__declspec(align(16))
 	struct CBChangeEveryFrame_L_point
 	{
 		I4Matrix4x4 view;
 	};
 
-	__declspec(align(16))
 	struct CBChangeEachLight_L_point_VS
 	{
 		I4Matrix4x4 world;
 	};
 
-	__declspec(align(16))
 	struct CBChangeEachLight_L_point_PS
 	{
 		I4Vector3	lightPosition;
@@ -112,13 +104,14 @@ namespace i4graphics
 		I4Vector3	lightColor;
 	};
 
-	__declspec(align(16))
 	struct ConstantBuffer
 	{
 		I4Matrix4x4 World;
 		I4Matrix4x4 View;
 		I4Matrix4x4 Projection;
 	};
+
+	#pragma pack(pop)
 
 	class I4VertexBuffer;
 
