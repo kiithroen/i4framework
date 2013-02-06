@@ -89,13 +89,13 @@ bool I4MiniGameFrameCallback::onUpdate(float deltaSec)
 	if (frameStateMgr->onUpdate(deltaSec) == false)
 		return false;
 
+	updateCamera(deltaSec);
 
 	return true;
 }
 
 bool I4MiniGameFrameCallback::onRender(float deltaSec)
 {
-	updateCamera(deltaSec);
 	commitToRenderer(deltaSec);
 
 	renderer->preRender(camera);
