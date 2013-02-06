@@ -5,9 +5,9 @@ namespace i4graphics
 {
 	I4RenderTargetD3D11::I4RenderTargetD3D11(ID3D11Device* d3dDevice)
 		: d3dDevice(d3dDevice)
-		, renderTargetView(NULL)
-		, depthStencilView(NULL)
-		, shaderResourceView(NULL)
+		, renderTargetView(nullptr)
+		, depthStencilView(nullptr)
+		, shaderResourceView(nullptr)
 	{	  	
 	}
 
@@ -31,7 +31,7 @@ namespace i4graphics
 		texDesc.BindFlags =  D3D11_BIND_RENDER_TARGET|D3D11_BIND_SHADER_RESOURCE;
 		texDesc.CPUAccessFlags = 0;
 		texDesc.MiscFlags = 0;
-		if (FAILED(d3dDevice->CreateTexture2D(&texDesc, NULL, &renderTargetTex)))
+		if (FAILED(d3dDevice->CreateTexture2D(&texDesc, nullptr, &renderTargetTex)))
 		{
 			I4LOG_WARN << L"render target texture create failed.";
 			return false;
@@ -81,7 +81,7 @@ namespace i4graphics
 		texDesc.BindFlags =  D3D11_BIND_DEPTH_STENCIL|D3D11_BIND_SHADER_RESOURCE;
 		texDesc.CPUAccessFlags = 0;
 		texDesc.MiscFlags = 0;
-		if (FAILED(d3dDevice->CreateTexture2D(&texDesc, NULL, &renderTargetTex)))
+		if (FAILED(d3dDevice->CreateTexture2D(&texDesc, nullptr, &renderTargetTex)))
 		{
 			I4LOG_WARN << L"render target texture create failed.";
 			return false;
@@ -116,25 +116,25 @@ namespace i4graphics
 		if (shaderResourceView)
 		{
 			shaderResourceView->Release();
-			shaderResourceView = NULL;
+			shaderResourceView = nullptr;
 		}
 
 		if (depthStencilView)
 		{
 			depthStencilView->Release();
-			depthStencilView = NULL;
+			depthStencilView = nullptr;
 		}
 
 		if (renderTargetView)
 		{
 			renderTargetView->Release();
-			renderTargetView = NULL;
+			renderTargetView = nullptr;
 		}
 
 		if (renderTargetTex)
 		{
 			renderTargetTex->Release();
-			renderTargetTex = NULL;
+			renderTargetTex = nullptr;
 		}
 	}
 

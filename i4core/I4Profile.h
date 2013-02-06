@@ -105,7 +105,7 @@ namespace i4core
 
 		bool isCurChildValid()
 		{
-			return (curChildNode != NULL);
+			return (curChildNode != nullptr);
 		}
 
 		void enterChild(int index)
@@ -120,7 +120,7 @@ namespace i4core
 			}
 
 			// 찾은 자식이 있으면 자식노드로 들어간다.
-			if (curChildNode != NULL)
+			if (curChildNode != nullptr)
 			{
 				curNode = curChildNode;
 				curChildNode = curNode->getChild();
@@ -129,7 +129,7 @@ namespace i4core
 
 		void enterParent()
 		{
-			if (curNode->getParent() != NULL)
+			if (curNode->getParent() != nullptr)
 			{
 				curNode = curNode->getParent();
 			}

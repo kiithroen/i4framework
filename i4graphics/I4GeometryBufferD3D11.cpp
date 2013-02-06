@@ -15,7 +15,7 @@ namespace i4graphics
 	I4VertexBufferD3D11::I4VertexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
 		: d3dDevice(device)
 		, immediateContext(context)
-		, vertexBuffer(NULL)
+		, vertexBuffer(nullptr)
 	{
 	}
 
@@ -29,7 +29,7 @@ namespace i4graphics
 		if (I4VertexBuffer::create(count, stride, vertices) == false)
 			return false;
 
-		if (vertices != NULL)
+		if (vertices != nullptr)
 		{
 			D3D11_BUFFER_DESC bd;
 			bd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -55,7 +55,7 @@ namespace i4graphics
 			bd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
 			bd.MiscFlags = 0;
 
-			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, NULL, &vertexBuffer)))
+			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, nullptr, &vertexBuffer)))
 			{
 				return true;
 			}
@@ -123,7 +123,7 @@ namespace i4graphics
 	I4IndexBufferD3D11::I4IndexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
 		: d3dDevice(device)
 		, immediateContext(context)
-		, indexBuffer(NULL)
+		, indexBuffer(nullptr)
 	{
 
 	}
@@ -138,7 +138,7 @@ namespace i4graphics
 		if (I4IndexBuffer::create(count, stride, indices) == false)
 			return false;
 
-		if (indices != NULL)
+		if (indices != nullptr)
 		{
 			D3D11_BUFFER_DESC bd;
 			bd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -167,7 +167,7 @@ namespace i4graphics
 			D3D11_SUBRESOURCE_DATA InitData;
 			InitData.pSysMem = indices;
 
-			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, NULL, &indexBuffer)))
+			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, nullptr, &indexBuffer)))
 			{
 				return true;
 			}
@@ -182,7 +182,7 @@ namespace i4graphics
 		if (indexBuffer)
 		{
 			indexBuffer->Release();
-			indexBuffer = NULL;
+			indexBuffer = nullptr;
 		}
 	}
 

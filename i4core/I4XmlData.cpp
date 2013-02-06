@@ -5,9 +5,9 @@
 namespace i4core
 {
 	I4XmlData::I4XmlData()
-		: xmlDoc(NULL)
-		, selNode(NULL)		
-		, textBuffer(NULL)
+		: xmlDoc(nullptr)
+		, selNode(nullptr)		
+		, textBuffer(nullptr)
 	{
 		xmlDoc = new I4XmlDocument;
 	}
@@ -77,9 +77,9 @@ namespace i4core
 
 	bool I4XmlData::selectNodeByPath(const char* path)
 	{
-		I4XmlNode* node = NULL;
+		I4XmlNode* node = nullptr;
 		getNode(node, path);
-		if (node == NULL)
+		if (node == nullptr)
 			return false;
 
 		selNode = node;
@@ -89,11 +89,11 @@ namespace i4core
 
 	bool I4XmlData::selectParentNode()
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlNode* node = selNode->parent();
-		if (node == NULL)
+		if (node == nullptr)
 			return false;
 
 		selNode = node;
@@ -103,11 +103,11 @@ namespace i4core
 
 	bool I4XmlData::selectFirstChildNode(const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlNode* node = selNode->first_node(name);
-		if (node == NULL)
+		if (node == nullptr)
 			return false;
 
 		selNode = node;
@@ -117,11 +117,11 @@ namespace i4core
 
 	bool I4XmlData::selectNextSiblingNode(const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlNode* node = selNode->next_sibling(name);
-		if (node == NULL)
+		if (node == nullptr)
 			return false;
 
 		selNode = node;
@@ -131,7 +131,7 @@ namespace i4core
 
 	bool I4XmlData::getNodeValue(short& result)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		result = (short)atoi(selNode->value());
@@ -141,7 +141,7 @@ namespace i4core
 
 	bool I4XmlData::getNodeValue(unsigned short& result)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		result = (unsigned short)atoi(selNode->value());
@@ -151,7 +151,7 @@ namespace i4core
 
 	bool I4XmlData::getNodeValue(int& result)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		result = atoi(selNode->value());
@@ -161,7 +161,7 @@ namespace i4core
 
 	bool I4XmlData::getNodeValue(unsigned int& result)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		result = (unsigned int)atoi(selNode->value());
@@ -171,7 +171,7 @@ namespace i4core
 
 	bool I4XmlData::getNodeValue(float& result)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		result = (float)atof(selNode->value());
@@ -181,7 +181,7 @@ namespace i4core
 
 	bool I4XmlData::getNodeValue(const char*& result)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		result = selNode->value();
@@ -191,11 +191,11 @@ namespace i4core
 
 	bool I4XmlData::getAttrValue(short& result, const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = (short)atoi(attr->value());
@@ -205,11 +205,11 @@ namespace i4core
 
 	bool I4XmlData::getAttrValue(unsigned short& result, const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = (unsigned short)atoi(attr->value());
@@ -219,11 +219,11 @@ namespace i4core
 
 	bool I4XmlData::getAttrValue(int& result, const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = atoi(attr->value());
@@ -233,11 +233,11 @@ namespace i4core
 
 	bool I4XmlData::getAttrValue(unsigned int& result, const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = (unsigned int)atoi(attr->value());
@@ -247,11 +247,11 @@ namespace i4core
 
 	bool I4XmlData::getAttrValue(float& result, const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = (float)atof(attr->value());
@@ -261,11 +261,11 @@ namespace i4core
 
 	bool I4XmlData::getAttrValue(const char*& result, const char* name)
 	{
-		if (selNode == NULL)
+		if (selNode == nullptr)
 			return false;
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = attr->value();
@@ -282,9 +282,9 @@ namespace i4core
 
 		for (unsigned int i = 1; i < split.size(); ++i)
 		{
-			if (node == NULL)
+			if (node == nullptr)
 			{
-				result = NULL;
+				result = nullptr;
 				return false;
 			}
 

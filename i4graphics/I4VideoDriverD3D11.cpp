@@ -11,12 +11,12 @@
 namespace i4graphics
 {
 	I4VideoDriverD3D11::I4VideoDriverD3D11()
-		: d3dDevice(NULL)
-		, immediateContext(NULL)
-		, swapChain(NULL)
-		, backBufferRenderTargetView(NULL)
-		, backBufferDepthStencilTex(NULL)
-		, backBufferDepthStencilView(NULL)
+		: d3dDevice(nullptr)
+		, immediateContext(nullptr)
+		, swapChain(nullptr)
+		, backBufferRenderTargetView(nullptr)
+		, backBufferDepthStencilTex(nullptr)
+		, backBufferDepthStencilView(nullptr)
 	{
 	}
 
@@ -30,38 +30,38 @@ namespace i4graphics
 		if (backBufferDepthStencilTex) 
 		{
 			backBufferDepthStencilTex->Release();
-			backBufferDepthStencilTex = NULL;
+			backBufferDepthStencilTex = nullptr;
 		}
 
 		if (backBufferDepthStencilView) 
 		{
 			backBufferDepthStencilView->Release();
-			backBufferDepthStencilView = NULL;
+			backBufferDepthStencilView = nullptr;
 
 		}
 
 		if (backBufferRenderTargetView) 
 		{
 			backBufferRenderTargetView->Release();
-			backBufferRenderTargetView = NULL;
+			backBufferRenderTargetView = nullptr;
 		}
 
 		if (swapChain) 
 		{
 			swapChain->Release();
-			swapChain = NULL;
+			swapChain = nullptr;
 		}
 
 		if (immediateContext)
 		{
 			immediateContext->Release();
-			immediateContext = NULL;
+			immediateContext = nullptr;
 		}
 
 		if (d3dDevice) 
 		{
 			d3dDevice->Release();			
-			d3dDevice = NULL;
+			d3dDevice = nullptr;
 		}
 	}
 
@@ -110,9 +110,9 @@ namespace i4graphics
 		for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
 		{
 			driverType = driverTypes[driverTypeIndex];
-			hr = D3D11CreateDeviceAndSwapChain(NULL,
+			hr = D3D11CreateDeviceAndSwapChain(nullptr,
 												driverTypes[driverTypeIndex],
-												NULL,
+												nullptr,
 												createDeviceFlags,
 												featureLevels,
 												numFeatureLevels,
@@ -134,7 +134,7 @@ namespace i4graphics
 		if (FAILED(hr))
 			return false;
 
-		hr = d3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &backBufferRenderTargetView);
+		hr = d3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &backBufferRenderTargetView);
 		pBackBuffer->Release();
 		if (FAILED(hr))
 			return false;
@@ -152,7 +152,7 @@ namespace i4graphics
 		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
-		hr = d3dDevice->CreateTexture2D(&descDepth, NULL, &backBufferDepthStencilTex);
+		hr = d3dDevice->CreateTexture2D(&descDepth, nullptr, &backBufferDepthStencilTex);
 		if (FAILED(hr))
 			return false;
 
@@ -327,7 +327,7 @@ namespace i4graphics
 		}
 		else
 		{
-			immediateContext->OMSetRenderTargets(num, arrRTViews, NULL);
+			immediateContext->OMSetRenderTargets(num, arrRTViews, nullptr);
 		}
 	}
 

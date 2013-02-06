@@ -449,12 +449,12 @@ namespace i4core
 
 		void decompose(I4Vector3* scale, I4Matrix4x4* rotation, I4Vector3* translation) const
 		{
-			if (translation != NULL)
+			if (translation != nullptr)
 			{
 				extractTranslation(*translation);
 			}
 
-			if (scale != NULL || rotation != NULL)
+			if (scale != nullptr || rotation != nullptr)
 			{
 				I4Vector3 xAxis, yAxis, zAxis;
 				extractAxis(xAxis, yAxis, zAxis);
@@ -463,14 +463,14 @@ namespace i4core
 				float yScale = yAxis.getLength();
 				float zScale = zAxis.getLength();
 
-				if (scale != NULL)
+				if (scale != nullptr)
 				{
 					scale->x = xScale;
 					scale->y = yScale;
 					scale->z = zScale;
 				}
 
-				if (rotation != NULL)
+				if (rotation != nullptr)
 				{
 					if (xScale != 0)
 					{

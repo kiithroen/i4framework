@@ -68,7 +68,7 @@ namespace i4core
 			if (v < 0.0f || u + v > det)
 				return false;
 
-			if (dist != NULL)
+			if (dist != nullptr)
 			{				
 				*dist = I4Vector3::dotProduct(edge2, qvec);
 				float invDet = 1.0f / det;
@@ -217,7 +217,7 @@ namespace i4core
 			if (testB < 0)
 				return false;
 
-			if (dist != NULL)
+			if (dist != nullptr)
 			{
 				*dist = testA - sqrt(testB);
 			}

@@ -7,7 +7,7 @@ namespace i4graphics
 {
 	I4TextureD3D11::I4TextureD3D11(ID3D11Device* d3dDevice)
 		: d3dDevice(d3dDevice)
-		, shaderResourceView(NULL)
+		, shaderResourceView(nullptr)
 	{
 	}
 
@@ -22,7 +22,7 @@ namespace i4graphics
 			return false;
 
 		const wchar_t* wfname = I4StringUtil::to_wchar_t(fname);
-		if (FAILED(CreateDDSTextureFromFile(d3dDevice, wfname, NULL, &shaderResourceView)))
+		if (FAILED(CreateDDSTextureFromFile(d3dDevice, wfname, nullptr, &shaderResourceView)))
 		{
 			I4LOG_WARN << L"texture load failed. : " << wfname;
 			return false;
@@ -36,7 +36,7 @@ namespace i4graphics
 		if (shaderResourceView)
 		{
 			shaderResourceView->Release();
-			shaderResourceView = NULL;
+			shaderResourceView = nullptr;
 		}
 	}
 

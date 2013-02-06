@@ -60,7 +60,7 @@ namespace i4core
 		worldMatrix.extractAxisZ(direction);
 
 		I4Matrix4x4 rotationMatrix;
-		worldMatrix.decompose(NULL, &rotationMatrix, NULL);
+		worldMatrix.decompose(nullptr, &rotationMatrix, nullptr);
 		rotation.makeRotationMatrix(rotationMatrix);
 
 		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);

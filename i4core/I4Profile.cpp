@@ -3,7 +3,7 @@
 namespace i4core
 {
 
-	I4ProfileNode	I4ProfileManager::rootNode("root", NULL, NULL);
+	I4ProfileNode	I4ProfileManager::rootNode("root", nullptr, nullptr);
 	I4ProfileNode*	I4ProfileManager::curNode = &rootNode;
 
 	I4ProfileNode::I4ProfileNode(const char* _name, I4ProfileNode* _parent, I4ProfileNode* _sibling)
@@ -11,7 +11,7 @@ namespace i4core
 	, totalCalls(0)
 	, recursionCounter(0)
 	, parent(_parent)
-	, child(NULL)		
+	, child(nullptr)		
 	, sibling(_sibling)
 	, name(_name)
 	{

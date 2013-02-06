@@ -55,8 +55,8 @@ END_MESSAGE_MAP()
 // CI4MercyToolView »ý¼º/¼Ò¸ê
 
 CI4MercyToolView::CI4MercyToolView()
-	: stopWatch(NULL)
-	, camera(NULL)
+	: stopWatch(nullptr)
+	, camera(nullptr)
 	, camYaw(0)
 	, camPitch(0)
 	, camRoll(0)

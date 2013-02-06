@@ -31,7 +31,7 @@ namespace i4graphics
 		I4HashID modelInstanceID(modelInstanceName);
 
 		I4ModelInstance* modelInstance = findModelInstance(modelInstanceID);
-		if (modelInstance != NULL)
+		if (modelInstance != nullptr)
 		{
 			if (modelInstance->sameName(modelInstanceName))
 			{
@@ -40,18 +40,18 @@ namespace i4graphics
 			else
 			{
 				I4LOG_WARN << L"model instance duplicated hash id : " << modelInstance->getName().c_str() <<  L" vs " << modelInstanceName;
-				return NULL;
+				return nullptr;
 			}
 		}
 
 		I4HashID modelPrototypeID(modelPrototypeName);
 		I4ModelPrototype* modelPrototype = findModelPrototype(modelPrototypeID);
-		if (modelPrototype != NULL)
+		if (modelPrototype != nullptr)
 		{
 			if (modelPrototype->sameName(modelPrototypeName) == false)
 			{
 				I4LOG_WARN << L"model prototype duplicated hash id : " << modelPrototype->getName().c_str() <<  L" vs " << modelPrototypeName;
-				return NULL;
+				return nullptr;
 			}
 		}
 		else
@@ -66,7 +66,7 @@ namespace i4graphics
 			if (xml.parseFromFile(modelPrototypeName) == false)
 			{
 				I4LOG_WARN << L"parse model failed.";
-				return NULL;
+				return nullptr;
 			}
 
 			I4LOG_INFO << L"parse model xml : " << (int)(watch.getElapsedTime()*1000.0f) << L" ms";
@@ -108,7 +108,7 @@ namespace i4graphics
 	{
 		I4ModelPrototypeMap::iterator itr = mapModelPrototype.find(prototypeID);
 		if (itr == mapModelPrototype.end())
-			return NULL;
+			return nullptr;
 
 		return itr->second;
 	}
@@ -117,7 +117,7 @@ namespace i4graphics
 	{
 		I4ModelInstanceMap::iterator itr = mapModelInstance.find(modelInstanceID);
 		if (itr == mapModelInstance.end())
-			return NULL;
+			return nullptr;
 
 		return itr->second;
 	}
@@ -126,7 +126,7 @@ namespace i4graphics
 	{
 		I4TextureMap::iterator itr = mapTexture.find(textureID);
 		if (itr == mapTexture.end())
-			return NULL;
+			return nullptr;
 
 		return itr->second;
 	}
@@ -135,7 +135,7 @@ namespace i4graphics
 	{
 		I4StaticMeshMap::iterator itr = mapStaticMesh.find(meshID);
 		if (itr == mapStaticMesh.end())
-			return NULL;
+			return nullptr;
 
 		return itr->second;
 	}
@@ -171,16 +171,16 @@ namespace i4graphics
 	{		
 		const char* modelName;
 		if (xml.getAttrValueByPath(modelName, "name", "model") == false)
-			return NULL;
+			return nullptr;
 
-		I4ModelPrototype* modelPrototype = NULL;
+		I4ModelPrototype* modelPrototype = nullptr;
 
 		if (xml.selectNodeByPath("model/mesh"))
 		{
 			modelPrototype = new I4ModelPrototype;
 			do
 			{
-				I4StaticMesh* mesh = NULL;
+				I4StaticMesh* mesh = nullptr;
 				const char* meshName;
 				xml.getAttrValue(meshName, "name");
 			
@@ -189,7 +189,7 @@ namespace i4graphics
 				strFullName += meshName;
 				I4HashID meshID(strFullName);
 				mesh = findMesh(meshID);
-				if (mesh != NULL && mesh->sameName(strFullName) == false)
+				if (mesh != nullptr && mesh->sameName(strFullName) == false)
 				{
 					I4LOG_WARN << L"mesh duplicated hash id : " << mesh->getName().c_str() <<  L" vs " << strFullName.c_str();
 					continue;
@@ -255,7 +255,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 					sscanf_s(val, "%f %f %f", &out.localTM.m[i][0], &out.localTM.m[i][1], &out.localTM.m[i][2]);
 
@@ -281,7 +281,7 @@ namespace i4graphics
 		{
 			if (xml.selectFirstChildNode("diffuseMap"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				char texturePath[256] = "";
@@ -290,7 +290,7 @@ namespace i4graphics
 				I4HashID textureID(texturePath);
 
 				I4Texture* texture = findTexture(textureID);
-				if (texture != NULL)
+				if (texture != nullptr)
 				{
 					if (texture->sameName(texturePath) == false)
 					{
@@ -322,7 +322,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("specularMap"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				char texturePath[256] = "";
@@ -331,7 +331,7 @@ namespace i4graphics
 				I4HashID textureID(texturePath);
 				
 				I4Texture* texture = findTexture(textureID);
-				if (texture != NULL)
+				if (texture != nullptr)
 				{
 					if (texture->sameName(texturePath) == false)
 					{
@@ -363,7 +363,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("normalMap"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				char texturePath[256] = "";
@@ -372,7 +372,7 @@ namespace i4graphics
 				I4HashID textureID(texturePath);
 
 				I4Texture* texture = findTexture(textureID);
-				if (texture != NULL)
+				if (texture != nullptr)
 				{
 					if (texture->sameName(texturePath) == false)
 					{
@@ -687,7 +687,7 @@ namespace i4graphics
 		if (parsedMeshData.skined)	
 		{
 			mesh->getVertexBuffer().create(parsedMeshData.vecPosition.size(), sizeof(Vertex_Pos_Normal_Tan_Tex_SkinInfo), VERTEXELEMENTS_POS_NORMAL_TAN_TEX_SKININFO);
-			Vertex_Pos_Normal_Tan_Tex_SkinInfo* vertices = NULL;
+			Vertex_Pos_Normal_Tan_Tex_SkinInfo* vertices = nullptr;
 			mesh->getVertexBuffer().lock((void**)&vertices);
 			for (unsigned int i = 0; i < parsedMeshData.vecPosition.size(); ++i)
 			{
@@ -704,7 +704,7 @@ namespace i4graphics
 		// 절대 변할일 없으니까 아예 락걸고 복사하지말고 임시 메시데이타를 만들고 생성할때 버텍스 지정하는 식으로 바꺼보자.
 		I4VertexBuffer* vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
 		vertexBuffer->create(parsedMeshData.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan));
-		I4Vertex_Pos_Normal_Tex_Tan* vertices = NULL;
+		I4Vertex_Pos_Normal_Tex_Tan* vertices = nullptr;
 		vertexBuffer->lock((void**)&vertices);
 		for (unsigned int i = 0; i < parsedMeshData.vecPosition.size(); ++i)
 		{

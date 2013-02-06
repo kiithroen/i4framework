@@ -31,15 +31,15 @@ namespace i4graphics
 	}
 
 	I4DefferedRenderer::I4DefferedRenderer()
-		: shaderMgr(NULL)
-		, modelMgr(NULL)
-		, rtDiffuse(NULL)
-		, rtNormal(NULL)
-		, rtDepth(NULL)
-		, rtLight(NULL)
-		, rtShadow(NULL)
-		, quadMesh(NULL)
-		, sphereMesh(NULL)
+		: shaderMgr(nullptr)
+		, modelMgr(nullptr)
+		, rtDiffuse(nullptr)
+		, rtNormal(nullptr)
+		, rtDepth(nullptr)
+		, rtLight(nullptr)
+		, rtShadow(nullptr)
+		, quadMesh(nullptr)
+		, sphereMesh(nullptr)
 	{
 	}
 
@@ -301,10 +301,10 @@ namespace i4graphics
 		cbChangesEveryFrame_G.view = camera->getViewMatrix();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangesEveryFrame_G", sizeof(cbChangesEveryFrame_G), &cbChangesEveryFrame_G);
 
-		I4MeshInstance* prevMeshInstance = NULL;
-		I4MeshInstance* curMeshInstance = NULL;
-		I4StaticMesh* prevMesh = NULL;
-		I4StaticMesh* curMesh = NULL;
+		I4MeshInstance* prevMeshInstance = nullptr;
+		I4MeshInstance* curMeshInstance = nullptr;
+		I4StaticMesh* prevMesh = nullptr;
+		I4StaticMesh* curMesh = nullptr;
 
 		for (auto &itr : vecCulledMeshInstnaceRenderItem)
 		{
@@ -314,7 +314,7 @@ namespace i4graphics
 			bool isChangedNormalMap = false;
 			bool isChangedMesh = false;
 
-			if (prevMeshInstance == NULL)
+			if (prevMeshInstance == nullptr)
 			{
 				isChangedDiffuseMap = true;
 				isChangedSpecularMap = true;
@@ -338,7 +338,7 @@ namespace i4graphics
 				}
 			}
 
-			if (prevMesh == NULL)
+			if (prevMesh == nullptr)
 			{
 				isChangedMesh = true;
 			}
@@ -352,20 +352,20 @@ namespace i4graphics
 					
 			if (isChangedMesh == true)
 			{
-				if (prevMesh != NULL)
+				if (prevMesh != nullptr)
 				{
 					prevMesh->unbind();
 				}
 
 				curMesh = modelMgr->findMesh(curMeshInstance->meshID);
 
-				if (curMesh != NULL)
+				if (curMesh != nullptr)
 				{
 					curMesh->bind();
 				}
 			}
 
-			if (curMesh != NULL)
+			if (curMesh != nullptr)
 			{
 				if (isChangedDiffuseMap == true)
 				{
@@ -397,7 +397,7 @@ namespace i4graphics
 			prevMesh = curMesh;
 		}
 				
-		if (curMesh != NULL)
+		if (curMesh != nullptr)
 		{
 			curMesh->unbind();
 		}
@@ -409,7 +409,7 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		videoDriver->setRenderTarget(1, &rtLight, NULL);
+		videoDriver->setRenderTarget(1, &rtLight, nullptr);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
 		cullAndSortDirectionalLight(camera);
@@ -480,9 +480,9 @@ namespace i4graphics
 		}
 		quadMesh->unbind();
 
-		shaderMgr->setRenderTarget(0, NULL);
-		shaderMgr->setRenderTarget(1, NULL);
-		shaderMgr->setRenderTarget(2, NULL);
+		shaderMgr->setRenderTarget(0, nullptr);
+		shaderMgr->setRenderTarget(1, nullptr);
+		shaderMgr->setRenderTarget(2, nullptr);
 
 		shaderMgr->end();
 	}
@@ -565,9 +565,9 @@ namespace i4graphics
 		}
 		sphereMesh->unbind();
 		
-		shaderMgr->setRenderTarget(0, NULL);
-		shaderMgr->setRenderTarget(1, NULL);
-		shaderMgr->setRenderTarget(2, NULL);
+		shaderMgr->setRenderTarget(0, nullptr);
+		shaderMgr->setRenderTarget(1, nullptr);
+		shaderMgr->setRenderTarget(2, nullptr);
 		
 
 		shaderMgr->end();
@@ -593,7 +593,7 @@ namespace i4graphics
 		quadMesh->draw();
 		quadMesh->unbind();
 		
-		shaderMgr->setRenderTarget(0, NULL);
-		shaderMgr->setRenderTarget(1, NULL);		
+		shaderMgr->setRenderTarget(0, nullptr);
+		shaderMgr->setRenderTarget(1, nullptr);		
 	}
 }

@@ -112,15 +112,15 @@ namespace i4graphics
 
 	//------------------------------------------------------------
 
-	I4VideoDriver* I4VideoDriver::videoDriver = NULL;
+	I4VideoDriver* I4VideoDriver::videoDriver = nullptr;
 
 	void I4VideoDriver::createVideoDriver(I4VideoDriverMode mode)
 	{
-		assert(videoDriver == NULL);
+		assert(videoDriver == nullptr);
 
 		switch (mode)
 		{
-		case I4VIDEO_DRIVER_MODE_NULL:
+		case I4VIDEO_DRIVER_MODE_nullptr:
 			videoDriver = new I4VideoDriver;
 			break;
 		case I4VIDEO_DRIVER_MODE_D3D11:
@@ -136,6 +136,6 @@ namespace i4graphics
 	void I4VideoDriver::destroyVideoDriver()
 	{
 		delete videoDriver;
-		videoDriver = NULL;
+		videoDriver = nullptr;
 	}
 }

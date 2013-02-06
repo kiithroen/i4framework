@@ -10,7 +10,7 @@ namespace i4graphics
 
 	enum I4ShaderMgrType
 	{
-		I4SHADER_MGR_TYPE_NULL		= 0,
+		I4SHADER_MGR_TYPE_nullptr		= 0,
 		I4SHADER_MGR_TYPE_UBER,
 	};
 

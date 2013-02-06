@@ -4,8 +4,8 @@
 namespace i4graphics
 {
 	I4StaticMesh::I4StaticMesh()
-		: vertexBuffer(NULL)
-		, indexBuffer(NULL)
+		: vertexBuffer(nullptr)
+		, indexBuffer(nullptr)
 	{
 		
 	}
@@ -30,7 +30,7 @@ namespace i4graphics
 
 	void I4StaticMesh::draw()
 	{
-		if (vertexBuffer != NULL && indexBuffer != NULL)
+		if (vertexBuffer != nullptr && indexBuffer != nullptr)
 		{
 			indexBuffer->draw(I4PT_TRIANGLELIST);
 		}

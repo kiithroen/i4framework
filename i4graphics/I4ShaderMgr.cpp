@@ -6,7 +6,7 @@
 namespace i4graphics
 {
 	I4ShaderMgr::I4ShaderMgr()
-		:activeShaderProgram(NULL)
+		:activeShaderProgram(nullptr)
 	{
 	}
 
@@ -66,7 +66,7 @@ namespace i4graphics
 		if (itr == mapShaderProgram.end())
 		{
 			activeShaderProgram = createShaderProgram(mask, inputElements, numElements);
-			if (activeShaderProgram != NULL)
+			if (activeShaderProgram != nullptr)
 			{
 				mapShaderProgram.insert(std::make_pair(mask, activeShaderProgram));
 			}
@@ -153,7 +153,7 @@ namespace i4graphics
 		if (shaderProgram->createFromString(finalShaderCode.c_str(), inputElements, numElements) == false)
 		{
 			delete shaderProgram;
-			return NULL;
+			return nullptr;
 		}
 
 		return shaderProgram;
@@ -165,7 +165,7 @@ namespace i4graphics
 
 	bool I4ShaderMgr::addShaderMgr(const std::string& fxName)
 	{
-		I4ShaderMgr* shaderMgr = NULL;
+		I4ShaderMgr* shaderMgr = nullptr;
 		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fxName);
 		if (itr == mapShaderMgr.end())
 		{
@@ -174,7 +174,7 @@ namespace i4graphics
 			{
 				I4LOG_WARN << L"shaderMgr load failed.(" << fxName.c_str() << L")";
 				delete shaderMgr;
-				shaderMgr = NULL;
+				shaderMgr = nullptr;
 			}
 			mapShaderMgr.insert(std::make_pair(fxName, shaderMgr));
 		}
@@ -195,7 +195,7 @@ namespace i4graphics
 		}
 
 		I4LOG_WARN << L"can't find shader mgr.(" << fxName.c_str() << L")";
-		return NULL;
+		return nullptr;
 	}
 
 	void I4ShaderMgr::destroyShaderMgr()

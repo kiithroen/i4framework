@@ -16,9 +16,9 @@ namespace i4graphics
 	I4ShaderProgramD3D11::I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
 		: d3dDevice(device)
 		, immediateContext(context)
-		, vertexShader(NULL)
-		, pixelShader(NULL)
-		, vertexLayout(NULL)
+		, vertexShader(nullptr)
+		, pixelShader(nullptr)
+		, vertexLayout(nullptr)
 	{
 	}
 
@@ -27,19 +27,19 @@ namespace i4graphics
 		if (vertexLayout)
 		{
 			vertexLayout->Release();
-			vertexLayout = NULL;
+			vertexLayout = nullptr;
 		}
 
 		if (pixelShader)
 		{
 			pixelShader->Release();
-			pixelShader = NULL;
+			pixelShader = nullptr;
 		}
 
 		if (vertexShader)
 		{
 			vertexShader->Release();
-			vertexShader = NULL;
+			vertexShader = nullptr;
 		}
 	}
 
@@ -48,12 +48,12 @@ namespace i4graphics
 		HRESULT hr = S_OK;
 
 		// Compile the vertex shader
-		ID3DBlob* pVSBlob = NULL;
+		ID3DBlob* pVSBlob = nullptr;
 		if (compileShaderFromString(code, "VS", "vs_4_0", &pVSBlob) == false)
 			return false;
 
 		// Create the vertex shader
-		hr = d3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &vertexShader);
+		hr = d3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &vertexShader);
 		if (FAILED(hr))
 		{	
 			pVSBlob->Release();
@@ -68,13 +68,13 @@ namespace i4graphics
 			return false;
 
 		// Compile the pixel shader
-		ID3DBlob* pPSBlob = NULL;
+		ID3DBlob* pPSBlob = nullptr;
 		hr = compileShaderFromString(code, "PS", "ps_4_0", &pPSBlob);
 		if (FAILED(hr))
 			return false;
 
 		// Create the pixel shader
-		hr = d3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &pixelShader);
+		hr = d3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &pixelShader);
 		pPSBlob->Release();
 		if (FAILED(hr))
 			return false;
@@ -85,8 +85,8 @@ namespace i4graphics
 	bool I4ShaderProgramD3D11::begin()
 	{
 		immediateContext->IASetInputLayout(vertexLayout);
-		immediateContext->VSSetShader(vertexShader, NULL, 0);
-		immediateContext->PSSetShader(pixelShader, NULL, 0);
+		immediateContext->VSSetShader(vertexShader, nullptr, 0);
+		immediateContext->PSSetShader(pixelShader, nullptr, 0);
 
 		return true;
 	}
@@ -99,7 +99,7 @@ namespace i4graphics
 	{
 		auto itr = constantBufferMap.find(name);
 		
-		ID3D11Buffer* constantBuffer = NULL;
+		ID3D11Buffer* constantBuffer = nullptr;
 
 		if (itr == constantBufferMap.end())
 		{			
@@ -109,7 +109,7 @@ namespace i4graphics
 			bd.ByteWidth = size;
 			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			bd.CPUAccessFlags = 0;
-			HRESULT hr = d3dDevice->CreateBuffer(&bd, NULL, &constantBuffer);
+			HRESULT hr = d3dDevice->CreateBuffer(&bd, nullptr, &constantBuffer);
 			if (FAILED(hr))
 			{
 				I4LOG_WARN << L"can't create constant buffer : " << name;
@@ -123,7 +123,7 @@ namespace i4graphics
 			constantBuffer = itr->second;
 		}
 
-		immediateContext->UpdateSubresource(constantBuffer, 0, NULL, buffer, 0, 0);
+		immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, buffer, 0, 0);
 
 		if (type == I4SHADER_PROGRAM_TYPE_VS)
 		{
@@ -141,35 +141,35 @@ namespace i4graphics
 
 	void I4ShaderProgramD3D11::setTexture(unsigned int slot, const I4Texture* tex)
 	{
-		if (tex != NULL)
+		if (tex != nullptr)
 		{
 			ID3D11ShaderResourceView* texRV = ((I4TextureD3D11*)tex)->getShaderResourceView();
 			immediateContext->PSSetShaderResources(slot, 1, &texRV);
 		}
 		else
 		{
-			ID3D11ShaderResourceView * const nullRes[1] = {NULL};
+			ID3D11ShaderResourceView * const nullRes[1] = {nullptr};
 			immediateContext->PSSetShaderResources(slot, 1, nullRes);
 		}
 	}
 
 	void I4ShaderProgramD3D11::setRenderTarget(unsigned int slot, const I4RenderTarget* tex)
 	{
-		if (tex != NULL)
+		if (tex != nullptr)
 		{
 			ID3D11ShaderResourceView* texRV = ((I4RenderTargetD3D11*)tex)->getShaderResourceView();
 			immediateContext->PSSetShaderResources(slot, 1, &texRV);
 		}
 		else
 		{
-			ID3D11ShaderResourceView * const nullRes[1] = {NULL};
+			ID3D11ShaderResourceView * const nullRes[1] = {nullptr};
 			immediateContext->PSSetShaderResources(slot, 1, nullRes);
 		}
 	}
 
 	void I4ShaderProgramD3D11::setSamplerState(unsigned int slot, I4SamplerState state)
 	{
-		if (sampler[state] == NULL)
+		if (sampler[state] == nullptr)
 		{
 			if (state == I4SAMPLER_STATE_POINT)
 			{
@@ -222,10 +222,10 @@ namespace i4graphics
 	#endif
 
 		ID3DBlob* pErrorBlob;
-		hr = D3DCompile(code, strlen(code), NULL, NULL, NULL, entryPoint, shaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
+		hr = D3DCompile(code, strlen(code), nullptr, nullptr, nullptr, entryPoint, shaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
 		if (FAILED(hr))
 		{
-			if (pErrorBlob != NULL)
+			if (pErrorBlob != nullptr)
 			{
 				I4LOG_WARN << (char*)pErrorBlob->GetBufferPointer();
 				pErrorBlob->Release();

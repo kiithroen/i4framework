@@ -27,17 +27,17 @@ namespace i4core
 		}
 
 		float childSiblingTotalTime = 0;
-		I4ProfileNode* child = NULL;
+		I4ProfileNode* child = nullptr;
 
 		child = node->getChild();
-		while (child != NULL)
+		while (child != nullptr)
 		{
 			childSiblingTotalTime += child->getTotalTime();
 			child = child->getSibling();
 		}
 
 		child = node->getChild();
-		while (child != NULL)
+		while (child != nullptr)
 		{
 			writeRecursive(child, childSiblingTotalTime, depth + 1);
 			child = child->getSibling();
