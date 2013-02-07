@@ -12,7 +12,7 @@ namespace i4core
 		std::string ret(pstr);
 		free(pstr);
 
-		return pstr;
+		return ret;
 	}
 
 	std::wstring I4StringUtil::to_wchar_t(const char* str)
