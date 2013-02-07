@@ -34,7 +34,7 @@ namespace i4graphics
 			D3D11_BUFFER_DESC bd;
 			bd.Usage = D3D11_USAGE_IMMUTABLE;
 			bd.ByteWidth = stride*count;
-			bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			bd.CPUAccessFlags = 0;
 			bd.MiscFlags = 0;
 
@@ -51,8 +51,8 @@ namespace i4graphics
 			D3D11_BUFFER_DESC bd;
 			bd.Usage = D3D11_USAGE_DYNAMIC;
 			bd.ByteWidth = stride*count;
-			bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-			bd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			bd.MiscFlags = 0;
 
 			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, nullptr, &vertexBuffer)))
@@ -143,7 +143,7 @@ namespace i4graphics
 			D3D11_BUFFER_DESC bd;
 			bd.Usage = D3D11_USAGE_IMMUTABLE;
 			bd.ByteWidth = stride*count;
-			bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 			bd.CPUAccessFlags = 0;
 			bd.MiscFlags = 0;
 
@@ -160,13 +160,10 @@ namespace i4graphics
 			D3D11_BUFFER_DESC bd;
 			bd.Usage = D3D11_USAGE_DYNAMIC;
 			bd.ByteWidth = stride*count;
-			bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
-			bd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			bd.MiscFlags = 0;
-
-			D3D11_SUBRESOURCE_DATA InitData;
-			InitData.pSysMem = indices;
-
+			
 			if (SUCCEEDED(d3dDevice->CreateBuffer(&bd, nullptr, &indexBuffer)))
 			{
 				return true;
