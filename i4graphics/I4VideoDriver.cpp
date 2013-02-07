@@ -100,6 +100,11 @@ namespace i4graphics
 		return new I4IndexBuffer;
 	}
 
+	I4ConstantBuffer* I4VideoDriver::createConstantBuffer()
+	{
+		return new I4ConstantBuffer;
+	}
+
 	I4Texture* I4VideoDriver::createTexture()
 	{
 		return new I4Texture;

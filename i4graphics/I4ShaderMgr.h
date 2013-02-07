@@ -19,7 +19,7 @@ namespace i4graphics
 		I4SHADER_MASK_NONE				= 1 << 0,
 		I4SHADER_MASK_TEX_DIFFUSE		= 1 << 1,
 		I4SHADER_MASK_TEX_SPECULAR		= 1 << 2,
-		I4SHADER_MASK_TEX_NORMAL			= 1 << 3,
+		I4SHADER_MASK_TEX_NORMAL		= 1 << 3,
 	};
 
 	
@@ -35,7 +35,7 @@ namespace i4graphics
 		bool 				begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		void 				end();
 
-		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer);
+		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data);
 		void				setTexture(unsigned int slot, const I4Texture* tex);
 		void				setRenderTarget(unsigned int slot, const I4RenderTarget* tex);
 		void				setSamplerState(unsigned int slot, I4SamplerState state);

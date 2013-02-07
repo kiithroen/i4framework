@@ -121,4 +121,21 @@ namespace i4graphics
 
 	}
 
+
+	//-------------------------------------------------------------------------------------
+
+	I4ConstantBuffer::I4ConstantBuffer()
+	{
+
+	}
+
+	I4ConstantBuffer::~I4ConstantBuffer()
+	{
+
+	}
+
+	bool I4ConstantBuffer::create(unsigned int stride)
+	{
+		return true;
+	}
 }

@@ -289,4 +289,13 @@ namespace i4graphics
 		I4FORMAT			format;
 	};
 
+	class I4ConstantBuffer
+	{
+	public:
+		I4ConstantBuffer();
+		virtual ~I4ConstantBuffer();
+
+		virtual bool		create(unsigned int stride);
+	};
+
 }

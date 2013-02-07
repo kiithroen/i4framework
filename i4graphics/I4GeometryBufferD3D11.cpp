@@ -230,4 +230,44 @@ namespace i4graphics
 		immediateContext->DrawIndexed(count, 0, 0);
 	}
 
+	// -----------------------------------------------------------------------------------------------------------------
+
+	I4ConstantBufferD3D11::I4ConstantBufferD3D11(ID3D11Device* device)
+		: d3dDevice(device)
+		, constantBuffer(nullptr)
+	{
+
+	}
+
+	I4ConstantBufferD3D11::~I4ConstantBufferD3D11()
+	{
+		destroy();
+	}
+
+	bool I4ConstantBufferD3D11::create(unsigned int stride)
+	{
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = stride;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.CPUAccessFlags = 0;
+		HRESULT hr = d3dDevice->CreateBuffer(&bd, nullptr, &constantBuffer);
+		if (FAILED(hr))
+		{
+			I4LOG_WARN << L"can't create constant buffer";
+			return false;
+		}
+
+		return true;
+	}
+
+	void I4ConstantBufferD3D11::destroy()
+	{
+		if (constantBuffer)
+		{
+			constantBuffer->Release();
+			constantBuffer = nullptr;
+		}
+	}
 }

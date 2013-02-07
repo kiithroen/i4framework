@@ -4,18 +4,18 @@
 #include "I4Vector4.h"
 #include "I4TextureD3D11.h"
 #include "I4RenderTargetD3D11.h"
+#include "I4GeometryBufferD3D11.h"
 #include <d3dcompiler.h>
 
 namespace i4graphics
 {
 	
-	typedef std::map<std::string, ID3D11Buffer*>	ConstantBufferMap;
-	ConstantBufferMap		constantBufferMap;
-	ID3D11SamplerState*		sampler[I4SAMPLER_STATE_NUM];
+	
 
-	I4ShaderProgramD3D11::I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
+	I4ShaderProgramD3D11::I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11SamplerState** states)
 		: d3dDevice(device)
 		, immediateContext(context)
+		, samplerStates(states)
 		, vertexShader(nullptr)
 		, pixelShader(nullptr)
 		, vertexLayout(nullptr)
@@ -95,47 +95,22 @@ namespace i4graphics
 	{
 	}
 
-	void I4ShaderProgramD3D11::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer)
+	void I4ShaderProgramD3D11::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)
 	{
-		auto itr = constantBufferMap.find(name);
-		
-		ID3D11Buffer* constantBuffer = nullptr;
-
-		if (itr == constantBufferMap.end())
-		{			
-			D3D11_BUFFER_DESC bd;
-			ZeroMemory( &bd, sizeof(bd) );
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.ByteWidth = size;
-			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			bd.CPUAccessFlags = 0;
-			HRESULT hr = d3dDevice->CreateBuffer(&bd, nullptr, &constantBuffer);
-			if (FAILED(hr))
-			{
-				I4LOG_WARN << L"can't create constant buffer : " << name;
-				return;
-			}
-
-			constantBufferMap.insert(std::make_pair(name, constantBuffer));
-		}
-		else
-		{
-			constantBuffer = itr->second;
-		}
-
-		immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, buffer, 0, 0);
+		ID3D11Buffer* buffer = ((I4ConstantBufferD3D11*)constantBuffer)->getBuffer();
+		immediateContext->UpdateSubresource(buffer, 0, nullptr, data, 0, 0);
 
 		if (type == I4SHADER_PROGRAM_TYPE_VS)
 		{
-			immediateContext->VSSetConstantBuffers(slot, 1, &constantBuffer);
+			immediateContext->VSSetConstantBuffers(slot, 1, &buffer);
 		}
 		else if (type == I4SHADER_PROGRAM_TYPE_PS)
 		{
-			immediateContext->PSSetConstantBuffers(slot, 1, &constantBuffer);
+			immediateContext->PSSetConstantBuffers(slot, 1, &buffer);
 		}
 		else if (type == I4SHADER_PROGRAM_TYPE_GS)
 		{
-			immediateContext->GSSetConstantBuffers(slot, 1, &constantBuffer);
+			immediateContext->GSSetConstantBuffers(slot, 1, &buffer);
 		}
 	}
 
@@ -169,47 +144,7 @@ namespace i4graphics
 
 	void I4ShaderProgramD3D11::setSamplerState(unsigned int slot, I4SamplerState state)
 	{
-		if (sampler[state] == nullptr)
-		{
-			if (state == I4SAMPLER_STATE_POINT)
-			{
-				D3D11_SAMPLER_DESC sampDescPoint;
-				ZeroMemory( &sampDescPoint, sizeof(sampDescPoint) );
-				sampDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-				sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-				sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-				sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-				sampDescPoint.ComparisonFunc = D3D11_COMPARISON_NEVER;
-				sampDescPoint.MinLOD = 0;
-				sampDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
-				HRESULT hr = d3dDevice->CreateSamplerState(&sampDescPoint, &sampler[I4SAMPLER_STATE_POINT]);
-				if (FAILED(hr))
-				{
-					I4LOG_WARN << L"can't create sampler state point";
-					return;
-				}
-			}
-			else if (state == I4SAMPLER_STATE_LINEAR)
-			{
-				D3D11_SAMPLER_DESC sampDescLinear;
-				ZeroMemory( &sampDescLinear, sizeof(sampDescLinear) );
-				sampDescLinear.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-				sampDescLinear.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-				sampDescLinear.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-				sampDescLinear.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-				sampDescLinear.ComparisonFunc = D3D11_COMPARISON_NEVER;
-				sampDescLinear.MinLOD = 0;
-				sampDescLinear.MaxLOD = D3D11_FLOAT32_MAX;
-				HRESULT hr = d3dDevice->CreateSamplerState(&sampDescLinear, &sampler[I4SAMPLER_STATE_LINEAR]);
-				if (FAILED(hr))
-				{
-					I4LOG_WARN << L"can't create sampler state linear";
-					return;
-				}
-			}
-		}
-
-		immediateContext->PSSetSamplers(slot, 1, &sampler[state]);
+		immediateContext->PSSetSamplers(slot, 1, &samplerStates[state]);
 	}
 
 	bool I4ShaderProgramD3D11::compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut)

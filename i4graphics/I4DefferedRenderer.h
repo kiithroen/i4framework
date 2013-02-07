@@ -3,6 +3,8 @@
 #include "i4graphics.h"
 #include "I4AABB.h"
 #include "I4Sphere.h"
+#include "I4GeometryBuffer.h"
+
 namespace i4core
 {	
 	class I4Camera;
@@ -120,7 +122,43 @@ namespace i4graphics
 		I4Matrix4x4 Projection;
 	};
 	
-	class I4VertexBuffer;
+	template <typename T>
+	class I4ConstantBufferHodler
+	{
+	public:
+		I4ConstantBufferHodler()
+			: buffer(nullptr)
+			, data(nullptr)
+		{
+		}
+
+		~I4ConstantBufferHodler()
+		{
+			delete data;
+			delete buffer;
+		}
+
+		bool create()
+		{			
+			buffer = I4VideoDriver::getVideoDriver()->createConstantBuffer();
+			if (buffer->create(sizeof(T)) == false)
+			{
+				delete buffer;
+				return false;
+			}
+
+			data = new T;
+
+			return true;
+		}
+
+		I4ConstantBuffer*	getBuffer()		{ return buffer; }
+		T*					getData()		{ return data; }
+
+	private:
+		I4ConstantBuffer*	buffer;	
+		T*					data;
+	};
 
 	class I4GRAPHICS_API I4DefferedRenderer
 	{
@@ -183,18 +221,18 @@ namespace i4graphics
 		I4DirectionalLightVector		vecCulledDirectionalLight;
 		I4PointLightVector				vecCulledPointLight;
 
-		CBChageOnResize_G				cbChageOnResize_G;
-		CBChangesEveryFrame_G			cbChangesEveryFrame_G;
-		CBChangesEachMeshInstance_G		cbChangesEachMeshInstance_G;
+		I4ConstantBufferHodler<CBChageOnResize_G>				cbChageOnResize_G;
+		I4ConstantBufferHodler<CBChangesEveryFrame_G>			cbChangesEveryFrame_G;
+		I4ConstantBufferHodler<CBChangesEachMeshInstance_G>		cbChangesEachMeshInstance_G;
 
-		CBChangeOnResize_L_directional	cbChangeOnResize_L_directional;
-		CBChangeEachLight_L_directional	cbChangeEachLight_L_directional;
+		I4ConstantBufferHodler<CBChangeOnResize_L_directional>	cbChangeOnResize_L_directional;
+		I4ConstantBufferHodler<CBChangeEachLight_L_directional>	cbChangeEachLight_L_directional;
 
-		CBChangeOnResize_L_point_VS		cbChangeOnResize_L_point_VS;
-		CBChangeOnResize_L_point_PS		cbChangeOnResize_L_point_PS;
-		CBChangeEveryFrame_L_point		cbChangeEveryFrame_L_point;
-		CBChangeEachLight_L_point_VS	cbChangeEachLight_L_point_VS;
-		CBChangeEachLight_L_point_PS	cbChangeEachLight_L_point_PS;
+		I4ConstantBufferHodler<CBChangeOnResize_L_point_VS>		cbChangeOnResize_L_point_VS;
+		I4ConstantBufferHodler<CBChangeOnResize_L_point_PS>		cbChangeOnResize_L_point_PS;
+		I4ConstantBufferHodler<CBChangeEveryFrame_L_point>		cbChangeEveryFrame_L_point;
+		I4ConstantBufferHodler<CBChangeEachLight_L_point_VS>	cbChangeEachLight_L_point_VS;
+		I4ConstantBufferHodler<CBChangeEachLight_L_point_PS>	cbChangeEachLight_L_point_PS;
 
 		ConstantBuffer cb;
 	};

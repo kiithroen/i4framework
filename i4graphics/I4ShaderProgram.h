@@ -28,7 +28,7 @@ namespace i4graphics
 		virtual bool	begin()	{ return true; }
 		virtual void	end()	{}
 		
-		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer)		{}
+		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)		{}
 		virtual void	setTexture(unsigned int slot, const I4Texture* tex)				{}
 		virtual void	setRenderTarget(unsigned int slot, const I4RenderTarget* tex)	{}
 		virtual void	setSamplerState(unsigned int slot, I4SamplerState state)		{}

@@ -4,6 +4,7 @@
 #pragma warning(disable : 4201)
 #pragma warning(disable : 4251)
 #pragma warning(disable : 4481)
+#pragma warning(disable : 4324)
 
 #define _CRT_SECURE_NO_WARNINGS
 

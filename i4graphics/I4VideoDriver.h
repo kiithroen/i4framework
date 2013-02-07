@@ -8,6 +8,7 @@ namespace i4graphics
 	class I4ShaderProgram;
 	class I4VertexBuffer;
 	class I4IndexBuffer;
+	class I4ConstantBuffer;
 	class I4Texture;
 	class I4RenderTarget;
 	
@@ -78,6 +79,7 @@ namespace i4graphics
 
 		virtual I4VertexBuffer*		createVertexBuffer();
 		virtual I4IndexBuffer*		createIndexBuffer();
+		virtual I4ConstantBuffer*	createConstantBuffer();
 
 		virtual I4Texture*			createTexture();
 

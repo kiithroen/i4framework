@@ -9,7 +9,7 @@ namespace i4graphics
 	class I4ShaderProgramD3D11 : public I4ShaderProgram
 	{
 	public:
-		I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context);
+		I4ShaderProgramD3D11(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11SamplerState** samplerStates);
 		virtual ~I4ShaderProgramD3D11();
 
 		virtual bool	createFromString(const char* code, const I4INPUT_ELEMENT* inputElements, unsigned int numElements) override;
@@ -17,7 +17,7 @@ namespace i4graphics
 		virtual bool	begin() override;
 		virtual void	end() override;
 		
-		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer) override;
+		virtual void	setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data) override;
 		virtual void	setTexture(unsigned int slot, const I4Texture* tex)	override;
 		virtual void	setRenderTarget(unsigned int slot, const I4RenderTarget* tex) override;
 		virtual void	setSamplerState(unsigned int slot, I4SamplerState state) override;
@@ -28,6 +28,7 @@ namespace i4graphics
 	private:
 		ID3D11Device*			d3dDevice;
 		ID3D11DeviceContext*	immediateContext;
+		ID3D11SamplerState**	samplerStates;
 		ID3D11VertexShader*		vertexShader;
 		ID3D11PixelShader*		pixelShader;
 		ID3D11InputLayout*		vertexLayout;

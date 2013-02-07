@@ -57,4 +57,20 @@ namespace i4graphics
 		D3D11_MAPPED_SUBRESOURCE	resource;
 		ID3D11Buffer*				indexBuffer;
 	};
+
+	class I4ConstantBufferD3D11 : public I4ConstantBuffer
+	{
+	public:
+		I4ConstantBufferD3D11(ID3D11Device* device);
+		~I4ConstantBufferD3D11();
+
+		virtual bool	create(unsigned int stride) override;	
+		void			destroy();
+
+		ID3D11Buffer*	getBuffer() const	{ return constantBuffer; }
+
+	private:
+		ID3D11Device*				d3dDevice;
+		ID3D11Buffer*				constantBuffer;
+	};
 }

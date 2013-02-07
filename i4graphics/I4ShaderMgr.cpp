@@ -96,11 +96,11 @@ namespace i4graphics
 		}
 	}
 	
-	void I4ShaderMgr::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, const char* name, unsigned int size, void* buffer)
+	void I4ShaderMgr::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)
 	{
 		if (activeShaderProgram)
 		{
-			activeShaderProgram->setConstantBuffer(type, slot, name, size, buffer);
+			activeShaderProgram->setConstantBuffer(type, slot, constantBuffer, data);
 		}
 	}
 

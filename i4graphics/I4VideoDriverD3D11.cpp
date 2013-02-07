@@ -63,6 +63,24 @@ namespace i4graphics
 			d3dDevice->Release();			
 			d3dDevice = nullptr;
 		}
+		
+		for (int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
+		{
+			rasterizerStates[i]->Release();
+			rasterizerStates[i] = nullptr;
+		}
+
+		for (int i = 0; i < I4BLEND_MODE_NUM; ++i)
+		{
+			blendModes[i]->Release();
+			blendModes[i] = nullptr;
+		}
+
+		for (int i = 0; i < I4SAMPLER_STATE_NUM; ++i)
+		{
+			samplerStates[i]->Release();
+			samplerStates[i] = nullptr;
+		}
 	}
 
 	bool I4VideoDriverD3D11::initialize(void* windowID, unsigned int width, unsigned int height)
@@ -88,7 +106,6 @@ namespace i4graphics
 		sd.SampleDesc.Count = 1;
 		sd.SampleDesc.Quality = 0;
 		sd.Windowed = TRUE;
-
 		
 		D3D_DRIVER_TYPE driverTypes[] =
 		{
@@ -187,7 +204,7 @@ namespace i4graphics
 			D3D11_CULL_BACK
 		};
 
-		for( UINT i=0; i<I4RASTERIZER_MODE_NUM; i++ )
+		for (unsigned int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
 		{
 			D3D11_RASTERIZER_DESC rasterizerDesc;
 			rasterizerDesc.FillMode = fill[i];
@@ -212,7 +229,7 @@ namespace i4graphics
 		BlendState.IndependentBlendEnable = false;
 		BlendState.RenderTarget[0].BlendEnable = false;
 		BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		hr = d3dDevice->CreateBlendState(&BlendState, &blendStates[I4BLEND_MODE_NONE]);
+		hr = d3dDevice->CreateBlendState(&BlendState, &blendModes[I4BLEND_MODE_NONE]);
 		if (FAILED(hr))
 			return false;
 
@@ -228,7 +245,7 @@ namespace i4graphics
 		alphaBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		alphaBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		alphaBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		hr = d3dDevice->CreateBlendState(&alphaBlendDesc, &blendStates[I4BLEND_MODE_ALPHA]);
+		hr = d3dDevice->CreateBlendState(&alphaBlendDesc, &blendModes[I4BLEND_MODE_ALPHA]);
 		if (FAILED(hr))
 			return false;
 
@@ -244,7 +261,33 @@ namespace i4graphics
 		addBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 		addBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		addBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		hr = d3dDevice->CreateBlendState(&addBlendDesc, &blendStates[I4BLEND_MODE_ADD]);
+		hr = d3dDevice->CreateBlendState(&addBlendDesc, &blendModes[I4BLEND_MODE_ADD]);
+		if (FAILED(hr))
+			return false;
+
+		D3D11_SAMPLER_DESC sampDescPoint;
+		ZeroMemory( &sampDescPoint, sizeof(sampDescPoint) );
+		sampDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescPoint.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampDescPoint.MinLOD = 0;
+		sampDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
+		hr = d3dDevice->CreateSamplerState(&sampDescPoint, &samplerStates[I4SAMPLER_STATE_POINT]);
+		if (FAILED(hr))
+			return false;
+		
+		D3D11_SAMPLER_DESC sampDescLinear;
+		ZeroMemory( &sampDescLinear, sizeof(sampDescLinear) );
+		sampDescLinear.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sampDescLinear.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescLinear.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescLinear.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescLinear.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampDescLinear.MinLOD = 0;
+		sampDescLinear.MaxLOD = D3D11_FLOAT32_MAX;
+		hr = d3dDevice->CreateSamplerState(&sampDescLinear, &samplerStates[I4SAMPLER_STATE_LINEAR]);
 		if (FAILED(hr))
 			return false;
 
@@ -352,13 +395,13 @@ namespace i4graphics
 		{
 			I4VideoDriver::setBlendMode(mode);
 			float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			immediateContext->OMSetBlendState(blendStates[mode], blendFactor, 0xffffffff);
+			immediateContext->OMSetBlendState(blendModes[mode], blendFactor, 0xffffffff);
 		}
 	}
 
 	I4ShaderProgram* I4VideoDriverD3D11::createShaderProgram()
 	{
-		return new I4ShaderProgramD3D11(d3dDevice, immediateContext);
+		return new I4ShaderProgramD3D11(d3dDevice, immediateContext, samplerStates);
 	}
 
 	I4VertexBuffer* I4VideoDriverD3D11::createVertexBuffer()
@@ -369,6 +412,11 @@ namespace i4graphics
 	I4IndexBuffer* I4VideoDriverD3D11::createIndexBuffer()
 	{
 		return new I4IndexBufferD3D11(d3dDevice, immediateContext);
+	}
+
+	I4ConstantBuffer* I4VideoDriverD3D11::createConstantBuffer()
+	{
+		return new I4ConstantBufferD3D11(d3dDevice);
 	}
 
 	I4Texture* I4VideoDriverD3D11::createTexture()

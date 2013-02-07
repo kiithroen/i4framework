@@ -151,6 +151,36 @@ namespace i4graphics
 			return false;
 		}
 		
+
+		if (cbChageOnResize_G.create() == false)
+			return false;
+
+		if (cbChangesEveryFrame_G.create() == false)
+			return false;
+
+		if (cbChangesEachMeshInstance_G.create() == false)
+			return false;
+		
+		if (cbChangeOnResize_L_directional.create() == false)
+			return false;
+
+		if (cbChangeEachLight_L_directional.create() == false)
+			return false;
+		
+		if (cbChangeOnResize_L_point_VS.create() == false)
+			return false;
+		if (cbChangeOnResize_L_point_PS.create() == false)
+			return false;
+
+		if (cbChangeEveryFrame_L_point.create() == false)
+			return false;
+
+		if (cbChangeEachLight_L_point_VS.create() == false)
+			return false;
+
+		if (cbChangeEachLight_L_point_PS.create() == false)
+			return false;
+
 		return true;
 	}
 
@@ -294,12 +324,12 @@ namespace i4graphics
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 
-		cbChageOnResize_G.projection = camera->getProjectionMatrix(); 
-		cbChageOnResize_G.farDistance = camera->getZFar();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChageOnResize_G", sizeof(cbChageOnResize_G), &cbChageOnResize_G);
+		cbChageOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
+		cbChageOnResize_G.getData()->farDistance = camera->getZFar();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbChageOnResize_G.getBuffer(), cbChageOnResize_G.getData());
 
-		cbChangesEveryFrame_G.view = camera->getViewMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, "cbChangesEveryFrame_G", sizeof(cbChangesEveryFrame_G), &cbChangesEveryFrame_G);
+		cbChangesEveryFrame_G.getData()->view = camera->getViewMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbChangesEveryFrame_G.getBuffer(), cbChangesEveryFrame_G.getData());
 
 		I4MeshInstance* prevMeshInstance = nullptr;
 		I4MeshInstance* curMeshInstance = nullptr;
@@ -385,10 +415,10 @@ namespace i4graphics
 					shaderMgr->setTexture(2, normal);
 				}
 
-				cbChangesEachMeshInstance_G.specularIntensity = curMeshInstance->specularInensity; 
-				cbChangesEachMeshInstance_G.specularPower = curMeshInstance->specularPower;
-				cbChangesEachMeshInstance_G.world = itr.worldTM;
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, "cbChangesEachMeshInstance_G", sizeof(cbChangesEachMeshInstance_G), &cbChangesEachMeshInstance_G);
+				cbChangesEachMeshInstance_G.getData()->specularIntensity = curMeshInstance->specularInensity; 
+				cbChangesEachMeshInstance_G.getData()->specularPower = curMeshInstance->specularPower;
+				cbChangesEachMeshInstance_G.getData()->world = itr.worldTM;
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbChangesEachMeshInstance_G.getBuffer(), cbChangesEachMeshInstance_G.getData());
 
 				curMesh->draw();
 			}
@@ -445,8 +475,8 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, rtNormal);
 		shaderMgr->setRenderTarget(2, rtDepth);
 
-		cbChangeOnResize_L_directional.farTopRight = camera->getFarTopRight();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, "cbChangeOnResize_L_directional", sizeof(cbChangeOnResize_L_directional), &cbChangeOnResize_L_directional);
+		cbChangeOnResize_L_directional.getData()->farTopRight = camera->getFarTopRight();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbChangeOnResize_L_directional.getBuffer(), cbChangeOnResize_L_directional.getData());
 
 		quadMesh->bind();
 
@@ -470,11 +500,11 @@ namespace i4graphics
 
 			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
 
-			cbChangeEachLight_L_directional.lightViewProjection = matLightViewProj;
-			cbChangeEachLight_L_directional.viewInvLightViewProjection = matViewInvLightViewProj;
-			cbChangeEachLight_L_directional.lightViewDirection = lightViewDir;
-			cbChangeEachLight_L_directional.lightColor = light.color;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, "cbChangeEachLight_L_directional", sizeof(cbChangeEachLight_L_directional), &cbChangeEachLight_L_directional);
+			cbChangeEachLight_L_directional.getData()->lightViewProjection = matLightViewProj;
+			cbChangeEachLight_L_directional.getData()->viewInvLightViewProjection = matViewInvLightViewProj;
+			cbChangeEachLight_L_directional.getData()->lightViewDirection = lightViewDir;
+			cbChangeEachLight_L_directional.getData()->lightColor = light.color;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbChangeEachLight_L_directional.getBuffer(), cbChangeEachLight_L_directional.getData());
 
 			quadMesh->draw();
 		}
@@ -515,14 +545,14 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, rtNormal);
 		shaderMgr->setRenderTarget(2, rtDepth);
 		
-		cbChangeOnResize_L_point_VS.projection = camera->getProjectionMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cbChangeOnResize_L_point_VS", sizeof(cbChangeOnResize_L_point_VS), &cbChangeOnResize_L_point_VS);
+		cbChangeOnResize_L_point_VS.getData()->projection = camera->getProjectionMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbChangeOnResize_L_point_VS.getBuffer(), cbChangeOnResize_L_point_VS.getData());
 
-		cbChangeOnResize_L_point_PS.farTopRight = camera->getFarTopRight();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, "cbChangeOnResize_L_point_PS", sizeof(cbChangeOnResize_L_point_PS), &cbChangeOnResize_L_point_PS);
+		cbChangeOnResize_L_point_PS.getData()->farTopRight = camera->getFarTopRight();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbChangeOnResize_L_point_PS.getBuffer(), cbChangeOnResize_L_point_PS.getData());
 
-		cbChangeEveryFrame_L_point.view = camera->getViewMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, "cbChangeEveryFrame_L_point", sizeof(cbChangeEveryFrame_L_point), &cbChangeEveryFrame_L_point);
+		cbChangeEveryFrame_L_point.getData()->view = camera->getViewMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbChangeEveryFrame_L_point.getBuffer(), cbChangeEveryFrame_L_point.getData());
 
 		sphereMesh->bind();
 
@@ -552,14 +582,14 @@ namespace i4graphics
 				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_BACK);
 			}
 
-			cbChangeEachLight_L_point_VS.world = matLight;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 3, "cbChangeEachLight_L_point_VS", sizeof(cbChangeEachLight_L_point_VS), &cbChangeEachLight_L_point_VS);
+			cbChangeEachLight_L_point_VS.getData()->world = matLight;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 3, cbChangeEachLight_L_point_VS.getBuffer(), cbChangeEachLight_L_point_VS.getData());
 
 
-			cbChangeEachLight_L_point_PS.lightPosition = lightViewPos;
-			cbChangeEachLight_L_point_PS.lightRadius = light.radius;
-			cbChangeEachLight_L_point_PS.lightColor = light.color;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 4, "cbChangeEachLight_L_point_PS", sizeof(cbChangeEachLight_L_point_PS), &cbChangeEachLight_L_point_PS);
+			cbChangeEachLight_L_point_PS.getData()->lightPosition = lightViewPos;
+			cbChangeEachLight_L_point_PS.getData()->lightRadius = light.radius;
+			cbChangeEachLight_L_point_PS.getData()->lightColor = light.color;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 4, cbChangeEachLight_L_point_PS.getBuffer(), cbChangeEachLight_L_point_PS.getData());
 
 			sphereMesh->draw();
 		}

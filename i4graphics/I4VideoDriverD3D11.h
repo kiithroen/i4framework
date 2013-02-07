@@ -9,6 +9,8 @@ namespace i4graphics
 {
 	class I4VideoDriverD3D11 : public I4VideoDriver
 	{
+		typedef std::map<std::string, ID3D11Buffer*>	ConstantBufferMap;
+		ConstantBufferMap		constantBufferMap;
 		friend class I4VideoDriver;
 	public:
 		~I4VideoDriverD3D11();
@@ -37,6 +39,7 @@ namespace i4graphics
 
 		virtual I4VertexBuffer*		createVertexBuffer() override;
 		virtual I4IndexBuffer*		createIndexBuffer() override;
+		virtual I4ConstantBuffer*	createConstantBuffer() override;
 
 		virtual I4Texture*			createTexture() override;
 
@@ -53,7 +56,8 @@ namespace i4graphics
 		ID3D11Texture2D*			backBufferDepthStencilTex;
 		ID3D11DepthStencilView*		backBufferDepthStencilView;
 		ID3D11RasterizerState*		rasterizerStates[I4RASTERIZER_MODE_NUM];
-		ID3D11BlendState*			blendStates[I4BLEND_MODE_NUM];
+		ID3D11BlendState*			blendModes[I4BLEND_MODE_NUM];		
+		ID3D11SamplerState*			samplerStates[I4SAMPLER_STATE_NUM];
 		D3D_DRIVER_TYPE				driverType;
 		D3D_FEATURE_LEVEL			featureLevel;
 	};
