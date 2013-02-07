@@ -1,0 +1,5 @@
+DirectX 11 SDK : install Windows SDK or Visual Studio 2012
+vld : http://vld.codeplex.com/
+PhysX : https://developer.nvidia.com/physx
+DirectXTex : Copy from DirectX SDK Tutorial07 Sample.
+rapidxml : http://rapidxml.sourceforge.net/
