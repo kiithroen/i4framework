@@ -12,9 +12,9 @@ namespace i4graphics
 
 	I4ShaderMgr::~I4ShaderMgr()
 	{
-		for (I4ShaderProgramMap::iterator itr = mapShaderProgram.begin(); itr != mapShaderProgram.end(); ++itr)
+		for (auto &itr : mapShaderProgram)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapShaderProgram.clear();
 	}
@@ -62,7 +62,7 @@ namespace i4graphics
 
 	bool I4ShaderMgr::begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
-		I4ShaderProgramMap::iterator itr = mapShaderProgram.find(mask);
+		auto itr = mapShaderProgram.find(mask);
 		if (itr == mapShaderProgram.end())
 		{
 			activeShaderProgram = createShaderProgram(mask, inputElements, numElements);
@@ -166,7 +166,7 @@ namespace i4graphics
 	bool I4ShaderMgr::addShaderMgr(const std::string& fxName)
 	{
 		I4ShaderMgr* shaderMgr = nullptr;
-		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fxName);
+		auto itr = mapShaderMgr.find(fxName);
 		if (itr == mapShaderMgr.end())
 		{
 			shaderMgr = new I4ShaderMgr;
@@ -188,7 +188,7 @@ namespace i4graphics
 
 	I4ShaderMgr* I4ShaderMgr::findShaderMgr(const std::string& fxName)
 	{
-		I4ShaderMgrMap::iterator itr = mapShaderMgr.find(fxName);
+		auto itr = mapShaderMgr.find(fxName);
 		if (itr != mapShaderMgr.end())
 		{
 			return itr->second;
@@ -200,9 +200,9 @@ namespace i4graphics
 
 	void I4ShaderMgr::destroyShaderMgr()
 	{
-		for (I4ShaderMgrMap::iterator itr = mapShaderMgr.begin(); itr != mapShaderMgr.end(); ++itr)
+		for (auto &itr : mapShaderMgr)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapShaderMgr.clear();
 	}

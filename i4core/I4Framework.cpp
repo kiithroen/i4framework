@@ -12,11 +12,11 @@
 namespace i4core {
 
 	I4Framework::I4Framework()
-		: windowID(NULL)
+		: windowID(nullptr)
 		, title("Untitled")
 		, width(800)
 		, height(600)
-		, frameCallback(NULL)
+		, frameCallback(nullptr)
 	{
 		for (int i = 0; i < 256; ++i)
 		{
@@ -26,6 +26,7 @@ namespace i4core {
 
 	I4Framework::~I4Framework()
 	{
+		destroy();
 	}
 
 	bool I4Framework::create(unsigned int _width, unsigned int _height, const std::string& _title)
@@ -135,11 +136,11 @@ namespace i4core {
 
 	//-----------------------------------------------------------------------------
 
-	I4Framework* I4Framework::framework = NULL;
+	I4Framework* I4Framework::framework = nullptr;
 
 	void I4Framework::createFramework()
 	{
-		assert(framework == NULL);
+		assert(framework == nullptr);
 
 #ifdef _WIN32
 		framework = new I4FrameworkWin;
@@ -153,6 +154,6 @@ namespace i4core {
 	void I4Framework::destroyFramework()
 	{
 		delete framework;
-		framework = NULL;
+		framework = nullptr;
 	}
 }

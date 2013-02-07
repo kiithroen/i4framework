@@ -7,7 +7,7 @@
 namespace i4core
 {
 
-	I4FrameTimer* I4FrameTimer::timer = NULL;
+	I4FrameTimer* I4FrameTimer::timer = nullptr;
 
 	I4FrameTimer::I4FrameTimer()
 		: deltaSec(1.0f/30.0f)
@@ -20,7 +20,7 @@ namespace i4core
 
 	void I4FrameTimer::createFrameTimer()
 	{
-		assert(timer == NULL);
+		assert(timer == nullptr);
 
 #ifdef _WIN32
 		timer = new I4FrameTimerWin;
@@ -34,6 +34,6 @@ namespace i4core
 	void I4FrameTimer::destroyFrameTimer()
 	{
 		delete timer;
-		timer = NULL;
+		timer = nullptr;
 	}
 }

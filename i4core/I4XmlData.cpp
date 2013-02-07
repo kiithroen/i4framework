@@ -77,7 +77,7 @@ namespace i4core
 
 	bool I4XmlData::selectNodeByPath(const char* path)
 	{
-		I4XmlNode* node = NULL;
+		I4XmlNode* node = nullptr;
 		getNode(node, path);
 		if (node == nullptr)
 			return false;

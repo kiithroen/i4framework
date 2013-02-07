@@ -4,7 +4,7 @@
 namespace i4core {
 
 	I4FrameStateMgr::I4FrameStateMgr()
-	: curFrameState(NULL)
+	: curFrameState(nullptr)
 	, nextFrameStateID("")
 	{
 	}
@@ -16,9 +16,9 @@ namespace i4core {
 			curFrameState->onExit();
 		}
 
-		for (I4FrameStateMap::iterator itr = frameStateMap.begin(); itr != frameStateMap.end(); ++itr)
+		for (auto &itr : frameStateMap)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 
 		frameStateMap.clear();
@@ -110,10 +110,10 @@ namespace i4core {
 
 	bool I4FrameStateMgr::addFrameState(const char* id, I4FrameState* state)
 	{
-		if (state == NULL)
+		if (state == nullptr)
 			return false;
 
-		I4FrameStateMap::iterator itr = frameStateMap.find(id);
+		auto itr = frameStateMap.find(id);
 		if (itr != frameStateMap.end())	// 중복 추가면 실패
 			return false;
 
@@ -126,7 +126,7 @@ namespace i4core {
 
 	bool I4FrameStateMgr::changeFrameState(const char* id)
 	{
-		I4FrameStateMap::iterator itr = frameStateMap.find(id);
+		auto itr = frameStateMap.find(id);
 		if (itr == frameStateMap.end())	// 없는 상태면 실패
 			return false;
 
@@ -136,7 +136,7 @@ namespace i4core {
 		}		
 
 		curFrameState = itr->second;
-		assert(curFrameState != NULL);
+		assert(curFrameState != nullptr);
 
 		return curFrameState->onEnter();
 	}

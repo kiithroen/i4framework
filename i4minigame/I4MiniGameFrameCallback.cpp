@@ -67,10 +67,6 @@ bool I4MiniGameFrameCallback::onStart()
 
 void I4MiniGameFrameCallback::onEnd()
 {
-	for (int i = 0; i < _countof(testModelInstance); ++i)
-	{
-	//	renderer->destroyModelInstance(testModelInstance[i]);
-	}
 	delete renderer;
 	delete camera;
 	delete frameStateMgr;

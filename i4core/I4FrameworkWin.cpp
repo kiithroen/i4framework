@@ -6,7 +6,7 @@
 
 namespace i4core {
 
-	I4FrameworkWin* g_frameworkWin = NULL;
+	I4FrameworkWin* g_frameworkWin = nullptr;
 
 	// 전역 메시지 프로시저
 	LRESULT CALLBACK appWndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam)
@@ -16,23 +16,23 @@ namespace i4core {
 	}
 
 	I4FrameworkWin::I4FrameworkWin()
-	: hInst(NULL)
+	: hInst(nullptr)
 	{
-		assert(g_frameworkWin == NULL);	// 하나만 생성되어야 하기때문에 이미 할당되있으면 안된다.
+		assert(g_frameworkWin == nullptr);	// 하나만 생성되어야 하기때문에 이미 할당되있으면 안된다.
 		
 		g_frameworkWin = this;
 	}
 
 	I4FrameworkWin::~I4FrameworkWin()
 	{
-		g_frameworkWin = NULL;
+		g_frameworkWin = nullptr;
 	}
 
 	bool I4FrameworkWin::onCreate()
 	{
-		hInst = GetModuleHandle(NULL);
+		hInst = GetModuleHandle(nullptr);
 
-		const wchar_t* wtitle = I4StringUtil::to_wchar_t(title.c_str());
+		const std::wstring wtitle = I4StringUtil::to_wchar_t(title.c_str());
 		// 윈도우 클래스 등록
 		WNDCLASSEX	wc;
 
@@ -42,11 +42,11 @@ namespace i4core {
 		wc.cbClsExtra		= 0;
 		wc.cbWndExtra		= 0;
 		wc.hInstance		= hInst;
-		wc.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
-		wc.hCursor			= LoadCursor(NULL, IDC_ARROW);
+		wc.hIcon			= LoadIcon(nullptr, IDI_APPLICATION);
+		wc.hCursor			= LoadCursor(nullptr, IDC_ARROW);
 		wc.hbrBackground	= (HBRUSH)GetStockObject(WHITE_BRUSH);
-		wc.lpszMenuName		= NULL;
-		wc.lpszClassName	= wtitle;
+		wc.lpszMenuName		= nullptr;
+		wc.lpszClassName	= wtitle.c_str();
 		wc.hIconSm			= LoadIcon(0, IDI_APPLICATION);
 
 		if (RegisterClassEx(&wc) == 0)
@@ -63,19 +63,19 @@ namespace i4core {
 		// 윈도우 생성
 		HWND hWnd = CreateWindowEx(
 					exStyle,
-					wtitle,
-					wtitle,
+					wtitle.c_str(),
+					wtitle.c_str(),
 					style,
 					0,
 					0,
 					rect.right - rect.left,
 					rect.bottom - rect.top,
-					NULL,
-					NULL,
+					nullptr,
+					nullptr,
 					hInst,
-					NULL);
+					nullptr);
 		
-		if (hWnd == NULL)
+		if (hWnd == nullptr)
 			return false;
 
 		ShowWindow(hWnd, SW_SHOW);
@@ -87,8 +87,8 @@ namespace i4core {
 
 	void I4FrameworkWin::onDestroy()
 	{
-		const wchar_t* wtitle = I4StringUtil::to_wchar_t(title.c_str());
-		UnregisterClass(wtitle, hInst);
+		const std::wstring wtitle = I4StringUtil::to_wchar_t(title.c_str());
+		UnregisterClass(wtitle.c_str(), hInst);
 	}
 
 
@@ -96,7 +96,7 @@ namespace i4core {
 	{
 		MSG msg;
 		memset(&msg, 0, sizeof(MSG));
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -176,7 +176,7 @@ namespace i4core {
 			break;
 		case WM_LBUTTONUP:
 			{
-				SetCapture(NULL);
+				SetCapture(nullptr);
 
 				if (frameCallback)
 				{
@@ -196,7 +196,7 @@ namespace i4core {
 			break;
 		case WM_RBUTTONUP:
 			{
-				SetCapture(NULL);
+				SetCapture(nullptr);
 
 				if (frameCallback)
 				{

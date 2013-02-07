@@ -6,6 +6,11 @@
 #include "I4Log.h"
 #include "I4Framework.h"
 #include "I4MiniGameFrameCallback.h"
+
+#ifdef _DEBUG
+#include <vld.h>
+#endif
+
 using namespace i4core;
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
@@ -15,13 +20,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+	
 #ifdef _DEBUG
 	I4Log::initialize(I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE, I4Log::LEVEL_DEBUG, L"i4minigame_d.log");
 #else
-	I4Log::initialize(I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE, I4Log::LEVEL_DEBUG, L"i4minigame_d.log");
+	I4Log::initialize(I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE, I4Log::LEVEL_DEBUG, L"i4minigame.log");
 #endif	
 
 	I4MiniGameFrameCallback frameCallback;
@@ -33,8 +36,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		I4LOG_ERROR << "Framework create failed.\n";
 		return false;
 	}
-
 	framework->run();
-
+	I4Framework::destroyFramework();
 	return 0;
 }

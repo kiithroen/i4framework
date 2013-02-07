@@ -7,7 +7,7 @@ namespace i4core
 	class I4CORE_API I4StringUtil
 	{
 	public:
-		static const char* to_char(const wchar_t* wstr);
-		static const wchar_t* to_wchar_t(const char* str);
+		static std::string to_char(const wchar_t* wstr);
+		static std::wstring to_wchar_t(const char* str);
 	};
 }

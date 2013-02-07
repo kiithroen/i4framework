@@ -1,5 +1,8 @@
 #pragma once
 
+
+#define _CRTDBG_MAP_ALLOC
+
 // i4core
 #include "i4core.h"
 

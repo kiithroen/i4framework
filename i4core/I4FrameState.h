@@ -9,7 +9,7 @@ namespace i4core
 	{
 		friend class I4FrameStateMgr;
 	public:
-		I4FrameState() : frameStateMgr(NULL)	{}
+		I4FrameState() : frameStateMgr(nullptr)	{}
 		virtual ~I4FrameState()				{}
 
 		const char*		getFrameStateID()								{ return frameStateID.c_str(); }

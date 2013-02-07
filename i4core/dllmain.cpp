@@ -1,6 +1,9 @@
 // dllmain.cpp : DLL 응용 프로그램의 진입점을 정의합니다.
-
 #include "i4core.h"
+
+#ifdef _DEBUG
+#include <vld.h>
+#endif
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -15,6 +18,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	case DLL_PROCESS_DETACH:
 		break;
 	}
+	
 	return TRUE;
 }
 

@@ -89,7 +89,7 @@ namespace i4graphics
 
 	void I4ModelMgr::destroyInstance(I4ModelInstance* modelInstance)
 	{
-		I4ModelInstanceMap::iterator itr = mapModelInstance.find(modelInstance->getID());
+		auto itr = mapModelInstance.find(modelInstance->getID());
 		if (itr != mapModelInstance.end())
 		{
 			assert(modelInstance->isEqual(*itr->second));
@@ -106,7 +106,7 @@ namespace i4graphics
 
 	I4ModelPrototype* I4ModelMgr::findModelPrototype(I4HashID prototypeID)
 	{
-		I4ModelPrototypeMap::iterator itr = mapModelPrototype.find(prototypeID);
+		auto itr = mapModelPrototype.find(prototypeID);
 		if (itr == mapModelPrototype.end())
 			return nullptr;
 
@@ -115,7 +115,7 @@ namespace i4graphics
 
 	I4ModelInstance* I4ModelMgr::findModelInstance(I4HashID modelInstanceID)
 	{
-		I4ModelInstanceMap::iterator itr = mapModelInstance.find(modelInstanceID);
+		auto itr = mapModelInstance.find(modelInstanceID);
 		if (itr == mapModelInstance.end())
 			return nullptr;
 
@@ -124,7 +124,7 @@ namespace i4graphics
 
 	I4Texture* I4ModelMgr::findTexture(I4HashID textureID)
 	{
-		I4TextureMap::iterator itr = mapTexture.find(textureID);
+		auto itr = mapTexture.find(textureID);
 		if (itr == mapTexture.end())
 			return nullptr;
 
@@ -133,7 +133,7 @@ namespace i4graphics
 
 	I4StaticMesh* I4ModelMgr::findMesh(I4HashID meshID)
 	{
-		I4StaticMeshMap::iterator itr = mapStaticMesh.find(meshID);
+		auto itr = mapStaticMesh.find(meshID);
 		if (itr == mapStaticMesh.end())
 			return nullptr;
 
@@ -142,27 +142,27 @@ namespace i4graphics
 
 	void I4ModelMgr::destroy()
 	{	
-		for (I4StaticMeshMap::iterator itr = mapStaticMesh.begin(); itr != mapStaticMesh.end(); ++itr)
+		for (auto &itr : mapStaticMesh)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapStaticMesh.clear();
 
-		for (I4TextureMap::iterator itr = mapTexture.begin(); itr != mapTexture.end(); ++itr)
+		for (auto &itr : mapTexture)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapTexture.clear();
 
-		for (I4ModelInstanceMap::iterator itr = mapModelInstance.begin(); itr != mapModelInstance.end(); ++itr)
+		for (auto &itr : mapModelInstance)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapModelInstance.clear();
 
-		for (I4ModelPrototypeMap::iterator itr = mapModelPrototype.begin(); itr != mapModelPrototype.end(); ++itr)
+		for (auto &itr : mapModelPrototype)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapModelPrototype.clear();
 	}
