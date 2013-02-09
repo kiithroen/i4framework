@@ -15,6 +15,8 @@ namespace i4graphics
 {
 	class I4DefferedRenderer;
 	class I4ModelInstance;
+	class I4Actor;
+	class I4ActorMgr;
 }
 using namespace i4graphics;
 
@@ -56,4 +58,7 @@ private:
 	float				camYaw;
 	float				camPitch;
 	float				camRoll;
+
+	I4Actor*			actor;
+	I4ActorMgr*			actorMgr;
 };

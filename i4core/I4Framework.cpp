@@ -29,7 +29,7 @@ namespace i4core {
 		destroy();
 	}
 
-	bool I4Framework::create(unsigned int _width, unsigned int _height, const std::string& _title)
+	bool I4Framework::create(unsigned int _width, unsigned int _height, const string& _title)
 	{
 		width	= _width;
 		height	= _height;

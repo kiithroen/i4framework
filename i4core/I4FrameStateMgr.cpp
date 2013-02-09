@@ -119,7 +119,7 @@ namespace i4core {
 
 		state->frameStateID = id;
 		state->frameStateMgr = this;
-		frameStateMap.insert(std::make_pair(id, state));
+		frameStateMap.insert(make_pair(id, state));
 
 		return true;
 	}

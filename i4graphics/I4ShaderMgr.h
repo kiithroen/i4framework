@@ -24,11 +24,11 @@ namespace i4graphics
 
 	
 
-	typedef std::map<std::string, I4ShaderMgr*>		I4ShaderMgrMap;
+	typedef map<string, I4ShaderMgr*>		I4ShaderMgrMap;
 
 	class I4GRAPHICS_API I4ShaderMgr
 	{
-		typedef std::map<unsigned int, I4ShaderProgram*>	I4ShaderProgramMap;
+		typedef map<unsigned int, I4ShaderProgram*>	I4ShaderProgramMap;
 	public:
 		virtual ~I4ShaderMgr();
 
@@ -44,15 +44,15 @@ namespace i4graphics
 		I4ShaderProgram*	createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		
 	public:
-		static bool			addShaderMgr(const std::string& fxName);
-		static I4ShaderMgr*	findShaderMgr(const std::string& fxName);
+		static bool			addShaderMgr(const string& fxName);
+		static I4ShaderMgr*	findShaderMgr(const string& fxName);
 		static void			destroyShaderMgr();
 
 	protected:
 		I4ShaderMgr();
 
 	protected:
-		 std::string		baseShaderCode;
+		 string		baseShaderCode;
 		 I4ShaderProgram*	activeShaderProgram;
 		 I4ShaderProgramMap	mapShaderProgram;
 

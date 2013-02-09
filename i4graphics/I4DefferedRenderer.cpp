@@ -1,7 +1,7 @@
 #include "I4DefferedRenderer.h"
 #include "I4VideoDriver.h"
 #include "I4ShaderMgr.h"
-#include "I4ModelMgr.h"
+#include "I4ActorMgr.h"
 #include "I4RenderTarget.h"
 #include "I4QuadMesh.h"
 #include "I4SphereMesh.h"
@@ -15,16 +15,7 @@ namespace i4graphics
 	
 	bool I4MeshInstanceRenderItem::operator < (const I4MeshInstanceRenderItem& other) const
 	{
-		if (meshInstance->diffuseMapID < other.meshInstance->diffuseMapID)
-			return true;
-
-		if (meshInstance->specularMapID < other.meshInstance->specularMapID)
-			return true;
-
-		if (meshInstance->normalMapID < other.meshInstance->normalMapID)
-			return true;
-
-		if (meshInstance->meshID < other.meshInstance->meshID)
+		if (mesh < other.mesh)
 			return true;
 
 		return false;
@@ -32,7 +23,7 @@ namespace i4graphics
 
 	I4DefferedRenderer::I4DefferedRenderer()
 		: shaderMgr(nullptr)
-		, modelMgr(nullptr)
+		, actorMgr(nullptr)
 		, rtDiffuse(nullptr)
 		, rtNormal(nullptr)
 		, rtDepth(nullptr)
@@ -98,7 +89,7 @@ namespace i4graphics
 		}
 
 		// model mgr
-		modelMgr = new I4ModelMgr;
+		actorMgr = new I4ActorMgr;
 
 		// render target
 		rtDiffuse = videoDriver->createRenderTarget();
@@ -186,7 +177,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::finalize()
 	{
-		delete modelMgr;
+		delete actorMgr;
 		delete sphereMesh;
 		delete quadMesh;
 		delete rtShadow;
@@ -199,29 +190,9 @@ namespace i4graphics
 		I4VideoDriver::destroyVideoDriver();
 	}
 
-	I4ModelInstance* I4DefferedRenderer::createModelInstance(const char* modelPrototypeName, const char* modelInstanceName)
+	void I4DefferedRenderer::commitToScene(const I4MeshInstanceRenderItem& item)
 	{
-		return modelMgr->createInstance(modelPrototypeName, modelInstanceName);
-	}
-	
-	void I4DefferedRenderer::destroyModelInstance(I4ModelInstance* modelInstance)
-	{
-		modelMgr->destroyInstance(modelInstance);
-	}
-
-	void I4DefferedRenderer::commitToScene(I4ModelInstance* modelInstance)
-	{
-		for (unsigned int i = 0; i < modelInstance->getSubCount(); ++i)
-		{
-			vecSceneMeshInstnaceRenderItem.push_back(I4MeshInstanceRenderItem());
-			I4MeshInstanceRenderItem& item = *vecSceneMeshInstnaceRenderItem.rbegin();
-
-			I4MeshInstance& meshInstance = modelInstance->getSubMeshInstance(i);			
-			I4Matrix4x4::multiply(item.worldTM, meshInstance.meshLocalTM, modelInstance->getModelTM());
-			item.worldAABB = meshInstance.meshLocalAABB.transform(item.worldTM);
-
-			item.meshInstance = &meshInstance;			
-		}
+			vecSceneMeshInstnaceRenderItem.push_back(item);
 	}
 
 	void I4DefferedRenderer::commitToScene(I4DirectionalLight* light)
@@ -312,7 +283,7 @@ namespace i4graphics
 			}
 		}
 
-		std::sort(vecCulledMeshInstnaceRenderItem.begin(), vecCulledMeshInstnaceRenderItem.end());
+		sort(vecCulledMeshInstnaceRenderItem.begin(), vecCulledMeshInstnaceRenderItem.end());
 	}
 
 	void I4DefferedRenderer::renderMeshInstanceRenderItem(I4Camera* camera)
@@ -338,7 +309,7 @@ namespace i4graphics
 
 		for (auto &itr : vecCulledMeshInstnaceRenderItem)
 		{
-			curMeshInstance = itr.meshInstance;					
+//			curMeshInstance = itr.meshInstance;					
 			bool isChangedDiffuseMap = false;
 			bool isChangedSpecularMap = false;
 			bool isChangedNormalMap = false;
@@ -352,6 +323,7 @@ namespace i4graphics
 			}
 			else
 			{
+				/*
 				if (prevMeshInstance->diffuseMapID != curMeshInstance->diffuseMapID)
 				{
 					isChangedDiffuseMap = true;
@@ -366,6 +338,7 @@ namespace i4graphics
 				{
 					isChangedNormalMap = true;								
 				}
+				*/
 			}
 
 			if (prevMesh == nullptr)
@@ -374,7 +347,7 @@ namespace i4graphics
 			}
 			else
 			{
-				if (prevMesh->getID() != curMeshInstance->meshID)
+				if (prevMesh != itr.mesh)
 				{
 					isChangedMesh = true;					
 				}
@@ -387,7 +360,7 @@ namespace i4graphics
 					prevMesh->unbind();
 				}
 
-				curMesh = modelMgr->findMesh(curMeshInstance->meshID);
+				curMesh = itr.mesh;
 
 				if (curMesh != nullptr)
 				{
@@ -399,24 +372,24 @@ namespace i4graphics
 			{
 				if (isChangedDiffuseMap == true)
 				{
-					I4Texture* diffuse = modelMgr->findTexture(curMeshInstance->diffuseMapID);
-					shaderMgr->setTexture(0, diffuse);
+//					I4Texture* diffuse = actorMgr->findTexture(curMeshInstance->diffuseMapID);
+	//				shaderMgr->setTexture(0, diffuse);
 				}
 						
 				if (isChangedSpecularMap == true)
 				{
-					I4Texture* specular = modelMgr->findTexture(curMeshInstance->specularMapID);
-					shaderMgr->setTexture(1, specular);
+		//			I4Texture* specular = actorMgr->findTexture(curMeshInstance->specularMapID);
+			//		shaderMgr->setTexture(1, specular);
 				}
 
 				if (isChangedNormalMap == true)
 				{
-					I4Texture* normal = modelMgr->findTexture(curMeshInstance->normalMapID);
-					shaderMgr->setTexture(2, normal);
+				//	I4Texture* normal = actorMgr->findTexture(curMeshInstance->normalMapID);
+					//shaderMgr->setTexture(2, normal);
 				}
 
-				cbChangesEachMeshInstance_G.getData()->specularIntensity = curMeshInstance->specularInensity; 
-				cbChangesEachMeshInstance_G.getData()->specularPower = curMeshInstance->specularPower;
+				cbChangesEachMeshInstance_G.getData()->specularIntensity = 1.0f;// curMeshInstance->specularInensity; 
+				cbChangesEachMeshInstance_G.getData()->specularPower = 1.0f;//curMeshInstance->specularPower;
 				cbChangesEachMeshInstance_G.getData()->world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbChangesEachMeshInstance_G.getBuffer(), cbChangesEachMeshInstance_G.getData());
 
@@ -486,7 +459,7 @@ namespace i4graphics
 
 			//-----------
 			I4Matrix4x4 matLightProj;
-			matLightProj.makePerspectiveFovLH(mathutil::PI/4.0f, 1.0f, 1.0f, 1000.0f);
+			matLightProj.makePerspectiveFovLH(PI/4.0f, 1.0f, 1.0f, 1000.0f);
 			I4Matrix4x4 matLightView;
 			matLightView.makeCameraLookAtLH(-vecSceneDirectionalLight[0].direction*300, -vecSceneDirectionalLight[0].direction*299, I4Vector3(0, 1, 0));
 

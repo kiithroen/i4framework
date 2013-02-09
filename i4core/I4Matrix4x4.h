@@ -229,7 +229,7 @@ namespace i4core
 						(_12*_24 - _14*_22)*(_31*_43 - _33*_41) +
 						(_13*_24 - _14*_23)*(_31*_42 - _32*_41);
 
-			if (mathutil::isEpsilonZero(d))
+			if (I4MathUtil::isEpsilonZero(d))
 				return false;
 
 			float invD = 1.0f/d;
@@ -597,4 +597,9 @@ namespace i4core
 					   rhs._41*val, rhs._42*val, rhs._43*val, rhs._44*val);
 	}	
 
+	
+	static const I4Matrix4x4 IDENTITY = I4Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
+													0.0f, 1.0f, 0.0f, 0.0f,
+													0.0f, 0.0f, 1.0f, 0.0f,
+													0.0f, 0.0f, 0.0f, 1.0f);
 }

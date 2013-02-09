@@ -44,6 +44,7 @@ namespace i4core
 		bool		getAttrValue(unsigned int& result, const char* name);
 		bool		getAttrValue(float& result, const char* name);
 		bool		getAttrValue(const char*& result, const char* name);
+		bool		getAttrValue(string& result, const char* name);
 
 		template<typename T>
 		bool getNodeValueByPath(T& result, const char* path)
@@ -67,7 +68,7 @@ namespace i4core
 
 	private:		
 		bool	getNode(I4XmlNode*& result, const char* path);
-		void	splitPath(std::vector<std::string>& result, const char* path);
+		void	splitPath(vector<string>& result, const char* path);
 
 	private:
 		I4XmlDocument*	xmlDoc;

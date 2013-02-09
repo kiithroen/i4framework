@@ -4,11 +4,12 @@
 #include "I4Framework.h"
 #include "I4DefferedRenderer.h"
 #include "I4Camera.h"
-#include "I4ModelMgr.h"
 #include "I4FrameStateMgr.h"
 #include "I4Log.h"
 #include "I4Profile.h"
 #include "I4ProfileWriterLog.h"
+#include "I4Actor.h"
+#include "I4ActorMgr.h"
 
 using namespace i4graphics;
 
@@ -34,16 +35,8 @@ bool I4MiniGameFrameCallback::onStart()
 		return false;
 	}
 	
-	for (int i = 0; i < _countof(testModelInstance); ++i)
-	{
-		char buff[256] = {0, };
-		sprintf_s(buff, "test_%d", i);
-
-		testModelInstance[i] = renderer->createModelInstance("test.mesh.xml", buff);
-	}
-	
 	camera = new I4Camera;
-	camera->setPerspectiveFov(mathutil::PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 1.0f, 1000.0f);
+	camera->setPerspectiveFov(PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 1.0f, 1000.0f);
 	camera->setLookAt(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 	
 	float camYawRad;
@@ -51,9 +44,9 @@ bool I4MiniGameFrameCallback::onStart()
 	float camRollRad;
 	camera->getRotation().extractYawPitchRoll(camYawRad, camPitchRad, camRollRad);
 
-	camYaw = mathutil::radianToDegree(camYawRad);
-	camPitch = mathutil::radianToDegree(camPitchRad);
-	camRoll = mathutil::radianToDegree(camRollRad);
+	camYaw = I4MathUtil::radianToDegree(camYawRad);
+	camPitch = I4MathUtil::radianToDegree(camPitchRad);
+	camRoll = I4MathUtil::radianToDegree(camRollRad);
 
 	frameStateMgr = new I4FrameStateMgr;
 	frameStateMgr->addFrameState("minigame", new I4MiniGameState_Game);
@@ -62,11 +55,38 @@ bool I4MiniGameFrameCallback::onStart()
 	framework->moveMouseCenter();
 	framework->getMousePos(prevMouseX, prevMouseY);
 
+
+	actorMgr = new I4ActorMgr;
+	actor = actorMgr->createActor("actor");
+	if (!actorMgr->attachBone(actor, "cyberdemon.bone.xml"))
+	{
+		return FALSE;
+	}
+
+	if (!actorMgr->attachMesh(actor, "cyberdemon.mesh.xml"))
+	{
+		return FALSE;
+	}
+
+	if (!actorMgr->attachAni(actor, "cyberdemon.ani.xml", "idle"))
+	{
+		return FALSE;
+	}
+
+	if (!actor->initialize())
+	{
+		return FALSE;
+	}
+
+	actor->playAnimation("idle");
+
 	return true;
 }
 
 void I4MiniGameFrameCallback::onEnd()
 {
+	delete actor;
+	delete actorMgr;
 	delete renderer;
 	delete camera;
 	delete frameStateMgr;
@@ -84,6 +104,8 @@ bool I4MiniGameFrameCallback::onUpdate(float deltaSec)
 
 	if (frameStateMgr->onUpdate(deltaSec) == false)
 		return false;
+
+	actor->animate(deltaSec);
 
 	updateCamera(deltaSec);
 
@@ -225,7 +247,7 @@ void I4MiniGameFrameCallback::updateCamera(float deltaTime)
 		}
 
 
-		newCamRotation.makeRotationYawPitchRoll(mathutil::degreeToRadian(camYaw), mathutil::degreeToRadian(camPitch), mathutil::degreeToRadian(camRoll));
+		newCamRotation.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(camYaw), I4MathUtil::degreeToRadian(camPitch), I4MathUtil::degreeToRadian(camRoll));
 	}
 
 	camera->setTransform(newCamRotation, newCamEye);
@@ -239,20 +261,10 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 {
 	PROFILE_THISFUNC;
 
+	actor->render(renderer, IDENTITY);
+
 	I4Matrix4x4 matModel;
 	I4Matrix4x4 matScale;
-
-	for (int i = 0; i < _countof(testModelInstance)/10; ++i)
-	{
-		for (int j = 0; j < 10; ++j)
-		{
-			int idx = i*10 + j;
-			matModel.makeTranslation(-250.0f + i*50.0f, 0.0f, -250.0f + j*50.0f);
-			matScale.makeScale(0.15f, 0.15f, 0.15f);
-			testModelInstance[idx]->setModelTM(matScale*matModel);
-			renderer->commitToScene(testModelInstance[idx]);
-		}
-	}
 
 	I4DirectionalLight directionalLight[2] =
 	{
@@ -302,9 +314,9 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			}
 
 			int idx = i*10 + j;
-			pointLight[idx].position.x = -250.0f + i*25.0f + sign*45*cos(mathutil::degreeToRadian(degree));
+			pointLight[idx].position.x = -250.0f + i*25.0f + sign*45*cos(I4MathUtil::degreeToRadian(degree));
 			pointLight[idx].position.y = 10.0f;
-			pointLight[idx].position.z = -250.0f + j*50.0f + sign*15*sin(mathutil::degreeToRadian(degree));
+			pointLight[idx].position.z = -250.0f + j*50.0f + sign*15*sin(I4MathUtil::degreeToRadian(degree));
 			pointLight[idx].radius = 25.0f;
 			pointLight[idx].color = lightPointColor[idx%13];
 

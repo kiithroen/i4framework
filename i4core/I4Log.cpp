@@ -5,7 +5,7 @@ namespace i4core
 
 	int I4Log::reportFlag = I4Log::FLAG_CONSOLE|I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE;
 	I4Log::Level I4Log::reportLevel = I4Log::LEVEL_DEBUG;
-	std::ofstream I4Log::ofs;
+	ofstream I4Log::ofs;
 
 	I4Log::I4Log(void)
 	{
@@ -13,7 +13,7 @@ namespace i4core
 
 	I4Log::~I4Log(void)
 	{
-		oss << std::endl;
+		oss << endl;
 
 		if (reportFlag & FLAG_CONSOLE)
 		{
@@ -32,7 +32,7 @@ namespace i4core
 		}
 	}
 
-	std::wostringstream& I4Log::get(Level level, const char* file, const char* func, int line)
+	wostringstream& I4Log::get(Level level, const char* file, const char* func, int line)
 	{
 		oss << L"[" << getLevelString(level) << L"]";
 		oss << L" ";

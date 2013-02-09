@@ -15,18 +15,21 @@ namespace i4graphics
 {
 	class I4VideoDriver;
 	class I4ShaderMgr;
-	class I4ModelMgr;
+	class I4ActorMgr;
 	class I4RenderTarget;
 	class I4QuadMesh;
 	class I4SphereMesh;
 	class I4ModelInstance;
 	class I4MeshInstance;
+	class I4Actor;
+	class I4ActorMgr;
+	class I4StaticMesh;
 
 	struct I4MeshInstanceRenderItem
 	{
 		I4Matrix4x4			worldTM;
 		I4AABB				worldAABB;
-		I4MeshInstance*		meshInstance;
+		I4StaticMesh*		mesh;
 
 		bool operator < (const I4MeshInstanceRenderItem& other) const;
 	};
@@ -162,9 +165,9 @@ namespace i4graphics
 
 	class I4GRAPHICS_API I4DefferedRenderer
 	{
-		typedef std::vector<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemVector;
-		typedef std::vector<I4DirectionalLight>			I4DirectionalLightVector;
-		typedef std::vector<I4PointLight>				I4PointLightVector;
+		typedef vector<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemVector;
+		typedef vector<I4DirectionalLight>			I4DirectionalLightVector;
+		typedef vector<I4PointLight>				I4PointLightVector;
 	public:
 		I4DefferedRenderer();
 		~I4DefferedRenderer(void);
@@ -172,10 +175,7 @@ namespace i4graphics
 		bool				initialize(void* _windowID, unsigned int _width, unsigned int _height);
 		void				finalize();
 
-		I4ModelInstance*	createModelInstance(const char* modelPrototypeName, const char* modelInstanceName);
-		void				destroyModelInstance(I4ModelInstance* modelInstance);
-
-		void				commitToScene(I4ModelInstance* modelInstance);
+		void				commitToScene(const I4MeshInstanceRenderItem& item);
 		void				commitToScene(I4DirectionalLight* light);
 		void				commitToScene(I4PointLight* light);
 
@@ -202,8 +202,7 @@ namespace i4graphics
 	private:
 		I4VideoDriver*					videoDriver;
 		I4ShaderMgr*					shaderMgr;
-		I4ModelMgr*						modelMgr;
-
+		I4ActorMgr*						actorMgr;
 		I4RenderTarget*					rtDiffuse;
 		I4RenderTarget*					rtNormal;
 		I4RenderTarget*					rtDepth;

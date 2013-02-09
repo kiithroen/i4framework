@@ -10,7 +10,7 @@ namespace i4core
 	class I4CORE_API I4FrameStateMgr
 	{
 		friend class I4FrameCallback;
-		typedef std::map<std::string, I4FrameState*>	I4FrameStateMap;
+		typedef map<string, I4FrameState*>	I4FrameStateMap;
 	public:
 		I4FrameStateMgr();
 		virtual ~I4FrameStateMgr();
@@ -39,6 +39,6 @@ namespace i4core
 	private:
 		I4FrameState*		curFrameState;
 		I4FrameStateMap		frameStateMap;
-		std::string			nextFrameStateID;
+		string			nextFrameStateID;
 	};
 }

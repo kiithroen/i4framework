@@ -32,6 +32,6 @@ namespace i4core
 
 	protected:
 		I4FrameStateMgr*	frameStateMgr;
-		std::string			frameStateID;
+		string			frameStateID;
 	};
 }

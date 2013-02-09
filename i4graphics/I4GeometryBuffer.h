@@ -73,6 +73,13 @@ namespace i4graphics
 		unsigned short i[3];
 	};
 	
+	struct I4SkinInfo
+	{
+
+		float	boneID[4];
+		float	weight[4];
+	};
+
 	struct I4Vertex_Pos
 	{
 		float x, y, z;
@@ -137,17 +144,16 @@ namespace i4graphics
 		{ "TANGENT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 32, I4INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Normal_Tex_Tan_BoneID_Weight
+	struct I4Vertex_Pos_Normal_Tex_Tan_SkinInfo
 	{
 		I4Vector3	position;
 		I4Vector3	normal;
 		I4TextureUV	uv;
 		I4Vector4	tangent;
-		float		boneID[4];
-		float		weight[4];
+		I4SkinInfo	skinInfo;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_BONEID_WEIGHT[] = 
+	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO[] = 
 	{
 		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
@@ -157,14 +163,14 @@ namespace i4graphics
 		{ "WEIGHT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 64, I4INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	inline void calculateTangentArray(const std::vector<I4Vector3>& vecPosition, const std::vector<I4Vector3>& vecNormal,
-		const std::vector<I4TextureUV>& vecTexUV, const std::vector<I4Index16>& vecIndex, std::vector<I4Vector4>& vecTangent)
+	inline void calculateTangentArray(const vector<I4Vector3>& vecPosition, const vector<I4Vector3>& vecNormal,
+		const vector<I4TextureUV>& vecTexUV, const vector<I4Index16>& vecIndex, vector<I4Vector4>& vecTangent)
 	{
-		std::vector<I4Vector3> tan1;
+		vector<I4Vector3> tan1;
 		tan1.resize(vecPosition.size());
 		memset(&tan1[0], 0, sizeof(I4Vector3)*tan1.size());
 
-		std::vector<I4Vector3> tan2;
+		vector<I4Vector3> tan2;
 		tan2.resize(vecPosition.size());
 		memset(&tan2[0], 0, sizeof(I4Vector3)*tan2.size());
 		

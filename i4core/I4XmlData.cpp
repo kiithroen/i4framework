@@ -20,8 +20,8 @@ namespace i4core
 
 	bool I4XmlData::parseFromFile(const char* fname)
 	{
-		std::ifstream ifs;
-		ifs.open(fname, std::ifstream::in);
+		ifstream ifs;
+		ifs.open(fname, ifstream::in);
 
 		if (ifs.is_open() == false)
 		{
@@ -29,7 +29,7 @@ namespace i4core
 			return false;
 		}
 
-		ifs.seekg(0, std::ios_base::end);
+		ifs.seekg(0, ios_base::end);
 		int size = (int)ifs.tellg();
 		if (size <= 0)
 		{
@@ -37,7 +37,7 @@ namespace i4core
 			return false;
 		}
 
-		ifs.seekg(0, std::ios::beg);
+		ifs.seekg(0, ios::beg);
 		textBuffer = new char[size + 1];
 		memset(textBuffer, 0, size + 1);
 		ifs.read(textBuffer, size);
@@ -273,9 +273,22 @@ namespace i4core
 		return true;
 	}
 	
+	bool I4XmlData::getAttrValue(string& result, const char* name)
+	{
+		assert(selNode != NULL);
+
+		I4XmlAttribute* attr = selNode->first_attribute(name);
+		if (attr == NULL)
+			return false;
+
+		result = attr->value();
+
+		return true;
+	}
+
 	bool I4XmlData::getNode(I4XmlNode*& result, const char* path)
 	{
-		std::vector<std::string> split;
+		vector<string> split;
 		splitPath(split, path);
 
 		I4XmlNode* node = xmlDoc->first_node(split[0].c_str());
@@ -296,9 +309,9 @@ namespace i4core
 		return true;
 	}
 
-	void I4XmlData::splitPath(std::vector<std::string>& result, const char* path)
+	void I4XmlData::splitPath(vector<string>& result, const char* path)
 	{
-		std::string tempPath = path;
+		string tempPath = path;
 		for (;;)
 		{
 			size_t idx = tempPath.find('/');

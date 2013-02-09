@@ -21,7 +21,7 @@ namespace i4core
 		{
 		}
 
-		I4HashID(const std::string& str)
+		I4HashID(const string& str)
 		{
 			hashCode = getHashCode(str.c_str());
 		}
@@ -88,14 +88,14 @@ namespace i4core
 			if (!str || !str[0])
 				return INVALID_HASH;
 
-			const unsigned char* string = (const unsigned char*)str;
+			const unsigned char* st = (const unsigned char*)str;
 			unsigned int hash = HASH_INIT;
 
-			while (*string)
+			while (*st)
 			{
 				hash *= HASH_PRIME;
 
-				char c = *string++;
+				char c = *st++;
 				if (c == '\\')
 				{
 					c = '/';
@@ -120,7 +120,7 @@ namespace i4core
 	class I4HashData
 	{
 	public:
-		void setName(const std::string& _name)
+		void setName(const string& _name)
 		{
 			name = _name;
 			id = I4HashID(name);
@@ -136,7 +136,7 @@ namespace i4core
 			return id == _id;
 		}
 
-		bool sameName(const std::string& _name)
+		bool sameName(const string& _name)
 		{
 			return sameName(_name.c_str());
 		}
@@ -147,7 +147,7 @@ namespace i4core
 		}
 
 		I4HashID			getID()		{ return id; }
-		const std::string&	getName()	{ return name; }
+		const string&	getName()	{ return name; }
 
 	protected:
 		I4HashData()	{}
@@ -159,7 +159,7 @@ namespace i4core
 
 	private:
 		I4HashID			id;
-		std::string		name;
+		string		name;
 	};
 }
 

@@ -13,7 +13,7 @@ namespace i4core
 	{
 		if (depth != 0)
 		{
-			std::wstring depthStr = L"";
+			wstring depthStr = L"";
 			for (int i = 0; i < depth; ++i)
 			{
 				depthStr += L"\t";

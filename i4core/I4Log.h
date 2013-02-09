@@ -29,7 +29,7 @@ namespace i4core
 		I4Log(void);
 		~I4Log(void);
 
-		std::wostringstream& get(Level level, const char* file, const char* func, int line);
+		wostringstream& get(Level level, const char* file, const char* func, int line);
 
 	private:
 		const wchar_t* getLevelString(Level level) const;
@@ -39,7 +39,7 @@ namespace i4core
 		I4Log& operator = (const I4Log&);
 
 	private:
-		std::wostringstream	oss;
+		wostringstream	oss;
 
 	public:
 		static const int getReportFlag()			{ return reportFlag; }
@@ -51,7 +51,7 @@ namespace i4core
 	private:
 		static int				reportFlag;
 		static Level			reportLevel;
-		static std::ofstream	ofs;
+		static ofstream	ofs;
 	};
 
 #define I4LOG(level, file, func, line) \

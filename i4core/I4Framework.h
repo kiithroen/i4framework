@@ -13,14 +13,14 @@ namespace i4core
 		I4Framework();
 		virtual ~I4Framework();
 
-		bool				create(unsigned int width, unsigned int height, const std::string& title);
+		bool				create(unsigned int width, unsigned int height, const string& title);
 		void				destroy();
 		void				run();
 		
 		void				setFrameCallback(I4FrameCallback* callback);
 
 		void*				getWindowID() const						{ return windowID; }
-		std::string			getTitle() const						{ return title; }
+		string			getTitle() const						{ return title; }
 		unsigned int		getWidth() const						{ return width; }
 		unsigned int		getHeight() const						{ return height; }
 		bool				isActivated() const						{ return activated; }
@@ -46,7 +46,7 @@ namespace i4core
 
 	protected:
 		void*				windowID;
-		std::string			title;
+		string			title;
 		unsigned int		width;
 		unsigned int		height;
 		bool				activated;

@@ -22,9 +22,9 @@ namespace i4graphics
 
 	bool I4ShaderMgr::load(const char* fname)
 	{
-		std::ifstream ifs;
+		ifstream ifs;
 
-		ifs.open(fname, std::ifstream::in);
+		ifs.open(fname, ifstream::in);
 
 		if (ifs.is_open() == false)
 		{
@@ -32,7 +32,7 @@ namespace i4graphics
 			return false;
 		}
 
-		ifs.seekg(0, std::ios_base::end);
+		ifs.seekg(0, ios_base::end);
 
 		int size = (int)ifs.tellg();
 		if (size <= 0)
@@ -41,7 +41,7 @@ namespace i4graphics
 			return false;
 		}
 
-		ifs.seekg(0, std::ios::beg);
+		ifs.seekg(0, ios::beg);
 		char* buffer = new char[size + 1];
 		memset(buffer, 0, size + 1);
 		ifs.read(buffer, size);
@@ -68,7 +68,7 @@ namespace i4graphics
 			activeShaderProgram = createShaderProgram(mask, inputElements, numElements);
 			if (activeShaderProgram != nullptr)
 			{
-				mapShaderProgram.insert(std::make_pair(mask, activeShaderProgram));
+				mapShaderProgram.insert(make_pair(mask, activeShaderProgram));
 			}
 			else
 			{
@@ -130,7 +130,7 @@ namespace i4graphics
 
 	I4ShaderProgram* I4ShaderMgr::createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
-		std::string finalShaderCode = "";
+		string finalShaderCode = "";
 
 		if (mask & I4SHADER_MASK_TEX_DIFFUSE)
 		{
@@ -163,7 +163,7 @@ namespace i4graphics
 
 	I4ShaderMgrMap I4ShaderMgr::mapShaderMgr;
 
-	bool I4ShaderMgr::addShaderMgr(const std::string& fxName)
+	bool I4ShaderMgr::addShaderMgr(const string& fxName)
 	{
 		I4ShaderMgr* shaderMgr = nullptr;
 		auto itr = mapShaderMgr.find(fxName);
@@ -176,7 +176,7 @@ namespace i4graphics
 				delete shaderMgr;
 				shaderMgr = nullptr;
 			}
-			mapShaderMgr.insert(std::make_pair(fxName, shaderMgr));
+			mapShaderMgr.insert(make_pair(fxName, shaderMgr));
 		}
 		else
 		{
@@ -186,7 +186,7 @@ namespace i4graphics
 		return true;
 	}
 
-	I4ShaderMgr* I4ShaderMgr::findShaderMgr(const std::string& fxName)
+	I4ShaderMgr* I4ShaderMgr::findShaderMgr(const string& fxName)
 	{
 		auto itr = mapShaderMgr.find(fxName);
 		if (itr != mapShaderMgr.end())

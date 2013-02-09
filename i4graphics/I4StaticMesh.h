@@ -3,6 +3,7 @@
 #include "i4graphics.h"
 #include "I4Matrix4x4.h"
 #include "I4Hash.h"
+#include "I4AABB.h"
 using namespace i4core;
 
 namespace i4graphics
@@ -26,14 +27,18 @@ namespace i4graphics
 			vertexBuffer = vb;
 		}
 
-		void setIndexBuffer(I4IndexBuffer* ib)
-		{
+		void			setIndexBuffer(I4IndexBuffer* ib)	{
 			indexBuffer = ib;
 		}
 		
-	private:		
+		
+		bool			isSkined() const				{ return skined; }
+		void			setSkined(bool _skined)			{ skined = _skined;	}
+
 		I4VertexBuffer*	vertexBuffer;
 		I4IndexBuffer*	indexBuffer;
+		I4AABB			localAABB;
+		bool			skined;
 	};
 	
 }

@@ -9,7 +9,7 @@ namespace i4graphics
 {
 	class I4VideoDriverD3D11 : public I4VideoDriver
 	{
-		typedef std::map<std::string, ID3D11Buffer*>	ConstantBufferMap;
+		typedef map<string, ID3D11Buffer*>	ConstantBufferMap;
 		ConstantBufferMap		constantBufferMap;
 		friend class I4VideoDriver;
 	public:

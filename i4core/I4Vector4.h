@@ -133,6 +133,14 @@ namespace i4core
 				float w;
 			};
 			
+			struct
+			{
+				float r;
+				float g;
+				float b;
+				float a;
+			};
+
 			float xyzw[4];
 		};
 	};
