@@ -89,7 +89,6 @@ namespace i4graphics {
 
 	class ActorSkinedMeshGPU : public I4ActorMesh
 	{
-		typedef vector<I4Matrix4x4>			MatrixPalette;
 	public:
 		ActorSkinedMeshGPU(I4Actor* actor, I4ActorElementInfo* info, I4StaticMesh* mesh);
 		virtual ~ActorSkinedMeshGPU();
@@ -100,7 +99,7 @@ namespace i4graphics {
 		virtual void	render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM);
 
 	private:
-		MatrixPalette	matrixPalette;
+		vector<I4Matrix4x4>		matrixPalette;
 	};
 
 }

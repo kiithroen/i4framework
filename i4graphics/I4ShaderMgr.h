@@ -20,6 +20,7 @@ namespace i4graphics
 		I4SHADER_MASK_TEX_DIFFUSE		= 1 << 1,
 		I4SHADER_MASK_TEX_SPECULAR		= 1 << 2,
 		I4SHADER_MASK_TEX_NORMAL		= 1 << 3,
+		I4SHADER_MASK_SKINNING			= 1 << 4,
 	};
 
 	

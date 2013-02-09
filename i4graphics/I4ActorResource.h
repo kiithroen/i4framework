@@ -11,7 +11,7 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct ParsedData
+	struct ParsedMeshData
 	{
 		bool				skined;
 		I4Material*			material;
@@ -28,7 +28,8 @@ namespace i4graphics {
 		vector<I4Index16>		vecVertexIndex;
 		vector<I4TextureUV>		vecTexUV;
 		vector<I4Index16>		vecTexIndex;
-		vector<I4SkinInfo>		vecSkinInfo;
+		vector<I4BoneID>		vecBoneID;
+		vector<I4Weight>		vecWeight;
 	};
 
 	class I4Texture;
@@ -89,16 +90,16 @@ namespace i4graphics {
 		void					parseNodeInfoLocalTM(I4ActorElementInfo& out,I4XmlData& xml);
 		void					parseNodeInfoWorldTM(I4ActorElementInfo& out,I4XmlData& xml);
 
-		void					parseMaterials(ParsedData& out, I4XmlData& xml);
-		void					parseMeshVertex(ParsedData& out,I4XmlData& xml);
-		void					parseMeshNormal(ParsedData& out,I4XmlData& xml);
-		void					parseMeshIndex(ParsedData& out,I4XmlData& xml);		
-		void					parseMeshTexUV(ParsedData& out,I4XmlData& xml);
-		void					parseMeshTexIndex(ParsedData& out,I4XmlData& xml);
-		bool					parseMeshWeight(ParsedData& out,I4XmlData& xml);
-		void					mergeMeshTextureUV(ParsedData& out,I4XmlData& xml);
+		void					parseMaterials(ParsedMeshData& out, I4XmlData& xml);
+		void					parseMeshVertex(ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshNormal(ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshIndex(ParsedMeshData& out,I4XmlData& xml);		
+		void					parseMeshTexUV(ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshTexIndex(ParsedMeshData& out,I4XmlData& xml);
+		bool					parseMeshWeight(ParsedMeshData& out,I4XmlData& xml);
+		void					mergeMeshTextureUV(ParsedMeshData& out,I4XmlData& xml);
 
-		I4StaticMesh*			buildMesh(ParsedData &ParsedData);
+		I4StaticMesh*			buildMesh(ParsedMeshData &ParsedMeshData);
 
 		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);

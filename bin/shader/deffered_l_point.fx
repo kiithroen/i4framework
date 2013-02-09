@@ -16,27 +16,27 @@ SamplerState samPoint : register(s1)
     AddressV = CLAMP;
 };
 
-cbuffer cbChangeOnResize_L_point_VS : register(b0)
+cbuffer CBOnResize_L_point_VS : register(b0)
 {
 	matrix projection;
 }
 
-cbuffer cbChangeOnResize_L_point_PS : register(b1)
+cbuffer CBOnResize_L_point_PS : register(b1)
 {
 	float3 farTopRight;
 };
 
-cbuffer cbChangeEveryFrame_L_Point : register(b2)
+cbuffer CBEveryFrame_L_Point : register(b2)
 {
 	matrix view;
 };
 
-cbuffer cbChangeEachLight_L_point_VS : register(b3)
+cbuffer CBEachLight_L_point_VS : register(b3)
 {
 	matrix world;
 };
 
-cbuffer cbChangeEachLight_L_point_PS : register(b4)
+cbuffer CBEachLight_L_point_PS : register(b4)
 {
 	float3	lightPosition;
 	float	lightRadius;

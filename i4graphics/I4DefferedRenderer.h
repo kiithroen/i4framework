@@ -30,6 +30,7 @@ namespace i4graphics
 		I4Matrix4x4			worldTM;
 		I4AABB				worldAABB;
 		I4StaticMesh*		mesh;
+		I4Matrix4x4*		matrixPalette;
 
 		bool operator < (const I4MeshInstanceRenderItem& other) const;
 	};
@@ -49,20 +50,20 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBChageOnResize_G
+	struct CBOnResize_G
 	{
 		I4Matrix4x4 projection;
 		float farDistance;
 	};
 
 	__declspec(align(16))
-	struct CBChangesEveryFrame_G
+	struct CBEveryFrame_G
 	{
 		I4Matrix4x4 view;
 	};
 
 	__declspec(align(16))
-	struct CBChangesEachMeshInstance_G
+	struct CBEachMeshInstance_G
 	{
 		I4Matrix4x4 world;
 		float specularIntensity;
@@ -70,13 +71,19 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBChangeOnResize_L_directional
+	struct CBEachSkinedMesh_G
+	{
+		I4Matrix4x4 matrixPalette[80];
+	};
+
+	__declspec(align(16))
+	struct CBOnResize_L_directional
 	{
 		I4Vector3 farTopRight;
 	};
 
 	__declspec(align(16))
-	struct CBChangeEachLight_L_directional
+	struct CBEachLight_L_directional
 	{
 		I4Matrix4x4 lightViewProjection;
 		I4Matrix4x4 viewInvLightViewProjection;
@@ -86,31 +93,31 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBChangeOnResize_L_point_VS
+	struct CBOnResize_L_point_VS
 	{
 		I4Matrix4x4 projection;
 	};
 
 	__declspec(align(16))
-	struct CBChangeOnResize_L_point_PS
+	struct CBOnResize_L_point_PS
 	{
 		I4Vector3 farTopRight;
 	};
 	
 	__declspec(align(16))
-	struct CBChangeEveryFrame_L_point
+	struct CBEveryFrame_L_point
 	{
 		I4Matrix4x4 view;
 	};
 
 	__declspec(align(16))
-	struct CBChangeEachLight_L_point_VS
+	struct CBEachLight_L_point_VS
 	{
 		I4Matrix4x4 world;
 	};
 
 	__declspec(align(16))
-	struct CBChangeEachLight_L_point_PS
+	struct CBEachLight_L_point_PS
 	{
 		I4Vector3	lightPosition;
 		float		lightRadius;
@@ -126,16 +133,16 @@ namespace i4graphics
 	};
 	
 	template <typename T>
-	class I4ConstantBufferHodler
+	class I4CBHolder
 	{
 	public:
-		I4ConstantBufferHodler()
+		I4CBHolder()
 			: buffer(nullptr)
 			, data(nullptr)
 		{
 		}
 
-		~I4ConstantBufferHodler()
+		~I4CBHolder()
 		{
 			delete data;
 			delete buffer;
@@ -220,19 +227,19 @@ namespace i4graphics
 		I4DirectionalLightVector		vecCulledDirectionalLight;
 		I4PointLightVector				vecCulledPointLight;
 
-		I4ConstantBufferHodler<CBChageOnResize_G>				cbChageOnResize_G;
-		I4ConstantBufferHodler<CBChangesEveryFrame_G>			cbChangesEveryFrame_G;
-		I4ConstantBufferHodler<CBChangesEachMeshInstance_G>		cbChangesEachMeshInstance_G;
+		I4CBHolder<CBOnResize_G>				cbOnResize_G;
+		I4CBHolder<CBEveryFrame_G>				cbEveryFrame_G;
+		I4CBHolder<CBEachMeshInstance_G>		cbEachMeshInstance_G;
+		I4CBHolder<CBEachSkinedMesh_G>			cbEachSkinedMesh_G;
 
-		I4ConstantBufferHodler<CBChangeOnResize_L_directional>	cbChangeOnResize_L_directional;
-		I4ConstantBufferHodler<CBChangeEachLight_L_directional>	cbChangeEachLight_L_directional;
+		I4CBHolder<CBOnResize_L_directional>	cbOnResize_L_directional;
+		I4CBHolder<CBEachLight_L_directional>	cbEachLight_L_directional;
 
-		I4ConstantBufferHodler<CBChangeOnResize_L_point_VS>		cbChangeOnResize_L_point_VS;
-		I4ConstantBufferHodler<CBChangeOnResize_L_point_PS>		cbChangeOnResize_L_point_PS;
-		I4ConstantBufferHodler<CBChangeEveryFrame_L_point>		cbChangeEveryFrame_L_point;
-		I4ConstantBufferHodler<CBChangeEachLight_L_point_VS>	cbChangeEachLight_L_point_VS;
-		I4ConstantBufferHodler<CBChangeEachLight_L_point_PS>	cbChangeEachLight_L_point_PS;
-
+		I4CBHolder<CBOnResize_L_point_VS>		cbOnResize_L_point_VS;
+		I4CBHolder<CBOnResize_L_point_PS>		cbOnResize_L_point_PS;
+		I4CBHolder<CBEveryFrame_L_point>		cbEveryFrame_L_point;
+		I4CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
+		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
 		ConstantBuffer cb;
 	};
 

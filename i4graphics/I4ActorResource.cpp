@@ -177,18 +177,18 @@ namespace i4graphics
 
 			parseNodeInfo(*nodeInfo, xml);	 
 
-			ParsedData ParsedData;
+			ParsedMeshData data;
 
-			parseMaterials(ParsedData, xml);
-			parseMeshVertex(ParsedData, xml);
-			parseMeshNormal(ParsedData, xml);
-			parseMeshIndex(ParsedData, xml);
-			parseMeshTexUV(ParsedData, xml);
-			parseMeshTexIndex(ParsedData, xml);
-			parseMeshWeight(ParsedData, xml);
-			mergeMeshTextureUV(ParsedData, xml);
+			parseMaterials(data, xml);
+			parseMeshVertex(data, xml);
+			parseMeshNormal(data, xml);
+			parseMeshIndex(data, xml);
+			parseMeshTexUV(data, xml);
+			parseMeshTexIndex(data, xml);
+			parseMeshWeight(data, xml);
+			mergeMeshTextureUV(data, xml);
 
-			I4StaticMesh* mesh = buildMesh(ParsedData);
+			I4StaticMesh* mesh = buildMesh(data);
 			vecMesh.push_back(mesh);
 
 		} while (xml.selectNextSiblingNode("node"));
@@ -259,7 +259,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMaterials(ParsedData& out, I4XmlData& xml)
+	void I4ActorMeshResource::parseMaterials(ParsedMeshData& out, I4XmlData& xml)
 	{
 		out.material = NULL;
 //		out.diffuseMap = NULL;
@@ -403,7 +403,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshVertex(ParsedData& out, I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshVertex(ParsedMeshData& out, I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("vertex"))
 		{
@@ -440,7 +440,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshNormal(ParsedData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshNormal(ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("normal"))
 		{
@@ -469,7 +469,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshIndex(ParsedData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshIndex(ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("index"))
 		{
@@ -504,7 +504,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshTexUV(ParsedData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshTexUV(ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("texUV"))
 		{
@@ -534,7 +534,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshTexIndex(ParsedData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshTexIndex(ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("texIndex"))
 		{
@@ -568,7 +568,7 @@ namespace i4graphics
 		}
 	}
 
-	bool I4ActorMeshResource::parseMeshWeight(ParsedData& out, I4XmlData& xml)
+	bool I4ActorMeshResource::parseMeshWeight(ParsedMeshData& out, I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("weight") == false)
 		{
@@ -581,7 +581,8 @@ namespace i4graphics
 
 			int size;
 			xml.getAttrValue(size, "count");
-			out.vecSkinInfo.resize(size);
+			out.vecBoneID.resize(size);
+			out.vecWeight.resize(size);
 
 			if (xml.selectFirstChildNode("vertex"))
 			{
@@ -596,24 +597,24 @@ namespace i4graphics
 							const char* val = NULL;
 							xml.getNodeValue(val);
 
-							sscanf_s(val, "%f %f", &out.vecSkinInfo[i].boneID[j], &out.vecSkinInfo[i].weight[j]);
+							sscanf_s(val, "%d %f", &out.vecBoneID[i].boneID[j], &out.vecWeight[i].weight[j]);
 
 							++j;
 
 						} while (xml.selectNextSiblingNode("val") && j < 4);
 
 						// 총합을 1.0으로 맞추기 위해 마지막값은 1.0에서 나머지들의 핪을 빼준값으로 한다.
-						out.vecSkinInfo[i].weight[j - 1] = 1.0f;
+						out.vecWeight[i].weight[j - 1] = 1.0f;
 						for (int k = 0; k < j - 1; ++k)
 						{
-							out.vecSkinInfo[i].weight[j - 1] -= out.vecSkinInfo[i].weight[k];
+							out.vecWeight[i].weight[j - 1] -= out.vecWeight[i].weight[k];
 						}
 
 						// 그리고 남은 부분 0으로 채운다.
 						for (; j < 4; ++j)
 						{
-							out.vecSkinInfo[i].boneID[j] = 0;
-							out.vecSkinInfo[i].weight[j] = 0;
+							out.vecBoneID[i].boneID[j] = 0;
+							out.vecWeight[i].weight[j] = 0;
 						}
 
 						xml.selectParentNode();
@@ -632,7 +633,7 @@ namespace i4graphics
 	}
 
 
-	void I4ActorMeshResource::mergeMeshTextureUV(ParsedData& out, I4XmlData& xml)
+	void I4ActorMeshResource::mergeMeshTextureUV(ParsedMeshData& out, I4XmlData& xml)
 	{
 		// UV가 있으면
 		if (out.vecTexUV.size() != 0 && out.vecTexIndex.size() != 0)
@@ -647,7 +648,8 @@ namespace i4graphics
 			out.vecVertexUV.resize(maxSize);
 			if (out.skined)
 			{
-				out.vecSkinInfo.resize(maxSize);	// 웨이트도 같은 크기로
+				out.vecBoneID.resize(maxSize);
+				out.vecWeight.resize(maxSize);
 			}
 			unsigned int indexSize = out.vecVertexIndex.size();
 			for (unsigned int i = 0; i < indexSize; ++i)
@@ -676,11 +678,8 @@ namespace i4graphics
 							out.vecNormal[verticeCount] = out.vecNormal[vtxIdx];
 							if (out.skined)
 							{
-								for (int i = 0; i < 4; ++i)
-								{
-									out.vecSkinInfo[verticeCount].boneID[i] = out.vecSkinInfo[vtxIdx].boneID[i];
-									out.vecSkinInfo[verticeCount].weight[i] = out.vecSkinInfo[vtxIdx].weight[i];
-								}
+								out.vecBoneID[verticeCount] = out.vecBoneID[vtxIdx];
+								out.vecWeight[verticeCount] = out.vecWeight[vtxIdx];
 							}
 
 							verticeCount++;
@@ -695,7 +694,8 @@ namespace i4graphics
 			out.vecVertexUV.resize(verticeCount);
 			if (out.skined)
 			{
-				out.vecSkinInfo.resize(verticeCount);
+				out.vecBoneID.resize(verticeCount);
+				out.vecWeight.resize(verticeCount);
 			}
 		}
 
@@ -704,54 +704,55 @@ namespace i4graphics
 			out.vecVertexUV, out.vecVertexIndex.size(), out.vecVertexIndex, out.vecTangent);
 	}
 
-	I4StaticMesh* I4ActorMeshResource::buildMesh(ParsedData &ParsedData)
+	I4StaticMesh* I4ActorMeshResource::buildMesh(ParsedMeshData &data)
 	{
 		I4StaticMesh* mesh = new I4StaticMesh();
 
-		mesh->setSkined(ParsedData.skined);
-		mesh->localAABB = ParsedData.localAABB;
+		mesh->setSkined(data.skined);
+		mesh->localAABB = data.localAABB;
 /*
-		mesh->setMaterial(ParsedData.material);
-		mesh->setDiffuseMap(ParsedData.diffuseMap);	
-		mesh->setSpecularMap(ParsedData.specularMap);
-		mesh->setNormalMap(ParsedData.normalMap);
+		mesh->setMaterial(data.material);
+		mesh->setDiffuseMap(data.diffuseMap);	
+		mesh->setSpecularMap(data.specularMap);
+		mesh->setNormalMap(data.normalMap);
 */
-		if (ParsedData.skined)	
+		if (data.skined)	
 		{
 			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			mesh->vertexBuffer->create(ParsedData.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan_SkinInfo));
+			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan_SkinInfo));
 			I4Vertex_Pos_Normal_Tex_Tan_SkinInfo* vertices = NULL;
 			mesh->vertexBuffer->lock((void**)&vertices);
-			for (unsigned int i = 0; i < ParsedData.vecPosition.size(); ++i)
+			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 			{
-				vertices[i].position = ParsedData.vecPosition[i];
-				vertices[i].normal = ParsedData.vecNormal[i];
-				vertices[i].tangent = ParsedData.vecTangent[i];
-				vertices[i].uv = ParsedData.vecVertexUV[i];
-				vertices[i].skinInfo = ParsedData.vecSkinInfo[i];
+				vertices[i].position = data.vecPosition[i];
+				vertices[i].normal = data.vecNormal[i];
+				vertices[i].tangent = data.vecTangent[i];
+				vertices[i].uv = data.vecVertexUV[i];
+				vertices[i].boneID = data.vecBoneID[i];
+				vertices[i].weight = data.vecWeight[i];
 			}
 			mesh->vertexBuffer->unlock();
 		}
 		else
 		{
 			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			mesh->vertexBuffer->create(ParsedData.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan));
+			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan));
 			I4Vertex_Pos_Normal_Tex_Tan* vertices = NULL;
 			mesh->vertexBuffer->lock((void**)&vertices);
-			for (unsigned int i = 0; i < ParsedData.vecPosition.size(); ++i)
+			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 			{
-				vertices[i].position = ParsedData.vecPosition[i];
-				vertices[i].normal = ParsedData.vecNormal[i];
-				vertices[i].tangent = ParsedData.vecTangent[i];
-				vertices[i].uv = ParsedData.vecVertexUV[i];
+				vertices[i].position = data.vecPosition[i];
+				vertices[i].normal = data.vecNormal[i];
+				vertices[i].tangent = data.vecTangent[i];
+				vertices[i].uv = data.vecVertexUV[i];
 			}
 			mesh->vertexBuffer->unlock();
 		}
 
 		mesh->indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
 
-		mesh->indexBuffer->create(ParsedData.vecVertexIndex.size()*3, sizeof(unsigned short));
-		mesh->indexBuffer->copyFrom((void**)&ParsedData.vecVertexIndex[0]);
+		mesh->indexBuffer->create(data.vecVertexIndex.size()*3, sizeof(unsigned short));
+		mesh->indexBuffer->copyFrom((void**)&data.vecVertexIndex[0]);
 
 		return mesh;
 	}

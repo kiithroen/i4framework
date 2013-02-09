@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "i4graphics.h"
 #include "I4Vector2.h"
 #include "I4Vector3.h"
@@ -37,6 +38,8 @@ namespace i4graphics
     };
 
 //-------------------------------------------------------------------------------------
+
+#pragma pack(push, 1)
 
 #define I4TEX_UV_NA 9999.0f
 	
@@ -78,6 +81,16 @@ namespace i4graphics
 
 		float	boneID[4];
 		float	weight[4];
+	};
+
+	struct I4BoneID
+	{
+		unsigned int boneID[4];
+	};
+
+	struct I4Weight
+	{
+		float weight[4];
 	};
 
 	struct I4Vertex_Pos
@@ -146,11 +159,12 @@ namespace i4graphics
 
 	struct I4Vertex_Pos_Normal_Tex_Tan_SkinInfo
 	{
-		I4Vector3	position;
-		I4Vector3	normal;
-		I4TextureUV	uv;
-		I4Vector4	tangent;
-		I4SkinInfo	skinInfo;
+		I4Vector3		position;
+		I4Vector3		normal;
+		I4TextureUV		uv;
+		I4Vector4		tangent;
+		I4BoneID		boneID;
+		I4Weight		weight;
 	};
 
 	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO[] = 
@@ -159,83 +173,11 @@ namespace i4graphics
 		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, I4FORMAT_R32G32_FLOAT, 0, 24, I4INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 32, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "BONEID", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 48, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "WEIGHT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 64, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "BONEID", 0, I4FORMAT_R32G32B32A32_UINT, 0,     48, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "WEIGHT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0,  64, I4INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	inline void calculateTangentArray(const vector<I4Vector3>& vecPosition, const vector<I4Vector3>& vecNormal,
-		const vector<I4TextureUV>& vecTexUV, const vector<I4Index16>& vecIndex, vector<I4Vector4>& vecTangent)
-	{
-		vector<I4Vector3> tan1;
-		tan1.resize(vecPosition.size());
-		memset(&tan1[0], 0, sizeof(I4Vector3)*tan1.size());
-
-		vector<I4Vector3> tan2;
-		tan2.resize(vecPosition.size());
-		memset(&tan2[0], 0, sizeof(I4Vector3)*tan2.size());
-		
-		for (unsigned int i = 0; i < vecIndex.size(); ++i)
-		{
-			unsigned short i1 = vecIndex[i].i[0];
-			unsigned short i2 = vecIndex[i].i[1];
-			unsigned short i3 = vecIndex[i].i[2];
-
-			const I4Vector3& v1 = vecPosition[i1];
-			const I4Vector3& v2 = vecPosition[i2];
-			const I4Vector3& v3 = vecPosition[i3];
-
-			const I4TextureUV& w1 = vecTexUV[i1];
-			const I4TextureUV& w2 = vecTexUV[i2];
-			const I4TextureUV& w3 = vecTexUV[i3];
-
-			float x1 = v2.x - v1.x;
-			float x2 = v3.x - v1.x;
-			float y1 = v2.y - v1.y;
-			float y2 = v3.y - v1.y;
-			float z1 = v2.z - v1.z;
-			float z2 = v3.z - v1.z;
-
-			float s1 = w2.u - w1.u;
-			float s2 = w3.u - w1.u;
-			float t1 = w2.v - w1.v;
-			float t2 = w3.v - w1.v;
-
-			float r = 1.0F / (s1 * t2 - s2 * t1);
-			I4Vector3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
-				(t2 * z1 - t1 * z2) * r);
-			I4Vector3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r,
-				(s1 * z2 - s2 * z1) * r);
-
-			tan1[i1] += sdir;
-			tan1[i2] += sdir;
-			tan1[i3] += sdir;
-
-			tan2[i1] += tdir;
-			tan2[i2] += tdir;
-			tan2[i3] += tdir;
-		}
-
-		vecTangent.resize(vecPosition.size());
-		for (unsigned int i = 0; i < vecPosition.size(); i++)
-		{
-			const I4Vector3& n = vecNormal[i];
-			const I4Vector3& t = tan1[i];
-
-			I4Vector3 v = (t - n * I4Vector3::dotProduct(n, t));			
-			v.normalize();
-			if (_finite(v.x) == 0 || _finite(v.y) == 0 || _finite(v.z) == 0)
-			{
-				v.x = 0;
-				v.y = 0;
-				v.z = 0;
-			}
-
-			vecTangent[i].x = v.x;
-			vecTangent[i].y = v.y;
-			vecTangent[i].z = v.z;
-			vecTangent[i].w = (I4Vector3::dotProduct(I4Vector3::crossProduct(n, t), tan2[i]) < 0.0F) ? -1.0F : 1.0F;
-		}
-	}
+#pragma pack(pop)
 
 //-------------------------------------------------------------------------------------
 

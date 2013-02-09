@@ -99,7 +99,7 @@ namespace i4graphics
 	{
 		I4ActorElement::initialize();
 
-		elementInfo->worldTM.extractInverse(worldInverseTM);;
+		elementInfo->worldTM.extractInversePrimitive(worldInverseTM);;
 
 		return true;
 	}
@@ -225,6 +225,7 @@ namespace i4graphics
 		item.mesh = mesh;
 		item.worldAABB = mesh->localAABB.transform(parentTM);
 		item.worldTM = parentTM;
+		item.matrixPalette = &matrixPalette[0];
 		renderer->commitToScene(item);
 		/*
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::getShaderMgr();

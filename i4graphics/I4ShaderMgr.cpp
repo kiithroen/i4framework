@@ -147,6 +147,11 @@ namespace i4graphics
 			finalShaderCode += "#define MASK_TEX_NORMAL\r\n";
 		}
 	
+		if (mask & I4SHADER_MASK_SKINNING)
+		{
+			finalShaderCode += "#define MASK_SKINNING\r\n";
+		}
+
 		finalShaderCode += baseShaderCode;
 
 		I4ShaderProgram* shaderProgram = I4VideoDriver::getVideoDriver()->createShaderProgram();

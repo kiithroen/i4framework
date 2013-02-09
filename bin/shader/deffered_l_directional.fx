@@ -16,12 +16,12 @@ SamplerState samPoint : register(s1)
     AddressV = CLAMP;
 };
 
-cbuffer cbChangeOnResize_L_directional : register(b0)
+cbuffer CBOnResize_L_directional : register(b0)
 {
 	float3 farTopRight	: FAR_TOP_RIGHT;
 };
 
-cbuffer cbChangeEachLight_L_directional : register(b1)
+cbuffer CBEachLight_L_directional : register(b1)
 {
 	matrix lightViewProjection;
 	matrix viewInvLightViewProjection;

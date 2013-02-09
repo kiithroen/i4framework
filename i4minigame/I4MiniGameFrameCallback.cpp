@@ -85,7 +85,6 @@ bool I4MiniGameFrameCallback::onStart()
 
 void I4MiniGameFrameCallback::onEnd()
 {
-	delete actor;
 	delete actorMgr;
 	delete renderer;
 	delete camera;
@@ -105,7 +104,6 @@ bool I4MiniGameFrameCallback::onUpdate(float deltaSec)
 	if (frameStateMgr->onUpdate(deltaSec) == false)
 		return false;
 
-	actor->animate(deltaSec);
 
 	updateCamera(deltaSec);
 
@@ -261,6 +259,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 {
 	PROFILE_THISFUNC;
 
+	actor->animate(deltaTime);
 	actor->render(renderer, IDENTITY);
 
 	I4Matrix4x4 matModel;

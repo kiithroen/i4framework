@@ -1,21 +1,27 @@
-cbuffer	cbChageOnResize_G : register(b0)
+cbuffer	CBOnResize_G : register(b0)
 {
 	matrix projection;
 	float farDistance;
 };
 
-cbuffer	cbChangesEveryFrame_G : register(b1)
+cbuffer	CBEveryFrame_G : register(b1)
 {
 	matrix view;
 };
 
-cbuffer	cbEachEveryMeshInstance_G : register(b2)
+cbuffer	CBEachMeshInstance_G : register(b2)
 {
 	matrix world;
 	float specularIntensity;
 	float specularPower;
 };
 
+#ifdef MASK_SKINNING
+cbuffer CBEachAnimation_G : register(b3)
+{
+	matrix matrixPalette[80];
+};
+#endif
 
 #ifdef MASK_TEX_DIFFUSE
 Texture2D texDiffuseMap : register(t0);
@@ -40,18 +46,17 @@ SamplerState samLinear : register(s0)
 
 struct VS_INPUT
 {
-	float3 pos		:	POSITION;
-	float3 normal	:	NORMAL;
-	float2 uv		:	TEXCOORD0;
-
-#ifdef MASK_TEX_NORMAL
-	float4 tan		:	TANGENT;
-#endif
+	float3 position		:	POSITION;
+	float3 normal		:	NORMAL;
+	float2 uv			:	TEXCOORD;
+	float4 tangent		:	TANGENT;
+	uint4 boneID		:	BONEID;
+	float4 weight		:	WEIGHT;
 };
 
 struct PS_INPUT
 {
-	float4 pos	 		:	SV_POSITION;
+	float4 position	 	:	SV_POSITION;
 	float2 uv			:	TEXCOORD0;
 	float depth			:	TEXCOORD1;
 
@@ -66,12 +71,35 @@ PS_INPUT VS( VS_INPUT	input	)
 {
 	PS_INPUT output	=	(PS_INPUT)0;
 
-	output.pos = mul(float4(input.pos,1), world);
-	output.pos = mul(output.pos, view);
 
-	output.depth = output.pos.z/farDistance;
+#ifdef MASK_SKINNING
+	float3 position = mul(float4(input.position, 1), matrixPalette[input.boneID.x])*input.weight.x;
+	position += mul(float4(input.position, 1), matrixPalette[input.boneID.y])*input.weight.y;
+	position += mul(float4(input.position, 1), matrixPalette[input.boneID.z])*input.weight.z;
+	position += mul(float4(input.position, 1), matrixPalette[input.boneID.w])*input.weight.w;
 
-	output.pos = mul(output.pos, projection);
+	float3 normal = mul(input.normal, (float3x3)matrixPalette[input.boneID.x])*input.weight.x;
+	normal += mul(input.normal, (float3x3)matrixPalette[input.boneID.y])*input.weight.y;
+	normal += mul(input.normal, (float3x3)matrixPalette[input.boneID.z])*input.weight.z;
+	normal += mul(input.normal, (float3x3)matrixPalette[input.boneID.w])*input.weight.w;
+		
+	float3 tangent = mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.x])*input.weight.x;
+	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.y])*input.weight.y;
+	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.z])*input.weight.z;
+	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.w])*input.weight.w;
+
+#else
+	float3 position = input.position;
+	float3 normal = input.normal;
+	float3 tangent = input.tangent.xyz;
+#endif
+
+	output.position = mul(float4(position,1), world);
+	output.position = mul(output.position, view);
+
+	output.depth = output.position.z/farDistance;
+
+	output.position = mul(output.position, projection);
 
 	output.uv = input.uv;
 
@@ -80,11 +108,11 @@ PS_INPUT VS( VS_INPUT	input	)
 	N = mul(N, (float3x3)view);
 	N = normalize(N);
 
-	float3 T = mul(input.tan.xyz, (float3x3)world);
+	float3 T = mul(input.tangent.xyz, (float3x3)world);
 	T = mul(T, (float3x3)view);
 	T = normalize(T);
 
-	float3 B = normalize(cross(N, T)*input.tan.w);
+	float3 B = normalize(cross(N, T)*input.tangent.w);
 
 	output.tangentToView[0] = T;
 	output.tangentToView[1] = B;
