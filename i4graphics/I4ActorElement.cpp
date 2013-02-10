@@ -174,6 +174,7 @@ namespace i4graphics
 	{
 		I4MeshInstanceRenderItem item;
 		item.mesh = mesh;
+		item.boneCount = actor->getBoneCount();
 		item.worldAABB = mesh->localAABB.transform(resultTM*parentTM);
 		item.worldTM = parentTM;
 		item.matrixPalette = &matrixPalette[0];

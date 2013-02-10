@@ -57,7 +57,6 @@ private:
 	float				camPitch;
 	float				camRoll;
 
-	I4Actor*			actor1[50];
-	I4Actor*			actor2[50];
+	I4Actor*			actor[100];
 	I4ActorMgr*			actorMgr;
 };

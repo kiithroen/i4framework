@@ -30,7 +30,7 @@ namespace i4graphics
 		I4Matrix4x4			worldTM;
 		I4AABB				worldAABB;
 		unsigned int		boneCount;
-		I4Mesh*		mesh;
+		I4Mesh*				mesh;
 		I4Matrix4x4*		matrixPalette;
 		bool operator < (const I4MeshInstanceRenderItem& other) const;
 	};

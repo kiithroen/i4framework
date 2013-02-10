@@ -396,7 +396,7 @@ namespace i4graphics
 				cbEachMeshInstance_G.getData()->world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G.getBuffer(), cbEachMeshInstance_G.getData());
 
-				for (int i = 0; i < 80; ++i)
+				for (unsigned int i = 0; i < itr.boneCount; ++i)
 				{
 					cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
 				}

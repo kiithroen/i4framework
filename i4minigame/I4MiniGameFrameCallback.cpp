@@ -37,7 +37,7 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	camera = new I4Camera;
 	camera->setPerspectiveFov(PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 1.0f, 1000.0f);
-	camera->setLookAt(I4Vector3(8.0f, 2.0f, -20.0f), I4Vector3(-2.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	camera->setLookAt(I4Vector3(0.0f, 0.0f, -20.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 	
 	float camYawRad;
 	float camPitchRad;
@@ -57,52 +57,63 @@ bool I4MiniGameFrameCallback::onStart()
 
 
 	actorMgr = new I4ActorMgr;
-	actor1 = actorMgr->createActor("actor1");
-	if (!actorMgr->attachBone(actor1, "cyberdemon.bone.xml"))
+
+	for (int i = 0; i < 100; ++i)
 	{
-		return FALSE;
+		char buf[128] = {0, };
+		_itoa_s(i, buf, 10);
+
+		actor[i] = actorMgr->createActor("actor_" + string(buf));
+		if (i%2 == 0)
+		{
+			if (!actorMgr->attachBone(actor[i], "cyberdemon.bone.xml"))
+			{
+				return FALSE;
+			}
+
+			if (!actorMgr->attachMesh(actor[i], "cyberdemon.mesh.xml"))
+			{
+				return FALSE;
+			}
+
+			if (!actorMgr->attachAni(actor[i], "cyberdemon.ani.xml", "idle"))
+			{
+				return FALSE;
+			}
+
+			if (!actor[i]->initialize())
+			{
+				return FALSE;
+			}
+
+			actor[i]->playAnimation("idle");
+		}
+		else
+		{
+			if (!actorMgr->attachBone(actor[i], "guard.bone.xml"))
+			{
+				return FALSE;
+			}
+
+			if (!actorMgr->attachMesh(actor[i], "guard.mesh.xml"))
+			{
+				return FALSE;
+			}
+
+			if (!actorMgr->attachAni(actor[i], "guard_idle.ani.xml", "idle"))
+			{
+				return FALSE;
+			}
+
+			if (!actor[i]->initialize())
+			{
+				return FALSE;
+			}
+
+			actor[i]->playAnimation("idle");
+		}
 	}
-
-	if (!actorMgr->attachMesh(actor1, "cyberdemon.mesh.xml"))
-	{
-		return FALSE;
-	}
-
-	if (!actorMgr->attachAni(actor1, "cyberdemon.ani.xml", "idle"))
-	{
-		return FALSE;
-	}
-
-	if (!actor1->initialize())
-	{
-		return FALSE;
-	}
-
-	actor1->playAnimation("idle");
-
-
-	actor2 = actorMgr->createActor("actor2");
-	if (!actorMgr->attachBone(actor2, "guard.bone.xml"))
-	{
-		return FALSE;
-	}
-
-	if (!actorMgr->attachMesh(actor2, "guard.mesh.xml"))
-	{
-		return FALSE;
-	}
-
-	if (!actorMgr->attachAni(actor2, "guard_idle.ani.xml", "idle"))
-	{
-		return FALSE;
-	}
-
-	if (!actor2->initialize())
-	{
-		return FALSE;
-	}
-
-	actor2->playAnimation("idle");
+	
 
 	return true;
 }
@@ -285,7 +296,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	static float angle = 0;
 
-	angle += 90*deltaTime;
+	//angle += 90*deltaTime;
 
 	if (angle > 360)
 	{
@@ -299,20 +310,30 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 	matS.makeScale(0.1f, 0.1f, 0.1f);
 
 	I4Matrix4x4 matT;
-	matT.makeTranslation(0, 30, 0);
 
-	actor1->animate(deltaTime);
-	actor2->animate(deltaTime);
-	actor1->render(renderer, matR*matS);
-	actor2->render(renderer, matR*matS);
+	for (int i = 0; i < 10; ++i)
+	{
+		for (int j = 0; j < 10; ++j)
+		{
+			int idx = i*10 + j;
+			matT.makeTranslation(-100.0f + i*20.0f, 0.0f, -100.0f + j*20.0f);
 
-	I4Matrix4x4 matModel;
-	I4Matrix4x4 matScale;
+			if (i%2 == 0)
+			{
+				actor[idx]->animate(deltaTime*2);
+			}
+			else
+			{
+				actor[idx]->animate(deltaTime);
+			}
+			actor[idx]->render(renderer, matS*matR*matT);
+		}
+	}
 
 	I4DirectionalLight directionalLight[2] =
 	{
-		{ I4Vector3(-1.0f, -1.0f, 1.0f), I4Vector3(0.0f, 1.0f, 0.0f) },
-		{ I4Vector3(1.0f, 0.3f, 0.3f), I4Vector3(1.0f, 0.0f, 0.0f) },
+		{ I4Vector3(-1.0f, -1.0f, 1.0f), I4Vector3(0.8f, 0.8f, 0.8f) },
+		{ I4Vector3(1.0f, 0.0f, 1.0f), I4Vector3(0.3f, 0.0f, 0.0f) },
 	};
 
 	for (int i = 0; i < _countof(directionalLight); ++i)
@@ -357,10 +378,10 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			}
 
 			int idx = i*10 + j;
-			pointLight[idx].position.x = -250.0f + i*25.0f + sign*45*cos(I4MathUtil::degreeToRadian(degree));
+			pointLight[idx].position.x = -100.0f + i*20.0f + sign*45*cos(I4MathUtil::degreeToRadian(degree));
 			pointLight[idx].position.y = 10.0f;
-			pointLight[idx].position.z = -250.0f + j*50.0f + sign*15*sin(I4MathUtil::degreeToRadian(degree));
-			pointLight[idx].radius = 25.0f;
+			pointLight[idx].position.z = -100.0f + j*20.0f + sign*15*sin(I4MathUtil::degreeToRadian(degree));
+			pointLight[idx].radius = 30.0f;
 			pointLight[idx].color = lightPointColor[idx%13];
 
 			renderer->commitToScene(&pointLight[idx]);
