@@ -113,12 +113,12 @@
     <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4KeyFrameSet.h" />
     <ClInclude Include="I4Material.h" />
+    <ClInclude Include="I4Mesh.h" />
     <ClInclude Include="I4QuadMesh.h" />
     <ClInclude Include="I4RenderTarget.h" />
     <ClInclude Include="I4RenderTargetD3D11.h" />
     <ClInclude Include="I4ShaderProgramD3D11.h" />
     <ClInclude Include="I4SphereMesh.h" />
-    <ClInclude Include="I4StaticMesh.h" />
     <ClInclude Include="I4GeometryBuffer.h" />
     <ClInclude Include="I4ShaderMgr.h" />
     <ClInclude Include="I4ShaderProgram.h" />
@@ -148,11 +148,11 @@
     <ClCompile Include="I4DefferedRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D11.cpp" />
     <ClCompile Include="I4Material.cpp" />
+    <ClCompile Include="I4Mesh.cpp" />
     <ClCompile Include="I4QuadMesh.cpp" />
     <ClCompile Include="I4RenderTargetD3D11.cpp" />
     <ClCompile Include="I4ShaderProgramD3D11.cpp" />
     <ClCompile Include="I4SphereMesh.cpp" />
-    <ClCompile Include="I4StaticMesh.cpp" />
     <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="I4ShaderMgr.cpp" />
     <ClCompile Include="I4TextureD3D11.cpp" />

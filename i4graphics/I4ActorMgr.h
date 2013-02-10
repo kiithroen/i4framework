@@ -13,14 +13,14 @@ namespace i4graphics {
 	class I4ActorMeshResource;
 	class I4ActorAniResource;
 	class I4Texture;
-	class I4StaticMesh;
+	class I4Mesh;
 
 	class I4MeshInstance
 	{
 	public:
 		I4Matrix4x4		meshLocalTM;
 		I4AABB			meshLocalAABB;
-		I4StaticMesh*	mesh;
+		I4Mesh*	mesh;
 		I4HashID		diffuseMapID;
 		I4HashID		specularMapID;
 		I4HashID		normalMapID;
@@ -30,10 +30,10 @@ namespace i4graphics {
 
 	class I4GRAPHICS_API I4ActorMgr
 	{
-		typedef map<string, I4Actor*>					ActorMap;
-		typedef map<string, I4ActorBoneResource*>		ActorBoneResourceMap;
-		typedef map<string, I4ActorMeshResource*>		ActorMeshResourceMap;
-		typedef map<string, I4ActorAniResource*>		ActorAniResourceMap;
+		typedef map<string, I4Actor*>					I4ActorMap;
+		typedef map<string, I4ActorBoneResource*>		I4ActorBoneResourceMap;
+		typedef map<string, I4ActorMeshResource*>		I4ActorMeshResourceMap;
+		typedef map<string, I4ActorAniResource*>		I4ActorAniResourceMap;
 		
 	public:
 		I4ActorMgr(void);
@@ -47,14 +47,11 @@ namespace i4graphics {
 
 		void			destroy();
 
-		//I4Texture*		findTexture(I4HashID meshID);
-		//I4StaticMesh*	findMesh(I4HashID meshID);
-
 	private:
-		ActorMap				mapActor;
-		ActorBoneResourceMap	mapActorBoneResource;
-		ActorMeshResourceMap	mapActorMeshResource;
-		ActorAniResourceMap		mapActorAniResource;
+		I4ActorMap				mapActor;
+		I4ActorBoneResourceMap	mapActorBoneResource;
+		I4ActorMeshResourceMap	mapActorMeshResource;
+		I4ActorAniResourceMap	mapActorAniResource;
 	};
 
 }

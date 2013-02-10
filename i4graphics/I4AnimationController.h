@@ -6,18 +6,18 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct KeyFrameSet;
-	class AnimationTrack;
+	struct I4KeyFrameSet;
+	class I4AnimationTrack;
 
-	class AnimationController
+	class I4AnimationController
 	{
-		typedef map<string, AnimationTrack*>		AnimationTrackMap;
+		typedef map<string, I4AnimationTrack*>		I4AnimationTrackMap;
 
 	public:
-		AnimationController();
-		~AnimationController();
+		I4AnimationController();
+		~I4AnimationController();
 
-		void				addTrack(const char* name, KeyFrameSet* keyFrameSet);
+		void				addTrack(const char* name, I4KeyFrameSet* keyFrameSet);
 		void				playTrack(const char* name);
 
 		void				animate(float deltaSec);
@@ -25,9 +25,9 @@ namespace i4graphics {
 		const I4Matrix4x4&	getAnimationTM() const		{ return animationTM; }
 
 	private:
-		AnimationTrackMap	mapAnimationTrack;
+		I4AnimationTrackMap	mapAnimationTrack;
 		I4Matrix4x4			animationTM;
-		AnimationTrack*		curAnimationTrack;
+		I4AnimationTrack*	curAnimationTrack;
 	};
 
 }

@@ -69,7 +69,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.localTM.m[i][0], &out.localTM.m[i][1], &out.localTM.m[i][2]);
@@ -97,7 +97,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.worldTM.m[i][0], &out.worldTM.m[i][1], &out.worldTM.m[i][2]);
@@ -177,7 +177,7 @@ namespace i4graphics
 
 			parseNodeInfo(*nodeInfo, xml);	 
 
-			ParsedMeshData data;
+			I4ParsedMeshData data;
 
 			parseMaterials(data, xml);
 			parseMeshVertex(data, xml);
@@ -188,7 +188,7 @@ namespace i4graphics
 			parseMeshWeight(data, xml);
 			mergeMeshTextureUV(data, xml);
 
-			I4StaticMesh* mesh = buildMesh(data);
+			I4Mesh* mesh = buildMesh(data);
 			vecMesh.push_back(mesh);
 
 		} while (xml.selectNextSiblingNode("node"));
@@ -212,7 +212,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.localTM.m[i][0], &out.localTM.m[i][1], &out.localTM.m[i][2]);
@@ -240,7 +240,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.worldTM.m[i][0], &out.worldTM.m[i][1], &out.worldTM.m[i][2]);
@@ -259,12 +259,12 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMaterials(ParsedMeshData& out, I4XmlData& xml)
+	void I4ActorMeshResource::parseMaterials(I4ParsedMeshData& out, I4XmlData& xml)
 	{
-		out.material = NULL;
-//		out.diffuseMap = NULL;
-//		out.specularMap = NULL;
-//		out.normalMap = NULL;
+		out.material = nullptr;
+		out.diffuseMap = nullptr;
+		out.specularMap = nullptr;
+		out.normalMap = nullptr;
 
 		if (xml.selectFirstChildNode("material"))
 		{
@@ -273,7 +273,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("ambient"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				sscanf_s(val, "%f %f %f", &material->ambient.r, &material->ambient.g, &material->ambient.b);
@@ -284,7 +284,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("diffuse"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				sscanf_s(val, "%f %f %f", &material->diffuse.r, &material->diffuse.g, &material->diffuse.b);
@@ -295,7 +295,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("emissive"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				float emissive = (float)atof(val);
@@ -309,7 +309,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("glossiness"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				material->glossiness = (float)atof(val);
@@ -319,7 +319,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("power"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				material->power = (float)atof(val);
@@ -332,7 +332,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("diffuseMap"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				char texturePath[256] = "texture/";
@@ -342,7 +342,7 @@ namespace i4graphics
 				if (texture->load(texturePath))
 				{
 					vecTexture.push_back(texture);
-//					out.diffuseMap = vecTexture.back();
+					out.diffuseMap = vecTexture.back();
 				}
 				else
 				{
@@ -355,7 +355,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("specularMap"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				char texturePath[256] = "texture/";
@@ -365,7 +365,7 @@ namespace i4graphics
 				if (texture->load(texturePath))
 				{
 					vecTexture.push_back(texture);
-//					out.specularMap = vecTexture.back();
+					out.specularMap = vecTexture.back();
 				}
 				else
 				{
@@ -378,7 +378,7 @@ namespace i4graphics
 
 			if (xml.selectFirstChildNode("normalMap"))
 			{
-				const char* val = NULL;
+				const char* val = nullptr;
 				xml.getNodeValue(val);
 
 				char texturePath[256] = "texture/";
@@ -388,7 +388,7 @@ namespace i4graphics
 				if (texture->load(texturePath))
 				{
 					vecTexture.push_back(texture);
-//					out.normalMap = vecTexture.back();
+					out.normalMap = vecTexture.back();
 				}
 				else
 				{
@@ -403,7 +403,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshVertex(ParsedMeshData& out, I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshVertex(I4ParsedMeshData& out, I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("vertex"))
 		{
@@ -416,7 +416,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.vecPosition[i].x, &out.vecPosition[i].y, &out.vecPosition[i].z);
@@ -440,7 +440,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshNormal(ParsedMeshData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("normal"))
 		{
@@ -453,7 +453,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.vecNormal[i].x, &out.vecNormal[i].y, &out.vecNormal[i].z);
@@ -469,7 +469,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshIndex(ParsedMeshData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("index"))
 		{
@@ -483,7 +483,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					int i0, i1, i2;
@@ -504,7 +504,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshTexUV(ParsedMeshData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshTexUV(I4ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("texUV"))
 		{
@@ -517,7 +517,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f", &out.vecTexUV[i].u, &out.vecTexUV[i].v);
@@ -534,7 +534,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ActorMeshResource::parseMeshTexIndex(ParsedMeshData& out,I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshTexIndex(I4ParsedMeshData& out,I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("texIndex"))
 		{
@@ -547,7 +547,7 @@ namespace i4graphics
 				int i = 0;
 				do
 				{
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					int i0, i1, i2;
@@ -568,17 +568,10 @@ namespace i4graphics
 		}
 	}
 
-	bool I4ActorMeshResource::parseMeshWeight(ParsedMeshData& out, I4XmlData& xml)
+	void I4ActorMeshResource::parseMeshWeight(I4ParsedMeshData& out, I4XmlData& xml)
 	{
-		if (xml.selectFirstChildNode("weight") == false)
+		if (xml.selectFirstChildNode("weight"))
 		{
-			out.skined = false;
-			return false;
-		}
-		else
-		{
-			out.skined = true;
-
 			int size;
 			xml.getAttrValue(size, "count");
 			out.vecBoneID.resize(size);
@@ -594,7 +587,7 @@ namespace i4graphics
 						int j = 0;
 						do
 						{
-							const char* val = NULL;
+							const char* val = nullptr;
 							xml.getNodeValue(val);
 
 							sscanf_s(val, "%d %f", &out.vecBoneID[i].boneID[j], &out.vecWeight[i].weight[j]);
@@ -627,13 +620,18 @@ namespace i4graphics
 				xml.selectParentNode();
 			}
 
-		}
+			xml.selectParentNode();
 
-		return true;
+			out.skined = true;
+		}
+		else
+		{
+			out.skined = false;
+		}
 	}
 
 
-	void I4ActorMeshResource::mergeMeshTextureUV(ParsedMeshData& out, I4XmlData& xml)
+	void I4ActorMeshResource::mergeMeshTextureUV(I4ParsedMeshData& out, I4XmlData& xml)
 	{
 		// UV가 있으면
 		if (out.vecTexUV.size() != 0 && out.vecTexIndex.size() != 0)
@@ -704,23 +702,18 @@ namespace i4graphics
 			out.vecVertexUV, out.vecVertexIndex.size(), out.vecVertexIndex, out.vecTangent);
 	}
 
-	I4StaticMesh* I4ActorMeshResource::buildMesh(ParsedMeshData &data)
+	I4Mesh* I4ActorMeshResource::buildMesh(I4ParsedMeshData &data)
 	{
-		I4StaticMesh* mesh = new I4StaticMesh();
+		I4Mesh* mesh = new I4Mesh();
 
-		mesh->setSkined(data.skined);
+		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
-/*
-		mesh->setMaterial(data.material);
-		mesh->setDiffuseMap(data.diffuseMap);	
-		mesh->setSpecularMap(data.specularMap);
-		mesh->setNormalMap(data.normalMap);
-*/
+
 		if (data.skined)	
 		{
 			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
 			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan_SkinInfo));
-			I4Vertex_Pos_Normal_Tex_Tan_SkinInfo* vertices = NULL;
+			I4Vertex_Pos_Normal_Tex_Tan_SkinInfo* vertices = nullptr;
 			mesh->vertexBuffer->lock((void**)&vertices);
 			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 			{
@@ -737,7 +730,7 @@ namespace i4graphics
 		{
 			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
 			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan));
-			I4Vertex_Pos_Normal_Tex_Tan* vertices = NULL;
+			I4Vertex_Pos_Normal_Tex_Tan* vertices = nullptr;
 			mesh->vertexBuffer->lock((void**)&vertices);
 			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 			{
@@ -848,7 +841,7 @@ namespace i4graphics
 	{
 		I4XmlData xml;
 		if (xml.parseFromFile(fname) == false)
-			return NULL;
+			return nullptr;
 
 		parseAnimation(xml);
 
@@ -891,7 +884,7 @@ namespace i4graphics
 
 		do
 		{
-			KeyFrameSet* keyFrameSet = new KeyFrameSet();
+			I4KeyFrameSet* keyFrameSet = new I4KeyFrameSet();
 			xml.getAttrValue(keyFrameSet->nodeName, "name");
 			keyFrameSet->startFrame = startFrame;
 			keyFrameSet->endFrame = endFrame;
@@ -903,7 +896,7 @@ namespace i4graphics
 		} while (xml.selectNextSiblingNode("node"));
 	}
 
-	void I4ActorAniResource::parseKeyFrameSet(KeyFrameSet& out, I4XmlData& xml)
+	void I4ActorAniResource::parseKeyFrameSet(I4KeyFrameSet& out, I4XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("posKey"))
 		{
@@ -918,7 +911,7 @@ namespace i4graphics
 				{
 					xml.getAttrValue(out.vecKeyPosition[i].frame,"frame");
 
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f",
@@ -950,7 +943,7 @@ namespace i4graphics
 
 					xml.getAttrValue(out.vecKeyRotation[i].frame,"frame");
 
-					const char* val = NULL;
+					const char* val = nullptr;
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f %f",

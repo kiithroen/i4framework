@@ -5,36 +5,36 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct KeyRotation
+	struct I4KeyRotation
 	{
-		float			frame;
 		I4Quaternion	rotation;
+		float			frame;
 	};
 
-	struct KeyPosition
+	struct I4KeyPosition
 	{
+		I4Vector3	position;
 		float		frame;
-		I4Vector3		position;
 	};
 
-	struct KeyScale
+	struct I4KeyScale
 	{
+		I4Vector3	scale;
 		float		frame;
-		I4Vector3		scale;
 	};
 
-	struct KeyFrameSet
+	struct I4KeyFrameSet
 	{
-		typedef vector<KeyRotation>		KeyRotationVector;
-		typedef vector<KeyPosition>		KeyPositionVector;
-		typedef vector<KeyScale>		KeyScaleVector;
+		typedef vector<I4KeyRotation>		I4KeyRotationVector;
+		typedef vector<I4KeyPosition>		I4KeyPositionVector;
+		typedef vector<I4KeyScale>			I4KeyScaleVector;
 
 		string				nodeName;
 		float				startFrame;
 		float				endFrame;
-		KeyRotationVector	vecKeyRotation;
-		KeyPositionVector	vecKeyPosition;
-		KeyScaleVector		vecKeyScale;
+		I4KeyRotationVector	vecKeyRotation;
+		I4KeyPositionVector	vecKeyPosition;
+		I4KeyScaleVector	vecKeyScale;
 	};
 
 }

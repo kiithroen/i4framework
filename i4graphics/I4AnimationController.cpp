@@ -4,24 +4,24 @@
 namespace i4graphics
 {
 
-	AnimationController::AnimationController()
-		: curAnimationTrack(NULL)
+	I4AnimationController::I4AnimationController()
+		: curAnimationTrack(nullptr)
 	{
 		animationTM.makeIdentity();
 	}
 
-	AnimationController::~AnimationController()
+	I4AnimationController::~I4AnimationController()
 	{
-		for (AnimationTrackMap::iterator itr = mapAnimationTrack.begin(); itr != mapAnimationTrack.end(); ++itr)
+		for (auto &itr : mapAnimationTrack)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapAnimationTrack.clear();
 	}
 
-	void AnimationController::animate(float deltaSec)
+	void I4AnimationController::animate(float deltaSec)
 	{		
-		if (curAnimationTrack == NULL)
+		if (curAnimationTrack == nullptr)
 			return;
 
 		curAnimationTrack->advanceFrame(deltaSec);	
@@ -48,18 +48,18 @@ namespace i4graphics
 		}
 	}
 
-	void AnimationController::addTrack(const char* name, KeyFrameSet* keyFrameSet)
+	void I4AnimationController::addTrack(const char* name, I4KeyFrameSet* keyFrameSet)
 	{
-		AnimationTrack* animationTrack = new AnimationTrack(keyFrameSet);
+		I4AnimationTrack* animationTrack = new I4AnimationTrack(keyFrameSet);
 		mapAnimationTrack.insert(make_pair(name, animationTrack));	
 	}
 
-	void AnimationController::playTrack(const char* name)
+	void I4AnimationController::playTrack(const char* name)
 	{
-		AnimationTrackMap::iterator itr = mapAnimationTrack.find(name);
+		auto itr = mapAnimationTrack.find(name);
 		if (itr == mapAnimationTrack.end())
 		{
-			curAnimationTrack = NULL;
+			curAnimationTrack = nullptr;
 			return;
 		}
 

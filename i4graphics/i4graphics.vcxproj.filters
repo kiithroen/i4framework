@@ -23,7 +23,6 @@
     <ClInclude Include="I4ShaderMgr.h" />
     <ClInclude Include="I4ShaderProgram.h" />
     <ClInclude Include="I4SphereMesh.h" />
-    <ClInclude Include="I4StaticMesh.h" />
     <ClInclude Include="I4Texture.h" />
     <ClInclude Include="I4VideoDriver.h" />
     <ClInclude Include="targetver.h">
@@ -47,6 +46,7 @@
     <ClInclude Include="I4AnimationTrack.h" />
     <ClInclude Include="I4KeyFrameSet.h" />
     <ClInclude Include="I4Material.h" />
+    <ClInclude Include="I4Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -57,7 +57,6 @@
     <ClCompile Include="I4QuadMesh.cpp" />
     <ClCompile Include="I4ShaderMgr.cpp" />
     <ClCompile Include="I4SphereMesh.cpp" />
-    <ClCompile Include="I4StaticMesh.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
     <ClCompile Include="I4DefferedRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D11.cpp" />
@@ -75,6 +74,7 @@
     <ClCompile Include="I4AnimationController.cpp" />
     <ClCompile Include="I4AnimationTrack.cpp" />
     <ClCompile Include="I4Material.cpp" />
+    <ClCompile Include="I4Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\shader\default.fx">

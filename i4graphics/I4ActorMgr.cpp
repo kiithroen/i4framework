@@ -15,9 +15,9 @@ namespace i4graphics {
 
 	I4Actor* I4ActorMgr::createActor(const string& name)
 	{
-		I4Actor* actor = NULL;
+		I4Actor* actor = nullptr;
 
-		ActorMap::iterator itr = mapActor.find(name);
+		auto itr = mapActor.find(name);
 		if (itr == mapActor.end())
 		{
 			actor = new I4Actor;
@@ -33,9 +33,9 @@ namespace i4graphics {
 
 	bool I4ActorMgr::attachBone(I4Actor* actor, const char* fname)
 	{
-		I4ActorBoneResource* boneResource = NULL;
+		I4ActorBoneResource* boneResource = nullptr;
 
-		ActorBoneResourceMap::iterator itr = mapActorBoneResource.find(fname);
+		auto itr = mapActorBoneResource.find(fname);
 		if (itr == mapActorBoneResource.end())
 		{
 			boneResource = new I4ActorBoneResource;
@@ -57,9 +57,9 @@ namespace i4graphics {
 
 	bool I4ActorMgr::attachMesh(I4Actor* actor, const char* fname)
 	{
-		I4ActorMeshResource* meshResource = NULL;
+		I4ActorMeshResource* meshResource = nullptr;
 
-		ActorMeshResourceMap::iterator itr = mapActorMeshResource.find(fname);
+		auto itr = mapActorMeshResource.find(fname);
 		if (itr == mapActorMeshResource.end())
 		{
 			meshResource = new I4ActorMeshResource;
@@ -81,9 +81,9 @@ namespace i4graphics {
 
 	bool I4ActorMgr::attachAni(I4Actor* actor, const char* fname, const char* aniName)
 	{
-		I4ActorAniResource* aniResource = NULL;
+		I4ActorAniResource* aniResource = nullptr;
 
-		ActorAniResourceMap::iterator itr = mapActorAniResource.find(fname);
+		auto itr = mapActorAniResource.find(fname);
 		if (itr == mapActorAniResource.end())
 		{
 			aniResource = new I4ActorAniResource;
@@ -105,27 +105,27 @@ namespace i4graphics {
 
 	void I4ActorMgr::destroy()
 	{
-		for (ActorMap::iterator itr = mapActor.begin(); itr != mapActor.end(); ++itr)
+		for (auto &itr : mapActor)
 		{			
-			delete itr->second;
+			delete itr.second;
 		}
 		mapActor.clear();
 
-		for (ActorBoneResourceMap::iterator itr = mapActorBoneResource.begin(); itr != mapActorBoneResource.end(); ++itr)
+		for (auto &itr : mapActorBoneResource)
 		{			
-			delete itr->second;
+			delete itr.second;
 		}
 		mapActorBoneResource.clear();
 
-		for (ActorMeshResourceMap::iterator itr = mapActorMeshResource.begin(); itr != mapActorMeshResource.end(); ++itr)
+		for (auto &itr : mapActorMeshResource)
 		{			
-			delete itr->second;
+			delete itr.second;
 		}
 		mapActorMeshResource.clear();
 
-		for (ActorAniResourceMap::iterator itr = mapActorAniResource.begin(); itr != mapActorAniResource.end(); ++itr)
+		for (auto &itr : mapActorAniResource)
 		{			
-			delete itr->second;
+			delete itr.second;
 		}
 		mapActorAniResource.clear();
 	}

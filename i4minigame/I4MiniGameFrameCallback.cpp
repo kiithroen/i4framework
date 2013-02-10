@@ -57,28 +57,52 @@ bool I4MiniGameFrameCallback::onStart()
 
 
 	actorMgr = new I4ActorMgr;
-	actor = actorMgr->createActor("actor");
-	if (!actorMgr->attachBone(actor, "cyberdemon.bone.xml"))
+	actor1 = actorMgr->createActor("actor1");
+	if (!actorMgr->attachBone(actor1, "cyberdemon.bone.xml"))
 	{
 		return FALSE;
 	}
 
-	if (!actorMgr->attachMesh(actor, "cyberdemon.mesh.xml"))
+	if (!actorMgr->attachMesh(actor1, "cyberdemon.mesh.xml"))
 	{
 		return FALSE;
 	}
 
-	if (!actorMgr->attachAni(actor, "cyberdemon.ani.xml", "idle"))
+	if (!actorMgr->attachAni(actor1, "cyberdemon.ani.xml", "idle"))
 	{
 		return FALSE;
 	}
 
-	if (!actor->initialize())
+	if (!actor1->initialize())
 	{
 		return FALSE;
 	}
 
-	actor->playAnimation("idle");
+	actor1->playAnimation("idle");
+
+
+	actor2 = actorMgr->createActor("actor2");
+	if (!actorMgr->attachBone(actor2, "guard.bone.xml"))
+	{
+		return FALSE;
+	}
+
+	if (!actorMgr->attachMesh(actor2, "guard.mesh.xml"))
+	{
+		return FALSE;
+	}
+
+	if (!actorMgr->attachAni(actor2, "guard_idle.ani.xml", "idle"))
+	{
+		return FALSE;
+	}
+
+	if (!actor2->initialize())
+	{
+		return FALSE;
+	}
+
+	actor2->playAnimation("idle");
 
 	return true;
 }
@@ -259,15 +283,35 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 {
 	PROFILE_THISFUNC;
 
-	actor->animate(deltaTime);
-	actor->render(renderer, IDENTITY);
+	static float angle = 0;
+
+	angle += 90*deltaTime;
+
+	if (angle > 360)
+	{
+		angle = 0;
+	}
+
+	I4Matrix4x4 matR;
+	matR.makeRotationY(I4MathUtil::degreeToRadian(angle));
+
+	I4Matrix4x4 matS;
+	matS.makeScale(0.1f, 0.1f, 0.1f);
+
+	I4Matrix4x4 matT;
+	matT.makeTranslation(0, 30, 0);
+
+	actor1->animate(deltaTime);
+	actor2->animate(deltaTime);
+	actor1->render(renderer, matR*matS);
+	actor2->render(renderer, matR*matS);
 
 	I4Matrix4x4 matModel;
 	I4Matrix4x4 matScale;
 
 	I4DirectionalLight directionalLight[2] =
 	{
-		{ I4Vector3(-1.0f, -1.0f, 1.0f), I4Vector3(1.0f, 1.0f, 1.0f) },
+		{ I4Vector3(-1.0f, -1.0f, 1.0f), I4Vector3(0.0f, 1.0f, 0.0f) },
 		{ I4Vector3(1.0f, 0.3f, 0.3f), I4Vector3(1.0f, 0.0f, 0.0f) },
 	};
 

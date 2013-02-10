@@ -23,15 +23,15 @@ namespace i4graphics
 	class I4MeshInstance;
 	class I4Actor;
 	class I4ActorMgr;
-	class I4StaticMesh;
+	class I4Mesh;
 
 	struct I4MeshInstanceRenderItem
 	{
 		I4Matrix4x4			worldTM;
 		I4AABB				worldAABB;
-		I4StaticMesh*		mesh;
+		unsigned int		boneCount;
+		I4Mesh*		mesh;
 		I4Matrix4x4*		matrixPalette;
-
 		bool operator < (const I4MeshInstanceRenderItem& other) const;
 	};
 

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "I4StaticMesh.h"
+#include "I4Mesh.h"
 #include "I4ActorElementInfo.h"
 
 namespace i4graphics {
 
-	struct KeyFrameSet;
+	struct I4KeyFrameSet;
 
 	class I4ShaderMgr;
 	class I4Actor;
 	class I4ActorBoneResource;
-	class AnimationController;
+	class I4AnimationController;
 	class I4DefferedRenderer;
 
 	//------------------------- I4ActorElement ---------------------
@@ -21,7 +21,7 @@ namespace i4graphics {
 		I4ActorElement(I4Actor* actor, I4ActorElementInfo* info);
 		virtual ~I4ActorElement();
 
-		void					registerAni(const char* name, KeyFrameSet* keyFrameSet);
+		void					registerAni(const char* name, I4KeyFrameSet* keyFrameSet);
 		void					playAni(const char* name);
 
 		virtual bool			initialize();
@@ -39,7 +39,7 @@ namespace i4graphics {
 		I4Actor*				actor;
 		I4ActorElementInfo*		elementInfo;
 		I4ActorElement*			parentElement;
-		AnimationController*	aniController;
+		I4AnimationController*	aniController;
 	};
 	
 
@@ -66,11 +66,11 @@ namespace i4graphics {
 	class I4ActorMesh : public I4ActorElement
 	{
 	public:
-		I4ActorMesh(I4Actor* actor, I4ActorElementInfo* info, I4StaticMesh* mesh);
+		I4ActorMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
 		virtual ~I4ActorMesh();
 	
 	protected:
-		I4StaticMesh*			mesh;
+		I4Mesh*			mesh;
 	};
 
 
@@ -79,7 +79,7 @@ namespace i4graphics {
 	class ActorRigidMesh : public I4ActorMesh
 	{
 	public:
-		ActorRigidMesh(I4Actor* actor, I4ActorElementInfo* info, I4StaticMesh* mesh);
+		ActorRigidMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
 		virtual ~ActorRigidMesh();
 
 		virtual void	render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM);
@@ -90,7 +90,7 @@ namespace i4graphics {
 	class ActorSkinedMeshGPU : public I4ActorMesh
 	{
 	public:
-		ActorSkinedMeshGPU(I4Actor* actor, I4ActorElementInfo* info, I4StaticMesh* mesh);
+		ActorSkinedMeshGPU(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
 		virtual ~ActorSkinedMeshGPU();
 
 		virtual bool	initialize();

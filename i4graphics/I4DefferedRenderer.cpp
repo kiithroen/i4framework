@@ -5,7 +5,7 @@
 #include "I4RenderTarget.h"
 #include "I4QuadMesh.h"
 #include "I4SphereMesh.h"
-#include "I4StaticMesh.h"
+#include "I4Mesh.h"
 #include "I4Camera.h"
 #include "I4Log.h"
 #include "I4Profile.h"
@@ -307,8 +307,8 @@ namespace i4graphics
 
 		I4MeshInstance* prevMeshInstance = nullptr;
 		I4MeshInstance* curMeshInstance = nullptr;
-		I4StaticMesh* prevMesh = nullptr;
-		I4StaticMesh* curMesh = nullptr;
+		I4Mesh* prevMesh = nullptr;
+		I4Mesh* curMesh = nullptr;
 
 		for (auto &itr : vecCulledMeshInstnaceRenderItem)
 		{

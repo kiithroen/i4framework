@@ -11,29 +11,18 @@ namespace i4graphics
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 
-	class I4GRAPHICS_API I4StaticMesh : public I4HashData<I4StaticMesh>
+	class I4GRAPHICS_API I4Mesh : public I4HashData<I4Mesh>
 	{
 	public:
-		I4StaticMesh();
-		~I4StaticMesh();
+		I4Mesh();
+		~I4Mesh();
 		
 		void			bind();
 		void			unbind();
 
 		void 			draw();
 
-		void setVertexBuffer(I4VertexBuffer* vb)
-		{
-			vertexBuffer = vb;
-		}
-
-		void			setIndexBuffer(I4IndexBuffer* ib)	{
-			indexBuffer = ib;
-		}
-		
-		
-		bool			isSkined() const				{ return skined; }
-		void			setSkined(bool _skined)			{ skined = _skined;	}
+		//-------------------------------
 
 		I4VertexBuffer*	vertexBuffer;
 		I4IndexBuffer*	indexBuffer;

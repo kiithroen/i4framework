@@ -4,11 +4,11 @@
 
 namespace i4graphics {
 
-	class AnimationTrack
+	class I4AnimationTrack
 	{
 	public:
-		AnimationTrack(KeyFrameSet* keyFrameSet);
-		~AnimationTrack();
+		I4AnimationTrack(I4KeyFrameSet* keyFrameSet);
+		~I4AnimationTrack();
 
 		void 				advanceFrame(float deltaSec);
 		void				resetStartFrame();
@@ -18,7 +18,7 @@ namespace i4graphics {
 		bool 				getKeyScale(I4Vector3& out) const;
 
 	private:
-		KeyFrameSet*		keyFrameSet;
+		I4KeyFrameSet*		keyFrameSet;
 		float				currentFrame;
 
 		static const float	ANIMATION_FRAME_RATE;

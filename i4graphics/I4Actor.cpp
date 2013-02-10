@@ -40,10 +40,10 @@ namespace i4graphics
 		for (unsigned int i = 0; i < meshCount; ++i)
 		{
 			I4ActorElementInfo* meshInfo = meshResource->getMeshInfo(i);
-			I4StaticMesh* mesh = meshResource->getMesh(i);
+			I4Mesh* mesh = meshResource->getMesh(i);
 
-			I4ActorMesh* actorMesh = NULL;
-			if (mesh->isSkined())
+			I4ActorMesh* actorMesh = nullptr;
+			if (mesh->skined)
 			{
 				actorMesh = new ActorSkinedMeshGPU(this, meshInfo, mesh);
 			}
@@ -64,7 +64,7 @@ namespace i4graphics
 		unsigned int keyFrameSetCount = aniResource->getKeyFrameSetCount();
 		for (unsigned int i = 0; i < keyFrameSetCount; ++i)
 		{
-			KeyFrameSet* keyFrameSet = aniResource->getKeyFrameSet(i);
+			I4KeyFrameSet* keyFrameSet = aniResource->getKeyFrameSet(i);
 			I4ActorElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
 			if (itr != mapElement.end())
 			{
@@ -77,9 +77,9 @@ namespace i4graphics
 
 	bool I4Actor::initialize()
 	{
-		for (I4ActorElementMap::iterator itr = mapElement.begin(); itr != mapElement.end(); ++itr)
+		for (auto &itr : mapElement)
 		{
-			if ((itr->second)->initialize() == false)
+			if ((itr.second)->initialize() == false)
 				return false;
 		}
 
@@ -88,20 +88,20 @@ namespace i4graphics
 
 	void I4Actor::destroy()
 	{
-		for (I4ActorElementMap::iterator itr = mapElement.begin(); itr != mapElement.end(); ++itr)
+		for (auto &itr : mapElement)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapElement.clear();
 	}
 
 	I4ActorElement* I4Actor::findElement(const char* name)
 	{
-		I4ActorElementMap::iterator itr = mapElement.find(name);
+		auto itr = mapElement.find(name);
 		if (itr != mapElement.end())
 			return itr->second;
 
-		return NULL;
+		return nullptr;
 	}
 
 	void I4Actor::animate(float deltaSec)
@@ -132,9 +132,9 @@ namespace i4graphics
 
 	void I4Actor::playAnimation(const char* aniName)
 	{
-		for (I4ActorElementMap::iterator itr = mapElement.begin(); itr != mapElement.end(); ++itr)
+		for (auto &itr : mapElement)
 		{
-			(itr->second)->playAni(aniName);
+			(itr.second)->playAni(aniName);
 		}
 	}
 

@@ -158,7 +158,7 @@ namespace i4core
 		const I4HashData& operator = (const I4HashData&);
 
 	private:
-		I4HashID			id;
+		I4HashID	id;
 		string		name;
 	};
 }

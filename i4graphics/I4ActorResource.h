@@ -1,7 +1,7 @@
 #pragma once
 
 #include "I4Material.h"
-#include "I4StaticMesh.h"
+#include "I4Mesh.h"
 #include "I4ActorElementInfo.h"
 #include "I4XmlData.h"
 #include "I4GeometryBuffer.h"
@@ -10,16 +10,17 @@
 using namespace i4core;
 
 namespace i4graphics {
+	
+	class I4Texture;
+	struct I4KeyFrameSet;
 
-	struct ParsedMeshData
+	struct I4ParsedMeshData
 	{
-		bool				skined;
-		I4Material*			material;
-		/*
-		I4Texture*			diffuseMap;
-		I4Texture*			specularMap;
-		I4Texture*			normalMap;
-		*/
+		bool					skined;
+		I4Material*				material;
+		I4Texture*				diffuseMap;
+		I4Texture*				specularMap;
+		I4Texture*				normalMap;
 		I4AABB					localAABB;
 		vector<I4Vector3>		vecPosition;
 		vector<I4Vector3>		vecNormal;
@@ -31,9 +32,6 @@ namespace i4graphics {
 		vector<I4BoneID>		vecBoneID;
 		vector<I4Weight>		vecWeight;
 	};
-
-	class I4Texture;
-	struct KeyFrameSet;
 
 	//-------------------- I4ActorBoneResource -----------------------
 
@@ -59,7 +57,7 @@ namespace i4graphics {
 		void					parseNodeInfoWorldTM(I4ActorElementInfo& out,I4XmlData& xml);
 		
 	private:
-		I4ActorInfoVector			vecBoneInfo;
+		I4ActorInfoVector		vecBoneInfo;
 	};
 
 	//-------------------- I4ActorMeshResource -----------------------
@@ -69,7 +67,7 @@ namespace i4graphics {
 		typedef vector<I4Material*>			I4MaterialVector;
 		typedef vector<I4Texture*>			I4TextureVector;
 		typedef vector<I4ActorElementInfo*>	I4ActorInfoVector;
-		typedef vector<I4StaticMesh*>		I4MeshVector;
+		typedef vector<I4Mesh*>				I4MeshVector;
 
 	public:
 		I4ActorMeshResource();
@@ -81,7 +79,7 @@ namespace i4graphics {
 
 		unsigned int			getMeshCount() const				{ return vecMeshInfo.size(); }
 		I4ActorElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
-		I4StaticMesh*			getMesh(unsigned int i) const		{ return vecMesh[i]; }
+		I4Mesh*					getMesh(unsigned int i) const		{ return vecMesh[i]; }
 
 	private:
 		void					parseMesh(I4XmlData& xml);
@@ -90,31 +88,31 @@ namespace i4graphics {
 		void					parseNodeInfoLocalTM(I4ActorElementInfo& out,I4XmlData& xml);
 		void					parseNodeInfoWorldTM(I4ActorElementInfo& out,I4XmlData& xml);
 
-		void					parseMaterials(ParsedMeshData& out, I4XmlData& xml);
-		void					parseMeshVertex(ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshNormal(ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshIndex(ParsedMeshData& out,I4XmlData& xml);		
-		void					parseMeshTexUV(ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshTexIndex(ParsedMeshData& out,I4XmlData& xml);
-		bool					parseMeshWeight(ParsedMeshData& out,I4XmlData& xml);
-		void					mergeMeshTextureUV(ParsedMeshData& out,I4XmlData& xml);
+		void					parseMaterials(I4ParsedMeshData& out, I4XmlData& xml);
+		void					parseMeshVertex(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml);		
+		void					parseMeshTexUV(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshTexIndex(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshWeight(I4ParsedMeshData& out,I4XmlData& xml);
+		void					mergeMeshTextureUV(I4ParsedMeshData& out,I4XmlData& xml);
 
-		I4StaticMesh*			buildMesh(ParsedMeshData &ParsedMeshData);
+		I4Mesh*					buildMesh(I4ParsedMeshData &I4ParsedMeshData);
 
 		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);
 	private:
-		I4MaterialVector			vecMaterial;
-		I4TextureVector				vecTexture;
-		I4ActorInfoVector			vecMeshInfo;
-		I4MeshVector				vecMesh;
+		I4MaterialVector		vecMaterial;
+		I4TextureVector			vecTexture;
+		I4ActorInfoVector		vecMeshInfo;
+		I4MeshVector			vecMesh;
 	};
 
 	//-------------------- I4ActorAniResource -----------------------
 
 	class I4GRAPHICS_API I4ActorAniResource
 	{
-		typedef vector<KeyFrameSet*>			KeyFrameSetVector;
+		typedef vector<I4KeyFrameSet*>		I4KeyFrameSetVector;
 	public:
 		I4ActorAniResource();
 		virtual ~I4ActorAniResource();
@@ -124,13 +122,13 @@ namespace i4graphics {
 		void					destroy();
 
 		unsigned int			getKeyFrameSetCount() const				{ return vecKeyFrameSet.size(); }
-		KeyFrameSet*			getKeyFrameSet(unsigned int i) const	{ return vecKeyFrameSet[i]; }
+		I4KeyFrameSet*			getKeyFrameSet(unsigned int i) const	{ return vecKeyFrameSet[i]; }
 
 	private:
 		void					parseAnimation(I4XmlData& xml);
-		void					parseKeyFrameSet(KeyFrameSet& out, I4XmlData& xml);
+		void					parseKeyFrameSet(I4KeyFrameSet& out, I4XmlData& xml);
 
 	private:
-		KeyFrameSetVector		vecKeyFrameSet;
+		I4KeyFrameSetVector		vecKeyFrameSet;
 	};
 }

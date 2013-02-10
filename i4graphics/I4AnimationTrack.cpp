@@ -51,25 +51,25 @@ namespace i4graphics
 		}
 		else	//  if (keys.size() == 0)
 		{
-			k1 = k2 = NULL;
+			k1 = k2 = nullptr;
 			return;
 		}
 	}
 
-	const float AnimationTrack::ANIMATION_FRAME_RATE = 30.0f;
+	const float I4AnimationTrack::ANIMATION_FRAME_RATE = 30.0f;
 
-	AnimationTrack::AnimationTrack(KeyFrameSet* _keyFrameSet)
+	I4AnimationTrack::I4AnimationTrack(I4KeyFrameSet* _keyFrameSet)
 		: keyFrameSet(_keyFrameSet)
 		, currentFrame(0)
 	{
 	}
 
-	AnimationTrack::~AnimationTrack()
+	I4AnimationTrack::~I4AnimationTrack()
 	{
 	}
 
 
-	void AnimationTrack::advanceFrame(float deltaSec)
+	void I4AnimationTrack::advanceFrame(float deltaSec)
 	{
 		currentFrame += deltaSec*ANIMATION_FRAME_RATE;
 
@@ -79,18 +79,18 @@ namespace i4graphics
 		}
 	}
 
-	void AnimationTrack::resetStartFrame()
+	void I4AnimationTrack::resetStartFrame()
 	{
 		currentFrame = keyFrameSet->startFrame;
 	}
 
-	bool AnimationTrack::getKeyRotation(I4Quaternion& out) const
+	bool I4AnimationTrack::getKeyRotation(I4Quaternion& out) const
 	{
-		KeyRotation* key1 = NULL;
-		KeyRotation* key2 = NULL;
+		I4KeyRotation* key1 = nullptr;
+		I4KeyRotation* key2 = nullptr;
 		getPairKeys(currentFrame, keyFrameSet->vecKeyRotation, key1, key2);
 
-		if (key1 == NULL || key2 == NULL)
+		if (key1 == nullptr || key2 == nullptr)
 		{
 			return false;
 		}
@@ -108,13 +108,13 @@ namespace i4graphics
 		return true;
 	}
 
-	bool AnimationTrack::getKeyPosition(I4Vector3& out) const
+	bool I4AnimationTrack::getKeyPosition(I4Vector3& out) const
 	{
-		KeyPosition* key1 = NULL;
-		KeyPosition* key2 = NULL;
+		I4KeyPosition* key1 = nullptr;
+		I4KeyPosition* key2 = nullptr;
 		getPairKeys(currentFrame, keyFrameSet->vecKeyPosition, key1, key2);
 
-		if (key1 == NULL || key2 == NULL)
+		if (key1 == nullptr || key2 == nullptr)
 		{
 			return false;
 		}
@@ -132,14 +132,14 @@ namespace i4graphics
 		return true;
 	}
 
-	bool AnimationTrack::getKeyScale(I4Vector3& out) const
+	bool I4AnimationTrack::getKeyScale(I4Vector3& out) const
 	{
-		KeyScale* key1 = NULL;
-		KeyScale* key2 = NULL;
+		I4KeyScale* key1 = nullptr;
+		I4KeyScale* key2 = nullptr;
 
 		getPairKeys(currentFrame, keyFrameSet->vecKeyScale, key1, key2);
 
-		if (key1 == NULL || key2 == NULL)
+		if (key1 == nullptr || key2 == nullptr)
 		{
 			return false;
 		}
