@@ -3,6 +3,7 @@
 #include "I4ActorElement.h"
 #include "I4ShaderMgr.h"
 #include "I4KeyFrameSet.h"
+#include "I4Profile.h"
 
 namespace i4graphics
 {
@@ -106,6 +107,8 @@ namespace i4graphics
 
 	void I4Actor::animate(float deltaSec)
 	{
+		I4PROFILE_THISFUNC;
+
 		unsigned int boneSize = vecBone.size();
 		for (unsigned int i = 0; i < boneSize; ++i)
 		{
@@ -123,6 +126,8 @@ namespace i4graphics
 
 	void I4Actor::render(I4DefferedRenderer* renderer, const I4Matrix4x4& worldTM)
 	{
+		I4PROFILE_THISFUNC;
+
 		unsigned int meshSize = vecMesh.size();
 		for (unsigned int i = 0; i < meshSize; ++i)
 		{

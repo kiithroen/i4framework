@@ -23,7 +23,7 @@ namespace i4core
 			float nodePercentPerSibling = nodeTotalTimeSec/siblingTotalTime*100.0f;
 			float nodeTimePerCalls = nodeTotalTimeSec/(float)node->getTotalCalls();
 
-			I4LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f << L"ms/sec : " << nodePercentPerSibling << " % : " << nodeTimePerCalls*1000.0f << L" ms/call";
+			I4LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f << L"ms/sec : " << nodePercentPerSibling << " % : " << nodeTimePerCalls*1000.0f << L" ms/call" << " : " << node->getTotalCalls() << " call";
 		}
 
 		float childSiblingTotalTime = 0;

@@ -8,6 +8,7 @@
 #include "I4Log.h"
 #include "I4Camera.h"
 #include "I4DefferedRenderer.h"
+#include "I4Profile.h"
 
 namespace i4graphics
 {
@@ -134,6 +135,15 @@ namespace i4graphics
 
 	void ActorRigidMesh::render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
+		const I4Matrix4x4 matWorld = resultTM*parentTM;
+		I4MeshInstanceRenderItem item;
+		item.shaderMask = I4SHADER_MASK_NONE;
+		item.mesh = mesh;
+		item.boneCount = 0;
+		item.worldAABB = mesh->localAABB.transform(matWorld);
+		item.worldTM = matWorld;
+		item.matrixPalette = nullptr;
+		renderer->commitToScene(item);
 	}
 
 
@@ -163,7 +173,6 @@ namespace i4graphics
 		I4ActorMesh::animate(deltaSec, parentTM);
 
 		assert(actor->getBoneCount() <= matrixPalette.size());
-		// 이 부분 저장 안하고 셰이더에 직접 루프돌면서 하나하나 넣어주는게 더 나을까?
 		for (unsigned int i = 0; i < actor->getBoneCount(); ++i)
 		{
 			matrixPalette[i] = resultTM*actor->getSkinTM(i);
@@ -172,8 +181,11 @@ namespace i4graphics
 
 	void ActorSkinedMeshGPU::render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
+		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
+		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
 		I4MeshInstanceRenderItem item;
 		item.mesh = mesh;
+		item.shaderMask = I4SHADER_MASK_SKINNING;
 		item.boneCount = actor->getBoneCount();
 		item.worldAABB = mesh->localAABB.transform(resultTM*parentTM);
 		item.worldTM = parentTM;

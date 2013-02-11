@@ -29,6 +29,7 @@ namespace i4graphics
 	{
 		I4Matrix4x4			worldTM;
 		I4AABB				worldAABB;
+		unsigned int		shaderMask;
 		unsigned int		boneCount;
 		I4Mesh*				mesh;
 		I4Matrix4x4*		matrixPalette;
@@ -240,7 +241,6 @@ namespace i4graphics
 		I4CBHolder<CBEveryFrame_L_point>		cbEveryFrame_L_point;
 		I4CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
 		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
-		ConstantBuffer cb;
 	};
 
 }

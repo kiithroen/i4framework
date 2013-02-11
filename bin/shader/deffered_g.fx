@@ -50,8 +50,11 @@ struct VS_INPUT
 	float3 normal		:	NORMAL;
 	float2 uv			:	TEXCOORD;
 	float4 tangent		:	TANGENT;
+	
+#ifdef MASK_SKINNING
 	uint4 boneID		:	BONEID;
 	float4 weight		:	WEIGHT;
+#endif
 };
 
 struct PS_INPUT

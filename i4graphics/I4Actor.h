@@ -18,7 +18,6 @@ namespace i4graphics {
 	class I4GRAPHICS_API I4Actor
 	{
 		typedef map<string, I4ActorElement*>	I4ActorElementMap;
-		typedef vector<I4ActorElement*>			I4ActorElementVector;
 		typedef vector<I4ActorBone*>			I4ActorBoneVector;
 		typedef vector<I4ActorMesh*>			I4ActorMeshVector;
 		typedef vector<I4Matrix4x4>				I4ActorSkinTMVector;
@@ -44,7 +43,6 @@ namespace i4graphics {
 		unsigned int			getBoneCount() const				{ return vecBone.size(); }
 	private:
 		I4ActorElementMap		mapElement;
-		I4ActorElementVector	vecElement;
 		I4ActorBoneVector		vecBone;
 		I4ActorMeshVector		vecMesh;
 		I4ActorSkinTMVector		vecSkinTM;

@@ -15,8 +15,18 @@ namespace i4graphics
 	
 	bool I4MeshInstanceRenderItem::operator < (const I4MeshInstanceRenderItem& other) const
 	{
-		if (mesh < other.mesh)
+		if (shaderMask < other.shaderMask)
+		{
 			return true;
+		}
+		else
+		{
+			if (shaderMask == other.shaderMask)
+			{
+				if (mesh < other.mesh)
+					return true;
+			}
+		}
 
 		return false;
 	}
@@ -210,37 +220,24 @@ namespace i4graphics
 
 	void I4DefferedRenderer::preRender(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		videoDriver->beginScene();
 	}
 
 	void I4DefferedRenderer::render(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 		clearAllRenderTarget();
 
 		renderStageGeometry(camera);
 		renderStageLight(camera);
 		renderStageMerge(camera);
-		/*
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("default.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
-
-		cb.Projection=camera->getProjectionMatrix();
-		cb.View=camera->getViewMatrix();
-		cb.World.makeIdentity();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, "cb", sizeof(ConstantBuffer), &cb);
-		sphereMesh->bind();
-		sphereMesh->draw();
-		sphereMesh->unbind();
-		shaderMgr->end();
-		*/
 	}
 
 	void I4DefferedRenderer::postRender(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		videoDriver->endScene();
 		vecSceneMeshInstnaceRenderItem.clear();
@@ -250,7 +247,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::clearAllRenderTarget()
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 					
 		videoDriver->clearBackBuffer(0, 32, 76);
 
@@ -262,7 +259,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::renderStageGeometry(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
@@ -274,7 +271,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::cullAndSortMeshInstanceRenderItem(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		vecCulledMeshInstnaceRenderItem.clear();
 
@@ -291,41 +288,40 @@ namespace i4graphics
 
 	void I4DefferedRenderer::renderMeshInstanceRenderItem(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_g.fx");
-		//shaderMgr->begin(I4SHADER_MASK_TEX_DIFFUSE|I4SHADER_MASK_TEX_SPECULAR|I4SHADER_MASK_TEX_NORMAL, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
-		shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
-		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
-
-		cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
-		cbOnResize_G.getData()->farDistance = camera->getZFar();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
-
-		cbEveryFrame_G.getData()->view = camera->getViewMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
-
-		I4MeshInstance* prevMeshInstance = nullptr;
-		I4MeshInstance* curMeshInstance = nullptr;
+		
+		I4MeshInstanceRenderItem* prevItem = nullptr;
+		I4MeshInstanceRenderItem* curItem = nullptr;
 		I4Mesh* prevMesh = nullptr;
 		I4Mesh* curMesh = nullptr;
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_g.fx");
 
 		for (auto &itr : vecCulledMeshInstnaceRenderItem)
 		{
-//			curMeshInstance = itr.meshInstance;					
+			curItem = &itr;			
+			
+			bool isChangedShader = false;
 			bool isChangedDiffuseMap = false;
 			bool isChangedSpecularMap = false;
 			bool isChangedNormalMap = false;
 			bool isChangedMesh = false;
 
-			if (prevMeshInstance == nullptr)
+			if (prevItem == nullptr)
 			{
+				isChangedShader = true;
 				isChangedDiffuseMap = true;
 				isChangedSpecularMap = true;
 				isChangedNormalMap = true;
+				isChangedMesh = true;
 			}
 			else
 			{
+				if (curItem->shaderMask != prevItem->shaderMask)
+				{
+					isChangedShader = true;
+				}
+
 				/*
 				if (prevMeshInstance->diffuseMapID != curMeshInstance->diffuseMapID)
 				{
@@ -342,6 +338,27 @@ namespace i4graphics
 					isChangedNormalMap = true;								
 				}
 				*/
+			}
+
+			if (isChangedShader)
+			{
+				if (curItem->shaderMask == I4SHADER_MASK_NONE)
+				{
+					shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
+				}
+				else
+				{
+					shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+				}
+					
+				shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+
+				cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
+				cbOnResize_G.getData()->farDistance = camera->getZFar();
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
+
+				cbEveryFrame_G.getData()->view = camera->getViewMatrix();
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
 
 			if (prevMesh == nullptr)
@@ -396,17 +413,19 @@ namespace i4graphics
 				cbEachMeshInstance_G.getData()->world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G.getBuffer(), cbEachMeshInstance_G.getData());
 
-				for (unsigned int i = 0; i < itr.boneCount; ++i)
+				if (curItem->boneCount != 0)
 				{
-					cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
+					for (unsigned int i = 0; i < itr.boneCount; ++i)
+					{
+						cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
+					}
+					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 3, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
 				}
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 3, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
-
 
 				curMesh->draw();
 			}
 
-			prevMeshInstance = curMeshInstance;
+			prevItem = curItem;
 			prevMesh = curMesh;
 		}
 				
@@ -420,7 +439,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::renderStageLight(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		videoDriver->setRenderTarget(1, &rtLight, nullptr);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
@@ -434,7 +453,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::cullAndSortDirectionalLight(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		// 일단 그냥 옮겨 담음. 현재로서는 특별한 정책이 없지만 추후에 너무 많은 라이트가 있으면 잘라낸다던가 병합한다던가...
 
@@ -447,7 +466,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::renderDirectionalLight(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_l_directional.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
@@ -502,7 +521,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::cullAndSortPointLight(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		vecCulledPointLight.clear();
 		
@@ -517,7 +536,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::renderPointLight(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_l_point.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
@@ -590,7 +609,7 @@ namespace i4graphics
 
 	void I4DefferedRenderer::renderStageMerge(I4Camera* camera)
 	{
-		PROFILE_THISFUNC;
+		I4PROFILE_THISFUNC;
 
 		videoDriver->resetRenderTarget();
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);

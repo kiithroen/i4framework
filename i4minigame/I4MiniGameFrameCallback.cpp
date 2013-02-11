@@ -37,7 +37,7 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	camera = new I4Camera;
 	camera->setPerspectiveFov(PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 1.0f, 1000.0f);
-	camera->setLookAt(I4Vector3(0.0f, 0.0f, -20.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	camera->setLookAt(I4Vector3(0.0f, 70.0f, -100.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 	
 	float camYawRad;
 	float camPitchRad;
@@ -64,7 +64,7 @@ bool I4MiniGameFrameCallback::onStart()
 		_itoa_s(i, buf, 10);
 
 		actor[i] = actorMgr->createActor("actor_" + string(buf));
-		if (i%2 == 0)
+		if (i%3 == 0)
 		{
 			if (!actorMgr->attachBone(actor[i], "cyberdemon.bone.xml"))
 			{
@@ -88,7 +88,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 			actor[i]->playAnimation("idle");
 		}
-		else
+		else if (i%3 == 1)
 		{
 			if (!actorMgr->attachBone(actor[i], "guard.bone.xml"))
 			{
@@ -111,6 +111,18 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 
 			actor[i]->playAnimation("idle");
+		}
+		else
+		{
+			if (!actorMgr->attachMesh(actor[i], "elin.mesh.xml"))
+			{
+				return FALSE;
+			}
+
+			if (!actor[i]->initialize())
+			{
+				return FALSE;
+			}
 		}
 	}
 	
@@ -142,11 +154,26 @@ bool I4MiniGameFrameCallback::onUpdate(float deltaSec)
 
 	updateCamera(deltaSec);
 
+	static float elapsed = 0;
+
+	elapsed += deltaSec;
+
+	if (elapsed >= 1.0f)
+	{
+		I4ProfileWriterLog	writer;
+		writer.write(I4ProfileManager::getRootNode());
+
+		elapsed = 0;
+		I4ProfileManager::reset();
+	}
+
 	return true;
 }
 
 bool I4MiniGameFrameCallback::onRender(float deltaSec)
 {
+	I4PROFILE_THISFUNC;
+
 	commitToRenderer(deltaSec);
 
 	renderer->preRender(camera);
@@ -218,7 +245,7 @@ void I4MiniGameFrameCallback::onRButtonUp(unsigned int x, unsigned int y)
 
 void I4MiniGameFrameCallback::updateCamera(float deltaTime)
 {
-	PROFILE_THISFUNC;
+	I4PROFILE_THISFUNC;
 
 	I4Framework* framework = I4Framework::getFramework();
 
@@ -292,11 +319,11 @@ void I4MiniGameFrameCallback::updateCamera(float deltaTime)
 
 void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 {
-	PROFILE_THISFUNC;
+	I4PROFILE_THISFUNC;
 
 	static float angle = 0;
 
-	//angle += 90*deltaTime;
+	angle += 30*deltaTime;
 
 	if (angle > 360)
 	{
@@ -326,7 +353,14 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			{
 				actor[idx]->animate(deltaTime);
 			}
-			actor[idx]->render(renderer, matS*matR*matT);
+			if (idx%3 != 2)
+			{
+				actor[idx]->render(renderer, matS*matR*matT);
+			}
+			else
+			{
+				actor[idx]->render(renderer, matR*matT);
+			}
 		}
 	}
 
