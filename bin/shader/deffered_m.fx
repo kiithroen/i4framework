@@ -37,6 +37,6 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 diffuseLight = light.rgb;
 	float specularLight = light.a;
 
-	float3 finalColor = diffuseColor*diffuseLight;// + specularLight;
+	float3 finalColor = diffuseColor*diffuseLight + specularLight;
 	return float4(finalColor, 1);
 }

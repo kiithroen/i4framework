@@ -9,15 +9,19 @@ cbuffer	CBEveryFrame_G : register(b1)
 	matrix view;
 };
 
-cbuffer	CBEachMeshInstance_G : register(b2)
+cbuffer	CBEachMeshInstance_G_VS : register(b2)
 {
 	matrix world;
+}
+
+cbuffer	CBEachMeshInstance_G_VS : register(b3)
+{
 	float specularIntensity;
 	float specularPower;
 };
 
 #ifdef MASK_SKINNING
-cbuffer CBEachAnimation_G : register(b3)
+cbuffer CBEachAnimation_G : register(b4)
 {
 	matrix matrixPalette[80];
 };
@@ -159,7 +163,7 @@ PS_OUTPUT PS( PS_INPUT	input	)
 #endif
 	
 	output.normal.rgb = 0.5f*(normalize(viewNormal) + 1.0f);
-	output.normal.a = specularPower;
+	output.normal.a = specularPower/255.0f;
 
 	output.depth = input.depth;
 

@@ -159,7 +159,10 @@ namespace i4graphics
 		if (cbEveryFrame_G.create() == false)
 			return false;
 
-		if (cbEachMeshInstance_G.create() == false)
+		if (cbEachMeshInstance_G_VS.create() == false)
+			return false;
+
+		if (cbEachMeshInstance_G_PS.create() == false)
 			return false;
 
 		if (cbEachSkinedMesh_G.create() == false)
@@ -406,10 +409,12 @@ namespace i4graphics
 					shaderMgr->setTexture(2, curMesh->normalMap);
 				}
 
-				cbEachMeshInstance_G.getData()->specularIntensity = 1.0f;// curMeshInstance->specularInensity; 
-				cbEachMeshInstance_G.getData()->specularPower = 8.0f;//curMeshInstance->specularPower;
-				cbEachMeshInstance_G.getData()->world = itr.worldTM;
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G.getBuffer(), cbEachMeshInstance_G.getData());
+				cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
+
+				cbEachMeshInstance_G_PS.getData()->specularIntensity = 0.7f;
+				cbEachMeshInstance_G_PS.getData()->specularPower = 16.0f;
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
 				if (curItem->boneCount != 0)
 				{
@@ -417,7 +422,7 @@ namespace i4graphics
 					{
 						cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
 					}
-					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 3, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
 				}
 
 				curMesh->draw();

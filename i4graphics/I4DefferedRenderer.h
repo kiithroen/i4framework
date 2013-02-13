@@ -65,13 +65,18 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBEachMeshInstance_G
+	struct CBEachMeshInstance_G_VS
 	{
 		I4Matrix4x4 world;
-		float specularIntensity;
-		float specularPower;
 	};
 
+	__declspec(align(16))
+	struct CBEachMeshInstance_G_PS
+	{
+		float specularIntensity;
+		float specularPower;
+
+	};
 	__declspec(align(16))
 	struct CBEachSkinedMesh_G
 	{
@@ -231,7 +236,8 @@ namespace i4graphics
 
 		I4CBHolder<CBOnResize_G>				cbOnResize_G;
 		I4CBHolder<CBEveryFrame_G>				cbEveryFrame_G;
-		I4CBHolder<CBEachMeshInstance_G>		cbEachMeshInstance_G;
+		I4CBHolder<CBEachMeshInstance_G_VS>		cbEachMeshInstance_G_VS;
+		I4CBHolder<CBEachMeshInstance_G_PS>		cbEachMeshInstance_G_PS;
 		I4CBHolder<CBEachSkinedMesh_G>			cbEachSkinedMesh_G;
 
 		I4CBHolder<CBOnResize_L_directional>	cbOnResize_L_directional;
