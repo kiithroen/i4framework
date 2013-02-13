@@ -92,8 +92,6 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachLight_L_directional
 	{
-		I4Matrix4x4 lightViewProjection;
-		I4Matrix4x4 viewInvLightViewProjection;
 		I4Vector3 lightViewDirection;
 		float		padding;	// 4바이트 얼라인을 안하니 셰이더에 넘어간 데이타가 꼬이는 현상이 생겼다.
 		I4Vector3 lightColor;

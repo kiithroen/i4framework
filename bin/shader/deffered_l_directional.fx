@@ -23,8 +23,6 @@ cbuffer CBOnResize_L_directional : register(b0)
 
 cbuffer CBEachLight_L_directional : register(b1)
 {
-	matrix lightViewProjection;
-	matrix viewInvLightViewProjection;
 	float3 lightViewDirection;
 	float padding;
 	float3 lightColor;

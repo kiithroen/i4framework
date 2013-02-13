@@ -489,24 +489,8 @@ namespace i4graphics
 		{
 			const I4DirectionalLight& light = itr;
 
-			//-----------
-			I4Matrix4x4 matLightProj;
-			matLightProj.makePerspectiveFovLH(PI/4.0f, 1.0f, 1.0f, 1000.0f);
-			I4Matrix4x4 matLightView;
-			matLightView.makeCameraLookAtLH(-vecSceneDirectionalLight[0].direction*300, -vecSceneDirectionalLight[0].direction*299, I4Vector3(0, 1, 0));
-
-			I4Matrix4x4 matLightViewProj;
-			I4Matrix4x4::multiply(matLightViewProj, matLightView, matLightProj);
-
-			I4Matrix4x4 matViewInv;
-			camera->getViewMatrix().extractInversePrimitive(matViewInv);
-			I4Matrix4x4 matViewInvLightViewProj;
-			I4Matrix4x4::multiply(matViewInvLightViewProj, matViewInv, matLightViewProj);
-
 			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
 
-			cbEachLight_L_directional.getData()->lightViewProjection = matLightViewProj;
-			cbEachLight_L_directional.getData()->viewInvLightViewProjection = matViewInvLightViewProj;
 			cbEachLight_L_directional.getData()->lightViewDirection = lightViewDir;
 			cbEachLight_L_directional.getData()->lightColor = light.color;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbEachLight_L_directional.getBuffer(), cbEachLight_L_directional.getData());
