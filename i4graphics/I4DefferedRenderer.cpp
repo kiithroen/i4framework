@@ -98,7 +98,7 @@ namespace i4graphics
 			return false;
 		}
 
-		// model mgr
+		// actor mgr
 		actorMgr = new I4ActorMgr;
 
 		// render target
@@ -321,44 +321,6 @@ namespace i4graphics
 				{
 					isChangedShader = true;
 				}
-
-				/*
-				if (prevMeshInstance->diffuseMapID != curMeshInstance->diffuseMapID)
-				{
-					isChangedDiffuseMap = true;
-				}
-
-				if (prevMeshInstance->specularMapID != curMeshInstance->specularMapID)
-				{
-					isChangedSpecularMap = true;
-				}
-
-				if (prevMeshInstance->specularMapID != curMeshInstance->specularMapID)
-				{
-					isChangedNormalMap = true;								
-				}
-				*/
-			}
-
-			if (isChangedShader)
-			{
-				if (curItem->shaderMask == I4SHADER_MASK_NONE)
-				{
-					shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));
-				}
-				else
-				{
-					shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
-				}
-					
-				shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
-
-				cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
-				cbOnResize_G.getData()->farDistance = camera->getZFar();
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
-
-				cbEveryFrame_G.getData()->view = camera->getViewMatrix();
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
 
 			if (prevMesh == nullptr)
@@ -381,35 +343,71 @@ namespace i4graphics
 				}
 
 				curMesh = itr.mesh;
-
+	
 				if (curMesh != nullptr)
 				{
 					curMesh->bind();
+				}
+
+				if (prevMesh != nullptr)
+				{
+					if (curMesh->diffuseMap != prevMesh->diffuseMap)
+					{
+						isChangedDiffuseMap = true;
+					}
+
+					if (curMesh->specularMap != prevMesh->specularMap)
+					{
+						isChangedSpecularMap = true;
+					}
+
+					if (curMesh->specularMap != prevMesh->specularMap)
+					{
+						isChangedNormalMap = true;								
+					}
 				}
 			}
 
 			if (curMesh != nullptr)
 			{
+				if (isChangedShader)
+				{
+					if (curMesh->skined)
+					{
+						shaderMgr->begin(curItem->shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+					}
+					else
+					{
+						shaderMgr->begin(curItem->shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
+					}
+					
+					shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+
+					cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
+					cbOnResize_G.getData()->farDistance = camera->getZFar();
+					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
+
+					cbEveryFrame_G.getData()->view = camera->getViewMatrix();
+					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
+				}
+
 				if (isChangedDiffuseMap == true)
 				{
-//					I4Texture* diffuse = actorMgr->findTexture(curMeshInstance->diffuseMapID);
-	//				shaderMgr->setTexture(0, diffuse);
+					shaderMgr->setTexture(0, curMesh->diffuseMap);
 				}
 						
 				if (isChangedSpecularMap == true)
 				{
-		//			I4Texture* specular = actorMgr->findTexture(curMeshInstance->specularMapID);
-			//		shaderMgr->setTexture(1, specular);
+					shaderMgr->setTexture(1, curMesh->specularMap);
 				}
 
 				if (isChangedNormalMap == true)
 				{
-				//	I4Texture* normal = actorMgr->findTexture(curMeshInstance->normalMapID);
-					//shaderMgr->setTexture(2, normal);
+					shaderMgr->setTexture(2, curMesh->normalMap);
 				}
 
 				cbEachMeshInstance_G.getData()->specularIntensity = 1.0f;// curMeshInstance->specularInensity; 
-				cbEachMeshInstance_G.getData()->specularPower = 1.0f;//curMeshInstance->specularPower;
+				cbEachMeshInstance_G.getData()->specularPower = 8.0f;//curMeshInstance->specularPower;
 				cbEachMeshInstance_G.getData()->world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G.getBuffer(), cbEachMeshInstance_G.getData());
 

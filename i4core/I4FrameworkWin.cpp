@@ -32,7 +32,8 @@ namespace i4core {
 	{
 		hInst = GetModuleHandle(nullptr);
 
-		const wstring wtitle = I4StringUtil::to_wchar_t(title.c_str());
+		wstring wtitle;
+		to_wstring(wtitle, title);
 		// 윈도우 클래스 등록
 		WNDCLASSEX	wc;
 
@@ -87,7 +88,8 @@ namespace i4core {
 
 	void I4FrameworkWin::onDestroy()
 	{
-		const wstring wtitle = I4StringUtil::to_wchar_t(title.c_str());
+		wstring wtitle;
+		to_wstring(wtitle, title);
 		UnregisterClass(wtitle.c_str(), hInst);
 	}
 

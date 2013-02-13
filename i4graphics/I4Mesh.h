@@ -10,6 +10,7 @@ namespace i4graphics
 {
 	class I4VertexBuffer;
 	class I4IndexBuffer;
+	class I4Texture;
 
 	class I4GRAPHICS_API I4Mesh : public I4HashData<I4Mesh>
 	{
@@ -23,11 +24,14 @@ namespace i4graphics
 		void 			draw();
 
 		//-------------------------------
-
-		I4VertexBuffer*	vertexBuffer;
-		I4IndexBuffer*	indexBuffer;
-		I4AABB			localAABB;
-		bool			skined;
+		
+		I4AABB				localAABB;
+		I4VertexBuffer*		vertexBuffer;
+		I4IndexBuffer*		indexBuffer;
+		I4Texture*			diffuseMap;
+		I4Texture*			specularMap;
+		I4Texture*			normalMap;
+		bool				skined;
 	};
 	
 }

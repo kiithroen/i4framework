@@ -33,6 +33,7 @@ namespace i4graphics
 		unsigned int		boneCount;
 		I4Mesh*				mesh;
 		I4Matrix4x4*		matrixPalette;
+
 		bool operator < (const I4MeshInstanceRenderItem& other) const;
 	};
 

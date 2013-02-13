@@ -6,6 +6,9 @@ namespace i4graphics
 	I4Mesh::I4Mesh()
 		: vertexBuffer(nullptr)
 		, indexBuffer(nullptr)
+		, diffuseMap(nullptr)
+		, normalMap(nullptr)
+		, specularMap(nullptr)
 	{
 		
 	}
@@ -30,6 +33,6 @@ namespace i4graphics
 
 	void I4Mesh::draw()
 	{
-		indexBuffer->draw(I4PT_TRIANGLELIST);\
+		indexBuffer->draw(I4PT_TRIANGLELIST);
 	}
 }

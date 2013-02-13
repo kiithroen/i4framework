@@ -20,7 +20,7 @@
 			<emissive>0.000000</emissive>
 			<glossiness>0.100000</glossiness>
 			<power>0.640000</power>
-			<diffuseMap>gud_hammer_4.bmp</diffuseMap>
+			<diffuseMap>gud_hammer_4.dds</diffuseMap>
 		</material>
 		<vertex count="157">
 			<val>19.431950 18.998695 5.561101</val>
@@ -1589,7 +1589,7 @@
 			<emissive>0.000000</emissive>
 			<glossiness>0.100000</glossiness>
 			<power>0.000000</power>
-			<diffuseMap>gud_armor_3.bmp</diffuseMap>
+			<diffuseMap>gud_armor_3.dds</diffuseMap>
 		</material>
 		<vertex count="208">
 			<val>-0.001800 11.181820 -2.785303</val>
@@ -3429,7 +3429,7 @@
 			<emissive>0.000000</emissive>
 			<glossiness>0.100000</glossiness>
 			<power>0.000000</power>
-			<diffuseMap>gud_armor_2.bmp</diffuseMap>
+			<diffuseMap>gud_armor_2.dds</diffuseMap>
 		</material>
 		<vertex count="435">
 			<val>3.943697 19.241268 -3.407751</val>
@@ -7545,7 +7545,7 @@
 			<emissive>0.000000</emissive>
 			<glossiness>0.100000</glossiness>
 			<power>0.000000</power>
-			<diffuseMap>gud_down_1.bmp</diffuseMap>
+			<diffuseMap>gud_down_1.dds</diffuseMap>
 		</material>
 		<vertex count="351">
 			<val>-13.523562 30.784512 10.271620</val>
@@ -12336,7 +12336,7 @@
 			<emissive>0.000000</emissive>
 			<glossiness>0.100000</glossiness>
 			<power>0.000000</power>
-			<diffuseMap>gud_up_0.bmp</diffuseMap>
+			<diffuseMap>gud_up_0.dds</diffuseMap>
 		</material>
 		<vertex count="510">
 			<val>2.800457 7.278626 -5.261677</val>
@@ -19342,7 +19342,7 @@
 			<emissive>0.000000</emissive>
 			<glossiness>0.100000</glossiness>
 			<power>0.000000</power>
-			<diffuseMap>gud_etc1_5.bmp</diffuseMap>
+			<diffuseMap>gud_etc1_5.dds</diffuseMap>
 		</material>
 		<vertex count="86">
 			<val>-8.369555 3.308580 2.429118</val>

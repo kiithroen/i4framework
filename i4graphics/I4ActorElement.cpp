@@ -139,6 +139,22 @@ namespace i4graphics
 		I4MeshInstanceRenderItem item;
 		item.shaderMask = I4SHADER_MASK_NONE;
 		item.mesh = mesh;
+
+		if (mesh->diffuseMap != nullptr)
+		{
+			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
+		}
+
+		if (mesh->specularMap != nullptr)
+		{
+			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
+		}
+
+		if (mesh->normalMap != nullptr)
+		{
+			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
+		}
+
 		item.boneCount = 0;
 		item.worldAABB = mesh->localAABB.transform(matWorld);
 		item.worldTM = matWorld;
@@ -186,6 +202,22 @@ namespace i4graphics
 		I4MeshInstanceRenderItem item;
 		item.mesh = mesh;
 		item.shaderMask = I4SHADER_MASK_SKINNING;
+
+		if (mesh->diffuseMap != nullptr)
+		{
+			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
+		}
+
+		if (mesh->specularMap != nullptr)
+		{
+			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
+		}
+
+		if (mesh->normalMap != nullptr)
+		{
+			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
+		}
+
 		item.boneCount = actor->getBoneCount();
 		item.worldAABB = mesh->localAABB.transform(resultTM*parentTM);
 		item.worldTM = parentTM;

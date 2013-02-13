@@ -21,14 +21,14 @@ namespace i4graphics
 		if (I4Texture::load(fname) == false)
 			return false;
 
-		/*
-		const wstring wfname = I4StringUtil::to_wchar_t(fname);
+		wstring wfname;
+		to_wstring(wfname, fname);
 		if (FAILED(CreateDDSTextureFromFile(d3dDevice, wfname.c_str(), nullptr, &shaderResourceView)))
 		{
 			I4LOG_WARN << L"texture load failed. : " << wfname;
 			return false;
 		}
-		*/
+
 		return true;
 	}
 

@@ -14,9 +14,9 @@
 			<val>0.000000 0.000000 0.000000</val>
 		</worldTM>
 		<material>
-			<diffuseMap>cyberdemon.jpg</diffuseMap>
-			<specularMap>cyberdemon_s.jpg</specularMap>
-			<normalMap>cyberdemon_local.jpg</normalMap>
+			<diffuseMap>cyberdemon.dds</diffuseMap>
+			<specularMap>cyberdemon_s.dds</specularMap>
+			<normalMap>cyberdemon_local.dds</normalMap>
 		</material>
 		<vertex count="2282">
 			<val>-10.514463 6.073786 54.381626</val>

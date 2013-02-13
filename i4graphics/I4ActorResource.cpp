@@ -346,7 +346,6 @@ namespace i4graphics
 				}
 				else
 				{
-					assert(false);
 					delete texture;
 				}
 
@@ -369,7 +368,6 @@ namespace i4graphics
 				}
 				else
 				{
-					assert(false);
 					delete texture;
 				}
 
@@ -392,7 +390,6 @@ namespace i4graphics
 				}
 				else
 				{
-					assert(false);
 					delete texture;
 				}
 
@@ -708,6 +705,9 @@ namespace i4graphics
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
+		mesh->diffuseMap = data.diffuseMap;
+		mesh->specularMap = data.specularMap;
+		mesh->normalMap = data.normalMap;
 
 		if (data.skined)	
 		{
@@ -743,7 +743,6 @@ namespace i4graphics
 		}
 
 		mesh->indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
-
 		mesh->indexBuffer->create(data.vecVertexIndex.size()*3, sizeof(unsigned short));
 		mesh->indexBuffer->copyFrom((void**)&data.vecVertexIndex[0]);
 
