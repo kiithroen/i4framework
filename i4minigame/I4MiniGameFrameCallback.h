@@ -13,7 +13,7 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	class I4DefferedRenderer;
+	class I4DeferredRenderer;
 	class I4Actor;
 	class I4ActorMgr;
 }
@@ -48,7 +48,7 @@ private:
 
 private:
 	I4FrameStateMgr*	frameStateMgr;
-	I4DefferedRenderer*	renderer;
+	I4DeferredRenderer*	renderer;
 	I4Camera*			camera;
 	int					prevMouseX;
 	int					prevMouseY;

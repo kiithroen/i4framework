@@ -2,7 +2,7 @@
 #include "I4MiniGameFrameCallback.h"
 #include "I4MiniGameState_Game.h"
 #include "I4Framework.h"
-#include "I4DefferedRenderer.h"
+#include "I4DeferredRenderer.h"
 #include "I4Camera.h"
 #include "I4FrameStateMgr.h"
 #include "I4Log.h"
@@ -28,7 +28,7 @@ I4MiniGameFrameCallback::~I4MiniGameFrameCallback()
 bool I4MiniGameFrameCallback::onStart()
 {
 	I4Framework* framework = I4Framework::getFramework();
-	renderer = new I4DefferedRenderer;
+	renderer = new I4DeferredRenderer;
 	if (renderer->initialize(framework->getWindowID(), framework->getWidth(), framework->getHeight()) == false)
 	{
 		I4LOG_ERROR << "renderer initalize failed.";

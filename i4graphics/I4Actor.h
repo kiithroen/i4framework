@@ -13,7 +13,7 @@ namespace i4graphics {
 	class I4ActorBoneResource;
 	class I4ActorMeshResource;
 	class I4ActorAniResource;
-	class I4DefferedRenderer;
+	class I4DeferredRenderer;
 
 	class I4GRAPHICS_API I4Actor
 	{
@@ -37,7 +37,7 @@ namespace i4graphics {
 		void					playAnimation(const char* aniName);
 
 		void					animate(float deltaSec);	
-		void					render(I4DefferedRenderer* renderer, const I4Matrix4x4& worldTM);
+		void					render(I4DeferredRenderer* renderer, const I4Matrix4x4& worldTM);
 
 		const I4Matrix4x4&		getSkinTM(unsigned int i) const		{ return vecSkinTM[i]; }
 		unsigned int			getBoneCount() const				{ return vecBone.size(); }

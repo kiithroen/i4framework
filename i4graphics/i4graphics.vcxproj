@@ -108,7 +108,7 @@
     <ClInclude Include="I4ActorResource.h" />
     <ClInclude Include="I4AnimationController.h" />
     <ClInclude Include="I4AnimationTrack.h" />
-    <ClInclude Include="I4DefferedRenderer.h" />
+    <ClInclude Include="I4DeferredRenderer.h" />
     <ClInclude Include="I4Format.h" />
     <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4KeyFrameSet.h" />
@@ -145,7 +145,7 @@
     <ClCompile Include="I4ActorResource.cpp" />
     <ClCompile Include="I4AnimationController.cpp" />
     <ClCompile Include="I4AnimationTrack.cpp" />
-    <ClCompile Include="I4DefferedRenderer.cpp" />
+    <ClCompile Include="I4DeferredRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D11.cpp" />
     <ClCompile Include="I4Material.cpp" />
     <ClCompile Include="I4Mesh.cpp" />
@@ -165,19 +165,19 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_g.fx">
+    <FxCompile Include="..\bin\shader\deferred_g.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_l_directional.fx">
+    <FxCompile Include="..\bin\shader\deferred_l_directional.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_l_point.fx">
+    <FxCompile Include="..\bin\shader\deferred_l_point.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_m.fx">
+    <FxCompile Include="..\bin\shader\deferred_m.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>

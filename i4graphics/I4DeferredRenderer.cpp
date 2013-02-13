@@ -1,4 +1,4 @@
-#include "I4DefferedRenderer.h"
+#include "I4DeferredRenderer.h"
 #include "I4VideoDriver.h"
 #include "I4ShaderMgr.h"
 #include "I4ActorMgr.h"
@@ -31,7 +31,7 @@ namespace i4graphics
 		return false;
 	}
 
-	I4DefferedRenderer::I4DefferedRenderer()
+	I4DeferredRenderer::I4DeferredRenderer()
 		: shaderMgr(nullptr)
 		, actorMgr(nullptr)
 		, rtDiffuse(nullptr)
@@ -45,12 +45,12 @@ namespace i4graphics
 	}
 
 
-	I4DefferedRenderer::~I4DefferedRenderer(void)
+	I4DeferredRenderer::~I4DeferredRenderer(void)
 	{
 		finalize();
 	}
 
-	bool I4DefferedRenderer::initialize(void* _windowID, unsigned int _width, unsigned int _height)
+	bool I4DeferredRenderer::initialize(void* _windowID, unsigned int _width, unsigned int _height)
 	{
 		// video driver
 		I4VideoDriver::createVideoDriver(I4VIDEO_DRIVER_MODE_D3D11);
@@ -68,27 +68,27 @@ namespace i4graphics
 		}
 	
 		// shader mgr
-		if (I4ShaderMgr::addShaderMgr("shader/deffered_g.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deferred_g.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deffered_g add failed.";
+			I4LOG_ERROR << L"shader deferred_g add failed.";
 			return false;
 		}
 	
-		if (I4ShaderMgr::addShaderMgr("shader/deffered_l_directional.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deferred_l_directional.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deffered_l_directional add failed.";
+			I4LOG_ERROR << L"shader deferred_l_directional add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/deffered_l_point.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deferred_l_point.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deffered_l_point add failed.";
+			I4LOG_ERROR << L"shader deferred_l_point add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/deffered_m.fx") == false)
+		if (I4ShaderMgr::addShaderMgr("shader/deferred_m.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deffered_m add failed.";
+			I4LOG_ERROR << L"shader deferred_m add failed.";
 			return false;
 		}
 
@@ -191,7 +191,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4DefferedRenderer::finalize()
+	void I4DeferredRenderer::finalize()
 	{
 		delete actorMgr;
 		delete sphereMesh;
@@ -206,29 +206,29 @@ namespace i4graphics
 		I4VideoDriver::destroyVideoDriver();
 	}
 
-	void I4DefferedRenderer::commitToScene(const I4MeshInstanceRenderItem& item)
+	void I4DeferredRenderer::commitToScene(const I4MeshInstanceRenderItem& item)
 	{
 			vecSceneMeshInstnaceRenderItem.push_back(item);
 	}
 
-	void I4DefferedRenderer::commitToScene(I4DirectionalLight* light)
+	void I4DeferredRenderer::commitToScene(I4DirectionalLight* light)
 	{
 		vecSceneDirectionalLight.push_back(*light);
 	}
 
-	void I4DefferedRenderer::commitToScene(I4PointLight* light)
+	void I4DeferredRenderer::commitToScene(I4PointLight* light)
 	{
 		vecScenePointLight.push_back(*light);
 	}
 
-	void I4DefferedRenderer::preRender(I4Camera* camera)
+	void I4DeferredRenderer::preRender(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
 		videoDriver->beginScene();
 	}
 
-	void I4DefferedRenderer::render(I4Camera* camera)
+	void I4DeferredRenderer::render(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 		clearAllRenderTarget();
@@ -238,7 +238,7 @@ namespace i4graphics
 		renderStageMerge(camera);
 	}
 
-	void I4DefferedRenderer::postRender(I4Camera* camera)
+	void I4DeferredRenderer::postRender(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -248,7 +248,7 @@ namespace i4graphics
 		vecScenePointLight.clear();
 	}
 
-	void I4DefferedRenderer::clearAllRenderTarget()
+	void I4DeferredRenderer::clearAllRenderTarget()
 	{
 		I4PROFILE_THISFUNC;
 					
@@ -260,7 +260,7 @@ namespace i4graphics
 		videoDriver->clearRenderTarget(rtLight, 0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	void I4DefferedRenderer::renderStageGeometry(I4Camera* camera)
+	void I4DeferredRenderer::renderStageGeometry(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -272,7 +272,7 @@ namespace i4graphics
 		renderMeshInstanceRenderItem(camera);		
 	}
 
-	void I4DefferedRenderer::cullAndSortMeshInstanceRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortMeshInstanceRenderItem(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -289,7 +289,7 @@ namespace i4graphics
 		sort(vecCulledMeshInstnaceRenderItem.begin(), vecCulledMeshInstnaceRenderItem.end());
 	}
 
-	void I4DefferedRenderer::renderMeshInstanceRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::renderMeshInstanceRenderItem(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -298,7 +298,7 @@ namespace i4graphics
 		I4MeshInstanceRenderItem* curItem = nullptr;
 		I4Mesh* prevMesh = nullptr;
 		I4Mesh* curMesh = nullptr;
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_g.fx");
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_g.fx");
 
 		for (auto &itr : vecCulledMeshInstnaceRenderItem)
 		{
@@ -440,7 +440,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DefferedRenderer::renderStageLight(I4Camera* camera)
+	void I4DeferredRenderer::renderStageLight(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -454,7 +454,7 @@ namespace i4graphics
 		renderPointLight(camera);
 	}
 
-	void I4DefferedRenderer::cullAndSortDirectionalLight(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortDirectionalLight(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -467,11 +467,11 @@ namespace i4graphics
 		}
 	}
 
-	void I4DefferedRenderer::renderDirectionalLight(I4Camera* camera)
+	void I4DeferredRenderer::renderDirectionalLight(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
-		shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_l_directional.fx");
+		shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_l_directional.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
@@ -506,7 +506,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DefferedRenderer::cullAndSortPointLight(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortPointLight(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -521,11 +521,11 @@ namespace i4graphics
 		}
 	}
 
-	void I4DefferedRenderer::renderPointLight(I4Camera* camera)
+	void I4DeferredRenderer::renderPointLight(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_l_point.fx");
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_l_point.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
@@ -594,14 +594,14 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 	}
 
-	void I4DefferedRenderer::renderStageMerge(I4Camera* camera)
+	void I4DeferredRenderer::renderStageMerge(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
 		videoDriver->resetRenderTarget();
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deffered_m.fx");
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_m.fx");
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 

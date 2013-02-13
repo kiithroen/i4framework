@@ -28,7 +28,6 @@
     <ClInclude Include="targetver.h">
       <Filter>dllmain</Filter>
     </ClInclude>
-    <ClInclude Include="I4DefferedRenderer.h" />
     <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4RenderTargetD3D11.h" />
     <ClInclude Include="I4ShaderProgramD3D11.h" />
@@ -47,6 +46,7 @@
     <ClInclude Include="I4KeyFrameSet.h" />
     <ClInclude Include="I4Material.h" />
     <ClInclude Include="I4Mesh.h" />
+    <ClInclude Include="I4DeferredRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,7 +58,6 @@
     <ClCompile Include="I4ShaderMgr.cpp" />
     <ClCompile Include="I4SphereMesh.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
-    <ClCompile Include="I4DefferedRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D11.cpp" />
     <ClCompile Include="I4RenderTargetD3D11.cpp" />
     <ClCompile Include="I4ShaderProgramD3D11.cpp" />
@@ -75,21 +74,22 @@
     <ClCompile Include="I4AnimationTrack.cpp" />
     <ClCompile Include="I4Material.cpp" />
     <ClCompile Include="I4Mesh.cpp" />
+    <ClCompile Include="I4DeferredRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\shader\default.fx">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_g.fx">
+    <FxCompile Include="..\bin\shader\deferred_g.fx">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_l_directional.fx">
+    <FxCompile Include="..\bin\shader\deferred_l_directional.fx">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_l_point.fx">
+    <FxCompile Include="..\bin\shader\deferred_l_point.fx">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\bin\shader\deffered_m.fx">
+    <FxCompile Include="..\bin\shader\deferred_m.fx">
       <Filter>shader</Filter>
     </FxCompile>
   </ItemGroup>

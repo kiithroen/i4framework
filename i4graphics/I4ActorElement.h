@@ -11,7 +11,7 @@ namespace i4graphics {
 	class I4Actor;
 	class I4ActorBoneResource;
 	class I4AnimationController;
-	class I4DefferedRenderer;
+	class I4DeferredRenderer;
 
 	//------------------------- I4ActorElement ---------------------
 
@@ -26,7 +26,7 @@ namespace i4graphics {
 
 		virtual bool			initialize();
 		virtual void			animate(float deltaSec, const I4Matrix4x4& parentTM);
-		virtual void			render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM)	{}
+		virtual void			render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)	{}
 
 		const I4Matrix4x4& 		getResultTM() const			{ return resultTM;	}
 
@@ -52,7 +52,7 @@ namespace i4graphics {
 		virtual ~I4ActorBone();
 
 		virtual bool	initialize();
-		virtual void	render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM);
+		virtual void	render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM);
 
 		I4Matrix4x4		getSkinTM() const	{ return worldInverseTM*resultTM; }
 
@@ -82,7 +82,7 @@ namespace i4graphics {
 		ActorRigidMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
 		virtual ~ActorRigidMesh();
 
-		virtual void	render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM);
+		virtual void	render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM);
 	};
 
 	//------------------------- ActorSkinedMeshGPU -------------------------
@@ -96,7 +96,7 @@ namespace i4graphics {
 		virtual bool	initialize();
 		virtual void	animate(float deltaSec, const I4Matrix4x4& parentTM);
 
-		virtual void	render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM);
+		virtual void	render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM);
 
 	private:
 		vector<I4Matrix4x4>		matrixPalette;

@@ -7,7 +7,7 @@
 #include "I4VideoDriver.h"
 #include "I4Log.h"
 #include "I4Camera.h"
-#include "I4DefferedRenderer.h"
+#include "I4DeferredRenderer.h"
 #include "I4Profile.h"
 
 namespace i4graphics
@@ -105,7 +105,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ActorBone::render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM)
+	void I4ActorBone::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 	}
 
@@ -133,7 +133,7 @@ namespace i4graphics
 		
 	}
 
-	void ActorRigidMesh::render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM)
+	void ActorRigidMesh::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		const I4Matrix4x4 matWorld = resultTM*parentTM;
 		I4MeshInstanceRenderItem item;
@@ -195,7 +195,7 @@ namespace i4graphics
 		}
 	}
 
-	void ActorSkinedMeshGPU::render(I4DefferedRenderer* renderer, const I4Matrix4x4& parentTM)
+	void ActorSkinedMeshGPU::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.

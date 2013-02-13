@@ -175,14 +175,14 @@ namespace i4graphics
 		T*					data;
 	};
 
-	class I4GRAPHICS_API I4DefferedRenderer
+	class I4GRAPHICS_API I4DeferredRenderer
 	{
 		typedef vector<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemVector;
 		typedef vector<I4DirectionalLight>			I4DirectionalLightVector;
 		typedef vector<I4PointLight>				I4PointLightVector;
 	public:
-		I4DefferedRenderer();
-		~I4DefferedRenderer(void);
+		I4DeferredRenderer();
+		~I4DeferredRenderer(void);
 
 		bool				initialize(void* _windowID, unsigned int _width, unsigned int _height);
 		void				finalize();

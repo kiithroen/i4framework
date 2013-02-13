@@ -124,7 +124,7 @@ namespace i4graphics
 	}
 
 
-	void I4Actor::render(I4DefferedRenderer* renderer, const I4Matrix4x4& worldTM)
+	void I4Actor::render(I4DeferredRenderer* renderer, const I4Matrix4x4& worldTM)
 	{
 		I4PROFILE_THISFUNC;
 
