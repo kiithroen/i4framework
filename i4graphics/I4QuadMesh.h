@@ -6,7 +6,7 @@
 namespace i4graphics
 {
 
-	class I4GRAPHICS_API I4QuadMesh
+	class I4QuadMesh
 	{
 	public:
 		I4QuadMesh(void);

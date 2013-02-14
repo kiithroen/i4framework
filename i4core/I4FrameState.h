@@ -5,7 +5,7 @@
 namespace i4core
 {
 	class I4FrameStateMgr;
-	class I4FrameState
+	class I4CORE_API I4FrameState
 	{
 		friend class I4FrameStateMgr;
 	public:

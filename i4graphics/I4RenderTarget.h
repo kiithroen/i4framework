@@ -5,7 +5,7 @@
 
 namespace i4graphics
 {
-	class I4GRAPHICS_API I4RenderTarget
+	class I4RenderTarget
 	{
 		friend class I4VideoDriver;
 	public:

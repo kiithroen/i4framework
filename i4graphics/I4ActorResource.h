@@ -6,6 +6,7 @@
 #include "I4XmlData.h"
 #include "I4GeometryBuffer.h"
 #include "I4AABB.h"
+#include "I4Hash.h"
 
 using namespace i4core;
 
@@ -18,9 +19,9 @@ namespace i4graphics {
 	{
 		bool					skined;
 		I4Material*				material;
-		I4Texture*				diffuseMap;
-		I4Texture*				specularMap;
-		I4Texture*				normalMap;
+		I4Hash					diffuseMap;
+		I4Hash					specularMap;
+		I4Hash					normalMap;
 		I4AABB					localAABB;
 		vector<I4Vector3>		vecPosition;
 		vector<I4Vector3>		vecNormal;
@@ -35,7 +36,7 @@ namespace i4graphics {
 
 	//-------------------- I4ActorBoneResource -----------------------
 
-	class I4GRAPHICS_API I4ActorBoneResource
+	class I4ActorBoneResource
 	{
 		typedef vector<I4ActorElementInfo*>		I4ActorInfoVector;
 	public:
@@ -62,10 +63,9 @@ namespace i4graphics {
 
 	//-------------------- I4ActorMeshResource -----------------------
 
-	class I4GRAPHICS_API I4ActorMeshResource
+	class I4ActorMeshResource
 	{
 		typedef vector<I4Material*>			I4MaterialVector;
-		typedef vector<I4Texture*>			I4TextureVector;
 		typedef vector<I4ActorElementInfo*>	I4ActorInfoVector;
 		typedef vector<I4Mesh*>				I4MeshVector;
 
@@ -103,14 +103,13 @@ namespace i4graphics {
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);
 	private:
 		I4MaterialVector		vecMaterial;
-		I4TextureVector			vecTexture;
 		I4ActorInfoVector		vecMeshInfo;
 		I4MeshVector			vecMesh;
 	};
 
 	//-------------------- I4ActorAniResource -----------------------
 
-	class I4GRAPHICS_API I4ActorAniResource
+	class I4ActorAniResource
 	{
 		typedef vector<I4KeyFrameSet*>		I4KeyFrameSetVector;
 	public:

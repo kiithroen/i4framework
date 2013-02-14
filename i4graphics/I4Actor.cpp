@@ -24,10 +24,10 @@ namespace i4graphics
 		{
 			I4ActorElementInfo* boneInfo = boneResource->getBoneInfo(i);
 
-			I4ActorBone* actorMesh = new I4ActorBone(this, boneInfo);
+			I4ActorBone* actorBone = new I4ActorBone(this, boneInfo);
 
-			vecBone.push_back(actorMesh);
-			mapElement.insert(make_pair(boneInfo->name, actorMesh));
+			vecBone.push_back(actorBone);
+			mapElement.insert(make_pair(boneInfo->name, actorBone));
 		}
 
 		vecSkinTM.resize(vecBone.size());
@@ -78,7 +78,7 @@ namespace i4graphics
 
 	bool I4Actor::initialize()
 	{
-		for (auto &itr : mapElement)
+		for (auto&itr : mapElement)
 		{
 			if ((itr.second)->initialize() == false)
 				return false;
@@ -89,7 +89,7 @@ namespace i4graphics
 
 	void I4Actor::destroy()
 	{
-		for (auto &itr : mapElement)
+		for (auto&itr : mapElement)
 		{
 			delete itr.second;
 		}
@@ -137,7 +137,7 @@ namespace i4graphics
 
 	void I4Actor::playAnimation(const char* aniName)
 	{
-		for (auto &itr : mapElement)
+		for (auto&itr : mapElement)
 		{
 			(itr.second)->playAni(aniName);
 		}

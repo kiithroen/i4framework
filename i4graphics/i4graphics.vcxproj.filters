@@ -47,6 +47,7 @@
     <ClInclude Include="I4Material.h" />
     <ClInclude Include="I4Mesh.h" />
     <ClInclude Include="I4DeferredRenderer.h" />
+    <ClInclude Include="I4TextureMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -75,6 +76,7 @@
     <ClCompile Include="I4Material.cpp" />
     <ClCompile Include="I4Mesh.cpp" />
     <ClCompile Include="I4DeferredRenderer.cpp" />
+    <ClCompile Include="I4TextureMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\shader\default.fx">

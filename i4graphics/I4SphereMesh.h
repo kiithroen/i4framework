@@ -6,7 +6,7 @@
 namespace i4graphics
 {
 
-	class I4GRAPHICS_API I4SphereMesh
+	class I4SphereMesh
 	{
 	public:
 		I4SphereMesh(void);

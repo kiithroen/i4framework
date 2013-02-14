@@ -1,7 +1,7 @@
 #include "I4ActorResource.h"
 #include "I4KeyFrameSet.h"
 #include "I4VideoDriver.h"
-#include "I4Texture.h"
+#include "I4TextureMgr.h"
 #include "I4Log.h"
 
 namespace i4graphics
@@ -146,12 +146,6 @@ namespace i4graphics
 		}
 		vecMaterial.clear();
 
-		for (unsigned int i = 0; i < vecTexture.size(); ++i)
-		{
-			delete vecTexture[i];
-		}
-		vecTexture.clear();
-
 		for (unsigned int i = 0; i < vecMeshInfo.size(); ++i)
 		{
 			delete vecMeshInfo[i];
@@ -160,6 +154,9 @@ namespace i4graphics
 
 		for (unsigned int i = 0; i < vecMesh.size(); ++i)
 		{
+			I4TextureMgr::getTextureMgr().unload(vecMesh[i]->diffuseMap);
+			I4TextureMgr::getTextureMgr().unload(vecMesh[i]->specularMap);
+			I4TextureMgr::getTextureMgr().unload(vecMesh[i]->normalMap);
 			delete vecMesh[i];
 		}
 		vecMesh.clear();
@@ -338,16 +335,7 @@ namespace i4graphics
 				char texturePath[256] = "texture/";
 				strcat_s(texturePath, val);
 
-				I4Texture* texture = I4VideoDriver::getVideoDriver()->createTexture();
-				if (texture->load(texturePath))
-				{
-					vecTexture.push_back(texture);
-					out.diffuseMap = vecTexture.back();
-				}
-				else
-				{
-					delete texture;
-				}
+				out.diffuseMap = I4TextureMgr::getTextureMgr().load(texturePath);
 
 				xml.selectParentNode();
 			}
@@ -360,16 +348,7 @@ namespace i4graphics
 				char texturePath[256] = "texture/";
 				strcat_s(texturePath, val);
 
-				I4Texture* texture = I4VideoDriver::getVideoDriver()->createTexture();
-				if (texture->load(texturePath))
-				{
-					vecTexture.push_back(texture);
-					out.specularMap = vecTexture.back();
-				}
-				else
-				{
-					delete texture;
-				}
+				out.specularMap = I4TextureMgr::getTextureMgr().load(texturePath);
 
 				xml.selectParentNode();
 			}
@@ -382,16 +361,7 @@ namespace i4graphics
 				char texturePath[256] = "texture/";
 				strcat_s(texturePath, val);
 
-				I4Texture* texture = I4VideoDriver::getVideoDriver()->createTexture();
-				if (texture->load(texturePath))
-				{
-					vecTexture.push_back(texture);
-					out.normalMap = vecTexture.back();
-				}
-				else
-				{
-					delete texture;
-				}
+				out.normalMap = I4TextureMgr::getTextureMgr().load(texturePath);
 
 				xml.selectParentNode();
 			}

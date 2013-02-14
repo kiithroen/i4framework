@@ -323,7 +323,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	static float angle = 0;
 
-	angle += 30*deltaTime;
+	angle += 15*deltaTime;
 
 	if (angle > 360)
 	{
@@ -345,7 +345,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 			if (i%2 == 0)
 			{
-				actor[idx]->animate(deltaTime*3);
+				actor[idx]->animate(deltaTime*2);
 			}
 			else
 			{

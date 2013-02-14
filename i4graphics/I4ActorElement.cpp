@@ -136,7 +136,7 @@ namespace i4graphics
 	void ActorRigidMesh::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		const I4Matrix4x4 matWorld = resultTM*parentTM;
-		I4MeshInstanceRenderItem item;
+		I4MeshRenderItem item;
 		item.shaderMask = I4SHADER_MASK_NONE;
 		item.mesh = mesh;
 
@@ -199,7 +199,7 @@ namespace i4graphics
 	{
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
-		I4MeshInstanceRenderItem item;
+		I4MeshRenderItem item;
 		item.mesh = mesh;
 		item.shaderMask = I4SHADER_MASK_SKINNING;
 

@@ -15,19 +15,6 @@ namespace i4graphics {
 	class I4Texture;
 	class I4Mesh;
 
-	class I4MeshInstance
-	{
-	public:
-		I4Matrix4x4		meshLocalTM;
-		I4AABB			meshLocalAABB;
-		I4Mesh*	mesh;
-		I4HashID		diffuseMapID;
-		I4HashID		specularMapID;
-		I4HashID		normalMapID;
-		float  			specularInensity;
-		float			specularPower;
-	};
-
 	class I4GRAPHICS_API I4ActorMgr
 	{
 		typedef map<string, I4Actor*>					I4ActorMap;

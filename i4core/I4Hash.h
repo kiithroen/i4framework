@@ -7,41 +7,41 @@
 // http://isthe.com/chongo/tech/comp/fnv/
 // 어디까지나 해시니까 충돌가능성이 있다.
 // 사용시에는 항상 원본이 맞는지 확인할수 있는 수단이 었어야 한다.
-#define INVALID_HASH 0xffffffff
+#define INVALID_HASHCODE 0xffffffff
 #define HASH_INIT	0x811c9dc5
 #define HASH_PRIME	0x01000193
 
 namespace i4core
 {
-	class I4HashID
+	class I4Hash
 	{
 	public:
-		I4HashID()
-			: hashCode(INVALID_HASH)
+		I4Hash()
+			: hashCode(INVALID_HASHCODE)
 		{
 		}
 
-		I4HashID(const string& str)
+		I4Hash(const string& str)
 		{
 			hashCode = getHashCode(str.c_str());
 		}
 
-		I4HashID(const char* str)
+		I4Hash(const char* str)
 		{
 			hashCode = getHashCode(str);
 		}
 
-		I4HashID(unsigned int _hashValue)
+		I4Hash(unsigned int _hashCode)
 		{
-			hashCode = _hashValue;
+			hashCode = _hashCode;
 		}
 
-		I4HashID(const I4HashID& rhs)
+		I4Hash(const I4Hash& rhs)
 		{
 			hashCode = rhs.hashCode;
 		}
 
-		const I4HashID& operator = (const I4HashID& rhs)
+		const I4Hash& operator = (const I4Hash& rhs)
 		{
 			hashCode = rhs.hashCode;
 			return *this;
@@ -52,32 +52,37 @@ namespace i4core
 			return hashCode;
 		}
 
-		const bool operator < (const I4HashID &rhs) const
+		const bool operator < (const I4Hash &rhs) const
 		{
 			return hashCode < rhs.hashCode;
 		}
 
-		const bool operator > (const I4HashID &rhs) const
+		const bool operator > (const I4Hash &rhs) const
 		{
 			return hashCode > rhs.hashCode;
 		}
 
-		const bool operator <= (const I4HashID &rhs) const
+		const bool operator <= (const I4Hash &rhs) const
 		{
 			return hashCode <= rhs.hashCode;
 		}
 
-		const bool operator >= (const I4HashID &rhs) const
+		const bool operator >= (const I4Hash &rhs) const
 		{
 			return hashCode >= rhs.hashCode;
 		}
 
-		const bool operator == (const I4HashID &rhs) const
+		const bool operator == (const I4Hash &rhs) const
 		{
 			return hashCode == rhs.hashCode;
 		}
 
-		const bool operator != (const I4HashID &rhs) const
+		const bool operator == (unsigned int code) const
+		{
+			return hashCode == code;
+		}
+
+		const bool operator != (const I4Hash &rhs) const
 		{
 			return hashCode != rhs.hashCode;
 		}
@@ -86,7 +91,7 @@ namespace i4core
 		static unsigned int getHashCode(const char* str)
 		{
 			if (!str || !str[0])
-				return INVALID_HASH;
+				return INVALID_HASHCODE;
 
 			const unsigned char* st = (const unsigned char*)str;
 			unsigned int hash = HASH_INIT;
@@ -112,54 +117,6 @@ namespace i4core
 
 	private:
 		unsigned int hashCode;
-	};
-
-	// 대소문자를 구별하지 않는 이름을 기반으로한 해쉬를 아이디로 사용하는 클래스
-	// 아이디는 적지만 충돌의 가능성이 있으므로 주의해야한다.
-	template <typename T>
-	class I4HashData
-	{
-	public:
-		void setName(const string& _name)
-		{
-			name = _name;
-			id = I4HashID(name);
-		}
-
-		bool isEqual(const I4HashData<T>& rhs)
-		{
-			return (sameID(rhs.id) && sameName(name));
-		}
-
-		bool sameID(I4HashID _id)
-		{
-			return id == _id;
-		}
-
-		bool sameName(const string& _name)
-		{
-			return sameName(_name.c_str());
-		}
-
-		bool sameName(const char* _name)
-		{
-			return (_stricmp(name.c_str(), _name) == 0);
-		}
-
-		I4HashID			getID()		{ return id; }
-		const string&	getName()	{ return name; }
-
-	protected:
-		I4HashData()	{}
-		~I4HashData()	{}
-
-	private:
-		I4HashData(const I4HashData&);
-		const I4HashData& operator = (const I4HashData&);
-
-	private:
-		I4HashID	id;
-		string		name;
 	};
 }
 

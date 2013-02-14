@@ -27,7 +27,7 @@ namespace i4graphics
 
 	typedef map<string, I4ShaderMgr*>		I4ShaderMgrMap;
 
-	class I4GRAPHICS_API I4ShaderMgr
+	class I4ShaderMgr
 	{
 		typedef map<unsigned int, I4ShaderProgram*>	I4ShaderProgramMap;
 	public:
@@ -53,7 +53,7 @@ namespace i4graphics
 		I4ShaderMgr();
 
 	protected:
-		 string		baseShaderCode;
+		 string				baseShaderCode;
 		 I4ShaderProgram*	activeShaderProgram;
 		 I4ShaderProgramMap	mapShaderProgram;
 

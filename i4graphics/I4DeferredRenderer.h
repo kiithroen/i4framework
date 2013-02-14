@@ -19,13 +19,11 @@ namespace i4graphics
 	class I4RenderTarget;
 	class I4QuadMesh;
 	class I4SphereMesh;
-	class I4ModelInstance;
-	class I4MeshInstance;
 	class I4Actor;
 	class I4ActorMgr;
 	class I4Mesh;
 
-	struct I4MeshInstanceRenderItem
+	struct I4MeshRenderItem
 	{
 		I4Matrix4x4			worldTM;
 		I4AABB				worldAABB;
@@ -34,7 +32,7 @@ namespace i4graphics
 		I4Mesh*				mesh;
 		I4Matrix4x4*		matrixPalette;
 
-		bool operator < (const I4MeshInstanceRenderItem& other) const;
+		bool operator < (const I4MeshRenderItem& other) const;
 	};
 
 
@@ -177,9 +175,9 @@ namespace i4graphics
 
 	class I4GRAPHICS_API I4DeferredRenderer
 	{
-		typedef vector<I4MeshInstanceRenderItem>	I4MeshInstnaceRenderItemVector;
-		typedef vector<I4DirectionalLight>			I4DirectionalLightVector;
-		typedef vector<I4PointLight>				I4PointLightVector;
+		typedef vector<I4MeshRenderItem>		I4MeshInstnaceRenderItemVector;
+		typedef vector<I4DirectionalLight>		I4DirectionalLightVector;
+		typedef vector<I4PointLight>			I4PointLightVector;
 	public:
 		I4DeferredRenderer();
 		~I4DeferredRenderer(void);
@@ -187,7 +185,7 @@ namespace i4graphics
 		bool				initialize(void* _windowID, unsigned int _width, unsigned int _height);
 		void				finalize();
 
-		void				commitToScene(const I4MeshInstanceRenderItem& item);
+		void				commitToScene(const I4MeshRenderItem& item);
 		void				commitToScene(I4DirectionalLight* light);
 		void				commitToScene(I4PointLight* light);
 

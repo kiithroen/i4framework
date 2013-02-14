@@ -48,7 +48,7 @@ namespace i4graphics
 		I4SAMPLER_STATE_NUM,
 	};
 
-	class I4GRAPHICS_API I4VideoDriver
+	class I4VideoDriver
 	{
 	public:
 		virtual ~I4VideoDriver();

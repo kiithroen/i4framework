@@ -124,6 +124,7 @@
     <ClInclude Include="I4ShaderProgram.h" />
     <ClInclude Include="I4Texture.h" />
     <ClInclude Include="I4TextureD3D11.h" />
+    <ClInclude Include="I4TextureMgr.h" />
     <ClInclude Include="I4VideoDriver.h" />
     <ClInclude Include="i4graphics.h" />
     <ClInclude Include="I4VideoDriverD3D11.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="I4ShaderMgr.cpp" />
     <ClCompile Include="I4TextureD3D11.cpp" />
+    <ClCompile Include="I4TextureMgr.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
     <ClCompile Include="i4graphics.cpp" />
     <ClCompile Include="I4VideoDriverD3D11.cpp" />

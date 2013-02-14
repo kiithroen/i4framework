@@ -9,22 +9,33 @@
 #include "I4Camera.h"
 #include "I4Log.h"
 #include "I4Profile.h"
+#include "I4TextureMgr.h"
 
 namespace i4graphics
 {
 	
-	bool I4MeshInstanceRenderItem::operator < (const I4MeshInstanceRenderItem& other) const
+	bool I4MeshRenderItem::operator < (const I4MeshRenderItem& other) const
 	{
-		if (shaderMask < other.shaderMask)
+		if (shaderMask < other.shaderMask)							// 셰이더 우선으로 정렬하고
 		{
 			return true;
 		}
 		else
 		{
-			if (shaderMask == other.shaderMask)
+			if (shaderMask == other.shaderMask)						// 셰이더가 같으면
 			{
-				if (mesh < other.mesh)
+				if (mesh->diffuseMap < other.mesh->diffuseMap)		// 텍스쳐 우선으로 정렬한다. 다만 디퓨즈맵이 다르면 다른것도 다를 가능성이 높기에 디퓨즈맵만 비교한다
+				{
 					return true;
+				}
+				else
+				{
+					if (mesh->diffuseMap == other.mesh->diffuseMap)	// 디퓨즈맵이 같으면 
+					{
+						if (mesh < other.mesh)						// 메시 우선으로 정렬한다.
+							return true;
+					}
+				}
 			}
 		}
 
@@ -33,7 +44,6 @@ namespace i4graphics
 
 	I4DeferredRenderer::I4DeferredRenderer()
 		: shaderMgr(nullptr)
-		, actorMgr(nullptr)
 		, rtDiffuse(nullptr)
 		, rtSpecular(nullptr)
 		, rtNormal(nullptr)
@@ -98,10 +108,7 @@ namespace i4graphics
 			I4LOG_ERROR << L"shader default add failed.";
 			return false;
 		}
-
-		// actor mgr
-		actorMgr = new I4ActorMgr;
-
+		
 		// render target
 		rtDiffuse = videoDriver->createRenderTarget();
 		if (rtDiffuse->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
@@ -201,7 +208,6 @@ namespace i4graphics
 
 	void I4DeferredRenderer::finalize()
 	{
-		delete actorMgr;
 		delete sphereMesh;
 		delete quadMesh;
 		delete rtShadow;
@@ -215,7 +221,7 @@ namespace i4graphics
 		I4VideoDriver::destroyVideoDriver();
 	}
 
-	void I4DeferredRenderer::commitToScene(const I4MeshInstanceRenderItem& item)
+	void I4DeferredRenderer::commitToScene(const I4MeshRenderItem& item)
 	{
 			vecSceneMeshInstnaceRenderItem.push_back(item);
 	}
@@ -288,7 +294,7 @@ namespace i4graphics
 
 		vecCulledMeshInstnaceRenderItem.clear();
 
-		for (auto &itr : vecSceneMeshInstnaceRenderItem)
+		for (auto&itr : vecSceneMeshInstnaceRenderItem)
 		{
 			if (camera->isVisibleAABB(itr.worldAABB) == true)
 			{
@@ -303,14 +309,13 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 
-		
-		I4MeshInstanceRenderItem* prevItem = nullptr;
-		I4MeshInstanceRenderItem* curItem = nullptr;
+		I4MeshRenderItem* prevItem = nullptr;
+		I4MeshRenderItem* curItem = nullptr;
 		I4Mesh* prevMesh = nullptr;
 		I4Mesh* curMesh = nullptr;
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_g.fx");
 
-		for (auto &itr : vecCulledMeshInstnaceRenderItem)
+		for (auto&itr : vecCulledMeshInstnaceRenderItem)
 		{
 			curItem = &itr;			
 			
@@ -376,7 +381,7 @@ namespace i4graphics
 
 					if (curMesh->specularMap != prevMesh->specularMap)
 					{
-						isChangedNormalMap = true;								
+						isChangedNormalMap = true;
 					}
 				}
 			}
@@ -406,18 +411,22 @@ namespace i4graphics
 
 				if (isChangedDiffuseMap == true)
 				{
-					shaderMgr->setTexture(0, curMesh->diffuseMap);
+					I4Texture* texture = I4TextureMgr::getTextureMgr().find(curMesh->diffuseMap);
+					shaderMgr->setTexture(0, texture);
 				}
 						
 				if (isChangedSpecularMap == true)
 				{
-					shaderMgr->setTexture(1, curMesh->specularMap);
+					I4Texture* texture = I4TextureMgr::getTextureMgr().find(curMesh->specularMap);
+					shaderMgr->setTexture(1, texture);
 				}
 
 				if (isChangedNormalMap == true)
 				{
-					shaderMgr->setTexture(2, curMesh->normalMap);
+					I4Texture* texture = I4TextureMgr::getTextureMgr().find(curMesh->normalMap);
+					shaderMgr->setTexture(2, texture);
 				}
+				
 
 				cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
@@ -471,7 +480,7 @@ namespace i4graphics
 		// 일단 그냥 옮겨 담음. 현재로서는 특별한 정책이 없지만 추후에 너무 많은 라이트가 있으면 잘라낸다던가 병합한다던가...
 
 		vecCulledDirectionalLight.clear();
-		for (auto &itr : vecSceneDirectionalLight)
+		for (auto&itr : vecSceneDirectionalLight)
 		{
 			vecCulledDirectionalLight.push_back(itr);
 		}
@@ -495,7 +504,7 @@ namespace i4graphics
 
 		quadMesh->bind();
 
-		for (auto &itr : vecCulledDirectionalLight)
+		for (auto&itr : vecCulledDirectionalLight)
 		{
 			const I4DirectionalLight& light = itr;
 
@@ -522,7 +531,7 @@ namespace i4graphics
 
 		vecCulledPointLight.clear();
 		
-		for (auto &itr : vecScenePointLight)
+		for (auto&itr : vecScenePointLight)
 		{
 			if (camera->isVisibleSphere(itr.position, itr.radius) == true)
 			{
@@ -557,7 +566,7 @@ namespace i4graphics
 
 		I4Matrix4x4 matLight;
 
-		for (auto &itr : vecCulledPointLight)
+		for (auto&itr : vecCulledPointLight)
 		{
 			const I4PointLight& light = itr;
 
@@ -598,7 +607,6 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, nullptr);
 		shaderMgr->setRenderTarget(2, nullptr);
 		
-
 		shaderMgr->end();
 
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
@@ -624,6 +632,8 @@ namespace i4graphics
 		quadMesh->unbind();
 		
 		shaderMgr->setRenderTarget(0, nullptr);
-		shaderMgr->setRenderTarget(1, nullptr);		
+		shaderMgr->setRenderTarget(1, nullptr);
+
+		shaderMgr->end();
 	}
 }

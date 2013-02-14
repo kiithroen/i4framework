@@ -6,7 +6,7 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	class I4Texture : public I4HashData<I4Texture>
+	class I4Texture
 	{
 		friend class I4VideoDriver;
 	public:
