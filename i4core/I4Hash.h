@@ -7,9 +7,9 @@
 // http://isthe.com/chongo/tech/comp/fnv/
 // 어디까지나 해시니까 충돌가능성이 있다.
 // 사용시에는 항상 원본이 맞는지 확인할수 있는 수단이 었어야 한다.
-#define INVALID_HASHCODE 0xffffffff
-#define HASH_INIT	0x811c9dc5
-#define HASH_PRIME	0x01000193
+#define I4INVALID_HASHCODE 0xffffffff
+#define I4HASH_INIT	0x811c9dc5
+#define I4HASH_PRIME	0x01000193
 
 namespace i4core
 {
@@ -17,7 +17,7 @@ namespace i4core
 	{
 	public:
 		I4Hash()
-			: hashCode(INVALID_HASHCODE)
+			: hashCode(I4INVALID_HASHCODE)
 		{
 		}
 
@@ -91,14 +91,14 @@ namespace i4core
 		static unsigned int getHashCode(const char* str)
 		{
 			if (!str || !str[0])
-				return INVALID_HASHCODE;
+				return I4INVALID_HASHCODE;
 
 			const unsigned char* st = (const unsigned char*)str;
-			unsigned int hash = HASH_INIT;
+			unsigned int hash = I4HASH_INIT;
 
 			while (*st)
 			{
-				hash *= HASH_PRIME;
+				hash *= I4HASH_PRIME;
 
 				char c = *st++;
 				if (c == '\\')

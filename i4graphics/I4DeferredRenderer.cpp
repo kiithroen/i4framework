@@ -223,7 +223,7 @@ namespace i4graphics
 
 	void I4DeferredRenderer::commitToScene(const I4MeshRenderItem& item)
 	{
-			vecSceneMeshInstnaceRenderItem.push_back(item);
+			vecSceneMeshRenderItem.push_back(item);
 	}
 
 	void I4DeferredRenderer::commitToScene(I4DirectionalLight* light)
@@ -238,8 +238,6 @@ namespace i4graphics
 
 	void I4DeferredRenderer::preRender(I4Camera* camera)
 	{
-		I4PROFILE_THISFUNC;
-
 		videoDriver->beginScene();
 	}
 
@@ -255,10 +253,8 @@ namespace i4graphics
 
 	void I4DeferredRenderer::postRender(I4Camera* camera)
 	{
-		I4PROFILE_THISFUNC;
-
 		videoDriver->endScene();
-		vecSceneMeshInstnaceRenderItem.clear();
+		vecSceneMeshRenderItem.clear();
 		vecSceneDirectionalLight.clear();
 		vecScenePointLight.clear();
 	}
@@ -284,28 +280,28 @@ namespace i4graphics
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		cullAndSortMeshInstanceRenderItem(camera);
-		renderMeshInstanceRenderItem(camera);		
+		cullAndSortMeshRenderItem(camera);
+		renderMeshRenderItem(camera);		
 	}
 
-	void I4DeferredRenderer::cullAndSortMeshInstanceRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortMeshRenderItem(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
-		vecCulledMeshInstnaceRenderItem.clear();
+		vecCulledMeshRenderItem.clear();
 
-		for (auto&itr : vecSceneMeshInstnaceRenderItem)
+		for (auto&itr : vecSceneMeshRenderItem)
 		{
 			if (camera->isVisibleAABB(itr.worldAABB) == true)
 			{
-				vecCulledMeshInstnaceRenderItem.push_back(itr);
+				vecCulledMeshRenderItem.push_back(itr);
 			}
 		}
 
-		sort(vecCulledMeshInstnaceRenderItem.begin(), vecCulledMeshInstnaceRenderItem.end());
+		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end());
 	}
 
-	void I4DeferredRenderer::renderMeshInstanceRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::renderMeshRenderItem(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -315,7 +311,7 @@ namespace i4graphics
 		I4Mesh* curMesh = nullptr;
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_g.fx");
 
-		for (auto&itr : vecCulledMeshInstnaceRenderItem)
+		for (auto&itr : vecCulledMeshRenderItem)
 		{
 			curItem = &itr;			
 			

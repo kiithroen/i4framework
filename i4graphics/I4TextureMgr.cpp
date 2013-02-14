@@ -63,7 +63,7 @@ namespace i4graphics
 	
 	void I4TextureMgr::unload(I4Hash hash)
 	{
-		if (hash == INVALID_HASHCODE)
+		if (hash == I4INVALID_HASHCODE)
 			return;
 
 		auto itr = mapTextureProxy.find(hash);
@@ -83,7 +83,7 @@ namespace i4graphics
 
 	I4Texture* I4TextureMgr::find(I4Hash hash)
 	{
-		if (hash == INVALID_HASHCODE)
+		if (hash == I4INVALID_HASHCODE)
 			return nullptr;
 
 		auto itr = mapTextureProxy.find(hash);

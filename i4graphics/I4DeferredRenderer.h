@@ -175,7 +175,7 @@ namespace i4graphics
 
 	class I4GRAPHICS_API I4DeferredRenderer
 	{
-		typedef vector<I4MeshRenderItem>		I4MeshInstnaceRenderItemVector;
+		typedef vector<I4MeshRenderItem>		I4MeshRenderItemVector;
 		typedef vector<I4DirectionalLight>		I4DirectionalLightVector;
 		typedef vector<I4PointLight>			I4PointLightVector;
 	public:
@@ -200,8 +200,8 @@ namespace i4graphics
 		void				renderStageLight(I4Camera* camera);
 		void				renderStageMerge(I4Camera* camera);
 
-		void				cullAndSortMeshInstanceRenderItem(I4Camera* camera);
-		void				renderMeshInstanceRenderItem(I4Camera* camera);
+		void				cullAndSortMeshRenderItem(I4Camera* camera);
+		void				renderMeshRenderItem(I4Camera* camera);
 
 		void				cullAndSortDirectionalLight(I4Camera* camera);
 		void				renderDirectionalLight(I4Camera* camera);
@@ -223,11 +223,11 @@ namespace i4graphics
 		I4QuadMesh*						quadMesh;
 		I4SphereMesh*					sphereMesh;
 
-		I4MeshInstnaceRenderItemVector	vecSceneMeshInstnaceRenderItem;
+		I4MeshRenderItemVector			vecSceneMeshRenderItem;
 		I4DirectionalLightVector		vecSceneDirectionalLight;
 		I4PointLightVector				vecScenePointLight;
 
-		I4MeshInstnaceRenderItemVector	vecCulledMeshInstnaceRenderItem;
+		I4MeshRenderItemVector			vecCulledMeshRenderItem;
 		I4DirectionalLightVector		vecCulledDirectionalLight;
 		I4PointLightVector				vecCulledPointLight;
 

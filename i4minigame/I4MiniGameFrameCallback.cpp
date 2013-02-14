@@ -172,8 +172,6 @@ bool I4MiniGameFrameCallback::onUpdate(float deltaSec)
 
 bool I4MiniGameFrameCallback::onRender(float deltaSec)
 {
-	I4PROFILE_THISFUNC;
-
 	commitToRenderer(deltaSec);
 
 	renderer->preRender(camera);
@@ -245,8 +243,6 @@ void I4MiniGameFrameCallback::onRButtonUp(unsigned int x, unsigned int y)
 
 void I4MiniGameFrameCallback::updateCamera(float deltaTime)
 {
-	I4PROFILE_THISFUNC;
-
 	I4Framework* framework = I4Framework::getFramework();
 
 	float camMoveSpeed = 100.0f*deltaTime;
