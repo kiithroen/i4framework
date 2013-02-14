@@ -2,19 +2,9 @@ Texture2D texRTDiffuse : register(t0);
 Texture2D texRTNormal : register(t1);
 Texture2D texRTDepth : register(t2);
 
-SamplerState samLinear : register(s0)
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-};
+SamplerState samLinear : register(s0);
 
-SamplerState samPoint : register(s1)
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-};
+SamplerState samPoint : register(s1);
 
 cbuffer CBOnResize_L_directional : register(b0)
 {
@@ -54,8 +44,9 @@ float4 PS( PS_INPUT	input	) : SV_Target
 {
 	float4 normalData = texRTNormal.Sample(samPoint, input.uv);
 	float3 normal = 2.0f * normalData.xyz - 1.0f;
+
 	float specularPower = normalData.a * 255.0f;
-	float specularIntensity = texRTDiffuse.Sample(samLinear, input.uv).a;
+
 	float depthVal = texRTDepth.Sample(samPoint, input.uv).r;
 	float3 ray;
 	ray.x = lerp(-farTopRight.x, farTopRight.x, input.uv.x);
@@ -77,7 +68,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	float3 dirToCamera = -normalize(p);
 	float3 reflectVector = normalize(reflect(-lightVector, normal));
-	float specularLight = specularIntensity*NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
 	return float4(diffuseLight.rgb, specularLight);
 }

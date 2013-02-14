@@ -35,6 +35,7 @@ namespace i4graphics
 		: shaderMgr(nullptr)
 		, actorMgr(nullptr)
 		, rtDiffuse(nullptr)
+		, rtSpecular(nullptr)
 		, rtNormal(nullptr)
 		, rtDepth(nullptr)
 		, rtLight(nullptr)
@@ -109,6 +110,13 @@ namespace i4graphics
 			return false;
 		}
 
+		rtSpecular = videoDriver->createRenderTarget();
+		if (rtSpecular->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R32_FLOAT) == false)
+		{
+			I4LOG_ERROR << L"render target specular create failed.";
+			return false;
+		}
+
 		rtNormal = videoDriver->createRenderTarget();
 		if (rtNormal->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
 		{
@@ -122,7 +130,7 @@ namespace i4graphics
 			I4LOG_ERROR << L"render target depth create failed.";
 			return false;
 		}
-
+		
 		rtLight = videoDriver->createRenderTarget();
 		if (rtLight->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
 		{
@@ -200,6 +208,7 @@ namespace i4graphics
 		delete rtLight;
 		delete rtDepth;
 		delete rtNormal;
+		delete rtSpecular;
 		delete rtDiffuse;
 
 		I4ShaderMgr::destroyShaderMgr();
@@ -254,7 +263,8 @@ namespace i4graphics
 					
 		videoDriver->clearBackBuffer(0, 32, 76);
 
-		videoDriver->clearRenderTarget(rtDiffuse, 0.0f, 0.0f, 0.0f, 0.0f);
+		videoDriver->clearRenderTarget(rtDiffuse, 0.0f, 32.0f/255.0f, 76.0f/255.0f, 0.0f);
+		videoDriver->clearRenderTarget(rtSpecular, 0.0f, 0.0f, 0.0f, 0.0f);
 		videoDriver->clearRenderTarget(rtNormal, 0.5f, 0.5f, 0.5f, 0.0f);
 		videoDriver->clearRenderTarget(rtDepth, 0.0f, 0.0f, 0.0f, 0.0f);
 		videoDriver->clearRenderTarget(rtLight, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -264,7 +274,7 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 
-		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtNormal, rtDepth };
+		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtSpecular, rtNormal, rtDepth };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
@@ -606,7 +616,8 @@ namespace i4graphics
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 
 		shaderMgr->setRenderTarget(0, rtDiffuse);
-		shaderMgr->setRenderTarget(1, rtLight);
+		shaderMgr->setRenderTarget(1, rtSpecular);
+		shaderMgr->setRenderTarget(2, rtLight);
 		
 		quadMesh->bind();
 		quadMesh->draw();

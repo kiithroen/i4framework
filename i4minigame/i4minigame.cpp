@@ -31,7 +31,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	I4Framework::createFramework();
 	I4Framework* framework = I4Framework::getFramework();
 	framework->setFrameCallback(&frameCallback);
-	if (framework->create(800, 600, "i4 mini game") == false)
+	if (framework->create(1366, 768, "i4 mini game") == false)
 	{
 		I4LOG_ERROR << "Framework create failed.\n";
 		return false;

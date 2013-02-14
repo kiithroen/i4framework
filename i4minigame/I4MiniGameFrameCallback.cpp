@@ -333,8 +333,6 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 	I4Matrix4x4 matR;
 	matR.makeRotationY(I4MathUtil::degreeToRadian(angle));
 
-	I4Matrix4x4 matS;
-	matS.makeScale(0.1f, 0.1f, 0.1f);
 
 	I4Matrix4x4 matT;
 
@@ -347,19 +345,30 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 			if (i%2 == 0)
 			{
-				actor[idx]->animate(deltaTime*2);
+				actor[idx]->animate(deltaTime*3);
 			}
 			else
 			{
 				actor[idx]->animate(deltaTime);
 			}
-			if (idx%3 != 2)
+
+			if (idx%3 == 0)	// cyberdemon
 			{
+				I4Matrix4x4 matS;
+				matS.makeScale(0.12f, 0.12f, 0.12f);
 				actor[idx]->render(renderer, matS*matR*matT);
 			}
-			else
+			else if (idx%3 == 1)	// guard
+			{				
+				I4Matrix4x4 matS;
+				matS.makeScale(0.2f, 0.2f, 0.2f);
+				actor[idx]->render(renderer, matS*matR*matT);
+			}
+			else	// elin
 			{
-				actor[idx]->render(renderer, matR*matT);
+				I4Matrix4x4 matS;
+				matS.makeScale(0.8f, 0.8f, 0.8f);
+				actor[idx]->render(renderer, matS*matR*matT);
 			}
 		}
 	}

@@ -41,12 +41,7 @@ Texture2D texNormalMap : register(t2);
 
 
 
-SamplerState samLinear : register(s0)
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+SamplerState samLinear : register(s0);
 
 struct VS_INPUT
 {
@@ -134,8 +129,9 @@ PS_INPUT VS( VS_INPUT	input	)
 struct PS_OUTPUT
 {
 	float4 diffuse : SV_Target0;
-	float4 normal : SV_Target1;
-	float4 depth : SV_Target2;
+	float4 specular : SV_Target1;
+	float4 normal : SV_Target2;
+	float4 depth : SV_Target3;
 };
 
 PS_OUTPUT PS( PS_INPUT	input	)
@@ -147,12 +143,14 @@ PS_OUTPUT PS( PS_INPUT	input	)
 #else
 	output.diffuse.rgb = float3(1.0f, 1.0f, 1.0f);
 #endif
+	output.diffuse.a = 1;
 
 #ifdef MASK_TEX_SPECULAR
-	output.diffuse.a = texSpecularMap.Sample(samLinear, input.uv).r*specularIntensity;
+	output.specular.xyz = texSpecularMap.Sample(samLinear, input.uv)*specularIntensity;
 #else
-	output.diffuse.a = specularIntensity;
+	output.specular.xyz = float3(specularIntensity, specularIntensity, specularIntensity);
 #endif
+	output.specular.a = 1;
 
 	float3 viewNormal;
 #ifdef MASK_TEX_NORMAL

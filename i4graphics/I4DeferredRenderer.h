@@ -216,6 +216,7 @@ namespace i4graphics
 		I4ShaderMgr*					shaderMgr;
 		I4ActorMgr*						actorMgr;
 		I4RenderTarget*					rtDiffuse;
+		I4RenderTarget*					rtSpecular;
 		I4RenderTarget*					rtNormal;
 		I4RenderTarget*					rtDepth;
 		I4RenderTarget*					rtLight;
