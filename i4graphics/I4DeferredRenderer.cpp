@@ -111,7 +111,7 @@ namespace i4graphics
 		}
 
 		rtSpecular = videoDriver->createRenderTarget();
-		if (rtSpecular->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R32_FLOAT) == false)
+		if (rtSpecular->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
 		{
 			I4LOG_ERROR << L"render target specular create failed.";
 			return false;
@@ -422,7 +422,7 @@ namespace i4graphics
 				cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
 
-				cbEachMeshInstance_G_PS.getData()->specularIntensity = 0.7f;
+				cbEachMeshInstance_G_PS.getData()->specularIntensity = 1.0f;
 				cbEachMeshInstance_G_PS.getData()->specularPower = 16.0f;
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
