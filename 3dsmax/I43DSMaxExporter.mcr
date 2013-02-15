@@ -17,6 +17,12 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		return localTM
 	)
 	
+	fn getWorldTM obj =
+	(
+		local worldTM = copy obj.transform
+		return worldTM
+	)
+	
 	fn isBone obj =
 	(
 		return (classof obj == Biped_Object) or (classof obj == Bone) or (classof obj == BoneGeometry) or (classof obj == Dummy) 
@@ -54,7 +60,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		(
 			local vtx = in coordsys world getVert tmesh i
 			vtx = vtx * invTM
-			format "%\t<val x=\"%\" y=\"%\" z=\"%\"/>\n" depthStr vtx.x vtx.z vtx.y to:f
+			format "%\t<val>% % %</val>\n" depthStr vtx.x vtx.z vtx.y to:f
 		)
 		format "%</vertex>\n" depthStr to:f
 	)
@@ -70,7 +76,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		for i = 1 to numVerts do
 		(
 			local vtx = normalize (getNormal tmesh i)
-			format "%\t<val x=\"%\" y=\"%\" z=\"%\"/>\n" depthStr vtx.x vtx.z vtx.y to:f
+			format "%\t<val>% % %</val>\n" depthStr vtx.x vtx.z vtx.y to:f
 		)
 		format "%</normal>\n" depthStr to:f
 	)
@@ -86,7 +92,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		for i = 1 to numFace do
 		(
 			local idx = getFace tmesh i
-			format "%\t<val x=\"%\" y=\"%\" z=\"%\"/>\n" depthStr ((idx.x - 1) as integer ) ((idx.z - 1) as integer) ((idx.y - 1) as integer) to:f
+			format "%\t<val>% % %</val>\n" depthStr ((idx.x - 1) as integer ) ((idx.z - 1) as integer) ((idx.y - 1) as integer) to:f
 		)
 		format "%</index>\n" depthStr to:f
 	)
@@ -102,7 +108,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		for i = 1 to numTVerts do
 		(
 			local uv = getTVert tmesh i
-			format "%\t<val u=\"%\" v=\"%\"/>\n" depthStr (uv.x) (1.0 - uv.y) to:f
+			format "%\t<val>% %</val>\n" depthStr (uv.x) (1.0 - uv.y) to:f
 		)
 		format "%</texUV>\n" depthStr to:f
 	)
@@ -118,7 +124,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		for i = 1 to numTFace do
 		(
 			local idx = getTVFace tmesh i
-			format "%\t<val x=\"%\" y=\"%\" z=\"%\"/>\n" depthStr ((idx.x - 1) as integer ) ((idx.z - 1) as integer) ((idx.y - 1) as integer) to:f
+			format "%\t<val>% % %</val>\n" depthStr ((idx.x - 1) as integer ) ((idx.z - 1) as integer) ((idx.y - 1) as integer) to:f
 		)
 		format "%</texIndex>\n" depthStr to:f
 	)
@@ -127,18 +133,20 @@ macroScript I43DSMaxExporter category:"I4Framework"
 	(
 		local depthStr = getDepthStr depth
 		local localTM = getLocalTM obj	
+		local worldTM = getWorldTM obj	
 		local tmesh = snapshotAsMesh obj
 		
-		format "%<mesh name=\"%\" parent_name=\"\">\n" depthStr obj.name to:f
+		format "%<node name=\"%\" parent_name=\"\">\n" depthStr obj.name to:f
 		
 		writeTM f "localTM" localTM (depth + 1)
+		writeTM f "worldTM" worldTM (depth + 1)
 		writeVertex f tmesh obj (depth + 1)
 		writeNormal f tmesh (depth + 1)
 		writeIndex f tmesh (depth + 1)
 		writeTexUV f tmesh (depth + 1)
 		writeTexIndex f tmesh (depth + 1)
 		
-		format "%</mesh>\n" depthStr to:f
+		format "%</node>\n" depthStr to:f
 	)
 	
 	
@@ -152,7 +160,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		)
 	)
 	
-	local exportName = "test"
+	local exportName = "girl"
 	local exportType = "mesh"
 	local exportFullName = "d:\\" + exportName + "." + exportType + ".xml"
 	local version = 100
@@ -161,7 +169,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 
 	local f = createFile exportFullName
 	
-	format "<model name=\"%\">\n" exportName to:f
+	format "<mesh name=\"%\">\n" exportName to:f
 	
 	format "\t<version>%</version>\n" version to:f
 	
@@ -170,7 +178,7 @@ macroScript I43DSMaxExporter category:"I4Framework"
 		ExportRecursive f obj 1
 	)
 	
-	format "</model>" to:f
+	format "</mesh>" to:f
 	
 	close f
 	

@@ -87,6 +87,11 @@ namespace i4core
 			return hashCode != rhs.hashCode;
 		}
 
+		const bool operator != (unsigned int code) const
+		{
+			return hashCode != code;
+		}
+
 	public:
 		static unsigned int getHashCode(const char* str)
 		{

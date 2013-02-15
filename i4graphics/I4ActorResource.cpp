@@ -259,13 +259,12 @@ namespace i4graphics
 	void I4ActorMeshResource::parseMaterials(I4ParsedMeshData& out, I4XmlData& xml)
 	{
 		out.material = nullptr;
-		out.diffuseMap = nullptr;
-		out.specularMap = nullptr;
-		out.normalMap = nullptr;
+		out.diffuseMap = I4INVALID_HASHCODE;
+		out.specularMap = I4INVALID_HASHCODE;
+		out.normalMap = I4INVALID_HASHCODE;
 
 		if (xml.selectFirstChildNode("material"))
 		{
-
 			I4Material* material = new I4Material;
 
 			if (xml.selectFirstChildNode("ambient"))

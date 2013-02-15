@@ -9,6 +9,7 @@
 #include "I4Camera.h"
 #include "I4DeferredRenderer.h"
 #include "I4Profile.h"
+#include "I4Hash.h"
 
 namespace i4graphics
 {
@@ -140,17 +141,17 @@ namespace i4graphics
 		item.shaderMask = I4SHADER_MASK_NONE;
 		item.mesh = mesh;
 
-		if (mesh->diffuseMap != nullptr)
+		if (mesh->diffuseMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
 		}
 
-		if (mesh->specularMap != nullptr)
+		if (mesh->specularMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
 		}
 
-		if (mesh->normalMap != nullptr)
+		if (mesh->normalMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}
@@ -203,17 +204,17 @@ namespace i4graphics
 		item.mesh = mesh;
 		item.shaderMask = I4SHADER_MASK_SKINNING;
 
-		if (mesh->diffuseMap != nullptr)
+		if (mesh->diffuseMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
 		}
 
-		if (mesh->specularMap != nullptr)
+		if (mesh->specularMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
 		}
 
-		if (mesh->normalMap != nullptr)
+		if (mesh->normalMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}
