@@ -254,7 +254,7 @@ class I4MaxExporter : public SceneExport {
 
 		void WriteMaterial(FILE* fp, Mtl* mtl);
 
-		void WriteTexture(FILE* fp, Texmap* tex);
+		void WriteTexture(FILE* fp, Texmap* tex, int subNo);
 		void WriteMeshVertex(FILE* fp, Mesh& mesh, const Matrix3& objectTM, const Matrix3& worldInvTM);
 		void WriteMeshNormal(FILE* fp, Mesh& mesh);
 		void WriteMeshIndex(FILE* fp, Mesh& mesh);
@@ -597,7 +597,12 @@ void I4MaxExporter::ExportRecursive(INode* node)
 			{
 				WriteNodeStart(meshFile, node);
 				WriteNodeInfo(meshFile, node, localTM, worldTM);
+				
+
+				fprintf(meshFile, "\t\t<material>\n");
 				WriteMaterial(meshFile, node->GetMtl());
+				fprintf(meshFile, "\t\t</material>\n");
+
 				ObjectState os = node->EvalWorldState(0);
 				int needDelete;
 				Mesh& mesh = *(((GeomObject*)os.obj)->GetRenderMesh(0, node, nullView, needDelete));
@@ -610,7 +615,7 @@ void I4MaxExporter::ExportRecursive(INode* node)
 				Modifier* phyMod = FindPhysiqueModifier(node);
 				if (phyMod)
 				{
-					MessageBox(NULL, "Couldn't support physique.", NULL, MB_OK);
+					// 지원안함.
 				}
 
 				Modifier* skinMod = FindSkinModifier(node);
@@ -876,8 +881,6 @@ void I4MaxExporter::WriteMaterial(FILE* fp, Mtl* mtl)
 	if(mtl == NULL)
 		return;
 
-	fprintf(fp, "\t\t<material>\n");
-
 	if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
 	{
 		// 표준 재질로 변환함
@@ -901,50 +904,40 @@ void I4MaxExporter::WriteMaterial(FILE* fp, Mtl* mtl)
 		fprintf(fp,"\t\t\t<glossiness>%g</glossiness>\n", glossiness);
 
 		float power = shader->GetSpecularLevel(0);
-		fprintf(fp,"\t\t\t<power>%g</power>\n", power);
-	}
+		fprintf(fp,"\t\t\t<power>%g</power>\n", power*100);
 
-	for (int i = 0; i < mtl->NumSubTexmaps(); ++i)
-	{
-		Texmap* tex = mtl->GetSubTexmap(i);
-		if (tex != NULL) 
+		if (stdMtl->GetTwoSided())
 		{
-			// If it is a standard material we can see if the map is enabled.
-			if (mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) {
-				if (!((StdMat*)mtl)->MapEnabled(i))
-					continue;
-			}
-
-			WriteTexture(fp, tex);
+			fprintf(fp,"\t\t\t<twoside>true</twoside>\n");
 		}
-	}
-
-	if (mtl->NumSubMtls() > 0)
-	{
-		MessageBox(NULL, "Couldn't support sub materials.", NULL, MB_OK);
-	}
-
-	// 서브마테리얼 지원하지 않음.(미완성)
-	/*
-	if (mtl->NumSubMtls() > 0)
-	{
-		for (int i=0; i<mtl->NumSubMtls(); i++)
+		else
 		{
-			Mtl* subMtl = mtl->GetSubMtl(i);
-			if (subMtl)
+			fprintf(fp,"\t\t\t<twoside>false</twoside>\n");
+		}
+
+		for (int i = 0; i < mtl->NumSubTexmaps(); ++i)
+		{
+			Texmap* tex = mtl->GetSubTexmap(i);
+			if (tex != NULL) 
 			{
-				WriteMaterial(fp, subMtl);
+				// If it is a standard material we can see if the map is enabled.
+				if (mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) {
+					if (!((StdMat*)mtl)->MapEnabled(i))
+						continue;
+				}
+
+				WriteTexture(fp, tex, i);
 			}
 		}
 	}
-	*/
-	
-
-	fprintf(fp, "\t\t</material>\n");
+	else
+	{
+		// 표준 마테리얼이 아닌 재질은 지원하지 않는다.
+	}
 }
 
 
-void I4MaxExporter::WriteTexture(FILE* fp, Texmap* tex)
+void I4MaxExporter::WriteTexture(FILE* fp, Texmap* tex, int subNo)
 {
 	if (tex == NULL)
 		return;
@@ -957,26 +950,47 @@ void I4MaxExporter::WriteTexture(FILE* fp, Texmap* tex)
 		CStr name;
 		CStr ext;
 
+		CStr classname;
+
 		SplitFilename(fullpath, &path, &name, &ext);
 
 		CStr file = name + ext;
 
-		fprintf(fp,"\t\t\t<diffuseMap>%s</diffuseMap>\n", file.data());
+		switch (subNo)
+		{
+			case ID_AM:
+				break;
+			case ID_DI:
+				fprintf(fp,"\t\t\t<diffuseMap>%s</diffuseMap>\n", file.data());
+				break;
+			case ID_SP:
+				break;
+			case ID_SH:				
+				fprintf(fp,"\t\t\t<specularMap>%s</specularMap>\n", file.data());
+				break;
+			case ID_SS:
+				break;
+			case ID_SI:
+				break;
+			case ID_OP:
+				break;
+			case ID_FI:
+				break;
+			case ID_BU:
+				fprintf(fp,"\t\t\t<normalMap>%s</normalMap>\n", file.data());
+				break;
+			case ID_RL:
+				break;
+			case ID_RR:
+				break;
+		}
 	}
 
-	if (tex->NumSubTexmaps() > 0)
-	{
-		MessageBox(NULL, "Couldn't support sub textures.", NULL, MB_OK);
-	}
-
-	// 서브텍스쳐 지원안함.(미완성)
-	/*
 	for (int j=0; j<tex->NumSubTexmaps(); j++)
 	{
 		Texmap* subTex = tex->GetSubTexmap(j);
-		WriteTexture(fp, subTex);
+		WriteTexture(fp, subTex, j);
 	}
-	*/
 }
 
 void I4MaxExporter::WriteMeshVertex(FILE* fp, Mesh& mesh, const Matrix3& objectTM, const Matrix3& worldInvTM)
