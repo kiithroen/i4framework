@@ -26,8 +26,8 @@ namespace i4graphics {
 		vector<I4Vector3>		vecPosition;
 		vector<I4Vector3>		vecNormal;
 		vector<I4Vector4>		vecTangent;
-		vector<I4TextureUV>		vecVertexUV;
-		vector<I4Index16>		vecVertexIndex;
+		vector<I4TextureUV>		vecUV;
+		vector<I4Index16>		vecIndex;
 		vector<I4TextureUV>		vecTexUV;
 		vector<I4Index16>		vecTexIndex;
 		vector<I4BoneID>		vecBoneID;

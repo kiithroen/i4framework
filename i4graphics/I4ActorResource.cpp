@@ -64,7 +64,7 @@ namespace i4graphics
 	{
 		if (xml.selectFirstChildNode("localTM"))
 		{
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -76,7 +76,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -92,7 +92,7 @@ namespace i4graphics
 	{
 		if (xml.selectFirstChildNode("worldTM"))
 		{
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -104,7 +104,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -204,7 +204,7 @@ namespace i4graphics
 	{
 		if (xml.selectFirstChildNode("localTM"))
 		{
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -216,7 +216,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -232,7 +232,7 @@ namespace i4graphics
 	{
 		if (xml.selectFirstChildNode("worldTM"))
 		{
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -244,7 +244,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -377,9 +377,10 @@ namespace i4graphics
 			xml.getAttrValue(size, "count");
 			out.vecPosition.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
+				out.localAABB.init(out.vecPosition[0]);
 				do
 				{
 					const char* val = nullptr;
@@ -387,18 +388,11 @@ namespace i4graphics
 
 					sscanf_s(val, "%f %f %f", &out.vecPosition[i].x, &out.vecPosition[i].y, &out.vecPosition[i].z);
 
-					if (i == 0)
-					{
-						out.localAABB.init(out.vecPosition[i]);
-					}
-					else
-					{
-						out.localAABB.merge(out.vecPosition[i]);
-					}
+					out.localAABB.merge(out.vecPosition[i]);
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -414,7 +408,7 @@ namespace i4graphics
 			xml.getAttrValue(size, "count");
 			out.vecNormal.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -426,7 +420,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -442,9 +436,9 @@ namespace i4graphics
 
 			int size;
 			xml.getAttrValue(size, "count");
-			out.vecVertexIndex.resize(size);
+			out.vecIndex.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -455,13 +449,13 @@ namespace i4graphics
 					int i0, i1, i2;
 					sscanf_s(val, "%d %d %d", &i0, &i1, &i2);
 
-					out.vecVertexIndex[i].i[0] = (unsigned short)i0;
-					out.vecVertexIndex[i].i[1] = (unsigned short)i1;
-					out.vecVertexIndex[i].i[2] = (unsigned short)i2;
+					out.vecIndex[i].i[0] = (unsigned short)i0;
+					out.vecIndex[i].i[1] = (unsigned short)i1;
+					out.vecIndex[i].i[2] = (unsigned short)i2;
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -478,7 +472,7 @@ namespace i4graphics
 			xml.getAttrValue(size, "count");
 			out.vecTexUV.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -490,7 +484,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -508,7 +502,7 @@ namespace i4graphics
 			xml.getAttrValue(size, "count");
 			out.vecTexIndex.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -525,7 +519,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -543,12 +537,12 @@ namespace i4graphics
 			out.vecBoneID.resize(size);
 			out.vecWeight.resize(size);
 
-			if (xml.selectFirstChildNode("vertex"))
+			if (xml.selectFirstChildNode("v"))
 			{
 				int i = 0;
 				do
 				{
-					if (xml.selectFirstChildNode("val"))
+					if (xml.selectFirstChildNode("a"))
 					{
 						int j = 0;
 						do
@@ -560,7 +554,7 @@ namespace i4graphics
 
 							++j;
 
-						} while (xml.selectNextSiblingNode("val") && j < 4);
+						} while (xml.selectNextSiblingNode("a") && j < 4);
 
 						// 총합을 1.0으로 맞추기 위해 마지막값은 1.0에서 나머지들의 핪을 빼준값으로 한다.
 						out.vecWeight[i].weight[j - 1] = 1.0f;
@@ -581,7 +575,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("vertex"));
+				} while (xml.selectNextSiblingNode("v"));
 
 				xml.selectParentNode();
 			}
@@ -606,38 +600,38 @@ namespace i4graphics
 			unsigned int verticeCount = out.vecPosition.size();
 
 			// 가능한 최대사이즈로 늘인다
-			unsigned int maxSize = out.vecPosition.size() + out.vecVertexIndex.size()*3;
+			unsigned int maxSize = out.vecPosition.size() + out.vecIndex.size()*3;
 			out.vecPosition.resize(maxSize);
 			out.vecNormal.resize(maxSize);
-			out.vecVertexUV.resize(maxSize);
+			out.vecUV.resize(maxSize);
 			if (out.skined)
 			{
 				out.vecBoneID.resize(maxSize);
 				out.vecWeight.resize(maxSize);
 			}
-			unsigned int indexSize = out.vecVertexIndex.size();
+			unsigned int indexSize = out.vecIndex.size();
 			for (unsigned int i = 0; i < indexSize; ++i)
 			{
 				for (unsigned int j = 0; j < 3 ; ++j)
 				{
-					int vtxIdx = out.vecVertexIndex[i].i[j];			// 정점의 인덱스
+					int vtxIdx = out.vecIndex[i].i[j];			// 정점의 인덱스
 					int texUVIdx = out.vecTexIndex[i].i[j];	// 텍스처의 인덱스
 
 					// 아직 텍스처 UV 복사가 이루어지지 않았으면 텍스처 UV 복사
-					if (out.vecVertexUV[vtxIdx].u == I4TEX_UV_NA ||
-						out.vecVertexUV[vtxIdx].v == I4TEX_UV_NA)
+					if (out.vecUV[vtxIdx].u == I4TEX_UV_NA ||
+						out.vecUV[vtxIdx].v == I4TEX_UV_NA)
 					{
-						out.vecVertexUV[vtxIdx] = out.vecTexUV[texUVIdx];
+						out.vecUV[vtxIdx] = out.vecTexUV[texUVIdx];
 					}
 					else
 					{
 						// 이미 텍스처 UV 복사가 이루어진 정점인데 텍스처 UV가 다른 경우 새로운 정점 생성
-						if (out.vecVertexUV[vtxIdx].u != out.vecTexUV[texUVIdx].u ||
-							out.vecVertexUV[vtxIdx].v != out.vecTexUV[texUVIdx].v)
+						if (out.vecUV[vtxIdx].u != out.vecTexUV[texUVIdx].u ||
+							out.vecUV[vtxIdx].v != out.vecTexUV[texUVIdx].v)
 						{							
-							out.vecVertexIndex[i].i[j] = (unsigned short)verticeCount;	// 인덱스 재지정
+							out.vecIndex[i].i[j] = (unsigned short)verticeCount;	// 인덱스 재지정
 
-							out.vecVertexUV[verticeCount] = out.vecTexUV[texUVIdx];
+							out.vecUV[verticeCount] = out.vecTexUV[texUVIdx];
 							out.vecPosition[verticeCount] = out.vecPosition[vtxIdx];
 							out.vecNormal[verticeCount] = out.vecNormal[vtxIdx];
 							if (out.skined)
@@ -655,7 +649,7 @@ namespace i4graphics
 			// 낭비된 공간을 줄이기
 			out.vecPosition.resize(verticeCount);
 			out.vecNormal.resize(verticeCount);
-			out.vecVertexUV.resize(verticeCount);
+			out.vecUV.resize(verticeCount);
 			if (out.skined)
 			{
 				out.vecBoneID.resize(verticeCount);
@@ -665,7 +659,7 @@ namespace i4graphics
 
 		out.vecTangent.resize(out.vecPosition.size());
 		CalculateTangentArray(out.vecPosition.size(), out.vecPosition, out.vecNormal,
-			out.vecVertexUV, out.vecVertexIndex.size(), out.vecVertexIndex, out.vecTangent);
+			out.vecUV, out.vecIndex.size(), out.vecIndex, out.vecTangent);
 	}
 
 	I4Mesh* I4ActorMeshResource::buildMesh(I4ParsedMeshData &data)
@@ -689,7 +683,7 @@ namespace i4graphics
 				vertices[i].position = data.vecPosition[i];
 				vertices[i].normal = data.vecNormal[i];
 				vertices[i].tangent = data.vecTangent[i];
-				vertices[i].uv = data.vecVertexUV[i];
+				vertices[i].uv = data.vecUV[i];
 				vertices[i].boneID = data.vecBoneID[i];
 				vertices[i].weight = data.vecWeight[i];
 			}
@@ -706,14 +700,14 @@ namespace i4graphics
 				vertices[i].position = data.vecPosition[i];
 				vertices[i].normal = data.vecNormal[i];
 				vertices[i].tangent = data.vecTangent[i];
-				vertices[i].uv = data.vecVertexUV[i];
+				vertices[i].uv = data.vecUV[i];
 			}
 			mesh->vertexBuffer->unlock();
 		}
 
 		mesh->indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
-		mesh->indexBuffer->create(data.vecVertexIndex.size()*3, sizeof(unsigned short));
-		mesh->indexBuffer->copyFrom((void**)&data.vecVertexIndex[0]);
+		mesh->indexBuffer->create(data.vecIndex.size()*3, sizeof(unsigned short));
+		mesh->indexBuffer->copyFrom((void**)&data.vecIndex[0]);
 
 		return mesh;
 	}
@@ -872,7 +866,7 @@ namespace i4graphics
 			xml.getAttrValue(size, "count");
 			out.vecKeyPosition.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -889,7 +883,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));
+				} while (xml.selectNextSiblingNode("a"));
 
 				xml.selectParentNode();
 			}
@@ -903,7 +897,7 @@ namespace i4graphics
 			xml.getAttrValue(size, "count");
 			out.vecKeyRotation.resize(size);
 
-			if (xml.selectFirstChildNode("val"))
+			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
@@ -922,7 +916,7 @@ namespace i4graphics
 
 					++i;
 
-				} while (xml.selectNextSiblingNode("val"));	
+				} while (xml.selectNextSiblingNode("a"));	
 
 				xml.selectParentNode();
 			}

@@ -1,6 +1,7 @@
 syntax: glob
 Debug/
 Release/
+Hybrid/
 ipch/
 syntax: regexp
 \.user$
