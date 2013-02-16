@@ -259,6 +259,7 @@ class I4MaxExporter : public SceneExport {
 		void WriteMeshNormal(FILE* fp, Mesh& mesh);
 		void WriteMeshIndex(FILE* fp, Mesh& mesh);
 		void WriteMeshTexUVIndex(FILE* fp, Mesh& mesh);
+		void WriteMeshPhysique(FILE* fp, INode* node, Modifier* mod);
 		void WriteMeshSkin(FILE* fp, INode* node, Modifier* mod);
 
 		//Constructor/Destructor
@@ -615,7 +616,7 @@ void I4MaxExporter::ExportRecursive(INode* node)
 				Modifier* phyMod = FindPhysiqueModifier(node);
 				if (phyMod)
 				{
-					// 지원안함.
+					WriteMeshPhysique(meshFile, node, phyMod);
 				}
 
 				Modifier* skinMod = FindSkinModifier(node);
@@ -1060,6 +1061,104 @@ void I4MaxExporter::WriteMeshTexUVIndex(FILE* fp, Mesh& mesh)
 	}
 }
 
+void I4MaxExporter::WriteMeshPhysique(FILE* fp, INode* node, Modifier* mod)
+{
+	IPhysiqueExport* phyExport = (IPhysiqueExport *)mod->GetInterface(I_PHYEXPORT);  
+	IPhyContextExport* phyContextExport = (IPhyContextExport *)phyExport->GetContextInterface(node);
+
+	phyContextExport->ConvertToRigid(true);
+	phyContextExport->AllowBlending(true);
+
+	float normalizedWeight;
+	Point3 offsetVector;
+
+	IPhyBlendedRigidVertex* blendedRigidVertex;
+	IPhyRigidVertex* rigidVertex;
+
+	int numVerts = phyContextExport->GetNumberVertices();
+
+	fprintf(fp, "\t\t<weight count=\"%d\">\n", numVerts);
+
+	for (int i = 0; i<numVerts; i++)
+	{
+		fprintf(fp, "\t\t\t<v>\n"); 
+
+		float weight = 0.0f;
+		float totalWeight = 0.0f;
+		int totalWeightNum = 0;
+		int boneIdx = -1;
+		int j = 0;
+		INode* boneNode = NULL;
+
+		vector<WeightInfo> vecWeight;
+
+		IPhyVertexExport* phyVertExport = (IPhyVertexExport*)phyContextExport->GetVertexInterface(i);
+		if (phyVertExport)
+		{
+			int type = phyVertExport->GetVertexType();
+			switch (type)
+			{
+			case RIGID_BLENDED_TYPE:
+				blendedRigidVertex = (IPhyBlendedRigidVertex*)phyVertExport;	
+
+				totalWeightNum = blendedRigidVertex->GetNumberNodes();
+
+				totalWeight = 0.0f;
+				for (j = 0; j < totalWeightNum; ++j)
+				{
+					boneNode = blendedRigidVertex->GetNode(j);
+					boneIdx = GetBoneIndex(maxInteface->GetRootNode(), boneNode);
+
+					normalizedWeight = blendedRigidVertex->GetWeight(j);
+					offsetVector = blendedRigidVertex->GetOffsetVector(j);
+					totalWeight += normalizedWeight;
+
+					WeightInfo w;
+					w.boneIdx = boneIdx;
+					w.weight = normalizedWeight;
+					vecWeight.push_back(w);
+				}
+
+				break;
+			case RIGID_TYPE:
+				{
+					rigidVertex = (IPhyRigidVertex*)phyVertExport;
+					boneNode = rigidVertex->GetNode();
+					boneIdx = GetBoneIndex(maxInteface->GetRootNode(), boneNode);
+
+					WeightInfo w;
+					w.boneIdx = boneIdx;
+					w.weight = 1.0f;
+					vecWeight.push_back(w);
+				}
+				break;
+			default:
+				break;
+			}
+			phyContextExport->ReleaseVertexInterface(phyVertExport);
+		}
+
+		if (vecWeight.size() == 0)
+		{
+			// 할당된 웨이트가 없으면 에러다.
+			MessageBox(NULL, "assigned bones is zero.", NULL, MB_OK);
+		}
+
+		std::sort(vecWeight.begin(), vecWeight.end());
+		for (int j = 0; j < vecWeight.size(); ++j)
+		{
+			fprintf(fp, "\t\t\t\t<a>%d %g</a>\n", vecWeight[j].boneIdx, vecWeight[j].weight);
+		}
+		fprintf(fp, "\t\t\t</v>\n");
+	}
+
+	fprintf(fp, "\t\t</weight>\n");
+
+	phyExport->ReleaseContextInterface(phyContextExport);
+
+	mod->ReleaseInterface(I_PHYINTERFACE, phyExport);
+}
+
 void I4MaxExporter::WriteMeshSkin(FILE* fp, INode* node, Modifier* mod)
 {
 	ISkin *skin = (ISkin *)mod->GetInterface(I_SKIN);
@@ -1077,24 +1176,32 @@ void I4MaxExporter::WriteMeshSkin(FILE* fp, INode* node, Modifier* mod)
 
 	for (int i = 0; i<numVerts; i++)
 	{
-		fprintf(fp, "\t\t\t<vertex>\n"); 
+		fprintf(fp, "\t\t\t<v>\n"); 
 		float weight = 0.0f;
 		int boneIdx = -1;
 
 		vector<WeightInfo> vecWeight;
 		int numWeights = skin_data->GetNumAssignedBones(i);
-		for(int j = 0 ; j < numWeights ; j ++)
-		{ 
-			INode * pBone = skin->GetBone(skin_data->GetAssignedBone(i, j));			
-			weight = skin_data->GetBoneWeight(i, j);
-			if(weight < WEIGHT_EPSILON) continue ;
 
-			boneIdx = GetBoneIndex(maxInteface->GetRootNode(), pBone);
-			WeightInfo w;
-			w.boneIdx = boneIdx;
-			w.weight = weight;
-			vecWeight.push_back(w);
+		if (numWeights > 0)
+		{
+			for(int j = 0 ; j < numWeights ; j ++)
+			{ 
+				INode * pBone = skin->GetBone(skin_data->GetAssignedBone(i, j));			
+				weight = skin_data->GetBoneWeight(i, j);
+				if(weight < WEIGHT_EPSILON) continue ;
 
+				boneIdx = GetBoneIndex(maxInteface->GetRootNode(), pBone);
+				WeightInfo w;
+				w.boneIdx = boneIdx;
+				w.weight = weight;
+				vecWeight.push_back(w);
+			}
+		}
+		else
+		{
+			// 할당된 웨이트가 없으면 에러다.
+			MessageBox(NULL, "assigned bones is zero.", NULL, MB_OK);
 		}
 
 		std::sort(vecWeight.begin(), vecWeight.end());
@@ -1102,7 +1209,7 @@ void I4MaxExporter::WriteMeshSkin(FILE* fp, INode* node, Modifier* mod)
 		{
 			fprintf(fp, "\t\t\t\t<a>%d %g</a>\n", vecWeight[j].boneIdx, vecWeight[j].weight);
 		}
-		fprintf(fp, "\t\t\t</vertex>\n");
+		fprintf(fp, "\t\t\t</v>\n");
 	}
 
 	fprintf(fp, "\t\t</weight>\n");

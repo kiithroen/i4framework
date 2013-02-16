@@ -78,7 +78,7 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachSkinedMesh_G
 	{
-		I4Matrix4x4 matrixPalette[80];
+		I4Matrix4x4 matrixPalette[120];
 	};
 
 	__declspec(align(16))
