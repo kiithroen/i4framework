@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4VideoDriver.h"
 #include "I4VideoDriverD3D11.h"
 #include "I4ShaderProgram.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4ActorMgr.h"
 #include "I4Actor.h"
 #include "I4ActorResource.h"

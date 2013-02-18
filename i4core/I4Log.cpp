@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4Log.h"
 
 namespace i4core

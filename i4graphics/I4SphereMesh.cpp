@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4SphereMesh.h"
 #include "I4VideoDriver.h"
 

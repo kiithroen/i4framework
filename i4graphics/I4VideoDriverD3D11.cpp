@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4VideoDriverD3D11.h"
 #include "I4Matrix4x4.h"
 #include "I4GeometryBufferD3D11.h"
@@ -18,6 +19,20 @@ namespace i4graphics
 		, backBufferDepthStencilTex(nullptr)
 		, backBufferDepthStencilView(nullptr)
 	{
+		for (int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
+		{
+			rasterizerStates[i] = nullptr;
+		}
+
+		for (int i = 0; i < I4BLEND_MODE_NUM; ++i)
+		{
+			blendModes[i] = nullptr;
+		}
+
+		for (int i = 0; i < I4SAMPLER_STATE_NUM; ++i)
+		{
+			samplerStates[i] = nullptr;
+		}
 	}
 
 	I4VideoDriverD3D11::~I4VideoDriverD3D11()
@@ -66,20 +81,29 @@ namespace i4graphics
 		
 		for (int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
 		{
-			rasterizerStates[i]->Release();
-			rasterizerStates[i] = nullptr;
+			if (rasterizerStates[i] != nullptr)
+			{
+				rasterizerStates[i]->Release();
+				rasterizerStates[i] = nullptr;
+			}
 		}
 
 		for (int i = 0; i < I4BLEND_MODE_NUM; ++i)
 		{
-			blendModes[i]->Release();
-			blendModes[i] = nullptr;
+			if (blendModes[i] != nullptr)
+			{
+				blendModes[i]->Release();
+				blendModes[i] = nullptr;
+			}
 		}
 
 		for (int i = 0; i < I4SAMPLER_STATE_NUM; ++i)
 		{
-			samplerStates[i]->Release();
-			samplerStates[i] = nullptr;
+			if (samplerStates[i] != nullptr)
+			{
+				samplerStates[i]->Release();
+				samplerStates[i] = nullptr;
+			}
 		}
 	}
 
@@ -117,7 +141,6 @@ namespace i4graphics
 
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
-			D3D_FEATURE_LEVEL_11_1,
 			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
 			D3D_FEATURE_LEVEL_10_0,

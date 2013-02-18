@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4FrameTimer.h"
 
 #ifdef _WIN32

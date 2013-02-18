@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4Profile.h"
 
 namespace i4core

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4Framework.h"
 #include "I4Log.h"
 #include "I4FrameCallback.h"

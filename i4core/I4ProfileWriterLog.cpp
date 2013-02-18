@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4ProfileWriterLog.h"
 #include "I4Log.h"
 #include "I4Profile.h"

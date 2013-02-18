@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4AnimationTrack.h"
 #include "I4KeyFrameSet.h"
 #include "I4Log.h"

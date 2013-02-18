@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4ActorResource.h"
 #include "I4KeyFrameSet.h"
 #include "I4VideoDriver.h"

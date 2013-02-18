@@ -58,5 +58,6 @@ private:
 	float				camRoll;
 
 	I4Actor*			actor[100];
+	I4Actor*			floor;
 	I4ActorMgr*			actorMgr;
 };

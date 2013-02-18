@@ -232,6 +232,9 @@ class I4MaxExporter : public SceneExport {
 		BOOL IsExportMesh()						{ return exportMesh; }
 		void SetExportMesh(BOOL isMesh)			{ exportMesh = isMesh; }
 
+		BOOL IsExportMtrl()						{ return exportMtrl; }
+		void SetExportMtrl(BOOL isMtrl)			{ exportMtrl = isMtrl; }
+
 		BOOL IsExportAnimation()				{ return exportAnimation; }
 		void SetExportAnimation(BOOL isAni)		{ exportAnimation = isAni; }
 
@@ -269,10 +272,12 @@ class I4MaxExporter : public SceneExport {
 		Interface*	maxInteface;
 		FILE*		boneFile;
 		FILE*		meshFile;
+		FILE*		mtrlFile;
 		FILE*		aniFile;
 
 		BOOL		exportBone;
 		BOOL		exportMesh;
+		BOOL		exportMtrl;
 		BOOL		exportAnimation;
 
 		int			samplingStep;
@@ -323,6 +328,7 @@ INT_PTR CALLBACK I4MaxExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wPara
 			CenterWindow(hWnd,GetParent(hWnd));
 			CheckDlgButton(hWnd, IDC_CHECK_EXPORT_BONE,			exp->IsExportBone());
 			CheckDlgButton(hWnd, IDC_CHECK_EXPORT_MESH,			exp->IsExportMesh()); 
+			CheckDlgButton(hWnd, IDC_CHECK_EXPORT_MATERIAL,		exp->IsExportMtrl()); 
 			CheckDlgButton(hWnd, IDC_CHECK_EXPORT_ANIMATION,	exp->IsExportAnimation());
 
 			spin = GetISpinner(GetDlgItem(hWnd, IDC_SPIN_SAMPLING_STEP)); 
@@ -358,6 +364,7 @@ INT_PTR CALLBACK I4MaxExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wPara
 			case IDOK:
 				exp->SetExportBone(IsDlgButtonChecked(hWnd, IDC_CHECK_EXPORT_BONE)); 
 				exp->SetExportMesh(IsDlgButtonChecked(hWnd, IDC_CHECK_EXPORT_MESH)); 
+				exp->SetExportMtrl(IsDlgButtonChecked(hWnd, IDC_CHECK_EXPORT_MATERIAL)); 
 				exp->SetExportAnimation(IsDlgButtonChecked(hWnd, IDC_CHECK_EXPORT_ANIMATION)); 
 
 				spin = GetISpinner(GetDlgItem(hWnd, IDC_SPIN_SAMPLING_STEP)); 
@@ -392,9 +399,11 @@ I4MaxExporter::I4MaxExporter()
 : maxInteface(NULL)
 , boneFile(NULL)
 , meshFile(NULL)
+, mtrlFile(NULL)
 , aniFile(NULL)
 , exportBone(TRUE)
 , exportMesh(TRUE)
+, exportMtrl(TRUE)
 , exportAnimation(TRUE)
 , samplingStep(2)
 {
@@ -518,6 +527,20 @@ int	I4MaxExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOO
 		fprintf(meshFile, "\t<version>1.0.0</version>\n");
 	}
 
+	if (IsExportMtrl())
+	{
+		CStr mtrlFileName = path + "\\" + file + ".mtrl.xml";
+		mtrlFile = _tfopen(mtrlFileName.data(), "w");
+		if (mtrlFile == NULL)
+		{
+			MessageBox(NULL, "Couldn't open file", NULL, MB_OK);
+			return FALSE;
+		}
+
+		fprintf(mtrlFile, "<material>\n");
+		fprintf(mtrlFile, "\t<version>1.0.0</version>\n");
+	}
+
 	if (IsExportAnimation())
 	{
 		CStr aniFileName = path + "\\" + file + ".ani.xml";
@@ -554,6 +577,12 @@ int	I4MaxExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOO
 	{
 		fprintf(meshFile, "</mesh>\n");
 		fclose(meshFile);
+	}
+
+	if (IsExportMtrl())
+	{
+		fprintf(mtrlFile, "</material>\n");
+		fclose(mtrlFile);
 	}
 
 	if (IsExportAnimation())
@@ -599,11 +628,6 @@ void I4MaxExporter::ExportRecursive(INode* node)
 				WriteNodeStart(meshFile, node);
 				WriteNodeInfo(meshFile, node, localTM, worldTM);
 				
-
-				fprintf(meshFile, "\t\t<material>\n");
-				WriteMaterial(meshFile, node->GetMtl());
-				fprintf(meshFile, "\t\t</material>\n");
-
 				ObjectState os = node->EvalWorldState(0);
 				int needDelete;
 				Mesh& mesh = *(((GeomObject*)os.obj)->GetRenderMesh(0, node, nullView, needDelete));
@@ -628,6 +652,12 @@ void I4MaxExporter::ExportRecursive(INode* node)
 				WriteNodeEnd(meshFile);
 			}
 
+			if (IsExportMtrl())
+			{
+				WriteNodeStart(mtrlFile, node);
+				WriteMaterial(mtrlFile, node->GetMtl());
+				WriteNodeEnd(mtrlFile);
+			}
 		}
 
 		if (IsExportAnimation())

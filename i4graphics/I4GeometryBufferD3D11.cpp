@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4GeometryBufferD3D11.h"
 #include "I4Log.h"
 

@@ -57,7 +57,13 @@ bool I4MiniGameFrameCallback::onStart()
 
 
 	actorMgr = new I4ActorMgr;
-
+	
+	floor = actorMgr->createActor("floor");
+	if (!actorMgr->attachMesh(floor, "floor.mesh.xml"))
+	{
+		return false;
+	}
+;
 	for (int i = 0; i < 100; ++i)
 	{
 		char buf[128] = {0, };
@@ -68,22 +74,22 @@ bool I4MiniGameFrameCallback::onStart()
 		{
 			if (!actorMgr->attachBone(actor[i], "cyberdemon.bone.xml"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actorMgr->attachMesh(actor[i], "cyberdemon.mesh.xml"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actorMgr->attachAni(actor[i], "cyberdemon.ani.xml", "idle"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actor[i]->initialize())
 			{
-				return FALSE;
+				return false;
 			}
 
 			actor[i]->playAnimation("idle");
@@ -92,22 +98,22 @@ bool I4MiniGameFrameCallback::onStart()
 		{
 			if (!actorMgr->attachBone(actor[i], "guard.bone.xml"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actorMgr->attachMesh(actor[i], "guard.mesh.xml"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actorMgr->attachAni(actor[i], "guard_idle.ani.xml", "idle"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actor[i]->initialize())
 			{
-				return FALSE;
+				return false;
 			}
 
 			actor[i]->playAnimation("idle");
@@ -116,12 +122,12 @@ bool I4MiniGameFrameCallback::onStart()
 		{
 			if (!actorMgr->attachMesh(actor[i], "elin.mesh.xml"))
 			{
-				return FALSE;
+				return false;
 			}
 
 			if (!actor[i]->initialize())
 			{
-				return FALSE;
+				return false;
 			}
 		}
 	}
@@ -358,7 +364,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			{				
 				I4Matrix4x4 matS;
 				matS.makeScale(0.2f, 0.2f, 0.2f);
-				actor[idx]->render(renderer, matS*matR*matT);
+				actor[idx]->render(renderer, matS*matT);
 			}
 			else	// elin
 			{
@@ -369,16 +375,20 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 		}
 	}
 
-	I4DirectionalLight directionalLight[2] =
+	floor->animate(deltaTime);
+	floor->render(renderer, I4MATRIX4X4_IDENTITY);
+
+	I4DirectionalLight directionalLight[] =
 	{
-		{ I4Vector3(1.0f, -1.0f, 1.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
-		{ I4Vector3(1.0f, 0.0f, 1.0f), I4Vector3(0.3f, 0.0f, 0.0f) },
+		{ I4Vector3(1.0f, -0.3f, 1.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
+//		{ I4Vector3(1.0f, 0.0f, 1.0f), I4Vector3(0.3f, 0.0f, 0.0f) },
 	};
 
 	for (int i = 0; i < _countof(directionalLight); ++i)
 	{
 		renderer->commitToScene(&directionalLight[i]);
 	}
+
 
 	I4PointLight pointLight[200];
 	

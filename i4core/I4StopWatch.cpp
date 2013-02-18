@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4StopWatch.h"
 
 namespace i4core

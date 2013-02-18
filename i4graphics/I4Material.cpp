@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4Material.h"
 
 namespace i4graphics

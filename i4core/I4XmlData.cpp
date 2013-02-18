@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4XmlData.h"
 #include "I4Log.h"
 #include "rapidxml.hpp"

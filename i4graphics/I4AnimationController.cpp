@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4AnimationController.h"
 #include "I4AnimationTrack.h"
 

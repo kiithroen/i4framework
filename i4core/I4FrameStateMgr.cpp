@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4FrameStateMgr.h"
 #include "I4FrameState.h"
 

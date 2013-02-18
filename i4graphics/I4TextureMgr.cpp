@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4TextureMgr.h"
 #include "I4VideoDriver.h"
 #include "I4Texture.h"

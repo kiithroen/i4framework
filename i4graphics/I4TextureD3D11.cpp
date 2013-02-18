@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4TextureD3D11.h"
 #include "DDSTextureLoader.h"
 #include "I4Log.h"

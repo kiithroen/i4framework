@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -13,49 +13,65 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// Korean (Korea) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
+LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
+#pragma code_page(949)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Korean (Korea) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
-IDD_PANEL DIALOGEX 0, 0, 283, 166
-STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_TOOLWINDOW
-//FLOATING_DIALOG
-FONT 8, "MS Sans Serif"
 
+IDD_PANEL DIALOGEX 0, 0, 154, 185
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-	CONTROL         "",IDC_EDIT_SAMPLING_STEP,"CustEdit",WS_TABSTOP,77,96,35,10
-    CONTROL         "",IDC_SPIN_SAMPLING_STEP,"SpinnerControl",0x0,113,96,7,10
+    CONTROL         "",IDC_EDIT_SAMPLING_STEP,"CustEdit",WS_TABSTOP,77,110,35,10
+    CONTROL         "",IDC_SPIN_SAMPLING_STEP,"SpinnerControl",0x0,113,110,7,10
     CONTROL         "Bone",IDC_CHECK_EXPORT_BONE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,29,32,10
     CONTROL         "Mesh",IDC_CHECK_EXPORT_MESH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,43,33,10
-    CONTROL         "Animation",IDC_CHECK_EXPORT_ANIMATION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,57,47,10
-    GROUPBOX        "Check Export",IDC_STATIC,14,16,68,60
-    PUSHBUTTON      "OK",IDOK,226,15,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,226,31,50,14
-    GROUPBOX        "Animation Option",IDC_STATIC,14,85,115,57
-    LTEXT           "Sampling Frame :",IDC_STATIC,19,97,56,8
-    CONTROL         "",IDC_EDIT_SAMPLING_START,"CustEdit",WS_TABSTOP,77,111,35,10
-    CONTROL         "",IDC_SPIN_SAMPLING_START,"SpinnerControl",0x0,113,111,7,10
-    LTEXT           "Sampling Start :",IDC_STATIC,19,113,52,8
-    CONTROL         "",IDC_EDIT_SAMPLING_END,"CustEdit",WS_TABSTOP,77,125,35,10
-    CONTROL         "",IDC_SPIN_SAMPLING_END,"SpinnerControl",0x0,113,125,7,10
-    LTEXT           "Sampling End :",IDC_STATIC,19,127,48,8
+    CONTROL         "Animation",IDC_CHECK_EXPORT_ANIMATION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,71,47,10
+    GROUPBOX        "Check Export",IDC_STATIC,14,16,68,70
+    PUSHBUTTON      "OK",IDOK,96,15,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,96,31,50,14
+    GROUPBOX        "Animation Option",IDC_STATIC,14,96,125,62
+    LTEXT           "Sampling Frame :",IDC_STATIC,19,112,56,8
+    CONTROL         "",IDC_EDIT_SAMPLING_START,"CustEdit",WS_TABSTOP,77,126,35,10
+    CONTROL         "",IDC_SPIN_SAMPLING_START,"SpinnerControl",0x0,113,126,7,10
+    LTEXT           "Sampling Start :",IDC_STATIC,19,128,52,8
+    CONTROL         "",IDC_EDIT_SAMPLING_END,"CustEdit",WS_TABSTOP,77,141,35,10
+    CONTROL         "",IDC_SPIN_SAMPLING_END,"SpinnerControl",0x0,113,141,7,10
+    LTEXT           "Sampling End :",IDC_STATIC,19,142,48,8
+    CONTROL         "Material",IDC_CHECK_EXPORT_MATERIAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,21,57,41,10
 END
-
-
- //IMAGE_FILTER_COMPOSITOR_TYPE
-
-//(!UI_BY_MAX)
-
- //SHADER_TYPE
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -64,17 +80,16 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_PANEL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 101
+        RIGHTMARGIN, 146
         TOPMARGIN, 7
-        BOTTOMMARGIN, 149
+        BOTTOMMARGIN, 168
     END
 END
-
 #endif    // APSTUDIO_INVOKED
 
 
@@ -84,20 +99,18 @@ END
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-
 #endif    // APSTUDIO_INVOKED
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -105,17 +118,16 @@ END
 // String Table
 //
 
-STRINGTABLE DISCARDABLE
+STRINGTABLE
 BEGIN
     IDS_LIBDESCRIPTION      "I4MaxExporter"
     IDS_CATEGORY            "I4MaxExporter"
     IDS_CLASS_NAME          "I4MaxExporter"
     IDS_PARAMS              "Parameters"
     IDS_SPIN                "Spin"
- //TEX_TYPE
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -127,8 +139,6 @@ END
 //
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-
 

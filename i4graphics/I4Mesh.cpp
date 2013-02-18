@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "I4Mesh.h"
 #include "I4GeometryBuffer.h"
 

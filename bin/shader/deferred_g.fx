@@ -141,7 +141,7 @@ PS_OUTPUT PS( PS_INPUT	input	)
 #ifdef MASK_TEX_DIFFUSE
 	output.diffuse.rgb = texDiffuseMap.Sample(samLinear, input.uv).rgb;
 #else
-	output.diffuse.rgb = float3(1.0f, 1.0f, 1.0f);
+	output.diffuse.rgb = float3(0.5f, 0.5f, 0.5f);
 #endif
 	output.diffuse.a = 1;
 

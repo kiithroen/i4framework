@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="dllmain">
-      <UniqueIdentifier>{677e9aca-f85e-4010-b958-ef5a882026b1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DirectXTex">
       <UniqueIdentifier>{2ed0821f-bb8a-4ad9-9969-4c7109676765}</UniqueIdentifier>
     </Filter>
@@ -25,9 +22,6 @@
     <ClInclude Include="I4SphereMesh.h" />
     <ClInclude Include="I4Texture.h" />
     <ClInclude Include="I4VideoDriver.h" />
-    <ClInclude Include="targetver.h">
-      <Filter>dllmain</Filter>
-    </ClInclude>
     <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4RenderTargetD3D11.h" />
     <ClInclude Include="I4ShaderProgramD3D11.h" />
@@ -48,11 +42,10 @@
     <ClInclude Include="I4Mesh.h" />
     <ClInclude Include="I4DeferredRenderer.h" />
     <ClInclude Include="I4TextureMgr.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>dllmain</Filter>
-    </ClCompile>
     <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="i4graphics.cpp" />
     <ClCompile Include="I4QuadMesh.cpp" />
@@ -77,6 +70,8 @@
     <ClCompile Include="I4Mesh.cpp" />
     <ClCompile Include="I4DeferredRenderer.cpp" />
     <ClCompile Include="I4TextureMgr.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\shader\default.fx">

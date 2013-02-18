@@ -31,7 +31,7 @@ namespace i4graphics {
 		const I4Matrix4x4& 		getResultTM() const			{ return resultTM;	}
 
 		int						getParentID() const			{ return elementInfo->parentID; }
-		const I4Matrix4x4&		getParentTM() const			{ return parentElement ? parentElement->getResultTM() : IDENTITY; }
+		const I4Matrix4x4&		getParentTM() const			{ return parentElement ? parentElement->getResultTM() : I4MATRIX4X4_IDENTITY; }
 
 	protected:
 		I4Matrix4x4				resultTM;
