@@ -54,7 +54,7 @@ namespace i4graphics
 		, rtShadow(nullptr)
 		, quadMesh(nullptr)
 		, sphereMesh(nullptr)
-		, wireMode(true)
+		, wireMode(false)
 	{
 	}
 
