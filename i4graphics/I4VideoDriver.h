@@ -106,7 +106,6 @@ namespace i4graphics
 		unsigned int				height;		
 		I4RasterizerMode			curRasterizerMode;
 		I4BlendMode					curBlendMode;
-
 		I4TextureMgr*				textureMgr;
 
 	private:

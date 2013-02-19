@@ -28,7 +28,9 @@ PS_INPUT VS( VS_INPUT	input	)
 
 float4 PS( PS_INPUT	input	) : SV_Target
 {
-	float3 diffuseColor = texRTDiffuse.Sample(samLinear, input.uv).rgb;
+	float4 diffuseData = texRTDiffuse.Sample(samLinear, input.uv);
+	float3 diffuseColor = diffuseData.rgb;
+	float ambient = diffuseData.a;
 
 	float4 specularData = texRTSpecular.Sample(samLinear, input.uv);
 	float3 specularColor = specularData.xyz;
@@ -37,7 +39,6 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 diffuseLight = light.rgb;
 	float specularLight = light.a;
 
-	float ambient = 0.5f;	// 너무 어두워서 이쁘게 보이려고 임시로..
 	float3 finalColor = ambient* diffuseColor + diffuseColor*diffuseLight + diffuseLight*specularColor*specularLight;
 
 	//finalColor = diffuseLight + diffuseLight*specularColor*specularLight;

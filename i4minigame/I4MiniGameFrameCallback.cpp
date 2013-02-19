@@ -194,6 +194,11 @@ bool I4MiniGameFrameCallback::onRender(float deltaSec)
 
 void I4MiniGameFrameCallback::onKeyDown(unsigned int key)
 {
+	if (key == VK_F2)
+	{
+		renderer->setWireMode(!renderer->isWireMode());
+	}
+
 	if (frameStateMgr)
 	{
 		frameStateMgr->onKeyDown(key);
@@ -280,7 +285,6 @@ void I4MiniGameFrameCallback::updateCamera(float deltaTime)
 		newCamEye += camera->getRight()*camMoveSpeed;
 	}
 
-	
 	if (isRButtonDown)
 	{
 		POINT pt;

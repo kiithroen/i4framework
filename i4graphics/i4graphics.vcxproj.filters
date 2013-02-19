@@ -66,7 +66,6 @@
     <ClCompile Include="I4ActorResource.cpp" />
     <ClCompile Include="I4AnimationController.cpp" />
     <ClCompile Include="I4AnimationTrack.cpp" />
-    <ClCompile Include="I4Material.cpp" />
     <ClCompile Include="I4Mesh.cpp" />
     <ClCompile Include="I4DeferredRenderer.cpp" />
     <ClCompile Include="I4TextureMgr.cpp" />

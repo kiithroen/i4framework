@@ -37,6 +37,12 @@ struct WeightInfo
 	}
 };
 
+float ConvertToGrayscale(const Color& col)
+{
+	return col.r*0.3f + col.g*0.59f + col.b*0.11f;
+}
+
+
 bool IsMesh(INode *pNode)
 {
 	if(pNode == NULL)
@@ -906,7 +912,6 @@ void I4MaxExporter::WriteNodeInfo(FILE* fp, INode* node, const Matrix3& localTM,
 	fprintf(fp, "\t\t</worldTM>\n");
 }
 
-
 void I4MaxExporter::WriteMaterial(FILE* fp, Mtl* mtl)
 {
 	if(mtl == NULL)
@@ -918,32 +923,23 @@ void I4MaxExporter::WriteMaterial(FILE* fp, Mtl* mtl)
 		StdMat* stdMtl = static_cast<StdMat*>(mtl);
 
 		Color ambient = stdMtl->GetAmbient(0);
-		fprintf(fp,"\t\t\t<ambient>%g %g %g</ambient>\n", ambient.r, ambient.g, ambient.b);
-
-		Color diffuse = stdMtl->GetDiffuse(0);
-		fprintf(fp,"\t\t\t<diffuse>%g %g %g</diffuse>\n", diffuse.r, diffuse.g, diffuse.b);
-
-		Color specular = stdMtl->GetSpecular(0);
-		fprintf(fp,"\t\t\t<specular>%g %g %g</specular>\n", specular.r, specular.g, specular.b);
-
-		float emissive = stdMtl->GetSelfIllum(0);
-		fprintf(fp,"\t\t\t<emissive>%g</emissive>\n", emissive);
-
+		fprintf(fp,"\t\t\t<ambient>%g</ambient>\n", ConvertToGrayscale(ambient));
+		
 		Shader* shader = static_cast<StdMat2*>(stdMtl)->GetShader();
 
 		float glossiness = shader->GetGlossiness(0);
-		fprintf(fp,"\t\t\t<glossiness>%g</glossiness>\n", glossiness);
+		fprintf(fp,"\t\t\t<specularGlossiness>%g</specularGlossiness>\n", glossiness);
 
 		float power = shader->GetSpecularLevel(0);
-		fprintf(fp,"\t\t\t<power>%g</power>\n", power*100);
+		fprintf(fp,"\t\t\t<specularPower>%g</specularPower>\n", power*100);
 
 		if (stdMtl->GetTwoSided())
 		{
-			fprintf(fp,"\t\t\t<twoside>true</twoside>\n");
+			fprintf(fp,"\t\t\t<twoSide>true</twoSide>\n");
 		}
 		else
 		{
-			fprintf(fp,"\t\t\t<twoside>false</twoside>\n");
+			fprintf(fp,"\t\t\t<twoSide>false</twoSide>\n");
 		}
 
 		for (int i = 0; i < mtl->NumSubTexmaps(); ++i)

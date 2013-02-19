@@ -1,21 +1,26 @@
 <material>
 	<version>1.0.0</version>
 	<node name="objDrawCall_0032" parent_name="undefined">
+		<ambient>0.3</ambient>
 		<diffuseMap>Elin_hair_D.dds</diffuseMap>
 		<specularMap>Elin_hair_S.dds</specularMap>
 		<normalMap>Elin_hair_N.dds</normalMap>
+		<twoSide>true</twoSide>
 	</node>
 	<node name="objDrawCall_0033" parent_name="undefined">
+		<ambient>0.5</ambient>
 		<diffuseMap>Elin_face_D.dds</diffuseMap>
 		<specularMap>Elin_face_S.dds</specularMap>
 		<normalMap>Elin_face_N.dds</normalMap>
 	</node>
 	<node name="objDrawCall_0034" parent_name="undefined">
+		<ambient>0.5</ambient>
 		<diffuseMap>Elin_face_D.dds</diffuseMap>
 		<specularMap>Elin_face_S.dds</specularMap>
 		<normalMap>Elin_face_N.dds</normalMap>
 	</node>
 	<node name="objDrawCall_0035" parent_name="undefined">
+		<ambient>0.5</ambient>
 		<diffuseMap>Elin_hair_D.dds</diffuseMap>
 		<specularMap>Elin_hair_S.dds</specularMap>
 		<normalMap>Elin_hair_N.dds</normalMap>
@@ -23,16 +28,20 @@
 	<node name="objDrawCall_0036" parent_name="undefined">
 	</node>
 	<node name="objDrawCall_0037" parent_name="undefined">
+		<ambient>0.5</ambient>
 		<diffuseMap>Elin_body_D.dds</diffuseMap>
 		<specularMap>Elin_body_S.dds</specularMap>
 		<normalMap>Elin_body_N.dds</normalMap>
+		<twoSide>true</twoSide>
 	</node>
 	<node name="objDrawCall_0038" parent_name="undefined">
+		<ambient>0.5</ambient>
 		<diffuseMap>Elin_hand_D.dds</diffuseMap>
 		<specularMap>Elin_hand_S.dds</specularMap>
 		<normalMap>Elin_hand_N.dds</normalMap>
 	</node>
 	<node name="objDrawCall_0039" parent_name="undefined">
+		<ambient>0.5</ambient>
 		<diffuseMap>Elin_leg_D.dds</diffuseMap>
 		<specularMap>Elin_leg_S.dds</specularMap>
 		<normalMap>Elin_leg_N.dds</normalMap>

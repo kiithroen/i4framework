@@ -22,7 +22,7 @@ namespace i4graphics
 	class I4Actor;
 	class I4ActorMgr;
 	class I4Mesh;
-	class I4Material;
+	struct I4Material;
 
 	struct I4MeshRenderItem
 	{
@@ -73,6 +73,7 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachMeshInstance_G_PS
 	{
+		float ambient;
 		float specularGlossiness;
 		float specularPower;
 
@@ -195,6 +196,9 @@ namespace i4graphics
 		void				render(I4Camera* camera);
 		void				postRender(I4Camera* camera);
 
+		bool				isWireMode() const				{ return wireMode; }
+		void				setWireMode(bool enable)		{ wireMode = enable; }
+
 	private:
 		void				clearAllRenderTarget();
 
@@ -247,6 +251,9 @@ namespace i4graphics
 		I4CBHolder<CBEveryFrame_L_point>		cbEveryFrame_L_point;
 		I4CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
 		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
+
+		
+		bool						wireMode;
 	};
 
 }

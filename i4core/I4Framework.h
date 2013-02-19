@@ -20,7 +20,7 @@ namespace i4core
 		void				setFrameCallback(I4FrameCallback* callback);
 
 		void*				getWindowID() const						{ return windowID; }
-		string			getTitle() const						{ return title; }
+		string				getTitle() const						{ return title; }
 		unsigned int		getWidth() const						{ return width; }
 		unsigned int		getHeight() const						{ return height; }
 		bool				isActivated() const						{ return activated; }
@@ -46,7 +46,7 @@ namespace i4core
 
 	protected:
 		void*				windowID;
-		string			title;
+		string				title;
 		unsigned int		width;
 		unsigned int		height;
 		bool				activated;

@@ -6,7 +6,7 @@
 namespace i4graphics {
 
 	struct I4KeyFrameSet;
-	class I4Material;
+	struct I4Material;
 	class I4ShaderMgr;
 	class I4Actor;
 	class I4ActorBoneResource;

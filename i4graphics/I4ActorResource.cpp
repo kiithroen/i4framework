@@ -711,53 +711,27 @@ namespace i4graphics
 			const char* val = nullptr;
 			xml.getNodeValue(val);
 
-			sscanf_s(val, "%f %f %f", &material->ambient.r, &material->ambient.g, &material->ambient.b);
-			material->ambient.a = 1.0f;
+			sscanf_s(val, "%f", &material->ambient);
 
 			xml.selectParentNode();
 		}
 
-		if (xml.selectFirstChildNode("diffuse"))
+		if (xml.selectFirstChildNode("specularGlossiness"))
 		{
 			const char* val = nullptr;
 			xml.getNodeValue(val);
 
-			sscanf_s(val, "%f %f %f", &material->diffuse.r, &material->diffuse.g, &material->diffuse.b);
-			material->diffuse.a = 1.0f;
+			material->specularGlossiness = (float)atof(val);
 
 			xml.selectParentNode();
 		}
 
-		if (xml.selectFirstChildNode("emissive"))
+		if (xml.selectFirstChildNode("specularPower"))
 		{
 			const char* val = nullptr;
 			xml.getNodeValue(val);
 
-			float emissive = (float)atof(val);
-			material->emissive.r = emissive;
-			material->emissive.g = emissive;
-			material->emissive.b = emissive;
-			material->emissive.a = 1.0f;
-
-			xml.selectParentNode();
-		}
-
-		if (xml.selectFirstChildNode("glossiness"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
-
-			material->glossiness = (float)atof(val);
-
-			xml.selectParentNode();
-		}
-
-		if (xml.selectFirstChildNode("power"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
-
-			material->power = (float)atof(val);
+			material->specularPower = (float)atof(val);
 
 			xml.selectParentNode();
 		}
@@ -801,6 +775,23 @@ namespace i4graphics
 			xml.selectParentNode();
 		}
 		
+		if (xml.selectFirstChildNode("twoSide"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			if (strcmp(val, "true") == 0)
+			{
+				material->twoSide = true;
+			}
+			else
+			{
+				material->twoSide = false;
+			}
+
+			xml.selectParentNode();
+		}
+
 		vecMaterial.push_back(material);
 	}
 

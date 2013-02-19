@@ -6,26 +6,22 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	class I4Material
+	struct I4Material
 	{
-	public:
-		I4Material();
+		I4Material()
+		: ambient(0.2f)
+		, specularGlossiness(1.0f)
+		, specularPower(32.0f)
+		, twoSide(false)
+		{
+		}
 
-		void setDiffuse(unsigned char r, unsigned char g, unsigned char b);
-		void setAmbient(unsigned char r, unsigned char g, unsigned char b);
-		void setSpecular(unsigned char r, unsigned char g, unsigned char b);
-		void setEmissive(unsigned char r, unsigned char g, unsigned char b);
-		void setPower(float p);
-
-		I4Vector4		diffuse;
-		I4Vector4		ambient;
-		I4Vector4		specular;
-		I4Vector4		emissive;
-		float	  		power;
-		float			glossiness;
-
+		float			ambient;
+		float			specularGlossiness;
+		float	  		specularPower;
 		I4Hash			diffuseMap;
 		I4Hash			specularMap;
 		I4Hash			normalMap;
+		bool			twoSide;
 	};
 }

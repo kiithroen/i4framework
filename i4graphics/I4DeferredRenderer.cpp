@@ -54,6 +54,7 @@ namespace i4graphics
 		, rtShadow(nullptr)
 		, quadMesh(nullptr)
 		, sphereMesh(nullptr)
+		, wireMode(true)
 	{
 	}
 
@@ -294,7 +295,7 @@ namespace i4graphics
 
 		for (auto&itr : vecSceneMeshRenderItem)
 		{
-			if (camera->isVisibleAABB(itr.worldAABB) == true)
+			if (camera->isVisibleAABB(itr.worldAABB))
 			{
 				vecCulledMeshRenderItem.push_back(itr);
 			}
@@ -317,6 +318,7 @@ namespace i4graphics
 			bool isChangedSpecularMap = false;
 			bool isChangedNormalMap = false;
 			bool isChangedMesh = false;
+			bool isChangedTwoSide = false;
 
 			if (prevItem == nullptr)
 			{
@@ -325,6 +327,7 @@ namespace i4graphics
 				isChangedSpecularMap = true;
 				isChangedNormalMap = true;
 				isChangedMesh = true;
+				isChangedTwoSide = true;
 			}
 			else
 			{
@@ -348,21 +351,15 @@ namespace i4graphics
 					isChangedNormalMap = true;
 				}
 
+				if (itr.material->twoSide != prevItem->material->twoSide)
+				{
+					isChangedTwoSide = true;
+				}
+
 				if (prevItem->mesh != itr.mesh)
 				{
 					isChangedMesh = true;					
 				}
-
-			}
-		
-			if (isChangedMesh == true)
-			{
-				if (prevItem != nullptr)
-				{
-					prevItem->mesh->unbind();
-				}
-					
-				itr.mesh->bind();
 			}
 
 			if (isChangedShader)
@@ -385,31 +382,57 @@ namespace i4graphics
 				cbEveryFrame_G.getData()->view = camera->getViewMatrix();
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
+		
+			if (isChangedMesh)
+			{
+				if (prevItem != nullptr)
+				{
+					prevItem->mesh->unbind();
+				}
+					
+				itr.mesh->bind();
+			}
 
-			if (isChangedDiffuseMap == true)
+			if (isChangedTwoSide)
+			{
+				int mode = I4RASTERIZER_MODE_SOLID_FRONT;
+				if (itr.material->twoSide)
+				{
+					mode = I4RASTERIZER_MODE_SOLID_NONE;
+				}
+				
+				if (wireMode)
+				{
+					mode += I4RASTERIZER_MODE_WIRE_NONE;
+				}
+
+				videoDriver->setRasterizerMode((I4RasterizerMode)mode);
+			}
+
+			if (isChangedDiffuseMap)
 			{
 				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->diffuseMap);
 				shaderMgr->setTexture(0, texture);
 			}
 						
-			if (isChangedSpecularMap == true)
+			if (isChangedSpecularMap)
 			{
 				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->specularMap);
 				shaderMgr->setTexture(1, texture);
 			}
 
-			if (isChangedNormalMap == true)
+			if (isChangedNormalMap)
 			{
 				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->normalMap);
 				shaderMgr->setTexture(2, texture);
-			}
-				
+			}				
 
 			cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
 
-			cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->glossiness;
-			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->power;
+			cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
+			cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->specularGlossiness;
+			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
 			if (itr.boneCount != 0)
@@ -439,6 +462,7 @@ namespace i4graphics
 		I4PROFILE_THISFUNC;
 
 		videoDriver->setRenderTarget(1, &rtLight, nullptr);
+		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
 		cullAndSortDirectionalLight(camera);
@@ -508,7 +532,7 @@ namespace i4graphics
 		
 		for (auto&itr : vecScenePointLight)
 		{
-			if (camera->isVisibleSphere(itr.position, itr.radius) == true)
+			if (camera->isVisibleSphere(itr.position, itr.radius))
 			{
 				vecCulledPointLight.push_back(itr);
 			}
@@ -583,8 +607,6 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(2, nullptr);
 		
 		shaderMgr->end();
-
-		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 	}
 
 	void I4DeferredRenderer::renderStageMerge(I4Camera* camera)
@@ -592,6 +614,7 @@ namespace i4graphics
 		I4PROFILE_THISFUNC;
 
 		videoDriver->resetRenderTarget();
+		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_m.fx");
