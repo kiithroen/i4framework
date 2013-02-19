@@ -12,6 +12,7 @@ namespace i4graphics {
 	class I4ActorMesh;
 	class I4ActorBoneResource;
 	class I4ActorMeshResource;
+	class I4ActorMaterialResource;
 	class I4ActorAniResource;
 	class I4DeferredRenderer;
 
@@ -27,6 +28,7 @@ namespace i4graphics {
 
 		bool					registerBone(I4ActorBoneResource* boneResource);
 		bool					registerMesh(I4ActorMeshResource* meshResource);
+		bool					registerMaterial(I4ActorMaterialResource* mtrlResource);
 		bool					registerAni(I4ActorAniResource* aniResource, const char* aniName);
 
 		bool					initialize();
@@ -40,7 +42,13 @@ namespace i4graphics {
 		void					render(I4DeferredRenderer* renderer, const I4Matrix4x4& worldTM);
 
 		const I4Matrix4x4&		getSkinTM(unsigned int i) const		{ return vecSkinTM[i]; }
+
 		unsigned int			getBoneCount() const				{ return vecBone.size(); }
+		I4ActorBone*			getBone(unsigned int i)				{ return vecBone[i]; }
+
+		unsigned int			getMeshCount() const				{ return vecMesh.size(); }
+		I4ActorMesh*			getMesh(unsigned int i)				{ return vecMesh[i]; }
+
 	private:
 		I4ActorElementMap		mapElement;
 		I4ActorBoneVector		vecBone;

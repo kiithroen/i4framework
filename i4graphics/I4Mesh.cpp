@@ -7,9 +7,6 @@ namespace i4graphics
 	I4Mesh::I4Mesh()
 		: vertexBuffer(nullptr)
 		, indexBuffer(nullptr)
-		, diffuseMap(nullptr)
-		, normalMap(nullptr)
-		, specularMap(nullptr)
 	{
 		
 	}

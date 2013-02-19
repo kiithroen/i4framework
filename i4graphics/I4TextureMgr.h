@@ -44,13 +44,6 @@ namespace i4graphics {
 
 		I4Texture*		find(I4Hash hash);
 
-	public:
-		static I4TextureMgr& getTextureMgr()
-		{
-			static I4TextureMgr mgr;
-			return mgr;
-		}
-
 	private:
 		I4TextureProxyMap	mapTextureProxy;
 	};

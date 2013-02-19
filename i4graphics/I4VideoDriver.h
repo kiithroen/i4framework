@@ -11,7 +11,8 @@ namespace i4graphics
 	class I4ConstantBuffer;
 	class I4Texture;
 	class I4RenderTarget;
-	
+	class I4TextureMgr;
+
 	enum I4VideoDriverMode
 	{
 		I4VIDEO_DRIVER_MODE_NULL	= 0,
@@ -56,6 +57,7 @@ namespace i4graphics
 		virtual I4VideoDriverMode	getVideoDriverMode() const	{ return I4VIDEO_DRIVER_MODE_NULL; }
 
 		virtual bool				initialize(void* windowID, unsigned int width, unsigned int height);
+		virtual void				finalize();
 
 		virtual bool				setupEnvironment();
 
@@ -88,6 +90,7 @@ namespace i4graphics
 		unsigned int				getWidth() const		{ return width; }
 		unsigned int				getHeight() const		{ return height; }
 		
+		I4TextureMgr*				getTextureMgr()			{ return textureMgr; }
 	public:
 		static I4VideoDriver*		getVideoDriver()		{ return videoDriver; }
 
@@ -103,6 +106,8 @@ namespace i4graphics
 		unsigned int				height;		
 		I4RasterizerMode			curRasterizerMode;
 		I4BlendMode					curBlendMode;
+
+		I4TextureMgr*				textureMgr;
 
 	private:
 		static I4VideoDriver*		videoDriver;

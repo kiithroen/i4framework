@@ -5,6 +5,11 @@ namespace i4graphics
 {
 
 	I4Material::I4Material()
+		: diffuseMap(nullptr)
+		, normalMap(nullptr)
+		, specularMap(nullptr)
+		, power(32.0f)
+		, glossiness(1.0f)
 	{
 		diffuse.r = 0.82f;
 		diffuse.g = 0.82f;
@@ -25,8 +30,6 @@ namespace i4graphics
 		emissive.g = 0.0f;
 		emissive.b = 0.0f;
 		emissive.a = 1.0f;
-
-		power = 1.0f;
 	}
 
 
@@ -68,11 +71,6 @@ namespace i4graphics
 		emissive.g = g*inv;
 		emissive.b = b*inv;
 		emissive.a = 1.0f;
-	}
-
-	void I4Material::setPower(float p)
-	{
-		power = p;
 	}
 
 }

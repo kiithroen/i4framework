@@ -141,12 +141,6 @@ namespace i4graphics
 
 	void I4ActorMeshResource::destroy()
 	{
-		for (unsigned int i = 0; i < vecMaterial.size(); ++i)
-		{
-			delete vecMaterial[i];
-		}
-		vecMaterial.clear();
-
 		for (unsigned int i = 0; i < vecMeshInfo.size(); ++i)
 		{
 			delete vecMeshInfo[i];
@@ -155,9 +149,7 @@ namespace i4graphics
 
 		for (unsigned int i = 0; i < vecMesh.size(); ++i)
 		{
-			I4TextureMgr::getTextureMgr().unload(vecMesh[i]->diffuseMap);
-			I4TextureMgr::getTextureMgr().unload(vecMesh[i]->specularMap);
-			I4TextureMgr::getTextureMgr().unload(vecMesh[i]->normalMap);
+			
 			delete vecMesh[i];
 		}
 		vecMesh.clear();
@@ -176,8 +168,6 @@ namespace i4graphics
 			parseNodeInfo(*nodeInfo, xml);	 
 
 			I4ParsedMeshData data;
-
-			parseMaterials(data, xml);
 			parseMeshVertex(data, xml);
 			parseMeshNormal(data, xml);
 			parseMeshIndex(data, xml);
@@ -252,119 +242,6 @@ namespace i4graphics
 
 			out.worldTM._14 = out.worldTM._24 = out.worldTM._34 = 0.0f;
 			out.worldTM._44 = 1.0f;
-
-			xml.selectParentNode();
-		}
-	}
-
-	void I4ActorMeshResource::parseMaterials(I4ParsedMeshData& out, I4XmlData& xml)
-	{
-		out.material = nullptr;
-		out.diffuseMap = I4INVALID_HASHCODE;
-		out.specularMap = I4INVALID_HASHCODE;
-		out.normalMap = I4INVALID_HASHCODE;
-
-		if (xml.selectFirstChildNode("material"))
-		{
-			I4Material* material = new I4Material;
-
-			if (xml.selectFirstChildNode("ambient"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				sscanf_s(val, "%f %f %f", &material->ambient.r, &material->ambient.g, &material->ambient.b);
-				material->ambient.a = 1.0f;
-
-				xml.selectParentNode();
-			}
-
-			if (xml.selectFirstChildNode("diffuse"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				sscanf_s(val, "%f %f %f", &material->diffuse.r, &material->diffuse.g, &material->diffuse.b);
-				material->diffuse.a = 1.0f;
-
-				xml.selectParentNode();
-			}
-
-			if (xml.selectFirstChildNode("emissive"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				float emissive = (float)atof(val);
-				material->emissive.r = emissive;
-				material->emissive.g = emissive;
-				material->emissive.b = emissive;
-				material->emissive.a = 1.0f;
-
-				xml.selectParentNode();
-			}
-
-			if (xml.selectFirstChildNode("glossiness"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				material->glossiness = (float)atof(val);
-
-				xml.selectParentNode();
-			}
-
-			if (xml.selectFirstChildNode("power"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				material->power = (float)atof(val);
-
-				xml.selectParentNode();
-			}
-
-			vecMaterial.push_back(material);
-			out.material = vecMaterial.back();
-
-			if (xml.selectFirstChildNode("diffuseMap"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				char texturePath[256] = "texture/";
-				strcat_s(texturePath, val);
-
-				out.diffuseMap = I4TextureMgr::getTextureMgr().load(texturePath);
-
-				xml.selectParentNode();
-			}
-
-			if (xml.selectFirstChildNode("specularMap"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				char texturePath[256] = "texture/";
-				strcat_s(texturePath, val);
-
-				out.specularMap = I4TextureMgr::getTextureMgr().load(texturePath);
-
-				xml.selectParentNode();
-			}
-
-			if (xml.selectFirstChildNode("normalMap"))
-			{
-				const char* val = nullptr;
-				xml.getNodeValue(val);
-
-				char texturePath[256] = "texture/";
-				strcat_s(texturePath, val);
-
-				out.normalMap = I4TextureMgr::getTextureMgr().load(texturePath);
-
-				xml.selectParentNode();
-			}
 
 			xml.selectParentNode();
 		}
@@ -669,9 +546,6 @@ namespace i4graphics
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
-		mesh->diffuseMap = data.diffuseMap;
-		mesh->specularMap = data.specularMap;
-		mesh->normalMap = data.normalMap;
 
 		if (data.skined)	
 		{
@@ -786,6 +660,148 @@ namespace i4graphics
 		}
 
 		delete[] tan1;
+	}
+
+	//-------------------- I4ActorMaterialResource -----------------------
+
+	I4ActorMaterialResource::I4ActorMaterialResource()
+	{
+	}
+
+	I4ActorMaterialResource::~I4ActorMaterialResource()
+	{
+		destroy();
+	}
+
+	bool I4ActorMaterialResource::loadMaterial(const char* fname)
+	{
+		I4XmlData xml;
+		if (xml.parseFromFile(fname) == false)
+			return false;
+
+		if (xml.selectNodeByPath("material/node") == false)
+			return false;
+
+		do
+		{
+			parseMaterials(xml);
+		} while (xml.selectNextSiblingNode("node"));
+
+		return true;
+	}
+
+	void I4ActorMaterialResource::destroy()
+	{
+		for (auto &itr : vecMaterial)
+		{
+			I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itr->diffuseMap);
+			I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itr->specularMap);
+			I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itr->normalMap);
+			delete itr;
+		}
+		vecMaterial.clear();
+	}
+
+	
+	void I4ActorMaterialResource::parseMaterials(I4XmlData& xml)
+	{
+		I4Material* material = new I4Material;
+		if (xml.selectFirstChildNode("ambient"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			sscanf_s(val, "%f %f %f", &material->ambient.r, &material->ambient.g, &material->ambient.b);
+			material->ambient.a = 1.0f;
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("diffuse"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			sscanf_s(val, "%f %f %f", &material->diffuse.r, &material->diffuse.g, &material->diffuse.b);
+			material->diffuse.a = 1.0f;
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("emissive"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			float emissive = (float)atof(val);
+			material->emissive.r = emissive;
+			material->emissive.g = emissive;
+			material->emissive.b = emissive;
+			material->emissive.a = 1.0f;
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("glossiness"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			material->glossiness = (float)atof(val);
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("power"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			material->power = (float)atof(val);
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("diffuseMap"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			char texturePath[256] = "texture/";
+			strcat_s(texturePath, val);
+
+			material->diffuseMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("specularMap"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			char texturePath[256] = "texture/";
+			strcat_s(texturePath, val);
+
+			material->specularMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+
+			xml.selectParentNode();
+		}
+
+		if (xml.selectFirstChildNode("normalMap"))
+		{
+			const char* val = nullptr;
+			xml.getNodeValue(val);
+
+			char texturePath[256] = "texture/";
+			strcat_s(texturePath, val);
+
+			material->normalMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+
+			xml.selectParentNode();
+		}
+		
+		vecMaterial.push_back(material);
 	}
 
 	//-------------------- I4ActorAniResource -----------------------

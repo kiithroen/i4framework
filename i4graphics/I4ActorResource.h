@@ -18,10 +18,6 @@ namespace i4graphics {
 	struct I4ParsedMeshData
 	{
 		bool					skined;
-		I4Material*				material;
-		I4Hash					diffuseMap;
-		I4Hash					specularMap;
-		I4Hash					normalMap;
 		I4AABB					localAABB;
 		vector<I4Vector3>		vecPosition;
 		vector<I4Vector3>		vecNormal;
@@ -65,7 +61,6 @@ namespace i4graphics {
 
 	class I4ActorMeshResource
 	{
-		typedef vector<I4Material*>			I4MaterialVector;
 		typedef vector<I4ActorElementInfo*>	I4ActorInfoVector;
 		typedef vector<I4Mesh*>				I4MeshVector;
 
@@ -88,7 +83,6 @@ namespace i4graphics {
 		void					parseNodeInfoLocalTM(I4ActorElementInfo& out,I4XmlData& xml);
 		void					parseNodeInfoWorldTM(I4ActorElementInfo& out,I4XmlData& xml);
 
-		void					parseMaterials(I4ParsedMeshData& out, I4XmlData& xml);
 		void					parseMeshVertex(I4ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml);		
@@ -102,9 +96,32 @@ namespace i4graphics {
 		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);
 	private:
-		I4MaterialVector		vecMaterial;
 		I4ActorInfoVector		vecMeshInfo;
 		I4MeshVector			vecMesh;
+	};
+
+	//-------------------- I4ActorMaterialResource -----------------------
+
+	class I4ActorMaterialResource
+	{
+		typedef vector<I4Material*>			I4MaterialVector;
+
+	public:
+		I4ActorMaterialResource();
+		virtual ~I4ActorMaterialResource();
+
+		bool					loadMaterial(const char* fname);
+
+		void					destroy();
+
+		unsigned int			getMaterialCount() const			{ return vecMaterial.size(); }
+		I4Material*				getMaterial(unsigned int i) const	{ return vecMaterial[i]; }
+
+	private:
+		void					parseMaterials(I4XmlData& xml);
+
+	private:
+		I4MaterialVector		vecMaterial;
 	};
 
 	//-------------------- I4ActorAniResource -----------------------

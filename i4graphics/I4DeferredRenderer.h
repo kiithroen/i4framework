@@ -22,6 +22,7 @@ namespace i4graphics
 	class I4Actor;
 	class I4ActorMgr;
 	class I4Mesh;
+	class I4Material;
 
 	struct I4MeshRenderItem
 	{
@@ -30,6 +31,7 @@ namespace i4graphics
 		unsigned int		shaderMask;
 		unsigned int		boneCount;
 		I4Mesh*				mesh;
+		I4Material*			material;
 		I4Matrix4x4*		matrixPalette;
 
 		bool operator < (const I4MeshRenderItem& other) const;
@@ -71,7 +73,7 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachMeshInstance_G_PS
 	{
-		float specularIntensity;
+		float specularGlossiness;
 		float specularPower;
 
 	};

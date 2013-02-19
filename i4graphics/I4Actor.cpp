@@ -61,6 +61,20 @@ namespace i4graphics
 		return true;
 	}
 	
+	bool I4Actor::registerMaterial(I4ActorMaterialResource* mtrlResource)
+	{
+		vecSkinTM.resize(vecBone.size());
+
+		unsigned int mtrlCount = mtrlResource->getMaterialCount();
+		for (unsigned int i = 0; i < mtrlCount; ++i)
+		{
+			I4Material* material = mtrlResource->getMaterial(i);
+			vecMesh[i]->setMaterial(material);
+		} 
+
+		return true;
+	}
+
 	bool I4Actor::registerAni(I4ActorAniResource* aniResource, const char* aniName)
 	{
 		unsigned int keyFrameSetCount = aniResource->getKeyFrameSetCount();

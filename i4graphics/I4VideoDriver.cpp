@@ -4,6 +4,7 @@
 #include "I4ShaderProgram.h"
 #include "I4GeometryBuffer.h"
 #include "I4Texture.h"
+#include "I4TextureMgr.h"
 #include "I4RenderTarget.h"
 #include "I4MathUtil.h"
 #include "I4Log.h"
@@ -15,6 +16,7 @@ namespace i4graphics
 		, height(0)
 		, curRasterizerMode(I4RASTERIZER_MODE_INVALID)
 		, curBlendMode(I4BLEND_MODE_INVALID)
+		, textureMgr(nullptr)
 	{
 	}
 
@@ -28,7 +30,14 @@ namespace i4graphics
 		width	= _width;
 		height	= _height;
 
+		textureMgr = new I4TextureMgr;
+
 		return true;
+	}
+
+	void I4VideoDriver::finalize()
+	{
+		delete textureMgr;
 	}
 
 	bool I4VideoDriver::setupEnvironment()
@@ -141,7 +150,11 @@ namespace i4graphics
 
 	void I4VideoDriver::destroyVideoDriver()
 	{
-		delete videoDriver;
-		videoDriver = nullptr;
+		if (videoDriver)
+		{
+			videoDriver->finalize();
+			delete videoDriver;
+			videoDriver = nullptr;
+		}
 	}
 }

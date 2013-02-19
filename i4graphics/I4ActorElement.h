@@ -6,13 +6,13 @@
 namespace i4graphics {
 
 	struct I4KeyFrameSet;
-
+	class I4Material;
 	class I4ShaderMgr;
 	class I4Actor;
 	class I4ActorBoneResource;
 	class I4AnimationController;
 	class I4DeferredRenderer;
-
+	
 	//------------------------- I4ActorElement ---------------------
 
 	class I4ActorElement
@@ -32,6 +32,8 @@ namespace i4graphics {
 
 		int						getParentID() const			{ return elementInfo->parentID; }
 		const I4Matrix4x4&		getParentTM() const			{ return parentElement ? parentElement->getResultTM() : I4MATRIX4X4_IDENTITY; }
+
+		const char*				getName() const				{ return elementInfo->name.c_str(); }
 
 	protected:
 		I4Matrix4x4				resultTM;
@@ -69,8 +71,11 @@ namespace i4graphics {
 		I4ActorMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
 		virtual ~I4ActorMesh();
 	
+		void			setMaterial(I4Material*	mtrl)		{ material = mtrl;}
+
 	protected:
 		I4Mesh*			mesh;
+		I4Material*		material;
 	};
 
 

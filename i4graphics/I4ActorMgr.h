@@ -12,6 +12,7 @@ namespace i4graphics {
 	class I4ActorBoneResource;
 	class I4ActorMeshResource;
 	class I4ActorAniResource;
+	class I4ActorMaterialResource;
 	class I4Texture;
 	class I4Mesh;
 
@@ -20,6 +21,7 @@ namespace i4graphics {
 		typedef map<string, I4Actor*>					I4ActorMap;
 		typedef map<string, I4ActorBoneResource*>		I4ActorBoneResourceMap;
 		typedef map<string, I4ActorMeshResource*>		I4ActorMeshResourceMap;
+		typedef map<string, I4ActorMaterialResource*>	I4ActorMaterialResourceMap;
 		typedef map<string, I4ActorAniResource*>		I4ActorAniResourceMap;
 		
 	public:
@@ -30,15 +32,17 @@ namespace i4graphics {
 
 		bool			attachBone(I4Actor* actor, const char* fname);
 		bool			attachMesh(I4Actor* actor, const char* fname);
+		bool			attachMaterial(I4Actor* actor, const char* fname);
 		bool			attachAni(I4Actor* actor, const char* fname, const char* aniName);
 
 		void			destroy();
 
 	private:
-		I4ActorMap				mapActor;
-		I4ActorBoneResourceMap	mapActorBoneResource;
-		I4ActorMeshResourceMap	mapActorMeshResource;
-		I4ActorAniResourceMap	mapActorAniResource;
+		I4ActorMap					mapActor;
+		I4ActorBoneResourceMap		mapActorBoneResource;
+		I4ActorMeshResourceMap		mapActorMeshResource;
+		I4ActorMaterialResourceMap	mapActorMaterialResource;
+		I4ActorAniResourceMap		mapActorAniResource;
 	};
 
 }

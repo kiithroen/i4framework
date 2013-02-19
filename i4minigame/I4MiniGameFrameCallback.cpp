@@ -125,6 +125,11 @@ bool I4MiniGameFrameCallback::onStart()
 				return false;
 			}
 
+			if (!actorMgr->attachMaterial(actor[i], "elin.mtrl.xml"))
+			{
+				return false;
+			}
+
 			if (!actor[i]->initialize())
 			{
 				return false;
@@ -381,7 +386,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 	I4DirectionalLight directionalLight[] =
 	{
 		{ I4Vector3(1.0f, -0.3f, 1.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
-//		{ I4Vector3(1.0f, 0.0f, 1.0f), I4Vector3(0.3f, 0.0f, 0.0f) },
+		{ I4Vector3(1.0f, 0.0f, 1.0f), I4Vector3(0.7f, 0.3f, 0.2f) },
 	};
 
 	for (int i = 0; i < _countof(directionalLight); ++i)

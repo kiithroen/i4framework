@@ -16,7 +16,7 @@ cbuffer	CBEachMeshInstance_G_VS : register(b2)
 
 cbuffer	CBEachMeshInstance_G_VS : register(b3)
 {
-	float specularIntensity;
+	float specularGlossiness;
 	float specularPower;
 };
 
@@ -146,9 +146,9 @@ PS_OUTPUT PS( PS_INPUT	input	)
 	output.diffuse.a = 1;
 
 #ifdef MASK_TEX_SPECULAR
-	output.specular.xyz = texSpecularMap.Sample(samLinear, input.uv)*specularIntensity;
+	output.specular.xyz = texSpecularMap.Sample(samLinear, input.uv)*specularGlossiness;
 #else
-	output.specular.xyz = float3(specularIntensity, specularIntensity, specularIntensity);
+	output.specular.xyz = float3(specularGlossiness, specularGlossiness, specularGlossiness);
 #endif
 	output.specular.a = 1;
 

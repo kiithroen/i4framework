@@ -599,7 +599,7 @@ namespace i4core
 
 	
 	static const I4Matrix4x4 I4MATRIX4X4_IDENTITY = I4Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
-													0.0f, 1.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 1.0f, 0.0f,
-													0.0f, 0.0f, 0.0f, 1.0f);
+																0.0f, 1.0f, 0.0f, 0.0f,
+																0.0f, 0.0f, 1.0f, 0.0f,
+																0.0f, 0.0f, 0.0f, 1.0f);
 }

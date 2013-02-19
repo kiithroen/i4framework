@@ -113,9 +113,12 @@ namespace i4graphics
 
 	//------------------------- I4ActorMesh -------------------------
 
+	static I4Material defaultMaterial;
+
 	I4ActorMesh::I4ActorMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* _mesh)
 	: I4ActorElement(actor, info)
 	, mesh(_mesh)
+	, material(&defaultMaterial)
 	{
 	}
 
@@ -140,19 +143,20 @@ namespace i4graphics
 		const I4Matrix4x4 matWorld = resultTM*parentTM;
 		I4MeshRenderItem item;
 		item.shaderMask = I4SHADER_MASK_NONE;
+		item.material = material;
 		item.mesh = mesh;
 
-		if (mesh->diffuseMap != I4INVALID_HASHCODE)
+		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
 		}
 
-		if (mesh->specularMap != I4INVALID_HASHCODE)
+		if (item.material->specularMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
 		}
 
-		if (mesh->normalMap != I4INVALID_HASHCODE)
+		if (item.material->normalMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}
@@ -203,19 +207,20 @@ namespace i4graphics
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
 		I4MeshRenderItem item;
 		item.mesh = mesh;
+		item.material = material;
 		item.shaderMask = I4SHADER_MASK_SKINNING;
 
-		if (mesh->diffuseMap != I4INVALID_HASHCODE)
+		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
 		}
 
-		if (mesh->specularMap != I4INVALID_HASHCODE)
+		if (item.material->specularMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
 		}
 
-		if (mesh->normalMap != I4INVALID_HASHCODE)
+		if (item.material->normalMap != I4INVALID_HASHCODE)
 		{
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}

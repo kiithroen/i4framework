@@ -1,6 +1,7 @@
 #pragma once
 
 #include "I4Vector4.h"
+#include "I4Hash.h"
 using namespace i4core;
 
 namespace i4graphics {
@@ -22,6 +23,9 @@ namespace i4graphics {
 		I4Vector4		emissive;
 		float	  		power;
 		float			glossiness;
-	};
 
+		I4Hash			diffuseMap;
+		I4Hash			specularMap;
+		I4Hash			normalMap;
+	};
 }

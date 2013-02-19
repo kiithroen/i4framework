@@ -7,6 +7,7 @@
 #include "I4QuadMesh.h"
 #include "I4SphereMesh.h"
 #include "I4Mesh.h"
+#include "I4Material.h"
 #include "I4Camera.h"
 #include "I4Log.h"
 #include "I4Profile.h"
@@ -17,23 +18,23 @@ namespace i4graphics
 	
 	bool I4MeshRenderItem::operator < (const I4MeshRenderItem& other) const
 	{
-		if (shaderMask < other.shaderMask)							// 셰이더 우선으로 정렬하고
+		if (shaderMask < other.shaderMask)									// 셰이더 우선으로 정렬하고
 		{
 			return true;
 		}
 		else
 		{
-			if (shaderMask == other.shaderMask)						// 셰이더가 같으면
+			if (shaderMask == other.shaderMask)								// 셰이더가 같으면
 			{
-				if (mesh->diffuseMap < other.mesh->diffuseMap)		// 텍스쳐 우선으로 정렬한다. 다만 디퓨즈맵이 다르면 다른것도 다를 가능성이 높기에 디퓨즈맵만 비교한다
+				if (material->diffuseMap < other.material->diffuseMap)		// 텍스쳐 우선으로 정렬한다. 다만 디퓨즈맵이 다르면 다른것도 다를 가능성이 높기에 디퓨즈맵만 비교한다
 				{
 					return true;
 				}
 				else
 				{
-					if (mesh->diffuseMap == other.mesh->diffuseMap)	// 디퓨즈맵이 같으면 
+					if (material->diffuseMap == other.material->diffuseMap)	// 디퓨즈맵이 같으면 
 					{
-						if (mesh < other.mesh)						// 메시 우선으로 정렬한다.
+						if (mesh < other.mesh)								// 메시 우선으로 정렬한다.
 							return true;
 					}
 				}
@@ -277,7 +278,7 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 
-		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtSpecular, rtNormal, rtDepth };
+		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtSpecular, rtNormal, rtDepth, rtLight };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
@@ -307,15 +308,10 @@ namespace i4graphics
 		I4PROFILE_THISFUNC;
 
 		I4MeshRenderItem* prevItem = nullptr;
-		I4MeshRenderItem* curItem = nullptr;
-		I4Mesh* prevMesh = nullptr;
-		I4Mesh* curMesh = nullptr;
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_g.fx");
 
 		for (auto&itr : vecCulledMeshRenderItem)
 		{
-			curItem = &itr;			
-			
 			bool isChangedShader = false;
 			bool isChangedDiffuseMap = false;
 			bool isChangedSpecularMap = false;
@@ -332,125 +328,107 @@ namespace i4graphics
 			}
 			else
 			{
-				if (curItem->shaderMask != prevItem->shaderMask)
+				if (itr.shaderMask != prevItem->shaderMask)
 				{
 					isChangedShader = true;
 				}
-			}
+				
+				if (itr.material->diffuseMap != prevItem->material->diffuseMap)
+				{
+					isChangedDiffuseMap = true;
+				}
 
-			if (prevMesh == nullptr)
-			{
-				isChangedMesh = true;
-			}
-			else
-			{
-				if (prevMesh != itr.mesh)
+				if (itr.material->specularMap != prevItem->material->specularMap)
+				{
+					isChangedSpecularMap = true;
+				}
+
+				if (itr.material->specularMap != prevItem->material->specularMap)
+				{
+					isChangedNormalMap = true;
+				}
+
+				if (prevItem->mesh != itr.mesh)
 				{
 					isChangedMesh = true;					
 				}
+
 			}
-					
+		
 			if (isChangedMesh == true)
 			{
-				if (prevMesh != nullptr)
+				if (prevItem != nullptr)
 				{
-					prevMesh->unbind();
+					prevItem->mesh->unbind();
 				}
-
-				curMesh = itr.mesh;
-	
-				if (curMesh != nullptr)
-				{
-					curMesh->bind();
-				}
-
-				if (prevMesh != nullptr)
-				{
-					if (curMesh->diffuseMap != prevMesh->diffuseMap)
-					{
-						isChangedDiffuseMap = true;
-					}
-
-					if (curMesh->specularMap != prevMesh->specularMap)
-					{
-						isChangedSpecularMap = true;
-					}
-
-					if (curMesh->specularMap != prevMesh->specularMap)
-					{
-						isChangedNormalMap = true;
-					}
-				}
+					
+				itr.mesh->bind();
 			}
 
-			if (curMesh != nullptr)
+			if (isChangedShader)
 			{
-				if (isChangedShader)
+				if (itr.mesh->skined)
 				{
-					if (curMesh->skined)
-					{
-						shaderMgr->begin(curItem->shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
-					}
-					else
-					{
-						shaderMgr->begin(curItem->shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
-					}
+					shaderMgr->begin(itr.shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+				}
+				else
+				{
+					shaderMgr->begin(itr.shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
+				}
 					
-					shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+				shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 
-					cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
-					cbOnResize_G.getData()->farDistance = camera->getZFar();
-					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
+				cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
+				cbOnResize_G.getData()->farDistance = camera->getZFar();
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
 
-					cbEveryFrame_G.getData()->view = camera->getViewMatrix();
-					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
-				}
+				cbEveryFrame_G.getData()->view = camera->getViewMatrix();
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
+			}
 
-				if (isChangedDiffuseMap == true)
-				{
-					I4Texture* texture = I4TextureMgr::getTextureMgr().find(curMesh->diffuseMap);
-					shaderMgr->setTexture(0, texture);
-				}
+			if (isChangedDiffuseMap == true)
+			{
+				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->diffuseMap);
+				shaderMgr->setTexture(0, texture);
+			}
 						
-				if (isChangedSpecularMap == true)
-				{
-					I4Texture* texture = I4TextureMgr::getTextureMgr().find(curMesh->specularMap);
-					shaderMgr->setTexture(1, texture);
-				}
+			if (isChangedSpecularMap == true)
+			{
+				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->specularMap);
+				shaderMgr->setTexture(1, texture);
+			}
 
-				if (isChangedNormalMap == true)
-				{
-					I4Texture* texture = I4TextureMgr::getTextureMgr().find(curMesh->normalMap);
-					shaderMgr->setTexture(2, texture);
-				}
+			if (isChangedNormalMap == true)
+			{
+				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->normalMap);
+				shaderMgr->setTexture(2, texture);
+			}
 				
 
-				cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
+			cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
 
-				cbEachMeshInstance_G_PS.getData()->specularIntensity = 1.0f;
-				cbEachMeshInstance_G_PS.getData()->specularPower = 16.0f;
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
+			cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->glossiness;
+			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->power;
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
-				if (curItem->boneCount != 0)
+			if (itr.boneCount != 0)
+			{
+				for (unsigned int i = 0; i < itr.boneCount; ++i)
 				{
-					for (unsigned int i = 0; i < itr.boneCount; ++i)
-					{
-						cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
-					}
-					shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+					cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
 				}
-
-				curMesh->draw();
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
 			}
 
-			prevItem = curItem;
-			prevMesh = curMesh;
+			itr.mesh->draw();
+
+			prevItem = &itr;
 		}
 				
-		if (curMesh != nullptr)
+		if (prevItem != nullptr)
 		{
-			curMesh->unbind();
+			prevItem->mesh->unbind();
 		}
 
 		shaderMgr->end();
@@ -630,6 +608,7 @@ namespace i4graphics
 		
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);
+		shaderMgr->setRenderTarget(2, nullptr);
 
 		shaderMgr->end();
 	}

@@ -80,6 +80,30 @@ namespace i4graphics {
 		return actor->registerMesh(meshResource);
 	}
 
+	bool I4ActorMgr::attachMaterial(I4Actor* actor, const char* fname)
+	{
+		I4ActorMaterialResource* mtrlResource = nullptr;
+
+		auto itr = mapActorMaterialResource.find(fname);
+		if (itr == mapActorMaterialResource.end())
+		{
+			mtrlResource = new I4ActorMaterialResource;
+			if (mtrlResource->loadMaterial(fname) == false)
+			{
+				delete mtrlResource;
+				return false;
+			}
+
+			mapActorMaterialResource.insert(make_pair(fname, mtrlResource));
+		}
+		else
+		{
+			mtrlResource = itr->second;
+		}
+
+		return actor->registerMaterial(mtrlResource);
+	}
+
 	bool I4ActorMgr::attachAni(I4Actor* actor, const char* fname, const char* aniName)
 	{
 		I4ActorAniResource* aniResource = nullptr;
@@ -117,6 +141,12 @@ namespace i4graphics {
 			delete itr.second;
 		}
 		mapActorBoneResource.clear();
+
+		for (auto&itr : mapActorMaterialResource)
+		{			
+			delete itr.second;
+		}
+		mapActorMaterialResource.clear();
 
 		for (auto&itr : mapActorMeshResource)
 		{			
