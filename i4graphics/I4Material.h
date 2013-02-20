@@ -9,7 +9,7 @@ namespace i4graphics {
 	struct I4Material
 	{
 		I4Material()
-		: ambient(0.2f)
+		: ambient(0.58823f)
 		, specularGlossiness(1.0f)
 		, specularPower(32.0f)
 		, twoSide(false)

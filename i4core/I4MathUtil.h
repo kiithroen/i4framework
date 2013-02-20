@@ -4,17 +4,17 @@
 
 namespace i4core
 {
-	static const float	EPSILON		= 0.001f;
-	static const float	PI			= 3.141592654f;
-	static const float	DEGTORAD	= PI / 180.0f;
-	static const float	RADTODEG	= 180.0f / PI;
+	static const float	I4EPSILON		= 0.001f;
+	static const float	I4PI			= 3.141592654f;
+	static const float	I4DEGTORAD		= I4PI/180.0f;
+	static const float	I4RADTODEG		= 180.0f/I4PI;
 
 	class I4MathUtil
 	{
 	public:
 		static bool isEpsilonZero(float v)
 		{
-			return (v > -EPSILON && v < EPSILON) ? true : false;
+			return (v > -I4EPSILON && v < I4EPSILON) ? true : false;
 		}
 
 		static bool isEpsilonEqual(float a, float b)
@@ -24,12 +24,12 @@ namespace i4core
 
 		static float degreeToRadian(float deg)
 		{
-			return DEGTORAD*deg;
+			return I4DEGTORAD*deg;
 		}
 
 		static float radianToDegree(float rad)
 		{
-			return RADTODEG*rad;
+			return I4RADTODEG*rad;
 		}
 
 		template <typename T>

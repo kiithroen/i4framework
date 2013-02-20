@@ -233,14 +233,14 @@ namespace i4core
 			if (test > 0.499)
 			{
 				yaw = 2.0f * atan2f(x,w);
-				roll = PI/2;
+				roll = I4PI/2;
 				pitch = 0.0f;
 				return;
 			}
 			if (test < -0.499)
 			{
 				yaw = -2.0f * atan2f(x,w);
-				roll = -PI/2;
+				roll = -I4PI/2;
 				pitch = 0.0f;
 				return;
 			}
@@ -336,8 +336,8 @@ namespace i4core
 				b.z = -a.w;
 				b.w = a.z;
 
-				scale = sinf(PI * (0.5f - t));
-				invscale = sinf(PI * t);
+				scale = sinf(I4PI * (0.5f - t));
+				invscale = sinf(I4PI * t);
 			}
 
 			out = (a*scale) + (b*invscale);

@@ -164,7 +164,7 @@ namespace i4graphics
 		}
 
 		sphereMesh = new I4SphereMesh;
-		if (sphereMesh->create() == false)
+		if (sphereMesh->create(1.0f, 16, 16) == false)
 		{
 			I4LOG_ERROR << L"sphere mesh create failed.";
 			return false;
