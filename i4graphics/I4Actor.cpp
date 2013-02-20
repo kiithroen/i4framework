@@ -63,8 +63,6 @@ namespace i4graphics
 	
 	bool I4Actor::registerMaterial(I4ActorMaterialResource* mtrlResource)
 	{
-		vecSkinTM.resize(vecBone.size());
-
 		unsigned int mtrlCount = mtrlResource->getMaterialCount();
 		for (unsigned int i = 0; i < mtrlCount; ++i)
 		{

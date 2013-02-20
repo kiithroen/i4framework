@@ -1,0 +1,39 @@
+<material>
+	<version>100</version>
+	<node name="gud_hammer_4" parent_name="undefined">		
+		<ambient>072549</ambient>
+		<specularGlossiness>1</specularGlossiness>
+		<specularPower>64</specularPower>
+		<diffuseMap>gud_hammer_4.dds</diffuseMap>
+	</node>
+	<node name="gud_armor_3" parent_name="undefined">		
+		<ambient>0.25098</ambient>
+		<specularGlossiness>1</specularGlossiness>
+		<specularPower>16</specularPower>
+		<diffuseMap>gud_armor_3.dds</diffuseMap>
+	</node>
+	<node name="gud_armor_2" parent_name="undefined">
+		<ambient>0.25098</ambient>
+		<specularGlossiness>1</specularGlossiness>
+		<specularPower>16</specularPower>
+		<diffuseMap>gud_armor_2.dds</diffuseMap>
+	</node>
+	<node name="gud_up_1" parent_name="undefined">
+		<ambient>0.25098</ambient>
+		<specularGlossiness>0.1</specularGlossiness>
+		<specularPower>8</specularPower>
+		<diffuseMap>gud_down_1.dds</diffuseMap>
+	</node>
+	<node name="gud_head_0" parent_name="undefined">
+		<ambient>0.25098</ambient>
+		<specularGlossiness>0.1</specularGlossiness>
+		<specularPower>8</specularPower>
+		<diffuseMap>gud_up_0.dds</diffuseMap>
+	</node>
+	<node name="gud_manto_5" parent_name="undefined">
+		<ambient>0.25098</ambient>
+		<specularGlossiness>0.1</specularGlossiness>
+		<specularPower>1</specularPower>
+		<diffuseMap>gud_etc1_5.dds</diffuseMap>
+	</node>
+</material>

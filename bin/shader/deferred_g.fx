@@ -14,7 +14,7 @@ cbuffer	CBEachMeshInstance_G_VS : register(b2)
 	matrix world;
 }
 
-cbuffer	CBEachMeshInstance_G_VS : register(b3)
+cbuffer	CBEachMeshInstance_G_PS : register(b3)
 {
 	float ambient;
 	float specularGlossiness;

@@ -59,7 +59,7 @@ bool I4MiniGameFrameCallback::onStart()
 	actorMgr = new I4ActorMgr;
 	
 	floor = actorMgr->createActor("floor");
-	if (!actorMgr->attachMesh(floor, "floor.mesh.xml"))
+	if (!actorMgr->attachMesh(floor, "testactor/floor.mesh.xml"))
 	{
 		return false;
 	}
@@ -72,17 +72,22 @@ bool I4MiniGameFrameCallback::onStart()
 		actor[i] = actorMgr->createActor("actor_" + string(buf));
 		if (i%3 == 0)
 		{
-			if (!actorMgr->attachBone(actor[i], "cyberdemon.bone.xml"))
+			if (!actorMgr->attachBone(actor[i], "testactor/cyberdemon.bone.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMesh(actor[i], "cyberdemon.mesh.xml"))
+			if (!actorMgr->attachMesh(actor[i], "testactor/cyberdemon.mesh.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachAni(actor[i], "cyberdemon.ani.xml", "idle"))
+			if (!actorMgr->attachMaterial(actor[i], "testactor/cyberdemon.mtrl.xml"))
+			{
+				return false;
+			}
+
+			if (!actorMgr->attachAni(actor[i], "testactor/cyberdemon.ani.xml", "idle"))
 			{
 				return false;
 			}
@@ -96,17 +101,22 @@ bool I4MiniGameFrameCallback::onStart()
 		}
 		else if (i%3 == 1)
 		{
-			if (!actorMgr->attachBone(actor[i], "guard.bone.xml"))
+			if (!actorMgr->attachBone(actor[i], "testactor/guard.bone.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMesh(actor[i], "guard.mesh.xml"))
+			if (!actorMgr->attachMesh(actor[i], "testactor/guard.mesh.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachAni(actor[i], "guard_idle.ani.xml", "idle"))
+			if (!actorMgr->attachMaterial(actor[i], "testactor/guard.mtrl.xml"))
+			{
+				return false;
+			}
+
+			if (!actorMgr->attachAni(actor[i], "testactor/guard_idle.ani.xml", "idle"))
 			{
 				return false;
 			}
@@ -120,12 +130,12 @@ bool I4MiniGameFrameCallback::onStart()
 		}
 		else
 		{
-			if (!actorMgr->attachMesh(actor[i], "elin.mesh.xml"))
+			if (!actorMgr->attachMesh(actor[i], "testactor/elin.mesh.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMaterial(actor[i], "elin.mtrl.xml"))
+			if (!actorMgr->attachMaterial(actor[i], "testactor/elin.mtrl.xml"))
 			{
 				return false;
 			}
