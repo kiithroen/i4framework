@@ -290,9 +290,9 @@ namespace i4graphics
 		D3D11_SAMPLER_DESC sampDescPoint;
 		ZeroMemory( &sampDescPoint, sizeof(sampDescPoint) );
 		sampDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
 		sampDescPoint.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampDescPoint.MinLOD = 0;
 		sampDescPoint.MaxLOD = D3D11_FLOAT32_MAX;

@@ -32,6 +32,7 @@ namespace i4core
 		const I4Quaternion&	getRotation() const									{ return rotation; }
 
 		const I4Vector3&	getEye() const										{ return eye; }
+		const I4Vector3&	getLookAt() const									{ return lookAt; }
 		const I4Vector3&	getRight() const									{ return right; }
 		const I4Vector3&	getUp() const										{ return up; }
 		const I4Vector3&	getDirection() const								{ return direction; }
@@ -51,6 +52,8 @@ namespace i4core
 		float				getZNear() const									{ return zNear; }
 		float				getZFar() const										{ return zFar; }
 
+		void				extractCorners(I4Vector3* corners) const;
+
 	private:
 		void				updateVariable();
 
@@ -64,6 +67,7 @@ namespace i4core
 
 		I4Quaternion		rotation;
 		I4Vector3			eye;
+		I4Vector3			lookAt;
 		I4Vector3			right;
 		I4Vector3			direction;
 		I4Vector3			up;

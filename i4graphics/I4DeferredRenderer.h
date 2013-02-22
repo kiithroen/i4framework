@@ -4,6 +4,7 @@
 #include "I4AABB.h"
 #include "I4Sphere.h"
 #include "I4GeometryBuffer.h"
+#include "I4Camera.h"
 
 namespace i4core
 {	
@@ -65,13 +66,13 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
-	struct CBEachMeshInstance_G_VS
+	struct CBEachAllMesh_G_VS
 	{
 		I4Matrix4x4 world;
 	};
 
 	__declspec(align(16))
-	struct CBEachMeshInstance_G_PS
+	struct CBEachAllMesh_G_PS
 	{
 		float ambient;
 		float specularGlossiness;
@@ -85,6 +86,12 @@ namespace i4graphics
 	};
 
 	__declspec(align(16))
+	struct CBEachAllMesh_S_VS
+	{
+		I4Matrix4x4 worldViewProj;
+	};
+
+	__declspec(align(16))
 	struct CBOnResize_L_directional
 	{
 		I4Vector3 farTopRight;
@@ -93,6 +100,7 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachLight_L_directional
 	{
+		I4Matrix4x4 viewInvLightViewProjection;
 		I4Vector3 lightViewDirection;
 		float		padding;	// 4바이트 얼라인을 안하니 셰이더에 넘어간 데이타가 꼬이는 현상이 생겼다.
 		I4Vector3 lightColor;
@@ -241,10 +249,12 @@ namespace i4graphics
 
 		I4CBHolder<CBOnResize_G>				cbOnResize_G;
 		I4CBHolder<CBEveryFrame_G>				cbEveryFrame_G;
-		I4CBHolder<CBEachMeshInstance_G_VS>		cbEachMeshInstance_G_VS;
-		I4CBHolder<CBEachMeshInstance_G_PS>		cbEachMeshInstance_G_PS;
+		I4CBHolder<CBEachAllMesh_G_VS>			cbEachMeshInstance_G_VS;
+		I4CBHolder<CBEachAllMesh_G_PS>			cbEachMeshInstance_G_PS;
 		I4CBHolder<CBEachSkinedMesh_G>			cbEachSkinedMesh_G;
 
+		I4CBHolder<CBEachAllMesh_S_VS>			cbEachAllMesh_S_VS;
+		
 		I4CBHolder<CBOnResize_L_directional>	cbOnResize_L_directional;
 		I4CBHolder<CBEachLight_L_directional>	cbEachLight_L_directional;
 
@@ -257,6 +267,8 @@ namespace i4graphics
 		bool						wireMode;
 		int							cascadeSize;
 		int							cascadeLevel;
+
+		I4Camera lightCam;
 	};
 
 }

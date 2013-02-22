@@ -9,12 +9,12 @@ cbuffer	CBEveryFrame_G : register(b1)
 	matrix view;
 };
 
-cbuffer	CBEachMeshInstance_G_VS : register(b2)
+cbuffer	CBEachAllMesh_G_VS : register(b2)
 {
 	matrix world;
 }
 
-cbuffer	CBEachMeshInstance_G_PS : register(b3)
+cbuffer	CBEachAllMesh_G_PS : register(b3)
 {
 	float ambient;
 	float specularGlossiness;

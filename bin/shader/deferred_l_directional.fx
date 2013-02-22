@@ -1,6 +1,7 @@
 Texture2D texRTDiffuse : register(t0);
 Texture2D texRTNormal : register(t1);
 Texture2D texRTDepth : register(t2);
+Texture2D texRTShadow : register(t3);
 
 SamplerState samLinear : register(s0);
 
@@ -13,6 +14,7 @@ cbuffer CBOnResize_L_directional : register(b0)
 
 cbuffer CBEachLight_L_directional : register(b1)
 {
+	matrix viewInvLightViewProjection;
 	float3 lightViewDirection;
 	float padding;
 	float3 lightColor;
@@ -66,9 +68,23 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float NdL = dot(normal, lightVector);
 	float3 diffuseLight = saturate(pow(NdL*0.5 + 0.5, 2.0))*lightColor.rgb;
 
-	float3 dirToCamera = -normalize(p);
-	float3 reflectVector = normalize(reflect(-lightVector, normal));
-	float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	// ------ shadow -------
+	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection);
+	float depthInLight = posInLight.z/posInLight.w;
 
-	return float4(diffuseLight.rgb, specularLight);
+	float2 shadowUV = 0.5f*(float2(posInLight.x, -posInLight.y)/posInLight.w + 1.0f);
+	float depthInShadow = texRTShadow.Sample(samPoint, shadowUV).r;
+ 	
+	if (depthInLight > depthInShadow + 0.002f)
+	{
+		return float4(0.15f*diffuseLight.rgb, 0);
+	}
+	else
+	{
+		float3 dirToCamera = -normalize(p);
+		float3 reflectVector = normalize(reflect(-lightVector, normal));
+		float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+
+		return float4(diffuseLight.rgb, specularLight);
+	}
 }

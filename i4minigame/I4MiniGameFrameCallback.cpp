@@ -36,8 +36,8 @@ bool I4MiniGameFrameCallback::onStart()
 	}
 	
 	camera = new I4Camera;
-	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 1.0f, 1000.0f);
-	camera->setLookAt(I4Vector3(0.0f, 70.0f, -100.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
+	camera->setLookAt(I4Vector3(0.0f, 1.8f, 1.0f), I4Vector3(0.0f, 1.8f, -1.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 	
 	float camYawRad;
 	float camPitchRad;
@@ -63,7 +63,7 @@ bool I4MiniGameFrameCallback::onStart()
 	{
 		return false;
 	}
-;
+
 	for (int i = 0; i < 100; ++i)
 	{
 		char buf[128] = {0, };
@@ -271,7 +271,7 @@ void I4MiniGameFrameCallback::updateCamera(float deltaTime)
 {
 	I4Framework* framework = I4Framework::getFramework();
 
-	float camMoveSpeed = 100.0f*deltaTime;
+	float camMoveSpeed = 6.0f*deltaTime;
 	I4Vector3 newCamEye = camera->getEye();
 	I4Quaternion newCamRotation = camera->getRotation();
 
@@ -344,7 +344,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	static float angle = 0;
 
-	angle += 15*deltaTime;
+	//angle += 15*deltaTime;
 
 	if (angle > 360)
 	{
@@ -362,7 +362,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 		for (int j = 0; j < 10; ++j)
 		{
 			int idx = i*10 + j;
-			matT.makeTranslation(-100.0f + i*20.0f, 0.0f, -100.0f + j*20.0f);
+			matT.makeTranslation(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f);
 
 			if (i%2 == 0)
 			{
@@ -376,30 +376,33 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			if (idx%3 == 0)	// cyberdemon
 			{
 				I4Matrix4x4 matS;
-				matS.makeScale(0.12f, 0.12f, 0.12f);
+				matS.makeScale(0.006f, 0.006f, 0.006f);
 				actor[idx]->render(renderer, matS*matR*matT);
 			}
 			else if (idx%3 == 1)	// guard
 			{				
 				I4Matrix4x4 matS;
-				matS.makeScale(0.2f, 0.2f, 0.2f);
+				matS.makeScale(0.01f, 0.01f, 0.01f);
 				actor[idx]->render(renderer, matS*matT);
 			}
 			else	// elin
 			{
 				I4Matrix4x4 matS;
-				matS.makeScale(0.8f, 0.8f, 0.8f);
+				matS.makeScale(0.05f, 0.05f, 0.05f);
 				actor[idx]->render(renderer, matS*matR*matT);
 			}
 		}
 	}
 
 	floor->animate(deltaTime);
-	floor->render(renderer, I4MATRIX4X4_IDENTITY);
+
+	I4Matrix4x4 matS;
+	matS.makeScale(0.2f, 0.2f, 0.2f);
+	floor->render(renderer, matS);
 
 	I4DirectionalLight directionalLight[] =
 	{
-		{ I4Vector3(1.0f, -0.3f, 1.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
+		{ I4Vector3(1.0f, -1.0f, 1.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
 		{ I4Vector3(1.0f, 3.0f, -1.0f), I4Vector3(0.7f, 0.3f, 0.2f) },
 	};
 
@@ -446,10 +449,10 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			}
 
 			int idx = i*10 + j;
-			pointLight[idx].position.x = -100.0f + i*20.0f + sign*45*cos(I4MathUtil::degreeToRadian(degree));
-			pointLight[idx].position.y = 10.0f;
-			pointLight[idx].position.z = -100.0f + j*20.0f + sign*15*sin(I4MathUtil::degreeToRadian(degree));
-			pointLight[idx].radius = 30.0f;
+			pointLight[idx].position.x = -20.0f + i*2.0f + sign*1.5f*cos(I4MathUtil::degreeToRadian(degree));
+			pointLight[idx].position.y = 1.0f;
+			pointLight[idx].position.z = -20.0f + j*4.0f + sign*1.5f*sin(I4MathUtil::degreeToRadian(degree));
+			pointLight[idx].radius = 3.0f;
 			pointLight[idx].color = lightPointColor[idx%13];
 
 			renderer->commitToScene(&pointLight[idx]);

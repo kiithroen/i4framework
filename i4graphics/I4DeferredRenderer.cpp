@@ -194,6 +194,9 @@ namespace i4graphics
 		if (cbEachSkinedMesh_G.create() == false)
 			return false;
 
+		if (cbEachAllMesh_S_VS.create() == false)
+			return false;
+
 		if (cbOnResize_L_directional.create() == false)
 			return false;
 
@@ -256,7 +259,12 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 		clearAllRenderTarget();
-		
+
+		I4RenderTarget*	renderTargetG[] = { rtShadow };
+		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, rtShadow);
+		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
+		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
+
 		renderStageGeometry(camera);
 		renderStageShadow(camera);
 		renderStageLight(camera);
@@ -477,18 +485,29 @@ namespace i4graphics
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, rtShadow);
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
-
-		I4Camera lightCam;
-		lightCam.setLookAt(vecSceneDirectionalLight[0].direction*-200.0f, vecSceneDirectionalLight[0].direction*-199.0f, I4Vector3(0, 1, 0));
 		
-		I4AABB aabbScene = vecSceneMeshRenderItem[0].worldAABB;
+		lightCam.setLookAt(vecSceneDirectionalLight[0].direction*-2.0f, vecSceneDirectionalLight[0].direction*-1.9f, I4Vector3(0, 1, 0));
+		
+		I4Camera temp;
+		temp.setLookAt(camera->getEye(), camera->getLookAt(), camera->getUp());
+		temp.setPerspectiveFov(camera->getFovY(), camera->getAspect(), 0.1f, 50);
 
-		for (unsigned int i = 1; i < vecSceneMeshRenderItem.size(); ++i)
+		I4Vector3 corners[8];
+		temp.extractCorners(corners);
+
+		I4AABB aabbScene;
+		aabbScene.init(corners[0]);
+
+		for (int i = 1; i < 8; ++i)
 		{
-			aabbScene.merge(vecSceneMeshRenderItem[i].worldAABB);
+			aabbScene.merge(corners[i]);
 		}
+		I4Matrix4x4 matInvView;
+		temp.getViewMatrix().extractInverse(matInvView);
 
-		I4AABB aabbSceneInLightSpace = aabbScene.transform(lightCam.getViewMatrix());
+		I4AABB aabb = aabbScene.transform(matInvView);
+
+		I4AABB aabbSceneInLightSpace = aabb.transform(lightCam.getViewMatrix());
 
 		I4Vector3 aabbPointInLightSpace[8];
 		aabbSceneInLightSpace.extractEdges(aabbPointInLightSpace);
@@ -508,7 +527,7 @@ namespace i4graphics
 			videoDriver->setViewport(i*cascadeSize, 0, cascadeSize, cascadeSize);
 
 			cullAndSortMeshRenderItem(&lightCam);
-			renderMeshGeometryRenderItem(&lightCam);		
+			renderMeshShadowRenderItem(&lightCam);		
 		}
 
 		videoDriver->resetViewport();
@@ -525,13 +544,11 @@ namespace i4graphics
 		{
 			bool isChangedShader = false;
 			bool isChangedMesh = false;
-			bool isChangedTwoSide = false;
 
 			if (prevItem == nullptr)
 			{
 				isChangedShader = true;
 				isChangedMesh = true;
-				isChangedTwoSide = true;
 			}
 			else
 			{
@@ -539,12 +556,7 @@ namespace i4graphics
 				{
 					isChangedShader = true;
 				}
-
-				if (itr.material->twoSide != prevItem->material->twoSide)
-				{
-					isChangedTwoSide = true;
-				}
-
+				
 				if (prevItem->mesh != itr.mesh)
 				{
 					isChangedMesh = true;					
@@ -555,21 +567,12 @@ namespace i4graphics
 			{
 				if (itr.mesh->skined)
 				{
-					shaderMgr->begin(itr.shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+					shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
 				}
 				else
 				{
-					shaderMgr->begin(itr.shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
+					shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
 				}
-					
-				shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
-
-				cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
-				cbOnResize_G.getData()->farDistance = camera->getZFar();
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
-
-				cbEveryFrame_G.getData()->view = camera->getViewMatrix();
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
 		
 			if (isChangedMesh)
@@ -581,31 +584,10 @@ namespace i4graphics
 					
 				itr.mesh->bind();
 			}
-
-			if (isChangedTwoSide)
-			{
-				int mode = I4RASTERIZER_MODE_SOLID_FRONT;
-				if (itr.material->twoSide)
-				{
-					mode = I4RASTERIZER_MODE_SOLID_NONE;
-				}
-				
-				if (wireMode)
-				{
-					mode += I4RASTERIZER_MODE_WIRE_NONE;
-				}
-
-				videoDriver->setRasterizerMode((I4RasterizerMode)mode);
-			}
-
-			cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
-
-			cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
-			cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->specularGlossiness;
-			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
-
+	
+			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera->getViewProjectionMatrix(); 
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
+			/*
 			if (itr.boneCount != 0)
 			{
 				for (unsigned int i = 0; i < itr.boneCount; ++i)
@@ -614,7 +596,7 @@ namespace i4graphics
 				}
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
 			}
-
+			*/
 			itr.mesh->draw();
 
 			prevItem = &itr;
@@ -668,6 +650,7 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(0, rtDiffuse);
 		shaderMgr->setRenderTarget(1, rtNormal);
 		shaderMgr->setRenderTarget(2, rtDepth);
+		shaderMgr->setRenderTarget(3, rtShadow);
 
 		cbOnResize_L_directional.getData()->farTopRight = camera->getFarTopRight();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
@@ -680,6 +663,10 @@ namespace i4graphics
 
 			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
 
+			I4Matrix4x4 matViewInv;
+			camera->getViewMatrix().extractInverse(matViewInv);
+
+			cbEachLight_L_directional.getData()->viewInvLightViewProjection = matViewInv*lightCam.getViewProjectionMatrix();
 			cbEachLight_L_directional.getData()->lightViewDirection = lightViewDir;
 			cbEachLight_L_directional.getData()->lightColor = light.color;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbEachLight_L_directional.getBuffer(), cbEachLight_L_directional.getData());
@@ -691,6 +678,7 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);
 		shaderMgr->setRenderTarget(2, nullptr);
+		shaderMgr->setRenderTarget(3, nullptr);
 
 		shaderMgr->end();
 	}

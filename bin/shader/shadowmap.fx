@@ -1,7 +1,7 @@
 
-cbuffer cbPerObject : register( b0 )
+cbuffer cbPerObject : register(b0)
 {
-    matrix        g_mWorldViewProjection    : packoffset( c0 );
+    matrix        g_mWorldViewProjection ;
 };
 
 struct VS_INPUT
