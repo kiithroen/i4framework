@@ -93,6 +93,7 @@ namespace i4graphics
 		ZeroMemory(&dsvDesc, sizeof(dsvDesc));
 		dsvDesc.Format = (DXGI_FORMAT)dsvFormat;
 		dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Texture2D.MipSlice = 0;
 		if (FAILED(d3dDevice->CreateDepthStencilView(renderTargetTex, &dsvDesc, &depthStencilView)))
 		{
 			I4LOG_WARN << L"render target view create failed.";
@@ -103,7 +104,9 @@ namespace i4graphics
 		ZeroMemory(&srvDesc, sizeof(srvDesc));
 		srvDesc.Format = (DXGI_FORMAT)srvFormat;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
 		if (FAILED(d3dDevice->CreateShaderResourceView(renderTargetTex, &srvDesc, &shaderResourceView)))
 		{
 			I4LOG_WARN << L"shader resource view create failed.";

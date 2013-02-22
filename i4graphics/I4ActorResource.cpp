@@ -258,7 +258,6 @@ namespace i4graphics
 			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
-				out.localAABB.init(out.vecPosition[0]);
 				do
 				{
 					const char* val = nullptr;
@@ -266,7 +265,15 @@ namespace i4graphics
 
 					sscanf_s(val, "%f %f %f", &out.vecPosition[i].x, &out.vecPosition[i].y, &out.vecPosition[i].z);
 
-					out.localAABB.merge(out.vecPosition[i]);
+					
+					if (i == 0)
+					{
+						out.localAABB.init(out.vecPosition[i]);
+					}
+					else
+					{
+						out.localAABB.merge(out.vecPosition[i]);
+					}
 
 					++i;
 

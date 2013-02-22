@@ -15,6 +15,7 @@ namespace i4core
 		~I4Camera();
 		
 		void				setPerspectiveFov(float fovY, float aspect, float zn, float zf);
+		void				setOrthoOffCenter(float left, float right, float bottom, float top, float znearPlane, float zfarPlane);
 		void				setLookAt(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up);
 		void				setTransform(const I4Quaternion& rotation, const I4Vector3& eye);
 

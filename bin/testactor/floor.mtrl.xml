@@ -1,0 +1,7 @@
+<material>
+	<version>1.0.0</version>
+	<node name="Box001" parent_name="undefined">
+	</node>
+	<node name="Box002" parent_name="undefined">
+	</node>
+</material>

@@ -391,6 +391,18 @@ namespace i4core
 			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _34 = _41 = _42 = 0.0f;
 		}
 
+		void makeOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
+		{
+			_11 = 2/(right - left);
+			_22 = 2/(top - bottom);
+			_33 = 1/(zfarPlane-znearPlane);
+			_41 = (left + right)/(left - right);
+			_42 = (top + bottom)/(bottom - top);
+			_43 = znearPlane/(znearPlane - zfarPlane);
+			_44 = 1.0f;
+			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _34 = 0.0f;
+		}
+
 		void makePerspectiveFovLH(float fovY, float aspect, float zNear, float zFar)
 		{
 			float yScale = 1.0f/tan(fovY*0.5f);

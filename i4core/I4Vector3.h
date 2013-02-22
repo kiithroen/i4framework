@@ -11,6 +11,11 @@ namespace i4core
 		{
 		}
 
+		I4Vector3(float v)
+		: x(v), y(v), z(v)
+		{
+		}
+
 		I4Vector3(float nx, float ny, float nz)
 		: x(nx), y(ny), z(nz)
 		{
@@ -181,4 +186,11 @@ namespace i4core
 	{
 		return I4Vector3(rhs.x*val, rhs.y*val, rhs.z*val);
 	}
+
+	const I4Vector3 I4VECTOR3_AXISX = I4Vector3(1, 0, 0);
+	const I4Vector3 I4VECTOR3_AXISY = I4Vector3(0, 1, 0);
+	const I4Vector3 I4VECTOR3_AXISZ = I4Vector3(0, 0, 1);
+	const I4Vector3 I4VECTOR3_HALF = I4Vector3(0.5f, 0.5f, 0.5f);
 }
+
+

@@ -49,6 +49,28 @@ namespace i4core
 		frustum.make(viewProjectionMatrix);
 	}
 	
+	void I4Camera::setOrthoOffCenter(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
+	{
+		zNear = znearPlane;
+		zFar = zfarPlane;
+
+		projectionMatrix.makeOrthoOffCenterLH(left, right, bottom, top, znearPlane, zfarPlane);
+		
+		nearTopLeft = I4Vector3(left, top, znearPlane); 
+		nearTopRight = I4Vector3(right, top, znearPlane);
+		nearDownLeft = I4Vector3(left, bottom, znearPlane);
+		nearDownRight = I4Vector3(right, bottom, znearPlane);
+		
+		farTopLeft = I4Vector3(left, top, zfarPlane);
+		farTopRight = I4Vector3(right, top, zfarPlane);
+		farDownLeft = I4Vector3(left, bottom, zfarPlane);
+		farDownRight = I4Vector3(right, bottom, zfarPlane);
+
+		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+
+		frustum.make(viewProjectionMatrix);
+	}
+
 	void I4Camera::setLookAt(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
 	{
 		eye = _eye;

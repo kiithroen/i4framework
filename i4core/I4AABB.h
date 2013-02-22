@@ -94,7 +94,7 @@ namespace i4core
 		// 		|/        | /
 		// 		0---------3/ 
 
-		void I4AABB::extractEdges(I4Vector3* edges) const
+		void extractEdges(I4Vector3* edges) const
 		{
 			edges[0].set(minEdge.x, minEdge.y, minEdge.z);
 			edges[1].set(minEdge.x, maxEdge.y, minEdge.z);
@@ -106,7 +106,7 @@ namespace i4core
 			edges[7].set(maxEdge.x, minEdge.y, maxEdge.z);
 		}
 
-		void I4AABB::extractEdge(I4Vector3& edge, unsigned int i) const
+		void extractEdge(I4Vector3& edge, unsigned int i) const
 		{
 			switch (i)
 			{
@@ -138,6 +138,16 @@ namespace i4core
 				assert(false);
 				break;
 			}
+		}
+
+		I4Vector3 getCenter()
+		{
+			return (minEdge + maxEdge)*I4VECTOR3_HALF;
+		}
+
+		I4Vector3 getExtent()
+		{
+			return (maxEdge - minEdge)*I4VECTOR3_HALF;
 		}
 
 	public:

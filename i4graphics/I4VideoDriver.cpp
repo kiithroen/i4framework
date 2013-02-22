@@ -73,11 +73,19 @@ namespace i4graphics
 	{
 	}
 
+	void I4VideoDriver::resetViewport()
+	{
+	}
+
 	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
 	{
 	}
 
 	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil)
+	{
+	}
+
+	void I4VideoDriver::setRenderTargetDepthStencil(I4RenderTarget* depthStencil)
 	{
 	}
 

@@ -206,7 +206,6 @@ namespace i4graphics
 			return false;
 
 		immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
-		setViewport(0, 0, width, height);
 
 		D3D11_FILL_MODE fill[I4RASTERIZER_MODE_NUM] = 
 		{ 
@@ -314,6 +313,7 @@ namespace i4graphics
 		if (FAILED(hr))
 			return false;
 
+		resetViewport();
 		setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);		
 		setBlendMode(I4BLEND_MODE_NONE);
 
@@ -357,6 +357,11 @@ namespace i4graphics
 		immediateContext->RSSetViewports(1, &vp);
 	}
 
+	void I4VideoDriverD3D11::resetViewport()
+	{
+		setViewport(0, 0, width, height);
+	}
+
 	void I4VideoDriverD3D11::clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a)
 	{
 		float clearColor[4] = { r, g, b, a };
@@ -395,6 +400,12 @@ namespace i4graphics
 		{
 			immediateContext->OMSetRenderTargets(num, arrRTViews, nullptr);
 		}
+	}
+
+	void I4VideoDriverD3D11::setRenderTargetDepthStencil(I4RenderTarget* depthStencil)
+	{
+		ID3D11RenderTargetView* nullView = nullptr;
+		immediateContext->OMSetRenderTargets(1, &nullView, static_cast<I4RenderTargetD3D11*>(depthStencil)->getDepthStencilView());
 	}
 
 	void I4VideoDriverD3D11::resetRenderTarget()
