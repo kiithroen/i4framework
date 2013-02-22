@@ -190,7 +190,10 @@ namespace i4core
 	const I4Vector3 I4VECTOR3_AXISX = I4Vector3(1, 0, 0);
 	const I4Vector3 I4VECTOR3_AXISY = I4Vector3(0, 1, 0);
 	const I4Vector3 I4VECTOR3_AXISZ = I4Vector3(0, 0, 1);
+
+	const I4Vector3 I4VECTOR3_ZERO = I4Vector3(0, 0, 0);
 	const I4Vector3 I4VECTOR3_HALF = I4Vector3(0.5f, 0.5f, 0.5f);
+	const I4Vector3 I4VECTOR3_ONE = I4Vector3(1, 1, 1);
 }
 
 

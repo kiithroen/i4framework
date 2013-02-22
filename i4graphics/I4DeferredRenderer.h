@@ -202,12 +202,14 @@ namespace i4graphics
 	private:
 		void				clearAllRenderTarget();
 
+		void				renderStageShadow(I4Camera* camera);
 		void				renderStageGeometry(I4Camera* camera);
 		void				renderStageLight(I4Camera* camera);
 		void				renderStageMerge(I4Camera* camera);
 
 		void				cullAndSortMeshRenderItem(I4Camera* camera);
-		void				renderMeshRenderItem(I4Camera* camera);
+		void				renderMeshGeometryRenderItem(I4Camera* camera);
+		void				renderMeshShadowRenderItem(I4Camera* camera);
 
 		void				cullAndSortDirectionalLight(I4Camera* camera);
 		void				renderDirectionalLight(I4Camera* camera);
@@ -252,8 +254,9 @@ namespace i4graphics
 		I4CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
 		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
 
-		
 		bool						wireMode;
+		int							cascadeSize;
+		int							cascadeLevel;
 	};
 
 }

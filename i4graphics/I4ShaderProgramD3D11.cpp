@@ -70,16 +70,15 @@ namespace i4graphics
 
 		// Compile the pixel shader
 		ID3DBlob* pPSBlob = nullptr;
-		hr = compileShaderFromString(code, "PS", "ps_4_0", &pPSBlob);
-		if (FAILED(hr))
-			return false;
-
-		// Create the pixel shader
-		hr = d3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &pixelShader);
-		pPSBlob->Release();
-		if (FAILED(hr))
-			return false;
-
+		if (compileShaderFromString(code, "PS", "ps_4_0", &pPSBlob))
+		{
+			// Create the pixel shader
+			hr = d3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &pixelShader);
+			pPSBlob->Release();
+			if (FAILED(hr))
+				return false;
+		}
+		 
 		return true;
 	}
 

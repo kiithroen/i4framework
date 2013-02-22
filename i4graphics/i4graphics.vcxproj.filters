@@ -88,5 +88,8 @@
     <FxCompile Include="..\bin\shader\deferred_m.fx">
       <Filter>shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\bin\shader\shadowmap.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
