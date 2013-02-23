@@ -197,6 +197,9 @@ namespace i4graphics
 		if (cbEachAllMesh_S_VS.create() == false)
 			return false;
 
+		if (cbEachSkinedMesh_S_VS.create() == false)
+			return false;
+
 		if (cbOnResize_L_directional.create() == false)
 			return false;
 
@@ -567,11 +570,11 @@ namespace i4graphics
 			{
 				if (itr.mesh->skined)
 				{
-					shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+					shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
 				}
 				else
 				{
-					shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
+					shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
 				}
 			}
 		
@@ -587,16 +590,14 @@ namespace i4graphics
 	
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera->getViewProjectionMatrix(); 
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
-			/*
 			if (itr.boneCount != 0)
 			{
 				for (unsigned int i = 0; i < itr.boneCount; ++i)
 				{
-					cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
+					cbEachSkinedMesh_S_VS.getData()->matrixPalette[i] = itr.matrixPalette[i];
 				}
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
 			}
-			*/
 			itr.mesh->draw();
 
 			prevItem = &itr;

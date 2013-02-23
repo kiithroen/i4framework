@@ -79,6 +79,7 @@ namespace i4graphics
 		float specularPower;
 
 	};
+
 	__declspec(align(16))
 	struct CBEachSkinedMesh_G
 	{
@@ -89,6 +90,12 @@ namespace i4graphics
 	struct CBEachAllMesh_S_VS
 	{
 		I4Matrix4x4 worldViewProj;
+	};
+
+	__declspec(align(16))
+	struct CBEachSkinedMesh_S_VS
+	{
+		I4Matrix4x4 matrixPalette[120];
 	};
 
 	__declspec(align(16))
@@ -254,6 +261,7 @@ namespace i4graphics
 		I4CBHolder<CBEachSkinedMesh_G>			cbEachSkinedMesh_G;
 
 		I4CBHolder<CBEachAllMesh_S_VS>			cbEachAllMesh_S_VS;
+		I4CBHolder<CBEachSkinedMesh_S_VS>		cbEachSkinedMesh_S_VS;
 		
 		I4CBHolder<CBOnResize_L_directional>	cbOnResize_L_directional;
 		I4CBHolder<CBEachLight_L_directional>	cbEachLight_L_directional;

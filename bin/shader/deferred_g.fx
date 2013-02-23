@@ -76,7 +76,7 @@ PS_INPUT VS( VS_INPUT	input	)
 
 
 #ifdef MASK_SKINNING
-	float3 position = mul(float4(input.position, 1), matrixPalette[input.boneID.x])*input.weight.x;
+	float4 position = mul(float4(input.position, 1), matrixPalette[input.boneID.x])*input.weight.x;
 	position += mul(float4(input.position, 1), matrixPalette[input.boneID.y])*input.weight.y;
 	position += mul(float4(input.position, 1), matrixPalette[input.boneID.z])*input.weight.z;
 	position += mul(float4(input.position, 1), matrixPalette[input.boneID.w])*input.weight.w;
@@ -92,12 +92,12 @@ PS_INPUT VS( VS_INPUT	input	)
 	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.w])*input.weight.w;
 
 #else
-	float3 position = input.position;
+	float4 position = float4(input.position, 1);
 	float3 normal = input.normal;
 	float3 tangent = input.tangent.xyz;
 #endif
 
-	output.position = mul(float4(position,1), world);
+	output.position = mul(position, world);
 	output.position = mul(output.position, view);
 
 	output.depth = output.position.z/farDistance;

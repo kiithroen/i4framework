@@ -156,24 +156,20 @@ namespace i4graphics
 		dwShaderFlags |= D3DCOMPILE_DEBUG|D3DCOMPILE_SKIP_OPTIMIZATION;
 	#endif
 
-		ID3DBlob* pErrorBlob;
+		ID3DBlob* pErrorBlob = nullptr;
 		hr = D3DCompile(code, strlen(code), nullptr, nullptr, nullptr, entryPoint, shaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
-		if (FAILED(hr))
-		{
-			if (pErrorBlob != nullptr)
-			{
-				I4LOG_WARN << (char*)pErrorBlob->GetBufferPointer();
-				pErrorBlob->Release();
-			}
-
-			return false;
-		}
 
 		if (pErrorBlob)
 		{
+			I4LOG_WARN << (char*)pErrorBlob->GetBufferPointer();
 			pErrorBlob->Release();
 		}
 
+		if (FAILED(hr))
+		{
+			return false;
+		}
+		
 		return true;
 	}
 }
