@@ -102,7 +102,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
  	
 	if (depthInLight > depthInShadow + 0.002f)
 	{
-		return float4(0.15f*color*diffuseLight.rgb, 0);
+		return float4(0.15f*diffuseLight.rgb, 0);
 	}
 	else
 	{
@@ -110,6 +110,6 @@ float4 PS( PS_INPUT	input	) : SV_Target
 		float3 reflectVector = normalize(reflect(-lightVector, normal));
 		float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
-		return float4(color*diffuseLight.rgb, specularLight);
+		return float4(diffuseLight.rgb, specularLight);
 	}
 }
