@@ -397,13 +397,13 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 	floor->animate(deltaTime);
 
 	I4Matrix4x4 matS;
-	matS.makeScale(0.2f, 0.2f, 0.2f);
+	matS.makeScale(0.3f, 0.3f, 0.3f);
 	floor->render(renderer, matS);
 
 	I4DirectionalLight directionalLight[] =
 	{
 		{ I4Vector3(1.0f, -1.0f, 1.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
-		{ I4Vector3(1.0f, 3.0f, -1.0f), I4Vector3(0.7f, 0.3f, 0.2f) },
+//		{ I4Vector3(1.0f, 3.0f, -1.0f), I4Vector3(0.7f, 0.3f, 0.2f) },
 	};
 
 	for (int i = 0; i < _countof(directionalLight); ++i)

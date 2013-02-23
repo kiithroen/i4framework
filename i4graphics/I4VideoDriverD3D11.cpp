@@ -352,8 +352,8 @@ namespace i4graphics
 		vp.Height = (FLOAT)height;
 		vp.MinDepth = 0.0f;
 		vp.MaxDepth = 1.0f;
-		vp.TopLeftX = 0;
-		vp.TopLeftY = 0;
+		vp.TopLeftX = (FLOAT)x;
+		vp.TopLeftY = (FLOAT)y;
 		immediateContext->RSSetViewports(1, &vp);
 	}
 

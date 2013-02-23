@@ -56,7 +56,7 @@ namespace i4graphics
 		, sphereMesh(nullptr)
 		, wireMode(false)
 		, cascadeSize(1024)
-		, cascadeLevel(1)
+		, cascadeLevel(3)
 	{
 	}
 
@@ -489,48 +489,50 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 		
-		lightCam.setLookAt(vecSceneDirectionalLight[0].direction*-2.0f, vecSceneDirectionalLight[0].direction*-1.9f, I4Vector3(0, 1, 0));
-		
-		I4Camera temp;
-		temp.setLookAt(camera->getEye(), camera->getLookAt(), camera->getUp());
-		temp.setPerspectiveFov(camera->getFovY(), camera->getAspect(), 0.1f, 50);
 
-		I4Vector3 corners[8];
-		temp.extractCorners(corners);
+		I4Camera splitCamera;
+		splitCamera.setLookAt(camera->getEye(), camera->getLookAt(), camera->getUp());
 
-		I4AABB aabbScene;
-		aabbScene.init(corners[0]);
-
-		for (int i = 1; i < 8; ++i)
+		float partition[] = { 0.1f, 5, 20, 100 };
+		for (int i = 0; i < 3; ++i)
 		{
-			aabbScene.merge(corners[i]);
-		}
-		I4Matrix4x4 matInvView;
-		temp.getViewMatrix().extractInverse(matInvView);
-
-		I4AABB aabb = aabbScene.transform(matInvView);
-
-		I4AABB aabbSceneInLightSpace = aabb.transform(lightCam.getViewMatrix());
-
-		I4Vector3 aabbPointInLightSpace[8];
-		aabbSceneInLightSpace.extractEdges(aabbPointInLightSpace);
-
-		I4Sphere spereInLightSpace;
-		spereInLightSpace.fromAABB(aabbSceneInLightSpace);
-
-		I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
-		I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
-
-		lightCam.setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
-
-		for (int i = 0; i < cascadeLevel; ++i)
-		{
-			I4Vector3 frustumPoint[8];
+			lightCam[i].setLookAt(vecSceneDirectionalLight[0].direction*-2.0f, vecSceneDirectionalLight[0].direction*-1.9f, I4Vector3(0, 1, 0));
 
 			videoDriver->setViewport(i*cascadeSize, 0, cascadeSize, cascadeSize);
+			
+			splitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), partition[i], partition[i+1]);
 
-			cullAndSortMeshRenderItem(&lightCam);
-			renderMeshShadowRenderItem(&lightCam);		
+			I4Vector3 corners[8];
+			splitCamera.extractCorners(corners);
+
+			I4AABB aabbScene;
+			aabbScene.init(corners[0]);
+
+			for (int j = 1; j < 8; ++j)
+			{
+				aabbScene.merge(corners[j]);
+			}
+
+			I4Matrix4x4 matInvView;
+			splitCamera.getViewMatrix().extractInverse(matInvView);
+
+			I4AABB aabb = aabbScene.transform(matInvView);
+
+			I4AABB aabbSceneInLightSpace = aabb.transform(lightCam[i].getViewMatrix());
+
+			I4Vector3 aabbPointInLightSpace[8];
+			aabbSceneInLightSpace.extractEdges(aabbPointInLightSpace);
+
+			I4Sphere spereInLightSpace;
+			spereInLightSpace.fromAABB(aabbSceneInLightSpace);
+
+			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
+			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
+
+			lightCam[i].setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
+
+			cullAndSortMeshRenderItem(&lightCam[i]);
+			renderMeshShadowRenderItem(&lightCam[i]);		
 		}
 
 		videoDriver->resetViewport();
@@ -667,7 +669,9 @@ namespace i4graphics
 			I4Matrix4x4 matViewInv;
 			camera->getViewMatrix().extractInverse(matViewInv);
 
-			cbEachLight_L_directional.getData()->viewInvLightViewProjection = matViewInv*lightCam.getViewProjectionMatrix();
+			cbEachLight_L_directional.getData()->viewInvLightViewProjection[0] = matViewInv*lightCam[0].getViewProjectionMatrix();
+			cbEachLight_L_directional.getData()->viewInvLightViewProjection[1] = matViewInv*lightCam[1].getViewProjectionMatrix();
+			cbEachLight_L_directional.getData()->viewInvLightViewProjection[2] = matViewInv*lightCam[2].getViewProjectionMatrix();
 			cbEachLight_L_directional.getData()->lightViewDirection = lightViewDir;
 			cbEachLight_L_directional.getData()->lightColor = light.color;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbEachLight_L_directional.getBuffer(), cbEachLight_L_directional.getData());

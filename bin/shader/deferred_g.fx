@@ -147,15 +147,15 @@ PS_OUTPUT PS( PS_INPUT	input	)
 	output.diffuse.a = ambient;
 
 #ifdef MASK_TEX_SPECULAR
-	output.specular.xyz = texSpecularMap.Sample(samLinear, input.uv)*specularGlossiness;
+	output.specular.rgb = texSpecularMap.Sample(samLinear, input.uv).rgb*specularGlossiness;
 #else
-	output.specular.xyz = float3(specularGlossiness, specularGlossiness, specularGlossiness);
+	output.specular.rgb = float3(specularGlossiness, specularGlossiness, specularGlossiness);
 #endif
 	output.specular.a = 1;
 
 	float3 viewNormal;
 #ifdef MASK_TEX_NORMAL
-	viewNormal = 2.0f*texNormalMap.Sample(samLinear, input.uv) - 1.0f;
+	viewNormal = 2.0f*texNormalMap.Sample(samLinear, input.uv).rgb - 1.0f;
 	viewNormal = mul(viewNormal, input.tangentToView);
 #else
 	viewNormal = input.viewNormal;
