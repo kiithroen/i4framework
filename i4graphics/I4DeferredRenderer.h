@@ -34,7 +34,9 @@ namespace i4graphics
 		I4Mesh*				mesh;
 		I4Material*			material;
 		I4Matrix4x4*		matrixPalette;
-
+		bool				shadowCaster;
+		bool				shadowReceiver;
+				
 		bool operator < (const I4MeshRenderItem& other) const;
 	};
 
@@ -275,7 +277,7 @@ namespace i4graphics
 		bool						wireMode;
 		int							cascadeSize;
 		int							cascadeLevel;
-
+		
 		I4Camera lightCam[3];
 	};
 

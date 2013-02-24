@@ -49,11 +49,19 @@ namespace i4graphics {
 		unsigned int			getMeshCount() const				{ return vecMesh.size(); }
 		I4ActorMesh*			getMesh(unsigned int i)				{ return vecMesh[i]; }
 
+		void					setShadowCaster(bool enable)		{ shadowCaster = enable; }
+		bool					isShadowCaster() const				{ return shadowCaster; }
+
+		bool					isShadowReceiver() const			{ return shadowReceiver; }
+		void					setShadowReceiver(bool enable)		{ shadowReceiver = enable; }
+
 	private:
 		I4ActorElementMap		mapElement;
 		I4ActorBoneVector		vecBone;
 		I4ActorMeshVector		vecMesh;
 		I4ActorSkinTMVector		vecSkinTM;
+		bool					shadowCaster;
+		bool					shadowReceiver;
 	};
 
 }

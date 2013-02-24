@@ -268,10 +268,26 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		renderStageGeometry(camera);
-		renderStageShadow(camera);
-		renderStageLight(camera);
-		renderStageMerge(camera);
+		static bool init = false;
+		//if (init == false)
+		{
+			init = true;
+
+			
+			renderStageGeometry(camera);
+			renderStageShadow(camera);
+			renderStageLight(camera);
+			renderStageMerge(camera);
+		}
+		/*
+		else
+		{
+			
+			renderStageGeometry(&lightCam[0]);
+			renderStageLight(&lightCam[0]);
+			renderStageMerge(&lightCam[0]);
+		}
+		*/
 	}
 
 	void I4DeferredRenderer::postRender(I4Camera* camera)
@@ -489,11 +505,12 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 		
-
+		// 씬 전체 AABB 를 구한다.
+//		for (int i = 0; i < vecSceneMeshRenderItem.size();
 		I4Camera splitCamera;
 		splitCamera.setLookAt(camera->getEye(), camera->getLookAt(), camera->getUp());
 
-		float partition[] = { 0.1f, 5, 20, 100 };
+		float partition[] = { 0.1f, 5, 20, 50 };
 		for (int i = 0; i < 3; ++i)
 		{
 			lightCam[i].setLookAt(vecSceneDirectionalLight[0].direction*-20, vecSceneDirectionalLight[0].direction*-19, I4Vector3(0, 1, 0));
@@ -501,7 +518,7 @@ namespace i4graphics
 			videoDriver->setViewport(i*cascadeSize, 0, cascadeSize, cascadeSize);
 			
 			splitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), partition[i], partition[i+1]);
-
+																											
 			I4Vector3 corners[8];
 			splitCamera.extractCorners(corners);
 
@@ -516,6 +533,25 @@ namespace i4graphics
 			I4Matrix4x4 matInvView;
 			splitCamera.getViewMatrix().extractInverse(matInvView);
 
+			I4Vector3 cornerInWorld[8];
+			for (int j = 0; j < 8; ++j)
+			{
+				cornerInWorld[j] = matInvView.transformCoord(corners[j]);
+			}
+
+			I4Vector3 cornerInLight[8];
+			for (int j = 0; j < 8; ++j)
+			{
+				cornerInLight[j] = lightCam[i].getViewMatrix().transformCoord(cornerInWorld[j]);
+			}
+
+			I4AABB aabbSceneLight2;
+			aabbSceneLight2.init(cornerInLight[0]);
+			for (int j = 1; j < 8; ++j)
+			{
+				aabbSceneLight2.merge(cornerInLight[j]);
+			}
+
 			I4AABB aabb = aabbScene.transform(matInvView);
 
 			I4AABB aabbSceneInLightSpace = aabb.transform(lightCam[i].getViewMatrix());
@@ -524,12 +560,12 @@ namespace i4graphics
 			aabbSceneInLightSpace.extractEdges(aabbPointInLightSpace);
 
 			I4Sphere spereInLightSpace;
-			spereInLightSpace.fromAABB(aabbSceneInLightSpace);
+			spereInLightSpace.fromAABB(aabbSceneLight2);
 
 			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
 			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
 
-			lightCam[i].setOrthoOffCenter(vMin.x - 3, vMax.x + 3, vMin.y - 3, vMax.y + 3, vMin.z - 3, vMax.z + 3);
+			lightCam[i].setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
 
 			cullAndSortMeshRenderItem(&lightCam[i]);
 			renderMeshShadowRenderItem(&lightCam[i]);		

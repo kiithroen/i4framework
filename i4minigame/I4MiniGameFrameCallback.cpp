@@ -37,7 +37,7 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	camera = new I4Camera;
 	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
-	camera->setLookAt(I4Vector3(0.0f, 1.8f, 1.0f), I4Vector3(0.0f, 1.8f, -1.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	camera->setLookAt(I4Vector3(0.0f, 20.0f, 20.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 	
 	float camYawRad;
 	float camPitchRad;
@@ -63,6 +63,8 @@ bool I4MiniGameFrameCallback::onStart()
 	{
 		return false;
 	}
+
+	floor->setShadowCaster(false);
 
 	for (int i = 0; i < 100; ++i)
 	{
@@ -397,12 +399,12 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 	floor->animate(deltaTime);
 
 	I4Matrix4x4 matS;
-	matS.makeScale(0.3f, 0.3f, 0.3f);
+	matS.makeScale(1, 1, 1);
 	floor->render(renderer, matS);
 
 	I4DirectionalLight directionalLight[] =
 	{
-		{ I4Vector3(1.0f, -0.5f, 0.0f), I4Vector3(0.9f, 0.9f, 0.9f) },
+		{ I4Vector3(0.5f, -1.0f, 0.5f), I4Vector3(0.9f, 0.9f, 0.9f) },
 //		{ I4Vector3(1.0f, 3.0f, -1.0f), I4Vector3(0.7f, 0.3f, 0.2f) },
 	};
 

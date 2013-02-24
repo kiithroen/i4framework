@@ -75,12 +75,12 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	
 	float3 color;
 	int i = 0;
-	if (p.z < index1)
+	if (p.z <= index1)
 	{
 		i = 0;
 		color = float3(1, 0, 0);
 	}
-	else if (p.z < index2)
+	else if (p.z <= index2)
 	{
 		i = 1;
 		color = float3(0, 1, 0);
@@ -90,7 +90,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 		i = 2;
 		color = float3(0, 0, 1);
 	}
-	
+
 	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection[i]);
 
 	float2 shadowUV = 0.5f*(float2(posInLight.x, -posInLight.y)/posInLight.w + 1.0f);
@@ -100,7 +100,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float depthInLight = posInLight.z/posInLight.w;
 	float depthInShadow = texRTShadow.Sample(samPoint, shadowUV).r;
  	
-	if (depthInLight > depthInShadow + 0.002f)
+	if (depthInLight > depthInShadow + 0.005f)
 	{
 		return float4(0.15f*diffuseLight.rgb, 0);
 	}

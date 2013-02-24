@@ -10,6 +10,8 @@ namespace i4graphics
 {
 
 	I4Actor::I4Actor()
+		: shadowCaster(true)
+		, shadowReceiver(true)
 	{
 	}
 
