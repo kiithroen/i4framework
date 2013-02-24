@@ -496,7 +496,7 @@ namespace i4graphics
 		float partition[] = { 0.1f, 5, 20, 100 };
 		for (int i = 0; i < 3; ++i)
 		{
-			lightCam[i].setLookAt(vecSceneDirectionalLight[0].direction*-2.0f, vecSceneDirectionalLight[0].direction*-1.9f, I4Vector3(0, 1, 0));
+			lightCam[i].setLookAt(vecSceneDirectionalLight[0].direction*-20, vecSceneDirectionalLight[0].direction*-19, I4Vector3(0, 1, 0));
 
 			videoDriver->setViewport(i*cascadeSize, 0, cascadeSize, cascadeSize);
 			
@@ -529,7 +529,7 @@ namespace i4graphics
 			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
 			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
 
-			lightCam[i].setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
+			lightCam[i].setOrthoOffCenter(vMin.x - 3, vMax.x + 3, vMin.y - 3, vMax.y + 3, vMin.z - 3, vMax.z + 3);
 
 			cullAndSortMeshRenderItem(&lightCam[i]);
 			renderMeshShadowRenderItem(&lightCam[i]);		

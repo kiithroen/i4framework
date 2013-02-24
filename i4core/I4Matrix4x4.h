@@ -393,9 +393,9 @@ namespace i4core
 
 		void makeOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
 		{
-			_11 = 2/(right - left);
-			_22 = 2/(top - bottom);
-			_33 = 1/(zfarPlane-znearPlane);
+			_11 = 2.0f/(right - left);
+			_22 = 2.0f/(top - bottom);
+			_33 = 1.0f/(zfarPlane - znearPlane);
 			_41 = (left + right)/(left - right);
 			_42 = (top + bottom)/(bottom - top);
 			_43 = znearPlane/(znearPlane - zfarPlane);
