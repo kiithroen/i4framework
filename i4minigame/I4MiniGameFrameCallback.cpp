@@ -385,7 +385,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			{				
 				I4Matrix4x4 matS;
 				matS.makeScale(0.01f, 0.01f, 0.01f);
-				actor[idx]->render(renderer, matS*matT);
+				actor[idx]->render(renderer, matS*matR*matT);
 			}
 			else	// elin
 			{
@@ -404,7 +404,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	I4DirectionalLight directionalLight[] =
 	{
-		{ I4Vector3(0.5f, -1.0f, 0.5f), I4Vector3(0.9f, 0.9f, 0.9f) },
+		{ I4Vector3(0.7f, -1.0f, 0.75f), I4Vector3(0.9f, 0.9f, 0.9f) },
 //		{ I4Vector3(1.0f, 3.0f, -1.0f), I4Vector3(0.7f, 0.3f, 0.2f) },
 	};
 

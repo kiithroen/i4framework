@@ -10,7 +10,7 @@ namespace i4core
 	public:
 		I4AABB()
 			: minEdge(FLT_MAX)
-			, maxEdge(FLT_MIN)
+			, maxEdge(-FLT_MAX)
 		{
 		}
 
@@ -42,13 +42,35 @@ namespace i4core
 
 		void merge(const I4Vector3& v)
 		{
-			if (minEdge.x > v.x) minEdge.x = v.x;
-			if (minEdge.y > v.y) minEdge.y = v.y;
-			if (minEdge.z > v.z) minEdge.z = v.z;
+			if (minEdge.x > v.x)
+			{
+				minEdge.x = v.x;
+			}
+
+			if (minEdge.y > v.y)
+			{
+				minEdge.y = v.y;
+			}
+
+			if (minEdge.z > v.z) 
+			{
+				minEdge.z = v.z;
+			}
 			
-			if (maxEdge.x < v.x) maxEdge.x = v.x;
-			if (maxEdge.y < v.y) maxEdge.y = v.y;
-			if (maxEdge.z < v.z) maxEdge.z = v.z;
+			if (maxEdge.x < v.x)
+			{
+				maxEdge.x = v.x;
+			}
+
+			if (maxEdge.y < v.y)
+			{
+				maxEdge.y = v.y;
+			}
+
+			if (maxEdge.z < v.z)
+			{
+				maxEdge.z = v.z;
+			}
 		}
 
 		void merge(const I4AABB& box)

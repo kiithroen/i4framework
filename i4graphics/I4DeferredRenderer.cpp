@@ -489,11 +489,16 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 		
-		lightPerspectiveCamera.setLookAt(vecSceneDirectionalLight[0].direction*-0.2f, vecSceneDirectionalLight[0].direction, I4VECTOR3_AXISY);
+		lightPerspectiveCamera.setLookAt(vecSceneDirectionalLight[0].direction*-999.0f, vecSceneDirectionalLight[0].direction, I4VECTOR3_AXISY);
 		lightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
 
 		I4Camera tempSplitCamera;
 		tempSplitCamera.setViewMatrix(camera->getViewMatrix());
+
+		I4Matrix4x4 matInvView;
+		tempSplitCamera.getViewMatrix().extractInverse(matInvView);
+
+		I4Matrix4x4 matToLightView = matInvView*lightPerspectiveCamera.getViewMatrix();
 
 		float partition[] = { 0.1f, 3.6f, 7.1f, 20, 50 };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다.
 		for (int i = 0; i < cascadeLevel; ++i)
@@ -506,11 +511,6 @@ namespace i4graphics
 																											
 			I4Vector3 corners[8];
 			tempSplitCamera.extractCorners(corners);
-			
-			I4Matrix4x4 matInvView;
-			tempSplitCamera.getViewMatrix().extractInverse(matInvView);
-
-			I4Matrix4x4 matToLightView = matInvView*splitLightOrthoCamera[i].getViewMatrix();
 
 			for (int j = 0; j < 8; ++j)
 			{
