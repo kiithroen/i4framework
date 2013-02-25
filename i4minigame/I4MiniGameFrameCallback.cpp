@@ -346,7 +346,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	static float angle = 0;
 
-	//angle += 15*deltaTime;
+	angle += 15*deltaTime;
 
 	if (angle > 360)
 	{

@@ -7,6 +7,8 @@ SamplerState samLinear : register(s0);
 
 SamplerState samPoint : register(s1);
 
+SamplerComparisonState samShadow : register(s2);
+
 cbuffer CBOnResize_L_directional : register(b0)
 {
 	float3 farTopRight	: FAR_TOP_RIGHT;
@@ -106,18 +108,11 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	shadowUV.x = shadowUV.x/cascadeLevel + i/cascadeLevel;
 
 	float depthInLight = posInLight.z/posInLight.w;
-	float depthInShadow = texRTShadow.Sample(samPoint, shadowUV).r;
+	float shadowFactor = texRTShadow.SampleCmpLevelZero(samShadow, shadowUV, depthInLight - 0.005f);
  	
-	if (depthInLight > depthInShadow + 0.005f)
-	{
-		return float4(0.1f*diffuseLight.rgb, 0);
-	}
-	else
-	{
-		float3 dirToCamera = -normalize(p);
-		float3 reflectVector = normalize(reflect(-lightVector, normal));
-		float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	float3 dirToCamera = -normalize(p);
+	float3 reflectVector = normalize(reflect(-lightVector, normal));
+	float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
-		return float4(diffuseLight.rgb, specularLight);
-	}
+	return float4(shadowFactor*diffuseLight.rgb, specularLight);
 }

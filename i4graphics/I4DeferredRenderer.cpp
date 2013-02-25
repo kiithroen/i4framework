@@ -667,6 +667,7 @@ namespace i4graphics
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
+		shaderMgr->setSamplerState(2, I4SAMPLER_STATE_SHADOW);
 
 		shaderMgr->setRenderTarget(0, rtDiffuse);
 		shaderMgr->setRenderTarget(1, rtNormal);

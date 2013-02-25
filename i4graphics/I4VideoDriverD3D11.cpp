@@ -290,9 +290,9 @@ namespace i4graphics
 		D3D11_SAMPLER_DESC sampDescPoint;
 		ZeroMemory( &sampDescPoint, sizeof(sampDescPoint) );
 		sampDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-		sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-		sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 		sampDescPoint.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampDescPoint.MinLOD = 0;
 		sampDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
@@ -310,6 +310,25 @@ namespace i4graphics
 		sampDescLinear.MinLOD = 0;
 		sampDescLinear.MaxLOD = D3D11_FLOAT32_MAX;
 		hr = d3dDevice->CreateSamplerState(&sampDescLinear, &samplerStates[I4SAMPLER_STATE_LINEAR]);
+		if (FAILED(hr))
+			return false;
+
+		D3D11_SAMPLER_DESC sampDescShadow;
+		ZeroMemory( &sampDescShadow, sizeof(sampDescShadow) );
+		sampDescShadow.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+		sampDescShadow.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDescShadow.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDescShadow.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		sampDescShadow.MipLODBias = 0;
+		sampDescShadow.MaxAnisotropy = 0;
+		sampDescShadow.ComparisonFunc = D3D11_COMPARISON_LESS;
+		sampDescShadow.BorderColor[0] = 0;
+		sampDescShadow.BorderColor[1] = 0;
+		sampDescShadow.BorderColor[2] = 0;
+		sampDescShadow.BorderColor[3] = 0;
+		sampDescShadow.MinLOD = 0;
+		sampDescShadow.MaxLOD = 0;
+		hr = d3dDevice->CreateSamplerState(&sampDescShadow, &samplerStates[I4SAMPLER_STATE_SHADOW]);
 		if (FAILED(hr))
 			return false;
 
