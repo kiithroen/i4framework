@@ -83,25 +83,30 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	float3 color;
 	int i = 0;
+	float bias = 0.001;
 	if (p.z <= index1)
 	{
 		i = 0;
 		color = float3(1, 0, 0);
+		bias = 0.005f;
 	}
 	else if (p.z <= index2)
 	{
 		i = 1;
 		color = float3(0, 1, 0);
+		bias = 0.005f;
 	}
 	else if (p.z <= index3)
 	{
 		i = 2;
 		color = float3(0, 0, 1);
+		bias = 0.001f;
 	}
 	else
 	{
 		i = 3;
 		color = float3(1, 0, 1);
+		bias = 0.0001f;
 	}
 
 	float shadowSplitLevel = 4;
@@ -120,7 +125,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	{
 		for (float x = -1.5; x <= 1.5; x += 1.0)
 		{
-			shadowFactor += texRTShadow.SampleCmpLevelZero(samShadow, shadowUV + texOffset(x, y), depthInLight - 0.005f);
+			shadowFactor += texRTShadow.SampleCmpLevelZero(samShadow, shadowUV + texOffset(x, y), depthInLight - bias);
 		}
 	}
  	
@@ -130,5 +135,5 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 reflectVector = normalize(reflect(-lightVector, normal));
 	float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
 
-	return float4(shadowFactor*diffuseLight.rgb, specularLight);
+	return shadowFactor*float4(diffuseLight.rgb, specularLight);
 }
