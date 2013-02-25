@@ -56,7 +56,7 @@ namespace i4graphics
 		, sphereMesh(nullptr)
 		, wireMode(false)
 		, cascadeSize(1024)
-		, cascadeLevel(3)
+		, cascadeLevel(4)
 	{
 	}
 
@@ -268,26 +268,10 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		static bool init = false;
-		//if (init == false)
-		{
-			init = true;
-
-			
-			renderStageGeometry(camera);
-			renderStageShadow(camera);
-			renderStageLight(camera);
-			renderStageMerge(camera);
-		}
-		/*
-		else
-		{
-			
-			renderStageGeometry(&lightCam[0]);
-			renderStageLight(&lightCam[0]);
-			renderStageMerge(&lightCam[0]);
-		}
-		*/
+		renderStageGeometry(camera);
+		renderStageShadow(camera);
+		renderStageLight(camera);
+		renderStageMerge(camera);
 	}
 
 	void I4DeferredRenderer::postRender(I4Camera* camera)
@@ -321,11 +305,11 @@ namespace i4graphics
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		cullAndSortMeshRenderItem(camera);
+		cullAndSortMeshGeometryRenderItem(camera);
 		renderMeshGeometryRenderItem(camera);		
 	}
 
-	void I4DeferredRenderer::cullAndSortMeshRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortMeshGeometryRenderItem(I4Camera* camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -505,73 +489,69 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 		
-		// 씬 전체 AABB 를 구한다.
-//		for (int i = 0; i < vecSceneMeshRenderItem.size();
-		I4Camera splitCamera;
-		splitCamera.setLookAt(camera->getEye(), camera->getLookAt(), camera->getUp());
+		lightPerspectiveCamera.setLookAt(vecSceneDirectionalLight[0].direction*-0.2f, vecSceneDirectionalLight[0].direction, I4VECTOR3_AXISY);
+		lightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
 
-		float partition[] = { 0.1f, 5, 20, 50 };
-		for (int i = 0; i < 3; ++i)
+		I4Camera tempSplitCamera;
+		tempSplitCamera.setViewMatrix(camera->getViewMatrix());
+
+		float partition[] = { 0.1f, 3, 10, 25, 50 };
+		for (int i = 0; i < cascadeLevel; ++i)
 		{
-			lightCam[i].setLookAt(vecSceneDirectionalLight[0].direction*-20, vecSceneDirectionalLight[0].direction*-19, I4Vector3(0, 1, 0));
+			splitLightOrthoCamera[i].setViewMatrix(lightPerspectiveCamera.getViewMatrix());
 
 			videoDriver->setViewport(i*cascadeSize, 0, cascadeSize, cascadeSize);
 			
-			splitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), partition[i], partition[i+1]);
+			tempSplitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), partition[i], partition[i+1]);
 																											
 			I4Vector3 corners[8];
-			splitCamera.extractCorners(corners);
+			tempSplitCamera.extractCorners(corners);
 
-			I4AABB aabbScene;
-			aabbScene.init(corners[0]);
+			I4AABB aabbInViewSpace;
+			aabbInViewSpace.init(corners[0]);
 
 			for (int j = 1; j < 8; ++j)
 			{
-				aabbScene.merge(corners[j]);
+				aabbInViewSpace.merge(corners[j]);
 			}
 
 			I4Matrix4x4 matInvView;
-			splitCamera.getViewMatrix().extractInverse(matInvView);
+			tempSplitCamera.getViewMatrix().extractInverse(matInvView);
 
-			I4Vector3 cornerInWorld[8];
-			for (int j = 0; j < 8; ++j)
-			{
-				cornerInWorld[j] = matInvView.transformCoord(corners[j]);
-			}
+			I4AABB aabbInWorldSpace = aabbInViewSpace.transform(matInvView);
 
-			I4Vector3 cornerInLight[8];
-			for (int j = 0; j < 8; ++j)
-			{
-				cornerInLight[j] = lightCam[i].getViewMatrix().transformCoord(cornerInWorld[j]);
-			}
-
-			I4AABB aabbSceneLight2;
-			aabbSceneLight2.init(cornerInLight[0]);
-			for (int j = 1; j < 8; ++j)
-			{
-				aabbSceneLight2.merge(cornerInLight[j]);
-			}
-
-			I4AABB aabb = aabbScene.transform(matInvView);
-
-			I4AABB aabbSceneInLightSpace = aabb.transform(lightCam[i].getViewMatrix());
-
-			I4Vector3 aabbPointInLightSpace[8];
-			aabbSceneInLightSpace.extractEdges(aabbPointInLightSpace);
+			I4AABB aabbInLightSpace = aabbInWorldSpace.transform(splitLightOrthoCamera[i].getViewMatrix());
 
 			I4Sphere spereInLightSpace;
-			spereInLightSpace.fromAABB(aabbSceneLight2);
+			spereInLightSpace.fromAABB(aabbInLightSpace);
 
 			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
 			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
 
-			lightCam[i].setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
+			splitLightOrthoCamera[i].setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
 
-			cullAndSortMeshRenderItem(&lightCam[i]);
-			renderMeshShadowRenderItem(&lightCam[i]);		
+			cullAndSortMeshShadowRenderItem(&splitLightOrthoCamera[i]);
+			renderMeshShadowRenderItem(&splitLightOrthoCamera[i]);		
 		}
 
 		videoDriver->resetViewport();
+	}
+
+	void I4DeferredRenderer::cullAndSortMeshShadowRenderItem(I4Camera* camera)
+	{
+		I4PROFILE_THISFUNC;
+
+		vecCulledMeshRenderItem.clear();
+
+		for (auto&itr : vecSceneMeshRenderItem)
+		{
+			if (itr.shadowCaster == true && camera->isVisibleAABB(itr.worldAABB) == true)
+			{
+				vecCulledMeshRenderItem.push_back(itr);
+			}
+		}
+
+		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end());
 	}
 
 	void I4DeferredRenderer::renderMeshShadowRenderItem(I4Camera* camera)
@@ -705,9 +685,10 @@ namespace i4graphics
 			I4Matrix4x4 matViewInv;
 			camera->getViewMatrix().extractInverse(matViewInv);
 
-			cbEachLight_L_directional.getData()->viewInvLightViewProjection[0] = matViewInv*lightCam[0].getViewProjectionMatrix();
-			cbEachLight_L_directional.getData()->viewInvLightViewProjection[1] = matViewInv*lightCam[1].getViewProjectionMatrix();
-			cbEachLight_L_directional.getData()->viewInvLightViewProjection[2] = matViewInv*lightCam[2].getViewProjectionMatrix();
+			for (int i = 0; i < cascadeLevel; ++i)
+			{
+				cbEachLight_L_directional.getData()->viewInvLightViewProjection[i] = matViewInv*splitLightOrthoCamera[i].getViewProjectionMatrix();
+			}
 			cbEachLight_L_directional.getData()->lightViewDirection = lightViewDir;
 			cbEachLight_L_directional.getData()->lightColor = light.color;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbEachLight_L_directional.getBuffer(), cbEachLight_L_directional.getData());

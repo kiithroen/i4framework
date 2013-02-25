@@ -70,7 +70,6 @@ namespace i4core
 	void I4Camera::setLookAt(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
 	{
 		eye = _eye;
-		lookAt = _lookAt;
 		up = _up;
 
 		viewMatrix.makeCameraLookAtLH(_eye, _lookAt, _up);
@@ -94,12 +93,31 @@ namespace i4core
 		eye = _eye;
 
 		rotation.extractRotationMatrix(worldMatrix);
-		worldMatrix.setTranslation(eye);
+		worldMatrix.setTranslation(_eye);
 		worldMatrix.extractInversePrimitive(viewMatrix);
 
 		worldMatrix.extractAxisX(right);
 		worldMatrix.extractAxisY(up);
 		worldMatrix.extractAxisZ(direction);
+
+		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+
+		frustum.make(viewProjectionMatrix);
+	}
+
+	void I4Camera::setViewMatrix(const I4Matrix4x4& view)
+	{
+		viewMatrix = view;
+		viewMatrix.extractInversePrimitive(worldMatrix);
+
+		worldMatrix.extractAxisX(right);
+		worldMatrix.extractAxisY(up);
+		worldMatrix.extractAxisZ(direction);
+		worldMatrix.extractTranslation(eye);
+
+		I4Matrix4x4 rotationMatrix;
+		worldMatrix.decompose(nullptr, &rotationMatrix, nullptr);
+		rotation.makeRotationMatrix(rotationMatrix);
 
 		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
 

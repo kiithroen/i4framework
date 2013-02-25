@@ -14,7 +14,7 @@ cbuffer CBOnResize_L_directional : register(b0)
 
 cbuffer CBEachLight_L_directional : register(b1)
 {
-	matrix viewInvLightViewProjection[3];
+	matrix viewInvLightViewProjection[4];
 	float3 lightViewDirection;
 	float padding;
 	float3 lightColor;
@@ -70,9 +70,10 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	// ------ shadow -------
 
-	float index1 = 5.0f;
-	float index2 = 20.0f;
-	
+	float index1 = 3.0f;
+	float index2 = 10.0f;
+	float index3 = 25.0f;
+
 	float3 color;
 	int i = 0;
 	if (p.z <= index1)
@@ -85,24 +86,31 @@ float4 PS( PS_INPUT	input	) : SV_Target
 		i = 1;
 		color = float3(0, 1, 0);
 	}
-	else
+	else if (p.z <= index3)
 	{
 		i = 2;
 		color = float3(0, 0, 1);
 	}
+	else
+	{
+		i = 3;
+		color = float3(1, 0, 1);
+	}
+
+	float cascadeLevel = 4;
 
 	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection[i]);
 
 	float2 shadowUV = 0.5f*(float2(posInLight.x, -posInLight.y)/posInLight.w + 1.0f);
 
-	shadowUV.x = shadowUV.x/3.0f + i/3.0f;
+	shadowUV.x = shadowUV.x/cascadeLevel + i/cascadeLevel;
 
 	float depthInLight = posInLight.z/posInLight.w;
 	float depthInShadow = texRTShadow.Sample(samPoint, shadowUV).r;
  	
 	if (depthInLight > depthInShadow + 0.005f)
 	{
-		return float4(0.15f*diffuseLight.rgb, 0);
+		return float4(0.1f*diffuseLight.rgb, 0);
 	}
 	else
 	{

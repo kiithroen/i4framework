@@ -37,7 +37,7 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	camera = new I4Camera;
 	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
-	camera->setLookAt(I4Vector3(0.0f, 20.0f, 20.0f), I4Vector3(0.0f, 0.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	camera->setLookAt(I4Vector3(0.0f, 2.5f, -1.0f), I4Vector3(0.0f, 2.2f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 	
 	float camYawRad;
 	float camPitchRad;
