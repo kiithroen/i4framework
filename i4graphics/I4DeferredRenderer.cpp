@@ -495,7 +495,7 @@ namespace i4graphics
 		I4Camera tempSplitCamera;
 		tempSplitCamera.setViewMatrix(camera->getViewMatrix());
 
-		float partition[] = { 0.1f, 3, 10, 25, 50 };
+		float partition[] = { 0.1f, 3.6f, 7.1f, 20, 50 };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다.
 		for (int i = 0; i < cascadeLevel; ++i)
 		{
 			splitLightOrthoCamera[i].setViewMatrix(lightPerspectiveCamera.getViewMatrix());

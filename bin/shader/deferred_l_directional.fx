@@ -38,10 +38,15 @@ PS_INPUT VS( VS_INPUT	input	)
 {
 	PS_INPUT output	=	(PS_INPUT)0;
 
-	output.pos = float4(input.pos, 1.0f);
+	output.pos = float4(input.pos, 1.0);
 	output.uv = input.uv;
 
 	return output;
+}
+
+float2 texOffset(int u, int v)
+{
+    return float2(u *1.0f/4096.0f, v*1.0f/1024.0f);
 }
 
 float4 PS( PS_INPUT	input	) : SV_Target
@@ -72,9 +77,9 @@ float4 PS( PS_INPUT	input	) : SV_Target
 
 	// ------ shadow -------
 
-	float index1 = 3.0f;
-	float index2 = 10.0f;
-	float index3 = 25.0f;
+	float index1 = 3.6f;
+	float index2 = 7.1f;
+	float index3 = 20.0f;
 
 	float3 color;
 	int i = 0;
@@ -108,8 +113,19 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	shadowUV.x = shadowUV.x/cascadeLevel + i/cascadeLevel;
 
 	float depthInLight = posInLight.z/posInLight.w;
-	float shadowFactor = texRTShadow.SampleCmpLevelZero(samShadow, shadowUV, depthInLight - 0.005f);
+	float shadowFactor = 0;
+	
+	// 4x4 PCF
+	for (float y = -1.5; y <= 1.5; y += 1.0)
+	{
+		for (float x = -1.5; x <= 1.5; x += 1.0)
+		{
+			shadowFactor += texRTShadow.SampleCmpLevelZero(samShadow, shadowUV + texOffset(x, y), depthInLight - 0.005f);
+		}
+	}
  	
+	shadowFactor /= 16.0f;
+
 	float3 dirToCamera = -normalize(p);
 	float3 reflectVector = normalize(reflect(-lightVector, normal));
 	float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
