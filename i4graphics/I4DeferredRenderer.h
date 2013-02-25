@@ -35,7 +35,6 @@ namespace i4graphics
 		I4Material*			material;
 		I4Matrix4x4*		matrixPalette;
 		bool				shadowCaster;
-		bool				shadowReceiver;
 				
 		bool operator < (const I4MeshRenderItem& other) const;
 	};

@@ -9,6 +9,8 @@ namespace i4core
 	{
 	public:
 		I4AABB()
+			: minEdge(FLT_MAX)
+			, maxEdge(FLT_MIN)
 		{
 		}
 

@@ -506,29 +506,31 @@ namespace i4graphics
 																											
 			I4Vector3 corners[8];
 			tempSplitCamera.extractCorners(corners);
-
-			I4AABB aabbInViewSpace;
-			aabbInViewSpace.init(corners[0]);
-
-			for (int j = 1; j < 8; ++j)
-			{
-				aabbInViewSpace.merge(corners[j]);
-			}
-
+			
 			I4Matrix4x4 matInvView;
 			tempSplitCamera.getViewMatrix().extractInverse(matInvView);
 
-			I4AABB aabbInWorldSpace = aabbInViewSpace.transform(matInvView);
+			I4Matrix4x4 matToLightView = matInvView*splitLightOrthoCamera[i].getViewMatrix();
 
-			I4AABB aabbInLightSpace = aabbInWorldSpace.transform(splitLightOrthoCamera[i].getViewMatrix());
+			for (int j = 0; j < 8; ++j)
+			{
+				corners[j] = matToLightView.transformCoord(corners[j]);				
+			}
+
+			I4AABB aabbInLightSpace;
+			for (int j = 0; j < 8; ++j)
+			{
+				aabbInLightSpace.merge(corners[j]);
+			}
 
 			I4Sphere spereInLightSpace;
 			spereInLightSpace.fromAABB(aabbInLightSpace);
 
+			// 정확하게는 라이트의 위치에서 뷰프러스텀사이에 끼어드는 메시를 찾아서 zFar, zNear를 구해야하지만 임의로 구를 만들어서 구한다.
 			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
 			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
 
-			splitLightOrthoCamera[i].setOrthoOffCenter(vMin.x, vMax.x, vMin.y, vMax.y, vMin.z, vMax.z);
+			splitLightOrthoCamera[i].setOrthoOffCenter(aabbInLightSpace.minEdge.x, aabbInLightSpace.maxEdge.x, aabbInLightSpace.minEdge.y, aabbInLightSpace.maxEdge.y, vMin.z, vMax.z);
 
 			cullAndSortMeshShadowRenderItem(&splitLightOrthoCamera[i]);
 			renderMeshShadowRenderItem(&splitLightOrthoCamera[i]);		

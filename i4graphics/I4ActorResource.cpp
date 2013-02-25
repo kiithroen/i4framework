@@ -264,16 +264,8 @@ namespace i4graphics
 					xml.getNodeValue(val);
 
 					sscanf_s(val, "%f %f %f", &out.vecPosition[i].x, &out.vecPosition[i].y, &out.vecPosition[i].z);
-
 					
-					if (i == 0)
-					{
-						out.localAABB.init(out.vecPosition[i]);
-					}
-					else
-					{
-						out.localAABB.merge(out.vecPosition[i]);
-					}
+					out.localAABB.merge(out.vecPosition[i]);
 
 					++i;
 
