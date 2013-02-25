@@ -104,13 +104,13 @@ float4 PS( PS_INPUT	input	) : SV_Target
 		color = float3(1, 0, 1);
 	}
 
-	float cascadeLevel = 4;
+	float shadowSplitLevel = 4;
 
 	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection[i]);
 
 	float2 shadowUV = 0.5f*(float2(posInLight.x, -posInLight.y)/posInLight.w + 1.0f);
 
-	shadowUV.x = shadowUV.x/cascadeLevel + i/cascadeLevel;
+	shadowUV.x = shadowUV.x/shadowSplitLevel + i/shadowSplitLevel;
 
 	float depthInLight = posInLight.z/posInLight.w;
 	float shadowFactor = 0;

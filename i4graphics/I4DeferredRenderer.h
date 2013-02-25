@@ -275,8 +275,8 @@ namespace i4graphics
 		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
 
 		bool						wireMode;
-		int							cascadeSize;
-		int							cascadeLevel;
+		int							shadowSplitSize;
+		int							shadowSplitLevel;
 		
 		I4Camera	lightPerspectiveCamera;
 		I4Camera	splitLightOrthoCamera[4];

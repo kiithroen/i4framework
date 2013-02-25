@@ -55,8 +55,8 @@ namespace i4graphics
 		, quadMesh(nullptr)
 		, sphereMesh(nullptr)
 		, wireMode(false)
-		, cascadeSize(1024)
-		, cascadeLevel(4)
+		, shadowSplitSize(1024)
+		, shadowSplitLevel(4)
 	{
 	}
 
@@ -157,7 +157,7 @@ namespace i4graphics
 		}
 
 		rtShadow = videoDriver->createRenderTarget();
-		if (rtShadow->createDepthStencil(cascadeSize*cascadeLevel, cascadeSize, I4FORMAT_R32_TYPELESS, I4FORMAT_D32_FLOAT, I4FORMAT_R32_FLOAT) == false)
+		if (rtShadow->createDepthStencil(shadowSplitSize*shadowSplitLevel, shadowSplitSize, I4FORMAT_R32_TYPELESS, I4FORMAT_D32_FLOAT, I4FORMAT_R32_FLOAT) == false)
 		{
 			I4LOG_ERROR << L"render target shadow create failed.";
 			return false;
@@ -501,11 +501,11 @@ namespace i4graphics
 		I4Matrix4x4 matToLightView = matInvView*lightPerspectiveCamera.getViewMatrix();
 
 		float partition[] = { 0.1f, 3.6f, 7.1f, 20, 50 };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다.
-		for (int i = 0; i < cascadeLevel; ++i)
+		for (int i = 0; i < shadowSplitLevel; ++i)
 		{
 			splitLightOrthoCamera[i].setViewMatrix(lightPerspectiveCamera.getViewMatrix());
 
-			videoDriver->setViewport(i*cascadeSize, 0, cascadeSize, cascadeSize);
+			videoDriver->setViewport(i*shadowSplitSize, 0, shadowSplitSize, shadowSplitSize);
 			
 			tempSplitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), partition[i], partition[i+1]);
 																											
@@ -688,7 +688,7 @@ namespace i4graphics
 			I4Matrix4x4 matViewInv;
 			camera->getViewMatrix().extractInverse(matViewInv);
 
-			for (int i = 0; i < cascadeLevel; ++i)
+			for (int i = 0; i < shadowSplitLevel; ++i)
 			{
 				cbEachLight_L_directional.getData()->viewInvLightViewProjection[i] = matViewInv*splitLightOrthoCamera[i].getViewProjectionMatrix();
 			}
