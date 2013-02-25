@@ -130,31 +130,31 @@ namespace i4graphics {
 
 	void I4ActorMgr::destroy()
 	{
-		for (auto&itr : mapActor)
+		for (auto& itr : mapActor)
 		{			
 			delete itr.second;
 		}
 		mapActor.clear();
 
-		for (auto&itr : mapActorBoneResource)
+		for (auto& itr : mapActorBoneResource)
 		{			
 			delete itr.second;
 		}
 		mapActorBoneResource.clear();
 
-		for (auto&itr : mapActorMaterialResource)
+		for (auto& itr : mapActorMaterialResource)
 		{			
 			delete itr.second;
 		}
 		mapActorMaterialResource.clear();
 
-		for (auto&itr : mapActorMeshResource)
+		for (auto& itr : mapActorMeshResource)
 		{			
 			delete itr.second;
 		}
 		mapActorMeshResource.clear();
 
-		for (auto&itr : mapActorAniResource)
+		for (auto& itr : mapActorAniResource)
 		{			
 			delete itr.second;
 		}

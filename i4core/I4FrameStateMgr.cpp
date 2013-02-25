@@ -17,7 +17,7 @@ namespace i4core {
 			curFrameState->onExit();
 		}
 
-		for (auto&itr : frameStateMap)
+		for (auto& itr : frameStateMap)
 		{
 			delete itr.second;
 		}

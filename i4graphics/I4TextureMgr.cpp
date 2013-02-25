@@ -14,7 +14,7 @@ namespace i4graphics
 
 	I4TextureMgr::~I4TextureMgr(void)
 	{
-		for (auto&itr : mapTextureProxy)
+		for (auto& itr : mapTextureProxy)
 		{
 			delete itr.second.texture;
 		}

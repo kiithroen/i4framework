@@ -315,7 +315,7 @@ namespace i4graphics
 
 		vecCulledMeshRenderItem.clear();
 
-		for (auto&itr : vecSceneMeshRenderItem)
+		for (auto& itr : vecSceneMeshRenderItem)
 		{
 			if (camera->isVisibleAABB(itr.worldAABB))
 			{
@@ -334,7 +334,7 @@ namespace i4graphics
 		I4MeshRenderItem* prevItem = nullptr;
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_g.fx");
 
-		for (auto&itr : vecCulledMeshRenderItem)
+		for (auto& itr : vecCulledMeshRenderItem)
 		{
 			bool isChangedShader = false;
 			bool isChangedDiffuseMap = false;
@@ -545,7 +545,7 @@ namespace i4graphics
 
 		vecCulledMeshRenderItem.clear();
 
-		for (auto&itr : vecSceneMeshRenderItem)
+		for (auto& itr : vecSceneMeshRenderItem)
 		{
 			if (itr.shadowCaster == true && camera->isVisibleAABB(itr.worldAABB) == true)
 			{
@@ -563,7 +563,7 @@ namespace i4graphics
 		I4MeshRenderItem* prevItem = nullptr;
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/shadowmap.fx");
 
-		for (auto&itr : vecCulledMeshRenderItem)
+		for (auto& itr : vecCulledMeshRenderItem)
 		{
 			bool isChangedShader = false;
 			bool isChangedMesh = false;
@@ -653,7 +653,7 @@ namespace i4graphics
 		// 일단 그냥 옮겨 담음. 현재로서는 특별한 정책이 없지만 추후에 너무 많은 라이트가 있으면 잘라낸다던가 병합한다던가...
 
 		vecCulledDirectionalLight.clear();
-		for (auto&itr : vecSceneDirectionalLight)
+		for (auto& itr : vecSceneDirectionalLight)
 		{
 			vecCulledDirectionalLight.push_back(itr);
 		}
@@ -678,7 +678,7 @@ namespace i4graphics
 
 		quadMesh->bind();
 
-		for (auto&itr : vecCulledDirectionalLight)
+		for (auto& itr : vecCulledDirectionalLight)
 		{
 			const I4DirectionalLight& light = itr;
 
@@ -713,7 +713,7 @@ namespace i4graphics
 
 		vecCulledPointLight.clear();
 		
-		for (auto&itr : vecScenePointLight)
+		for (auto& itr : vecScenePointLight)
 		{
 			if (camera->isVisibleSphere(itr.position, itr.radius))
 			{
@@ -748,7 +748,7 @@ namespace i4graphics
 
 		I4Matrix4x4 matLight;
 
-		for (auto&itr : vecCulledPointLight)
+		for (auto& itr : vecCulledPointLight)
 		{
 			const I4PointLight& light = itr;
 

@@ -92,7 +92,7 @@ namespace i4graphics
 
 	bool I4Actor::initialize()
 	{
-		for (auto&itr : mapElement)
+		for (auto& itr : mapElement)
 		{
 			if ((itr.second)->initialize() == false)
 				return false;
@@ -103,7 +103,7 @@ namespace i4graphics
 
 	void I4Actor::destroy()
 	{
-		for (auto&itr : mapElement)
+		for (auto& itr : mapElement)
 		{
 			delete itr.second;
 		}
@@ -151,7 +151,7 @@ namespace i4graphics
 
 	void I4Actor::playAnimation(const char* aniName)
 	{
-		for (auto&itr : mapElement)
+		for (auto& itr : mapElement)
 		{
 			(itr.second)->playAni(aniName);
 		}

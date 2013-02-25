@@ -13,7 +13,7 @@ namespace i4graphics
 
 	I4AnimationController::~I4AnimationController()
 	{
-		for (auto&itr : mapAnimationTrack)
+		for (auto& itr : mapAnimationTrack)
 		{
 			delete itr.second;
 		}

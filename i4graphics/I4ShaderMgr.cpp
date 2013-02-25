@@ -13,7 +13,7 @@ namespace i4graphics
 
 	I4ShaderMgr::~I4ShaderMgr()
 	{
-		for (auto&itr : mapShaderProgram)
+		for (auto& itr : mapShaderProgram)
 		{
 			delete itr.second;
 		}
@@ -206,7 +206,7 @@ namespace i4graphics
 
 	void I4ShaderMgr::destroyShaderMgr()
 	{
-		for (auto&itr : mapShaderMgr)
+		for (auto& itr : mapShaderMgr)
 		{
 			delete itr.second;
 		}
