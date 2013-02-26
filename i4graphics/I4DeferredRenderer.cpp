@@ -56,8 +56,20 @@ namespace i4graphics
 		, sphereMesh(nullptr)
 		, wireMode(false)
 		, shadowSplitSize(1024)
-		, shadowSplitLevel(4)
 	{
+		static const float defaultShadowSplitZ[] = { 3.0f, 6.0f, 15.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
+		static const float defaultShadowBias[] = { 0.005f, 0.003f, 0.002f, 0.001f };
+		for (int  i = 0; i < 4; ++i)
+		{
+			shadowSplitZ[i] = defaultShadowSplitZ[i];
+			shadowBias[i] = defaultShadowBias[i];
+		}
+
+
+		// 디폴트 디렉셔널 라이팅 세팅.
+		directionalLight.direction = I4Vector3(1.0f, -1.0f, 1.0f);
+		directionalLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
+		commitToScene(&directionalLight);
 	}
 
 
@@ -157,7 +169,7 @@ namespace i4graphics
 		}
 
 		rtShadow = videoDriver->createRenderTarget();
-		if (rtShadow->createDepthStencil(shadowSplitSize*shadowSplitLevel, shadowSplitSize, I4FORMAT_R32_TYPELESS, I4FORMAT_D32_FLOAT, I4FORMAT_R32_FLOAT) == false)
+		if (rtShadow->createDepthStencil(shadowSplitSize*SHADOW_SPLIT_NUM, shadowSplitSize, I4FORMAT_R32_TYPELESS, I4FORMAT_D32_FLOAT, I4FORMAT_R32_FLOAT) == false)
 		{
 			I4LOG_ERROR << L"render target shadow create failed.";
 			return false;
@@ -202,10 +214,7 @@ namespace i4graphics
 
 		if (cbOnResize_L_directional.create() == false)
 			return false;
-
-		if (cbEachLight_L_directional.create() == false)
-			return false;
-		
+				
 		if (cbOnResize_L_point_VS.create() == false)
 			return false;
 		if (cbOnResize_L_point_PS.create() == false)
@@ -245,7 +254,10 @@ namespace i4graphics
 
 	void I4DeferredRenderer::commitToScene(I4DirectionalLight* light)
 	{
-		vecSceneDirectionalLight.push_back(*light);
+		directionalLight = *light;
+
+		directionalLightPerspectiveCamera.setLookAt(directionalLight.direction*-999.0f, directionalLight.direction, I4VECTOR3_AXISY);
+		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
 	}
 
 	void I4DeferredRenderer::commitToScene(I4PointLight* light)
@@ -278,7 +290,6 @@ namespace i4graphics
 	{
 		videoDriver->endScene();
 		vecSceneMeshRenderItem.clear();
-		vecSceneDirectionalLight.clear();
 		vecScenePointLight.clear();
 	}
 
@@ -487,10 +498,7 @@ namespace i4graphics
 		I4RenderTarget*	renderTargetG[] = { rtShadow };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, rtShadow);
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
-		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
-		
-		lightPerspectiveCamera.setLookAt(vecSceneDirectionalLight[0].direction*-999.0f, vecSceneDirectionalLight[0].direction, I4VECTOR3_AXISY);
-		lightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
+		videoDriver->setBlendMode(I4BLEND_MODE_NONE);		
 
 		I4Camera tempSplitCamera;
 		tempSplitCamera.setViewMatrix(camera->getViewMatrix());
@@ -498,16 +506,27 @@ namespace i4graphics
 		I4Matrix4x4 matInvView;
 		tempSplitCamera.getViewMatrix().extractInverse(matInvView);
 
-		I4Matrix4x4 matToLightView = matInvView*lightPerspectiveCamera.getViewMatrix();
+		I4Matrix4x4 matToLightView = matInvView*directionalLightPerspectiveCamera.getViewMatrix();
 
-		float partition[] = { 0.1f, 3.6f, 7.1f, 20, 50 };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다.
-		for (int i = 0; i < shadowSplitLevel; ++i)
+		for (int i = 0; i < SHADOW_SPLIT_NUM; ++i)
 		{
-			splitLightOrthoCamera[i].setViewMatrix(lightPerspectiveCamera.getViewMatrix());
+			directionalLightSplitOrthoCamera[i].setViewMatrix(directionalLightPerspectiveCamera.getViewMatrix());
 
 			videoDriver->setViewport(i*shadowSplitSize, 0, shadowSplitSize, shadowSplitSize);
 			
-			tempSplitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), partition[i], partition[i+1]);
+			float nearZ = camera->getZNear();
+			float farZ = camera->getZFar();
+			
+			if (i != 0)
+			{
+				nearZ = shadowSplitZ[i - 1];
+			}
+
+			if (i != SHADOW_SPLIT_NUM - 1)
+			{
+				farZ = shadowSplitZ[i];
+			}
+			tempSplitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), nearZ, farZ);
 																											
 			I4Vector3 corners[8];
 			tempSplitCamera.extractCorners(corners);
@@ -530,10 +549,10 @@ namespace i4graphics
 			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
 			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
 
-			splitLightOrthoCamera[i].setOrthoOffCenter(aabbInLightSpace.minEdge.x, aabbInLightSpace.maxEdge.x, aabbInLightSpace.minEdge.y, aabbInLightSpace.maxEdge.y, vMin.z, vMax.z);
+			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(aabbInLightSpace.minEdge.x, aabbInLightSpace.maxEdge.x, aabbInLightSpace.minEdge.y, aabbInLightSpace.maxEdge.y, vMin.z, vMax.z);
 
-			cullAndSortMeshShadowRenderItem(&splitLightOrthoCamera[i]);
-			renderMeshShadowRenderItem(&splitLightOrthoCamera[i]);		
+			cullAndSortMeshShadowRenderItem(&directionalLightSplitOrthoCamera[i]);
+			renderMeshShadowRenderItem(&directionalLightSplitOrthoCamera[i]);		
 		}
 
 		videoDriver->resetViewport();
@@ -639,24 +658,10 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
-		cullAndSortDirectionalLight(camera);
 		renderDirectionalLight(camera);
 
 		cullAndSortPointLight(camera);
 		renderPointLight(camera);
-	}
-
-	void I4DeferredRenderer::cullAndSortDirectionalLight(I4Camera* camera)
-	{
-		I4PROFILE_THISFUNC;
-
-		// 일단 그냥 옮겨 담음. 현재로서는 특별한 정책이 없지만 추후에 너무 많은 라이트가 있으면 잘라낸다던가 병합한다던가...
-
-		vecCulledDirectionalLight.clear();
-		for (auto& itr : vecSceneDirectionalLight)
-		{
-			vecCulledDirectionalLight.push_back(itr);
-		}
 	}
 
 	void I4DeferredRenderer::renderDirectionalLight(I4Camera* camera)
@@ -673,30 +678,26 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, rtDepth);
 		shaderMgr->setRenderTarget(2, rtShadow);
 
+		I4Matrix4x4 matViewInv;
+		camera->getViewMatrix().extractInverse(matViewInv);
+		for (int i = 0; i < SHADOW_SPLIT_NUM; ++i)
+		{
+			cbOnResize_L_directional.getData()->viewInvLightViewProjection[i] = matViewInv*directionalLightSplitOrthoCamera[i].getViewProjectionMatrix();
+			cbOnResize_L_directional.getData()->shadowSplitZ[i] = shadowSplitZ[i];
+			cbOnResize_L_directional.getData()->shadowBias[i] = shadowBias[i];
+		}
+		cbOnResize_L_directional.getData()->shadowSplitSize = (float)shadowSplitSize;
+		
+		const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(directionalLight.direction);
+
 		cbOnResize_L_directional.getData()->farTopRight = camera->getFarTopRight();
+		cbOnResize_L_directional.getData()->lightViewDirection = lightViewDir;
+		cbOnResize_L_directional.getData()->lightColor = directionalLight.color;
+
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
 
 		quadMesh->bind();
-
-		for (auto& itr : vecCulledDirectionalLight)
-		{
-			const I4DirectionalLight& light = itr;
-
-			const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(light.direction);
-
-			I4Matrix4x4 matViewInv;
-			camera->getViewMatrix().extractInverse(matViewInv);
-
-			for (int i = 0; i < shadowSplitLevel; ++i)
-			{
-				cbEachLight_L_directional.getData()->viewInvLightViewProjection[i] = matViewInv*splitLightOrthoCamera[i].getViewProjectionMatrix();
-			}
-			cbEachLight_L_directional.getData()->lightViewDirection = lightViewDir;
-			cbEachLight_L_directional.getData()->lightColor = light.color;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbEachLight_L_directional.getBuffer(), cbEachLight_L_directional.getData());
-
-			quadMesh->draw();
-		}
+		quadMesh->draw();
 		quadMesh->unbind();
 
 		shaderMgr->setRenderTarget(0, nullptr);

@@ -1,3 +1,5 @@
+#define SHADOW_SPLIT_NUM 4
+
 Texture2D texRTNormal : register(t0);
 Texture2D texRTDepth : register(t1);
 Texture2D texRTShadow : register(t2);
@@ -10,15 +12,15 @@ SamplerComparisonState samShadow : register(s2);
 
 cbuffer CBOnResize_L_directional : register(b0)
 {
-	float3 farTopRight	: FAR_TOP_RIGHT;
-};
-
-cbuffer CBEachLight_L_directional : register(b1)
-{
 	matrix viewInvLightViewProjection[4];
+	float4 shadowSplitZ;
+	float4 shadowBias;
+	float3 farTopRight;
+	float shadowSplitSize;
 	float3 lightViewDirection;
-	float padding;
+	float padding0;
 	float3 lightColor;
+	float padding1;
 };
 
 struct VS_INPUT
@@ -45,7 +47,7 @@ PS_INPUT VS( VS_INPUT	input	)
 
 float2 texOffset(int u, int v)
 {
-    return float2(u *1.0f/4096.0f, v*1.0f/1024.0f);
+    return float2(u/(shadowSplitSize*SHADOW_SPLIT_NUM), v/shadowSplitSize);
 }
 
 float4 PS( PS_INPUT	input	) : SV_Target
@@ -57,45 +59,22 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
 
-	float index1 = 3.6f;
-	float index2 = 7.1f;
-	float index3 = 20.0f;
+	int shadowSplitIndex = 0;
 
-	float3 color;
-	int i = 0;
-	float bias = 0.001;
-	if (p.z <= index1)
+	for (int i = SHADOW_SPLIT_NUM - 1; i > 0; --i)
 	{
-		i = 0;
-		color = float3(1, 0, 0);
-		bias = 0.005f;
+		if (p.z > shadowSplitZ[i - 1])
+		{
+			shadowSplitIndex = i;
+			break;
+		}
 	}
-	else if (p.z <= index2)
-	{
-		i = 1;
-		color = float3(0, 1, 0);
-		bias = 0.005f;
-	}
-	else if (p.z <= index3)
-	{
-		i = 2;
-		color = float3(0, 0, 1);
-		bias = 0.001f;
-	}
-	else
-	{
-		i = 3;
-		color = float3(1, 0, 1);
-		bias = 0.0001f;
-	}
-
-	float shadowSplitLevel = 4;
-
-	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection[i]);
+	
+	float4 posInLight = mul(float4(p, 1.0f), viewInvLightViewProjection[shadowSplitIndex]);
 
 	float2 shadowUV = 0.5f*(float2(posInLight.x, -posInLight.y)/posInLight.w + 1.0f);
 
-	shadowUV.x = shadowUV.x/shadowSplitLevel + i/shadowSplitLevel;
+	shadowUV.x = shadowUV.x/(float)SHADOW_SPLIT_NUM + (float)shadowSplitIndex/(float)SHADOW_SPLIT_NUM;
 
 	float depthInLight = posInLight.z/posInLight.w;
 	float shadowFactor = 0;
@@ -105,7 +84,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	{
 		for (float x = -1.5; x <= 1.5; x += 1.0)
 		{
-			shadowFactor += texRTShadow.SampleCmpLevelZero(samShadow, shadowUV + texOffset(x, y), depthInLight - bias);
+			shadowFactor += texRTShadow.SampleCmpLevelZero(samShadow, shadowUV + texOffset(x, y), depthInLight - shadowBias[shadowSplitIndex]);
 		}
 	}
  	

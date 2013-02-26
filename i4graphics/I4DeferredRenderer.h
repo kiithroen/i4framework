@@ -14,6 +14,8 @@ using namespace i4core;
 
 namespace i4graphics
 {
+	const int SHADOW_SPLIT_NUM = 4;
+
 	class I4VideoDriver;
 	class I4ShaderMgr;
 	class I4ActorMgr;
@@ -102,18 +104,17 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBOnResize_L_directional
 	{
+		I4Matrix4x4 viewInvLightViewProjection[SHADOW_SPLIT_NUM];
+		float shadowSplitZ[SHADOW_SPLIT_NUM];
+		float shadowBias[SHADOW_SPLIT_NUM];
 		I4Vector3 farTopRight;
-	};
-
-	__declspec(align(16))
-	struct CBEachLight_L_directional
-	{
-		I4Matrix4x4 viewInvLightViewProjection[4];
+		float shadowSplitSize;
 		I4Vector3 lightViewDirection;
-		float		padding;	// 4바이트 얼라인을 안하니 셰이더에 넘어간 데이타가 꼬이는 현상이 생겼다.
+		float padding0;
 		I4Vector3 lightColor;
+		float padding1;
 	};
-
+	
 	__declspec(align(16))
 	struct CBOnResize_L_point_VS
 	{
@@ -228,7 +229,6 @@ namespace i4graphics
 		void				cullAndSortMeshShadowRenderItem(I4Camera* camera);
 		void				renderMeshShadowRenderItem(I4Camera* camera);
 
-		void				cullAndSortDirectionalLight(I4Camera* camera);
 		void				renderDirectionalLight(I4Camera* camera);
 
 		void				cullAndSortPointLight(I4Camera* camera);
@@ -249,12 +249,12 @@ namespace i4graphics
 		I4SphereMesh*					sphereMesh;
 
 		I4MeshRenderItemVector			vecSceneMeshRenderItem;
-		I4DirectionalLightVector		vecSceneDirectionalLight;
 		I4PointLightVector				vecScenePointLight;
 
 		I4MeshRenderItemVector			vecCulledMeshRenderItem;
-		I4DirectionalLightVector		vecCulledDirectionalLight;
 		I4PointLightVector				vecCulledPointLight;
+
+		I4DirectionalLight				directionalLight;
 
 		I4CBHolder<CBOnResize_G>				cbOnResize_G;
 		I4CBHolder<CBEveryFrame_G>				cbEveryFrame_G;
@@ -266,7 +266,6 @@ namespace i4graphics
 		I4CBHolder<CBEachSkinedMesh_S_VS>		cbEachSkinedMesh_S_VS;
 		
 		I4CBHolder<CBOnResize_L_directional>	cbOnResize_L_directional;
-		I4CBHolder<CBEachLight_L_directional>	cbEachLight_L_directional;
 
 		I4CBHolder<CBOnResize_L_point_VS>		cbOnResize_L_point_VS;
 		I4CBHolder<CBOnResize_L_point_PS>		cbOnResize_L_point_PS;
@@ -274,12 +273,14 @@ namespace i4graphics
 		I4CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
 		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
 
-		bool						wireMode;
-		int							shadowSplitSize;
-		int							shadowSplitLevel;
+		bool		wireMode;
+
+		int			shadowSplitSize;
+		float		shadowSplitZ[SHADOW_SPLIT_NUM];
+		float		shadowBias[SHADOW_SPLIT_NUM];
 		
-		I4Camera	lightPerspectiveCamera;
-		I4Camera	splitLightOrthoCamera[4];
+		I4Camera	directionalLightPerspectiveCamera;
+		I4Camera	directionalLightSplitOrthoCamera[4];
 	};
 
 }
