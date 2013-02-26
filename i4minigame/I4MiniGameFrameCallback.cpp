@@ -390,7 +390,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 			else	// elin
 			{
 				I4Matrix4x4 matS;
-				matS.makeScale(0.05f, 0.05f, 0.05f);
+				matS.makeScale(0.03f, 0.03f, 0.03f);
 				actor[idx]->render(renderer, matS*matR*matT);
 			}
 		}

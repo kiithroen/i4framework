@@ -1,6 +1,5 @@
-Texture2D texRTDiffuse : register(t0);
-Texture2D texRTNormal : register(t1);
-Texture2D texRTDepth : register(t2);
+Texture2D texRTNormal : register(t0);
+Texture2D texRTDepth : register(t1);
 
 SamplerState samLinear : register(s0);
 

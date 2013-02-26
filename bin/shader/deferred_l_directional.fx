@@ -1,7 +1,6 @@
-Texture2D texRTDiffuse : register(t0);
-Texture2D texRTNormal : register(t1);
-Texture2D texRTDepth : register(t2);
-Texture2D texRTShadow : register(t3);
+Texture2D texRTNormal : register(t0);
+Texture2D texRTDepth : register(t1);
+Texture2D texRTShadow : register(t2);
 
 SamplerState samLinear : register(s0);
 
@@ -51,31 +50,12 @@ float2 texOffset(int u, int v)
 
 float4 PS( PS_INPUT	input	) : SV_Target
 {
-	float4 normalData = texRTNormal.Sample(samPoint, input.uv);
-	float3 normal = 2.0f * normalData.xyz - 1.0f;
-
-	float specularPower = normalData.a * 255.0f;
-
 	float depthVal = texRTDepth.Sample(samPoint, input.uv).r;
 	float3 ray;
 	ray.x = lerp(-farTopRight.x, farTopRight.x, input.uv.x);
 	ray.y = lerp(farTopRight.y, -farTopRight.y, input.uv.y);
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
-	
-	float3 lightVector = -normalize(lightViewDirection);
-
-	// ------ lambert -----
-	/*
-	float NdL = max(0, dot(normal, lightVector));
-	float3 diffuseLight = NdL*lightColor.rgb;
-	*/
-
-	// ------ half lambert -----
-	float NdL = dot(normal, lightVector);
-	float3 diffuseLight = saturate(pow(NdL*0.5 + 0.5, 2.0))*lightColor.rgb;
-
-	// ------ shadow -------
 
 	float index1 = 3.6f;
 	float index2 = 7.1f;
@@ -131,9 +111,26 @@ float4 PS( PS_INPUT	input	) : SV_Target
  	
 	shadowFactor /= 16.0f;
 
-	float3 dirToCamera = -normalize(p);
-	float3 reflectVector = normalize(reflect(-lightVector, normal));
-	float specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	float3 diffuseLight = float3(0, 0, 0);
+	float specularLight = 0;
+
+	if (shadowFactor > 0.1f)
+	{
+		float4 normalData = texRTNormal.Sample(samPoint, input.uv);
+		float3 normal = 2.0f * normalData.xyz - 1.0f;
+
+		float specularPower = normalData.a * 255.0f;
+
+		float3 lightVector = -normalize(lightViewDirection);
+	
+		// ------ half lambert -----
+		float NdL = dot(normal, lightVector);
+		diffuseLight = saturate(pow(NdL*0.5 + 0.5, 2.0))*lightColor.rgb;
+
+		float3 dirToCamera = -normalize(p);
+		float3 reflectVector = normalize(reflect(-lightVector, normal));
+		specularLight = NdL*pow(saturate(dot(reflectVector, dirToCamera)), specularPower);
+	}
 
 	return shadowFactor*float4(diffuseLight.rgb, specularLight);
 }

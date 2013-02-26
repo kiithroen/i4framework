@@ -669,10 +669,9 @@ namespace i4graphics
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
 		shaderMgr->setSamplerState(2, I4SAMPLER_STATE_SHADOW);
 
-		shaderMgr->setRenderTarget(0, rtDiffuse);
-		shaderMgr->setRenderTarget(1, rtNormal);
-		shaderMgr->setRenderTarget(2, rtDepth);
-		shaderMgr->setRenderTarget(3, rtShadow);
+		shaderMgr->setRenderTarget(0, rtNormal);
+		shaderMgr->setRenderTarget(1, rtDepth);
+		shaderMgr->setRenderTarget(2, rtShadow);
 
 		cbOnResize_L_directional.getData()->farTopRight = camera->getFarTopRight();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
@@ -703,7 +702,6 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);
 		shaderMgr->setRenderTarget(2, nullptr);
-		shaderMgr->setRenderTarget(3, nullptr);
 
 		shaderMgr->end();
 	}
@@ -732,9 +730,8 @@ namespace i4graphics
 		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
 
-		shaderMgr->setRenderTarget(0, rtDiffuse);
-		shaderMgr->setRenderTarget(1, rtNormal);
-		shaderMgr->setRenderTarget(2, rtDepth);
+		shaderMgr->setRenderTarget(0, rtNormal);
+		shaderMgr->setRenderTarget(1, rtDepth);
 		
 		cbOnResize_L_point_VS.getData()->projection = camera->getProjectionMatrix();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_L_point_VS.getBuffer(), cbOnResize_L_point_VS.getData());
@@ -788,7 +785,6 @@ namespace i4graphics
 		
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);
-		shaderMgr->setRenderTarget(2, nullptr);
 		
 		shaderMgr->end();
 	}
