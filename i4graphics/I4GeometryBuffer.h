@@ -1,7 +1,5 @@
 #pragma once
 
-
-#include "i4graphics.h"
 #include "I4Vector2.h"
 #include "I4Vector3.h"
 #include "I4Vector4.h"

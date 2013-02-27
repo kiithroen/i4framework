@@ -7,5 +7,4 @@
 
 #include "targetver.h"
 
-// C RunTime Header Files
-#include <tchar.h>
+#include "i4core.h"

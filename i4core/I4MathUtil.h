@@ -1,7 +1,5 @@
 #pragma once
 
-#include "i4core.h"
-
 namespace i4core
 {
 	static const float	I4EPSILON		= 0.001f;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "i4core.h"
 #include "I4MathUtil.h"
 #include "I4Matrix4x4.h"
 

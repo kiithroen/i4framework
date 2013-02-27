@@ -1,7 +1,5 @@
 #pragma once
 
-#include "i4core.h"
-
 namespace i4core
 {
 	class I4Vector2

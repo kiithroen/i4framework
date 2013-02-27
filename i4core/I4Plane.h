@@ -1,6 +1,5 @@
 #pragma once
 
-#include "i4core.h"
 #include "I4Matrix4x4.h"
 
 namespace i4core

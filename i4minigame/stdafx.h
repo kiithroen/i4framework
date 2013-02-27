@@ -6,6 +6,5 @@
 #pragma once
 
 #include "targetver.h"
-
-// C RunTime Header Files
+#include "i4object.h"
 #include <tchar.h>

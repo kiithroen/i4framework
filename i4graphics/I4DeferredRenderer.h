@@ -1,6 +1,5 @@
 #pragma once
 
-#include "i4graphics.h"
 #include "I4AABB.h"
 #include "I4Sphere.h"
 #include "I4GeometryBuffer.h"

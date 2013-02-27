@@ -1,6 +1,5 @@
 #pragma once
 
-#include "i4core.h"
 #include "I4Sphere.h"
 #include "I4AABB.h"
 #include "I4Frustum.h"

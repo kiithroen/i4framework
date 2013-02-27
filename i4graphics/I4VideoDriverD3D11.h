@@ -1,6 +1,5 @@
 #pragma once
 
-#include "i4graphics.h"
 #include "I4VideoDriver.h"
 
 #include <D3D11.h>

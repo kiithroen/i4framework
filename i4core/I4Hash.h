@@ -1,7 +1,5 @@
 #pragma once
 
-#include "i4core.h"
-
 // GPG 5.1.3 ÂüÁ¶
 // Fowler /Noll / Vo (FNV) Hash
 // http://isthe.com/chongo/tech/comp/fnv/

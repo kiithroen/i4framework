@@ -57,7 +57,7 @@ namespace i4graphics
 		, wireMode(false)
 		, shadowSplitSize(1024)
 	{
-		static const float defaultShadowSplitZ[] = { 3.0f, 6.0f, 15.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
+		static const float defaultShadowSplitZ[] = { 3.5f, 7.0f, 20.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
 		static const float defaultShadowBias[] = { 0.005f, 0.003f, 0.002f, 0.001f };
 		for (int  i = 0; i < 4; ++i)
 		{
