@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "I4VideoDriver.h"
 #include "I4VideoDriverD3D11.h"
-#include "I4ShaderProgram.h"
+#include "I4Shader.h"
 #include "I4GeometryBuffer.h"
 #include "I4Texture.h"
 #include "I4TextureMgr.h"
@@ -103,9 +103,9 @@ namespace i4graphics
 		curBlendMode = mode;
 	}
 	
-	I4ShaderProgram* I4VideoDriver::createShaderProgram()
+	I4Shader* I4VideoDriver::createShader()
 	{
-		return new I4ShaderProgram;
+		return new I4Shader;
 	}
 
 	I4VertexBuffer* I4VideoDriver::createVertexBuffer()

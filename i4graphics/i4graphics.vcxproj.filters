@@ -7,70 +7,167 @@
     <Filter Include="shader">
       <UniqueIdentifier>{0c32637f-028b-4be2-91b6-69cf8c7dea34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="model">
+      <UniqueIdentifier>{108f59b2-25ed-45a0-956b-4c905e43f733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer">
+      <UniqueIdentifier>{556cb7c9-bf0f-46e3-af8d-494592102e35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="driver">
+      <UniqueIdentifier>{95953fb4-c14d-4d22-b947-270822ffd4f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="I4Format.h" />
-    <ClInclude Include="I4GeometryBuffer.h" />
     <ClInclude Include="i4graphics.h" />
-    <ClInclude Include="I4QuadMesh.h" />
-    <ClInclude Include="I4RenderTarget.h" />
-    <ClInclude Include="I4ShaderMgr.h" />
-    <ClInclude Include="I4ShaderProgram.h" />
-    <ClInclude Include="I4SphereMesh.h" />
-    <ClInclude Include="I4Texture.h" />
-    <ClInclude Include="I4VideoDriver.h" />
-    <ClInclude Include="I4GeometryBufferD3D11.h" />
-    <ClInclude Include="I4RenderTargetD3D11.h" />
-    <ClInclude Include="I4ShaderProgramD3D11.h" />
-    <ClInclude Include="I4TextureD3D11.h" />
-    <ClInclude Include="I4VideoDriverD3D11.h" />
     <ClInclude Include="..\dependency\DirectXTex\DDSTextureLoader.h">
       <Filter>DirectXTex</Filter>
     </ClInclude>
-    <ClInclude Include="I4AnimationController.h" />
-    <ClInclude Include="I4AnimationTrack.h" />
-    <ClInclude Include="I4KeyFrameSet.h" />
-    <ClInclude Include="I4Material.h" />
-    <ClInclude Include="I4Mesh.h" />
-    <ClInclude Include="I4DeferredRenderer.h" />
-    <ClInclude Include="I4TextureMgr.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="I4Model.h" />
-    <ClInclude Include="I4ModelElement.h" />
-    <ClInclude Include="I4ModelElementInfo.h" />
-    <ClInclude Include="I4ModelMgr.h" />
-    <ClInclude Include="I4ModelResource.h" />
+    <ClInclude Include="I4AnimationController.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4AnimationTrack.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Model.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ModelElement.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ModelElementInfo.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ModelMgr.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ModelResource.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4KeyFrameSet.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="I4GeometryBuffer.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4GeometryBufferD3D11.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4RenderTarget.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4RenderTargetD3D11.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ShaderMgr.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Texture.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4TextureD3D11.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4TextureMgr.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4VideoDriver.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4VideoDriverD3D11.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4DeferredRenderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="I4QuadMesh.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="I4SphereMesh.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Mesh.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Material.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Shader.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ShaderD3D11.h">
+      <Filter>driver</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="i4graphics.cpp" />
-    <ClCompile Include="I4QuadMesh.cpp" />
-    <ClCompile Include="I4ShaderMgr.cpp" />
-    <ClCompile Include="I4SphereMesh.cpp" />
-    <ClCompile Include="I4VideoDriver.cpp" />
-    <ClCompile Include="I4GeometryBufferD3D11.cpp" />
-    <ClCompile Include="I4RenderTargetD3D11.cpp" />
-    <ClCompile Include="I4ShaderProgramD3D11.cpp" />
-    <ClCompile Include="I4TextureD3D11.cpp" />
-    <ClCompile Include="I4VideoDriverD3D11.cpp" />
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
       <Filter>DirectXTex</Filter>
     </ClCompile>
-    <ClCompile Include="I4AnimationController.cpp" />
-    <ClCompile Include="I4AnimationTrack.cpp" />
-    <ClCompile Include="I4Mesh.cpp" />
-    <ClCompile Include="I4DeferredRenderer.cpp" />
-    <ClCompile Include="I4TextureMgr.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="I4Model.cpp" />
-    <ClCompile Include="I4ModelElement.cpp" />
-    <ClCompile Include="I4ModelMgr.cpp" />
-    <ClCompile Include="I4ModelResource.cpp" />
+    <ClCompile Include="I4AnimationController.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="I4AnimationTrack.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="I4Model.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ModelElement.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ModelMgr.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ModelResource.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="I4GeometryBuffer.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4GeometryBufferD3D11.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4RenderTargetD3D11.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ShaderMgr.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4TextureD3D11.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4TextureMgr.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4VideoDriver.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4VideoDriverD3D11.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4DeferredRenderer.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="I4QuadMesh.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="I4SphereMesh.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="I4Mesh.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ShaderD3D11.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\shader\default.fx">

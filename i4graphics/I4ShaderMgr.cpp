@@ -1,23 +1,23 @@
 #include "stdafx.h"
 #include "I4ShaderMgr.h"
-#include "I4ShaderProgram.h"
+#include "I4Shader.h"
 #include "I4VideoDriver.h"
 #include "I4Log.h"
 
 namespace i4graphics
 {
 	I4ShaderMgr::I4ShaderMgr()
-		:activeShaderProgram(nullptr)
+		:activeShader(nullptr)
 	{
 	}
 
 	I4ShaderMgr::~I4ShaderMgr()
 	{
-		for (auto& itr : mapShaderProgram)
+		for (auto& itr : mapShader)
 		{
 			delete itr.second;
 		}
-		mapShaderProgram.clear();
+		mapShader.clear();
 	}
 
 
@@ -63,13 +63,13 @@ namespace i4graphics
 
 	bool I4ShaderMgr::begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
-		auto itr = mapShaderProgram.find(mask);
-		if (itr == mapShaderProgram.end())
+		auto itr = mapShader.find(mask);
+		if (itr == mapShader.end())
 		{
-			activeShaderProgram = createShaderProgram(mask, inputElements, numElements);
-			if (activeShaderProgram != nullptr)
+			activeShader = createShader(mask, inputElements, numElements);
+			if (activeShader != nullptr)
 			{
-				mapShaderProgram.insert(make_pair(mask, activeShaderProgram));
+				mapShader.insert(make_pair(mask, activeShader));
 			}
 			else
 			{
@@ -78,12 +78,12 @@ namespace i4graphics
 		}
 		else
 		{
-			activeShaderProgram = itr->second;
+			activeShader = itr->second;
 		}
 
-		if (activeShaderProgram)
+		if (activeShader)
 		{
-			return activeShaderProgram->begin();
+			return activeShader->begin();
 		}		
 
 		return true;
@@ -91,45 +91,45 @@ namespace i4graphics
 
 	void I4ShaderMgr::end()
 	{
-		if (activeShaderProgram)
+		if (activeShader)
 		{
-			activeShaderProgram->end();
+			activeShader->end();
 		}
 	}
 	
-	void I4ShaderMgr::setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)
+	void I4ShaderMgr::setConstantBuffer(I4ShaderType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)
 	{
-		if (activeShaderProgram)
+		if (activeShader)
 		{
-			activeShaderProgram->setConstantBuffer(type, slot, constantBuffer, data);
+			activeShader->setConstantBuffer(type, slot, constantBuffer, data);
 		}
 	}
 
 	void I4ShaderMgr::setTexture(unsigned int slot, const I4Texture* tex)
 	{
-		if (activeShaderProgram)
+		if (activeShader)
 		{
-			activeShaderProgram->setTexture(slot, tex);
+			activeShader->setTexture(slot, tex);
 		}
 	}
 
 	void I4ShaderMgr::setRenderTarget(unsigned int slot, const I4RenderTarget* tex)
 	{
-		if (activeShaderProgram)
+		if (activeShader)
 		{
-			activeShaderProgram->setRenderTarget(slot, tex);
+			activeShader->setRenderTarget(slot, tex);
 		}
 	}
 
 	void I4ShaderMgr::setSamplerState(unsigned int slot, I4SamplerState state)
 	{
-		if (activeShaderProgram)
+		if (activeShader)
 		{
-			activeShaderProgram->setSamplerState(slot, state);
+			activeShader->setSamplerState(slot, state);
 		}
 	}
 
-	I4ShaderProgram* I4ShaderMgr::createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
+	I4Shader* I4ShaderMgr::createShader(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
 		string finalShaderCode = "";
 
@@ -155,7 +155,7 @@ namespace i4graphics
 
 		finalShaderCode += baseShaderCode;
 
-		I4ShaderProgram* shaderProgram = I4VideoDriver::getVideoDriver()->createShaderProgram();
+		I4Shader* shaderProgram = I4VideoDriver::getVideoDriver()->createShader();
 		if (shaderProgram->createFromString(finalShaderCode.c_str(), inputElements, numElements) == false)
 		{
 			delete shaderProgram;

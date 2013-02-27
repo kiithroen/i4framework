@@ -2,7 +2,7 @@
 #include "I4VideoDriverD3D11.h"
 #include "I4Matrix4x4.h"
 #include "I4GeometryBufferD3D11.h"
-#include "I4ShaderProgramD3D11.h"
+#include "I4ShaderD3D11.h"
 #include "I4TextureD3D11.h"
 #include "I4RenderTargetD3D11.h"
 
@@ -452,9 +452,9 @@ namespace i4graphics
 		}
 	}
 
-	I4ShaderProgram* I4VideoDriverD3D11::createShaderProgram()
+	I4Shader* I4VideoDriverD3D11::createShader()
 	{
-		return new I4ShaderProgramD3D11(d3dDevice, immediateContext, samplerStates);
+		return new I4ShaderD3D11(d3dDevice, immediateContext, samplerStates);
 	}
 
 	I4VertexBuffer* I4VideoDriverD3D11::createVertexBuffer()

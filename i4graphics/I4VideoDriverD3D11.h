@@ -37,7 +37,7 @@ namespace i4graphics
 		virtual void				setRasterizerMode(I4RasterizerMode mode) override;
 		virtual void				setBlendMode(I4BlendMode mode) override;
 
-		virtual I4ShaderProgram*	createShaderProgram() override;
+		virtual I4Shader*	createShader() override;
 
 		virtual I4VertexBuffer*		createVertexBuffer() override;
 		virtual I4IndexBuffer*		createIndexBuffer() override;

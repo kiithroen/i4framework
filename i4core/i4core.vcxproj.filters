@@ -13,6 +13,12 @@
     <Filter Include="math">
       <UniqueIdentifier>{52ad5d74-58dd-454e-9431-efc5eaedecf2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework">
+      <UniqueIdentifier>{b0b81a71-281a-4220-8faa-e6466cf78a50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{81fb439c-325c-4cc5-a1e1-19ae5ebff609}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -57,8 +63,6 @@
     <ClInclude Include="I4MathUtil.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="I4XmlData.h" />
-    <ClInclude Include="I4Hash.h" />
     <ClInclude Include="I4Frustum.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -68,17 +72,39 @@
     <ClInclude Include="I4ProfileWriterLog.h">
       <Filter>debug\profile</Filter>
     </ClInclude>
-    <ClInclude Include="I4StringUtil.h" />
     <ClInclude Include="i4core.h" />
-    <ClInclude Include="I4FrameCallback.h" />
-    <ClInclude Include="I4FrameState.h" />
-    <ClInclude Include="I4FrameStateMgr.h" />
-    <ClInclude Include="I4Framework.h" />
-    <ClInclude Include="I4FrameworkWin.h" />
-    <ClInclude Include="I4FrameTimer.h" />
-    <ClInclude Include="I4FrameTimerWin.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="I4FrameCallback.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4FrameState.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4FrameStateMgr.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4FrameTimer.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4FrameTimerWin.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Framework.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4FrameworkWin.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Hash.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="I4XmlData.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="I4StringUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4Log.cpp">
@@ -90,21 +116,35 @@
     <ClCompile Include="I4StopWatch.cpp">
       <Filter>debug\profile</Filter>
     </ClCompile>
-    <ClCompile Include="I4XmlData.cpp" />
     <ClCompile Include="I4Camera.cpp">
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="I4ProfileWriterLog.cpp">
       <Filter>debug\profile</Filter>
     </ClCompile>
-    <ClCompile Include="I4StringUtil.cpp" />
     <ClCompile Include="i4core.cpp" />
-    <ClCompile Include="I4FrameStateMgr.cpp" />
-    <ClCompile Include="I4Framework.cpp" />
-    <ClCompile Include="I4FrameworkWin.cpp" />
-    <ClCompile Include="I4FrameTimer.cpp" />
-    <ClCompile Include="I4FrameTimerWin.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="I4FrameStateMgr.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="I4FrameTimer.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="I4FrameTimerWin.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="I4Framework.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="I4FrameworkWin.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="I4XmlData.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="I4StringUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

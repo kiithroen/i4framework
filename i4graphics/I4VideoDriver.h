@@ -5,7 +5,7 @@
 
 namespace i4graphics
 {
-	class I4ShaderProgram;
+	class I4Shader;
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 	class I4ConstantBuffer;
@@ -80,7 +80,7 @@ namespace i4graphics
 		virtual void				setRasterizerMode(I4RasterizerMode mode);
 		virtual void				setBlendMode(I4BlendMode mode);
 
-		virtual I4ShaderProgram*	createShaderProgram();
+		virtual I4Shader*	createShader();
 
 		virtual I4VertexBuffer*		createVertexBuffer();
 		virtual I4IndexBuffer*		createIndexBuffer();

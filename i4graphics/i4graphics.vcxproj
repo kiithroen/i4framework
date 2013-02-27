@@ -59,8 +59,10 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;I4GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../i4core;../dependency/DirectXTex;../dependency/vld/include</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -82,7 +84,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;I4GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../i4core;../dependency/DirectXTex</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,11 +119,11 @@
     <ClInclude Include="I4QuadMesh.h" />
     <ClInclude Include="I4RenderTarget.h" />
     <ClInclude Include="I4RenderTargetD3D11.h" />
-    <ClInclude Include="I4ShaderProgramD3D11.h" />
+    <ClInclude Include="I4Shader.h" />
+    <ClInclude Include="I4ShaderD3D11.h" />
     <ClInclude Include="I4SphereMesh.h" />
     <ClInclude Include="I4GeometryBuffer.h" />
     <ClInclude Include="I4ShaderMgr.h" />
-    <ClInclude Include="I4ShaderProgram.h" />
     <ClInclude Include="I4Texture.h" />
     <ClInclude Include="I4TextureD3D11.h" />
     <ClInclude Include="I4TextureMgr.h" />
@@ -152,7 +154,7 @@
     <ClCompile Include="I4ModelResource.cpp" />
     <ClCompile Include="I4QuadMesh.cpp" />
     <ClCompile Include="I4RenderTargetD3D11.cpp" />
-    <ClCompile Include="I4ShaderProgramD3D11.cpp" />
+    <ClCompile Include="I4ShaderD3D11.cpp" />
     <ClCompile Include="I4SphereMesh.cpp" />
     <ClCompile Include="I4GeometryBuffer.cpp" />
     <ClCompile Include="I4ShaderMgr.cpp" />

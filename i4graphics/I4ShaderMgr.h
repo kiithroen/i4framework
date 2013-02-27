@@ -1,11 +1,11 @@
 #pragma once
 
 #include "i4graphics.h"
-#include "I4ShaderProgram.h"
+#include "I4Shader.h"
 
 namespace i4graphics
 {
-	class I4ShaderProgram;
+	class I4Shader;
 	class I4ShaderMgr;
 
 	enum I4ShaderMgrType
@@ -29,20 +29,20 @@ namespace i4graphics
 
 	class I4ShaderMgr
 	{
-		typedef map<unsigned int, I4ShaderProgram*>	I4ShaderProgramMap;
+		typedef map<unsigned int, I4Shader*>	I4ShaderMap;
 	public:
 		virtual ~I4ShaderMgr();
 
 		bool 				begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		void 				end();
 
-		void				setConstantBuffer(I4ShaderProgramType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data);
+		void				setConstantBuffer(I4ShaderType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data);
 		void				setTexture(unsigned int slot, const I4Texture* tex);
 		void				setRenderTarget(unsigned int slot, const I4RenderTarget* tex);
 		void				setSamplerState(unsigned int slot, I4SamplerState state);
 	protected:
 		bool				load(const char* fname);
-		I4ShaderProgram*	createShaderProgram(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
+		I4Shader*	createShader(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements);
 		
 	public:
 		static bool			addShaderMgr(const string& fxName);
@@ -54,8 +54,8 @@ namespace i4graphics
 
 	protected:
 		 string				baseShaderCode;
-		 I4ShaderProgram*	activeShaderProgram;
-		 I4ShaderProgramMap	mapShaderProgram;
+		 I4Shader*	activeShader;
+		 I4ShaderMap	mapShader;
 
 	private:
 		static I4ShaderMgrMap		mapShaderMgr;
