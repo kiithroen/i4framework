@@ -6,7 +6,7 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct I4ActorElementInfo
+	struct I4ModelElementInfo
 	{
 		I4Matrix4x4	localTM;
 		I4Matrix4x4	worldTM;

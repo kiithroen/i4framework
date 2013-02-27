@@ -2,7 +2,7 @@
 #include "I4DeferredRenderer.h"
 #include "I4VideoDriver.h"
 #include "I4ShaderMgr.h"
-#include "I4ActorMgr.h"
+#include "I4ModelMgr.h"
 #include "I4RenderTarget.h"
 #include "I4QuadMesh.h"
 #include "I4SphereMesh.h"

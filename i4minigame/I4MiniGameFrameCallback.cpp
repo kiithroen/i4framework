@@ -8,8 +8,8 @@
 #include "I4Log.h"
 #include "I4Profile.h"
 #include "I4ProfileWriterLog.h"
-#include "I4Actor.h"
-#include "I4ActorMgr.h"
+#include "I4Model.h"
+#include "I4ModelMgr.h"
 
 using namespace i4graphics;
 
@@ -56,10 +56,10 @@ bool I4MiniGameFrameCallback::onStart()
 	framework->getMousePos(prevMouseX, prevMouseY);
 
 
-	actorMgr = new I4ActorMgr;
+	modelMgr = new I4ModelMgr;
 	
-	floor = actorMgr->createActor("floor");
-	if (!actorMgr->attachMesh(floor, "testactor/floor.mesh.xml"))
+	floor = modelMgr->createModel("floor");
+	if (!modelMgr->attachMesh(floor, "testmodel/floor.mesh.xml"))
 	{
 		return false;
 	}
@@ -71,78 +71,78 @@ bool I4MiniGameFrameCallback::onStart()
 		char buf[128] = {0, };
 		_itoa_s(i, buf, 10);
 
-		actor[i] = actorMgr->createActor("actor_" + string(buf));
+		model[i] = modelMgr->createModel("model_" + string(buf));
 		if (i%3 == 0)
 		{
-			if (!actorMgr->attachBone(actor[i], "testactor/cyberdemon.bone.xml"))
+			if (!modelMgr->attachBone(model[i], "testmodel/cyberdemon.bone.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMesh(actor[i], "testactor/cyberdemon.mesh.xml"))
+			if (!modelMgr->attachMesh(model[i], "testmodel/cyberdemon.mesh.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMaterial(actor[i], "testactor/cyberdemon.mtrl.xml"))
+			if (!modelMgr->attachMaterial(model[i], "testmodel/cyberdemon.mtrl.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachAni(actor[i], "testactor/cyberdemon.ani.xml", "idle"))
+			if (!modelMgr->attachAni(model[i], "testmodel/cyberdemon.ani.xml", "idle"))
 			{
 				return false;
 			}
 
-			if (!actor[i]->initialize())
+			if (!model[i]->initialize())
 			{
 				return false;
 			}
 
-			actor[i]->playAnimation("idle");
+			model[i]->playAnimation("idle");
 		}
 		else if (i%3 == 1)
 		{
-			if (!actorMgr->attachBone(actor[i], "testactor/guard.bone.xml"))
+			if (!modelMgr->attachBone(model[i], "testmodel/guard.bone.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMesh(actor[i], "testactor/guard.mesh.xml"))
+			if (!modelMgr->attachMesh(model[i], "testmodel/guard.mesh.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMaterial(actor[i], "testactor/guard.mtrl.xml"))
+			if (!modelMgr->attachMaterial(model[i], "testmodel/guard.mtrl.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachAni(actor[i], "testactor/guard_idle.ani.xml", "idle"))
+			if (!modelMgr->attachAni(model[i], "testmodel/guard_idle.ani.xml", "idle"))
 			{
 				return false;
 			}
 
-			if (!actor[i]->initialize())
+			if (!model[i]->initialize())
 			{
 				return false;
 			}
 
-			actor[i]->playAnimation("idle");
+			model[i]->playAnimation("idle");
 		}
 		else
 		{
-			if (!actorMgr->attachMesh(actor[i], "testactor/elin.mesh.xml"))
+			if (!modelMgr->attachMesh(model[i], "testmodel/elin.mesh.xml"))
 			{
 				return false;
 			}
 
-			if (!actorMgr->attachMaterial(actor[i], "testactor/elin.mtrl.xml"))
+			if (!modelMgr->attachMaterial(model[i], "testmodel/elin.mtrl.xml"))
 			{
 				return false;
 			}
 
-			if (!actor[i]->initialize())
+			if (!model[i]->initialize())
 			{
 				return false;
 			}
@@ -155,7 +155,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 void I4MiniGameFrameCallback::onEnd()
 {
-	delete actorMgr;
+	delete modelMgr;
 	delete renderer;
 	delete camera;
 	delete frameStateMgr;
@@ -368,30 +368,30 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 			if (i%2 == 0)
 			{
-				actor[idx]->animate(deltaTime*2);
+				model[idx]->animate(deltaTime*2);
 			}
 			else
 			{
-				actor[idx]->animate(deltaTime);
+				model[idx]->animate(deltaTime);
 			}
 
 			if (idx%3 == 0)	// cyberdemon
 			{
 				I4Matrix4x4 matS;
 				matS.makeScale(0.006f, 0.006f, 0.006f);
-				actor[idx]->render(renderer, matS*matR*matT);
+				model[idx]->render(renderer, matS*matR*matT);
 			}
 			else if (idx%3 == 1)	// guard
 			{				
 				I4Matrix4x4 matS;
 				matS.makeScale(0.01f, 0.01f, 0.01f);
-				actor[idx]->render(renderer, matS*matR*matT);
+				model[idx]->render(renderer, matS*matR*matT);
 			}
 			else	// elin
 			{
 				I4Matrix4x4 matS;
 				matS.makeScale(0.03f, 0.03f, 0.03f);
-				actor[idx]->render(renderer, matS*matR*matT);
+				model[idx]->render(renderer, matS*matR*matT);
 			}
 		}
 	}

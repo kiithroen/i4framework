@@ -14,8 +14,8 @@ using namespace i4core;
 namespace i4graphics
 {
 	class I4DeferredRenderer;
-	class I4Actor;
-	class I4ActorMgr;
+	class I4Model;
+	class I4ModelMgr;
 }
 using namespace i4graphics;
 
@@ -57,7 +57,7 @@ private:
 	float				camPitch;
 	float				camRoll;
 
-	I4Actor*			actor[100];
-	I4Actor*			floor;
-	I4ActorMgr*			actorMgr;
+	I4Model*			model[100];
+	I4Model*			floor;
+	I4ModelMgr*			modelMgr;
 };

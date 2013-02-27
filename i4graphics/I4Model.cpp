@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "I4Actor.h"
-#include "I4ActorResource.h"
-#include "I4ActorElement.h"
+#include "I4Model.h"
+#include "I4ModelResource.h"
+#include "I4ModelElement.h"
 #include "I4ShaderMgr.h"
 #include "I4KeyFrameSet.h"
 #include "I4Profile.h"
@@ -9,27 +9,27 @@
 namespace i4graphics
 {
 
-	I4Actor::I4Actor()
+	I4Model::I4Model()
 		: shadowCaster(true)
 	{
 	}
 
-	I4Actor::~I4Actor()
+	I4Model::~I4Model()
 	{
 		destroy();
 	}
 
-	bool I4Actor::registerBone(I4ActorBoneResource* boneResource)
+	bool I4Model::registerBone(I4ModelBoneResource* boneResource)
 	{
 		unsigned int boneCount = boneResource->getBoneCount();
 		for (unsigned int i = 0; i < boneCount; ++i)
 		{
-			I4ActorElementInfo* boneInfo = boneResource->getBoneInfo(i);
+			I4ModelElementInfo* boneInfo = boneResource->getBoneInfo(i);
 
-			I4ActorBone* actorBone = new I4ActorBone(this, boneInfo);
+			I4ModelBone* modelBone = new I4ModelBone(this, boneInfo);
 
-			vecBone.push_back(actorBone);
-			mapElement.insert(make_pair(boneInfo->name, actorBone));
+			vecBone.push_back(modelBone);
+			mapElement.insert(make_pair(boneInfo->name, modelBone));
 		}
 
 		vecSkinTM.resize(vecBone.size());
@@ -37,32 +37,32 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4Actor::registerMesh(I4ActorMeshResource* meshResource)
+	bool I4Model::registerMesh(I4ModelMeshResource* meshResource)
 	{
 		unsigned int meshCount = meshResource->getMeshCount();
 		for (unsigned int i = 0; i < meshCount; ++i)
 		{
-			I4ActorElementInfo* meshInfo = meshResource->getMeshInfo(i);
+			I4ModelElementInfo* meshInfo = meshResource->getMeshInfo(i);
 			I4Mesh* mesh = meshResource->getMesh(i);
 
-			I4ActorMesh* actorMesh = nullptr;
+			I4ModelMesh* modelMesh = nullptr;
 			if (mesh->skined)
 			{
-				actorMesh = new ActorSkinedMeshGPU(this, meshInfo, mesh);
+				modelMesh = new ModelSkinedMeshGPU(this, meshInfo, mesh);
 			}
 			else
 			{
-				actorMesh = new ActorRigidMesh(this, meshInfo, mesh);
+				modelMesh = new ModelRigidMesh(this, meshInfo, mesh);
 			}
 
-			vecMesh.push_back(actorMesh);
-			mapElement.insert(make_pair(meshInfo->name, actorMesh));
+			vecMesh.push_back(modelMesh);
+			mapElement.insert(make_pair(meshInfo->name, modelMesh));
 		} 
 
 		return true;
 	}
 	
-	bool I4Actor::registerMaterial(I4ActorMaterialResource* mtrlResource)
+	bool I4Model::registerMaterial(I4ModelMaterialResource* mtrlResource)
 	{
 		unsigned int mtrlCount = mtrlResource->getMaterialCount();
 		for (unsigned int i = 0; i < mtrlCount; ++i)
@@ -74,13 +74,13 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4Actor::registerAni(I4ActorAniResource* aniResource, const char* aniName)
+	bool I4Model::registerAni(I4ModelAniResource* aniResource, const char* aniName)
 	{
 		unsigned int keyFrameSetCount = aniResource->getKeyFrameSetCount();
 		for (unsigned int i = 0; i < keyFrameSetCount; ++i)
 		{
 			I4KeyFrameSet* keyFrameSet = aniResource->getKeyFrameSet(i);
-			I4ActorElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
+			I4ModelElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
 			if (itr != mapElement.end())
 			{
 				(itr->second)->registerAni(aniName, keyFrameSet);
@@ -90,7 +90,7 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4Actor::initialize()
+	bool I4Model::initialize()
 	{
 		for (auto& itr : mapElement)
 		{
@@ -101,7 +101,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4Actor::destroy()
+	void I4Model::destroy()
 	{
 		for (auto& itr : mapElement)
 		{
@@ -110,7 +110,7 @@ namespace i4graphics
 		mapElement.clear();
 	}
 
-	I4ActorElement* I4Actor::findElement(const char* name)
+	I4ModelElement* I4Model::findElement(const char* name)
 	{
 		auto itr = mapElement.find(name);
 		if (itr != mapElement.end())
@@ -119,7 +119,7 @@ namespace i4graphics
 		return nullptr;
 	}
 
-	void I4Actor::animate(float deltaSec)
+	void I4Model::animate(float deltaSec)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -138,7 +138,7 @@ namespace i4graphics
 	}
 
 
-	void I4Actor::render(I4DeferredRenderer* renderer, const I4Matrix4x4& worldTM)
+	void I4Model::render(I4DeferredRenderer* renderer, const I4Matrix4x4& worldTM)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -149,7 +149,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4Actor::playAnimation(const char* aniName)
+	void I4Model::playAnimation(const char* aniName)
 	{
 		for (auto& itr : mapElement)
 		{

@@ -18,12 +18,12 @@ namespace i4graphics
 
 	class I4VideoDriver;
 	class I4ShaderMgr;
-	class I4ActorMgr;
+	class I4ModelMgr;
 	class I4RenderTarget;
 	class I4QuadMesh;
 	class I4SphereMesh;
-	class I4Actor;
-	class I4ActorMgr;
+	class I4Model;
+	class I4ModelMgr;
 	class I4Mesh;
 	struct I4Material;
 
@@ -237,7 +237,7 @@ namespace i4graphics
 	private:
 		I4VideoDriver*					videoDriver;
 		I4ShaderMgr*					shaderMgr;
-		I4ActorMgr*						actorMgr;
+		I4ModelMgr*						modelMgr;
 		I4RenderTarget*					rtDiffuse;
 		I4RenderTarget*					rtSpecular;
 		I4RenderTarget*					rtNormal;

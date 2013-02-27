@@ -2,7 +2,7 @@
 
 #include "I4Material.h"
 #include "I4Mesh.h"
-#include "I4ActorElementInfo.h"
+#include "I4ModelElementInfo.h"
 #include "I4XmlData.h"
 #include "I4GeometryBuffer.h"
 #include "I4AABB.h"
@@ -30,58 +30,58 @@ namespace i4graphics {
 		vector<I4Weight>		vecWeight;
 	};
 
-	//-------------------- I4ActorBoneResource -----------------------
+	//-------------------- I4ModelBoneResource -----------------------
 
-	class I4ActorBoneResource
+	class I4ModelBoneResource
 	{
-		typedef vector<I4ActorElementInfo*>		I4ActorInfoVector;
+		typedef vector<I4ModelElementInfo*>		I4ModelInfoVector;
 	public:
-		I4ActorBoneResource();
-		virtual ~I4ActorBoneResource();
+		I4ModelBoneResource();
+		virtual ~I4ModelBoneResource();
 		
 		bool					loadBone(const char* fname);
 
 		void					destroy();
 
 		unsigned int			getBoneCount() const				{ return vecBoneInfo.size(); }
-		I4ActorElementInfo*		getBoneInfo(unsigned int i) const	{ return vecBoneInfo[i]; }
+		I4ModelElementInfo*		getBoneInfo(unsigned int i) const	{ return vecBoneInfo[i]; }
 
 	private:
 		void					parseBone(I4XmlData& xml);
 
-		void					parseNodeInfo(I4ActorElementInfo& out, I4XmlData& xml);
-		void					parseNodeInfoLocalTM(I4ActorElementInfo& out,I4XmlData& xml);
-		void					parseNodeInfoWorldTM(I4ActorElementInfo& out,I4XmlData& xml);
+		void					parseNodeInfo(I4ModelElementInfo& out, I4XmlData& xml);
+		void					parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml);
+		void					parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml);
 		
 	private:
-		I4ActorInfoVector		vecBoneInfo;
+		I4ModelInfoVector		vecBoneInfo;
 	};
 
-	//-------------------- I4ActorMeshResource -----------------------
+	//-------------------- I4ModelMeshResource -----------------------
 
-	class I4ActorMeshResource
+	class I4ModelMeshResource
 	{
-		typedef vector<I4ActorElementInfo*>	I4ActorInfoVector;
+		typedef vector<I4ModelElementInfo*>	I4ModelInfoVector;
 		typedef vector<I4Mesh*>				I4MeshVector;
 
 	public:
-		I4ActorMeshResource();
-		virtual ~I4ActorMeshResource();
+		I4ModelMeshResource();
+		virtual ~I4ModelMeshResource();
 
 		bool					loadMesh(const char* fname);
 
 		void					destroy();
 
 		unsigned int			getMeshCount() const				{ return vecMeshInfo.size(); }
-		I4ActorElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
+		I4ModelElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
 		I4Mesh*					getMesh(unsigned int i) const		{ return vecMesh[i]; }
 
 	private:
 		void					parseMesh(I4XmlData& xml);
 
-		void					parseNodeInfo(I4ActorElementInfo& out, I4XmlData& xml);
-		void					parseNodeInfoLocalTM(I4ActorElementInfo& out,I4XmlData& xml);
-		void					parseNodeInfoWorldTM(I4ActorElementInfo& out,I4XmlData& xml);
+		void					parseNodeInfo(I4ModelElementInfo& out, I4XmlData& xml);
+		void					parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml);
+		void					parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml);
 
 		void					parseMeshVertex(I4ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml);
@@ -96,19 +96,19 @@ namespace i4graphics {
 		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);
 	private:
-		I4ActorInfoVector		vecMeshInfo;
+		I4ModelInfoVector		vecMeshInfo;
 		I4MeshVector			vecMesh;
 	};
 
-	//-------------------- I4ActorMaterialResource -----------------------
+	//-------------------- I4ModelMaterialResource -----------------------
 
-	class I4ActorMaterialResource
+	class I4ModelMaterialResource
 	{
 		typedef vector<I4Material*>			I4MaterialVector;
 
 	public:
-		I4ActorMaterialResource();
-		virtual ~I4ActorMaterialResource();
+		I4ModelMaterialResource();
+		virtual ~I4ModelMaterialResource();
 
 		bool					loadMaterial(const char* fname);
 
@@ -124,14 +124,14 @@ namespace i4graphics {
 		I4MaterialVector		vecMaterial;
 	};
 
-	//-------------------- I4ActorAniResource -----------------------
+	//-------------------- I4ModelAniResource -----------------------
 
-	class I4ActorAniResource
+	class I4ModelAniResource
 	{
 		typedef vector<I4KeyFrameSet*>		I4KeyFrameSetVector;
 	public:
-		I4ActorAniResource();
-		virtual ~I4ActorAniResource();
+		I4ModelAniResource();
+		virtual ~I4ModelAniResource();
 
 		bool					loadAni(const char* fname);
 

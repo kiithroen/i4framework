@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "I4ActorElement.h"
+#include "I4ModelElement.h"
 #include "I4Mesh.h"
 #include "I4AnimationController.h"
-#include "I4Actor.h"
+#include "I4Model.h"
 #include "I4ShaderMgr.h"
 #include "I4Material.h"
 #include "I4VideoDriver.h"
@@ -14,22 +14,22 @@
 
 namespace i4graphics
 {
-	//------------------------- I4ActorElement ---------------------
+	//------------------------- I4ModelElement ---------------------
 
-	I4ActorElement::I4ActorElement(I4Actor* _actor, I4ActorElementInfo* info)
-		: actor(_actor)
+	I4ModelElement::I4ModelElement(I4Model* _model, I4ModelElementInfo* info)
+		: model(_model)
 		, elementInfo(info)
 		, parentElement(nullptr)
 		, aniController(nullptr)
 	{
 	}
 
-	I4ActorElement::~I4ActorElement()
+	I4ModelElement::~I4ModelElement()
 	{
 		delete aniController;
 	}
 
-	void I4ActorElement::registerAni(const char* name, I4KeyFrameSet* keyFrameSet)
+	void I4ModelElement::registerAni(const char* name, I4KeyFrameSet* keyFrameSet)
 	{
 		if (aniController == nullptr)
 		{
@@ -39,7 +39,7 @@ namespace i4graphics
 		aniController->addTrack(name, keyFrameSet);
 	}
 
-	void I4ActorElement::playAni(const char* name)
+	void I4ModelElement::playAni(const char* name)
 	{
 		if (aniController == nullptr)
 			return;
@@ -47,16 +47,16 @@ namespace i4graphics
 		aniController->playTrack(name);
 	}
 
-	bool I4ActorElement::initialize()
+	bool I4ModelElement::initialize()
 	{
 		resultTM = elementInfo->localTM;
 
-		parentElement = actor->findElement(elementInfo->parentName.c_str());
+		parentElement = model->findElement(elementInfo->parentName.c_str());
 
 		return true;
 	}
 
-	void I4ActorElement::animate(float deltaSec, const I4Matrix4x4& parentTM)
+	void I4ModelElement::animate(float deltaSec, const I4Matrix4x4& parentTM)
 	{
 		if (aniController == nullptr)
 		{
@@ -87,65 +87,65 @@ namespace i4graphics
 		}
 	}
 
-	//------------------------- I4ActorBone ---------------------
+	//------------------------- I4ModelBone ---------------------
 
-	I4ActorBone::I4ActorBone(I4Actor* actor, I4ActorElementInfo* info)
-	: I4ActorElement(actor, info)
+	I4ModelBone::I4ModelBone(I4Model* model, I4ModelElementInfo* info)
+	: I4ModelElement(model, info)
 	{
 	}
 
-	I4ActorBone::~I4ActorBone()
+	I4ModelBone::~I4ModelBone()
 	{
 	}
 
-	bool I4ActorBone::initialize()
+	bool I4ModelBone::initialize()
 	{
-		I4ActorElement::initialize();
+		I4ModelElement::initialize();
 
 		elementInfo->worldTM.extractInversePrimitive(worldInverseTM);;
 
 		return true;
 	}
 
-	void I4ActorBone::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
+	void I4ModelBone::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 	}
 
-	//------------------------- I4ActorMesh -------------------------
+	//------------------------- I4ModelMesh -------------------------
 
 	static I4Material defaultMaterial;
 
-	I4ActorMesh::I4ActorMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* _mesh)
-	: I4ActorElement(actor, info)
+	I4ModelMesh::I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* _mesh)
+	: I4ModelElement(model, info)
 	, mesh(_mesh)
 	, material(&defaultMaterial)
 	{
 	}
 
-	I4ActorMesh::~I4ActorMesh()
+	I4ModelMesh::~I4ModelMesh()
 	{
 	}
 
-	//------------------------- ActorRigidMesh -------------------------
+	//------------------------- ModelRigidMesh -------------------------
 
-	ActorRigidMesh::ActorRigidMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* _mesh)
-	: I4ActorMesh(actor, info, _mesh)
+	ModelRigidMesh::ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* _mesh)
+	: I4ModelMesh(model, info, _mesh)
 	{
 	}
 
-	ActorRigidMesh::~ActorRigidMesh()
+	ModelRigidMesh::~ModelRigidMesh()
 	{
 		
 	}
 
-	void ActorRigidMesh::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
+	void ModelRigidMesh::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		const I4Matrix4x4 matWorld = resultTM*parentTM;
 		I4MeshRenderItem item;
 		item.shaderMask = I4SHADER_MASK_NONE;
 		item.material = material;
 		item.mesh = mesh;
-		item.shadowCaster = actor->isShadowCaster();
+		item.shadowCaster = model->isShadowCaster();
 
 		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{
@@ -170,39 +170,39 @@ namespace i4graphics
 	}
 
 
-	//------------------------- ActorSkinedMeshGPU -------------------------
+	//------------------------- ModelSkinedMeshGPU -------------------------
 
-	ActorSkinedMeshGPU::ActorSkinedMeshGPU(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* _mesh)
-	: I4ActorMesh(actor, info, _mesh)
+	ModelSkinedMeshGPU::ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4Mesh* _mesh)
+	: I4ModelMesh(model, info, _mesh)
 	{
 	}
 
-	ActorSkinedMeshGPU::~ActorSkinedMeshGPU()
+	ModelSkinedMeshGPU::~ModelSkinedMeshGPU()
 	{
 
 	}
 
-	bool ActorSkinedMeshGPU::initialize()
+	bool ModelSkinedMeshGPU::initialize()
 	{
-		I4ActorMesh::initialize();
+		I4ModelMesh::initialize();
 
-		matrixPalette.resize(actor->getBoneCount());
+		matrixPalette.resize(model->getBoneCount());
 
 		return true;
 	}
 
-	void ActorSkinedMeshGPU::animate(float deltaSec, const I4Matrix4x4& parentTM)
+	void ModelSkinedMeshGPU::animate(float deltaSec, const I4Matrix4x4& parentTM)
 	{
-		I4ActorMesh::animate(deltaSec, parentTM);
+		I4ModelMesh::animate(deltaSec, parentTM);
 
-		assert(actor->getBoneCount() <= matrixPalette.size());
-		for (unsigned int i = 0; i < actor->getBoneCount(); ++i)
+		assert(model->getBoneCount() <= matrixPalette.size());
+		for (unsigned int i = 0; i < model->getBoneCount(); ++i)
 		{
-			matrixPalette[i] = resultTM*actor->getSkinTM(i);
+			matrixPalette[i] = resultTM*model->getSkinTM(i);
 		}
 	}
 
-	void ActorSkinedMeshGPU::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
+	void ModelSkinedMeshGPU::render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
@@ -210,7 +210,7 @@ namespace i4graphics
 		item.mesh = mesh;
 		item.material = material;
 		item.shaderMask = I4SHADER_MASK_SKINNING;
-		item.shadowCaster = actor->isShadowCaster();
+		item.shadowCaster = model->isShadowCaster();
 
 		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{
@@ -227,7 +227,7 @@ namespace i4graphics
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}
 
-		item.boneCount = actor->getBoneCount();
+		item.boneCount = model->getBoneCount();
 		item.worldAABB = mesh->localAABB.transform(resultTM*parentTM);
 		item.worldTM = parentTM;
 		item.matrixPalette = &matrixPalette[0];

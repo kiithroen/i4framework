@@ -1,25 +1,25 @@
 #pragma once
 
 #include "I4Mesh.h"
-#include "I4ActorElementInfo.h"
+#include "I4ModelElementInfo.h"
 
 namespace i4graphics {
 
 	struct I4KeyFrameSet;
 	struct I4Material;
 	class I4ShaderMgr;
-	class I4Actor;
-	class I4ActorBoneResource;
+	class I4Model;
+	class I4ModelBoneResource;
 	class I4AnimationController;
 	class I4DeferredRenderer;
 	
-	//------------------------- I4ActorElement ---------------------
+	//------------------------- I4ModelElement ---------------------
 
-	class I4ActorElement
+	class I4ModelElement
 	{
 	public:
-		I4ActorElement(I4Actor* actor, I4ActorElementInfo* info);
-		virtual ~I4ActorElement();
+		I4ModelElement(I4Model* model, I4ModelElementInfo* info);
+		virtual ~I4ModelElement();
 
 		void					registerAni(const char* name, I4KeyFrameSet* keyFrameSet);
 		void					playAni(const char* name);
@@ -38,20 +38,20 @@ namespace i4graphics {
 	protected:
 		I4Matrix4x4				resultTM;
 
-		I4Actor*				actor;
-		I4ActorElementInfo*		elementInfo;
-		I4ActorElement*			parentElement;
+		I4Model*				model;
+		I4ModelElementInfo*		elementInfo;
+		I4ModelElement*			parentElement;
 		I4AnimationController*	aniController;
 	};
 	
 
-	//------------------------- I4ActorBone ---------------------
+	//------------------------- I4ModelBone ---------------------
 
-	class I4ActorBone : public I4ActorElement
+	class I4ModelBone : public I4ModelElement
 	{
 	public:
-		I4ActorBone(I4Actor* actor, I4ActorElementInfo* info);
-		virtual ~I4ActorBone();
+		I4ModelBone(I4Model* model, I4ModelElementInfo* info);
+		virtual ~I4ModelBone();
 
 		virtual bool	initialize() override;
 		virtual void	render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM) override;
@@ -63,13 +63,13 @@ namespace i4graphics {
 	};
 	
 
-	//------------------------- I4ActorMesh -------------------------
+	//------------------------- I4ModelMesh -------------------------
 
-	class I4ActorMesh : public I4ActorElement
+	class I4ModelMesh : public I4ModelElement
 	{
 	public:
-		I4ActorMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
-		virtual ~I4ActorMesh();
+		I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* mesh);
+		virtual ~I4ModelMesh();
 	
 		void			setMaterial(I4Material*	mtrl)		{ material = mtrl;}
 
@@ -79,24 +79,24 @@ namespace i4graphics {
 	};
 
 
-	//------------------------- ActorRigidMesh -------------------------
+	//------------------------- ModelRigidMesh -------------------------
 
-	class ActorRigidMesh : public I4ActorMesh
+	class ModelRigidMesh : public I4ModelMesh
 	{
 	public:
-		ActorRigidMesh(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
-		virtual ~ActorRigidMesh();
+		ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* mesh);
+		virtual ~ModelRigidMesh();
 
 		virtual void	render(I4DeferredRenderer* renderer, const I4Matrix4x4& parentTM) override;
 	};
 
-	//------------------------- ActorSkinedMeshGPU -------------------------
+	//------------------------- ModelSkinedMeshGPU -------------------------
 
-	class ActorSkinedMeshGPU : public I4ActorMesh
+	class ModelSkinedMeshGPU : public I4ModelMesh
 	{
 	public:
-		ActorSkinedMeshGPU(I4Actor* actor, I4ActorElementInfo* info, I4Mesh* mesh);
-		virtual ~ActorSkinedMeshGPU();
+		ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4Mesh* mesh);
+		virtual ~ModelSkinedMeshGPU();
 
 		virtual bool	initialize() override;
 		virtual void	animate(float deltaSec, const I4Matrix4x4& parentTM) override;
