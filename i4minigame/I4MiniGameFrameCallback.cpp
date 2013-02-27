@@ -346,7 +346,7 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	static float angle = 0;
 
-	angle += 15*deltaTime;
+	angle += 45*deltaTime;
 
 	if (angle > 360)
 	{
@@ -404,7 +404,14 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 
 	I4DirectionalLight directionalLight;
 	directionalLight.direction = I4Vector3(0.7f, -1.0f, 0.75f);
-	directionalLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
+
+	/*
+		sunset=182,126,91
+		noon=192,191,173
+		clouds, haze=189,190,192
+		overcast=174,183,190
+	*/
+	directionalLight.color = I4Vector3(192.0f/255.0f, 191.0f/255.0f, 173.0f/255.0f);
 
 	renderer->commitToScene(&directionalLight);
 

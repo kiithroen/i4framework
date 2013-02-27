@@ -93,7 +93,7 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	float3 diffuseLight = float3(0, 0, 0);
 	float specularLight = 0;
 
-	if (shadowFactor > 0.1f)
+	if (shadowFactor > 0)
 	{
 		float4 normalData = texRTNormal.Sample(samPoint, input.uv);
 		float3 normal = 2.0f * normalData.xyz - 1.0f;
