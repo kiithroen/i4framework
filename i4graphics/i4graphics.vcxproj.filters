@@ -31,11 +31,6 @@
       <Filter>DirectXTex</Filter>
     </ClInclude>
     <ClInclude Include="I4AnimationController.h" />
-    <ClInclude Include="I4Actor.h" />
-    <ClInclude Include="I4ActorElement.h" />
-    <ClInclude Include="I4ActorElementInfo.h" />
-    <ClInclude Include="I4ActorMgr.h" />
-    <ClInclude Include="I4ActorResource.h" />
     <ClInclude Include="I4AnimationTrack.h" />
     <ClInclude Include="I4KeyFrameSet.h" />
     <ClInclude Include="I4Material.h" />
@@ -44,6 +39,11 @@
     <ClInclude Include="I4TextureMgr.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="I4Model.h" />
+    <ClInclude Include="I4ModelElement.h" />
+    <ClInclude Include="I4ModelElementInfo.h" />
+    <ClInclude Include="I4ModelMgr.h" />
+    <ClInclude Include="I4ModelResource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4GeometryBuffer.cpp" />
@@ -60,10 +60,6 @@
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
       <Filter>DirectXTex</Filter>
     </ClCompile>
-    <ClCompile Include="I4Actor.cpp" />
-    <ClCompile Include="I4ActorElement.cpp" />
-    <ClCompile Include="I4ActorMgr.cpp" />
-    <ClCompile Include="I4ActorResource.cpp" />
     <ClCompile Include="I4AnimationController.cpp" />
     <ClCompile Include="I4AnimationTrack.cpp" />
     <ClCompile Include="I4Mesh.cpp" />
@@ -71,6 +67,10 @@
     <ClCompile Include="I4TextureMgr.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="I4Model.cpp" />
+    <ClCompile Include="I4ModelElement.cpp" />
+    <ClCompile Include="I4ModelMgr.cpp" />
+    <ClCompile Include="I4ModelResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\bin\shader\default.fx">
