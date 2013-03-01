@@ -117,6 +117,7 @@
     <ClInclude Include="I4ModelMgr.h" />
     <ClInclude Include="I4ModelResource.h" />
     <ClInclude Include="I4QuadMesh.h" />
+    <ClInclude Include="I4Renderer.h" />
     <ClInclude Include="I4RenderTarget.h" />
     <ClInclude Include="I4RenderTargetD3D11.h" />
     <ClInclude Include="I4Shader.h" />

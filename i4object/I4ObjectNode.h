@@ -7,25 +7,21 @@ using namespace i4core;
 
 namespace i4object {
 
-	class ObjectMgr;
+	class I4ObjectMgr;
 
 	class I4OBJECT_API I4ObjectNode
 	{
-		typedef vector<I4ObjectNode*>		ObjectNodeVector;
+		typedef vector<I4ObjectNode*>		I4ObjectNodeVector;
 	public:
-		I4ObjectNode(I4ObjectNode* parent, const char* name);
+		I4ObjectNode(I4ObjectMgr* objectMgr, I4ObjectNode* parent, const char* name);
 		~I4ObjectNode();
 				
 		I4ObjectNode*			createChild(const char* name);
 
-		void					addChild(I4ObjectNode* child);
+		void					attachChild(I4ObjectNode* child);
 
-		void					removeChild(I4ObjectNode* child);
-		void					removeFromParent();
-		
-		void					destroyChild(I4ObjectNode* child);
-		void					destroyChildAll();
-		void					destroyFromObject();
+		void					detachChild(I4ObjectNode* child);
+		void					detachFromParent();
 		
 		void 					setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up);
 		void 					setLocalTM(const I4Matrix4x4& localTM);
@@ -54,8 +50,9 @@ namespace i4object {
 		I4Vector3				localScale;
 		I4Vector3				localPosition;
 
+		I4ObjectMgr*			objectMgr;
 		I4ObjectNode*			parent;
-		ObjectNodeVector		vecChild;
+		I4ObjectNodeVector		vecChild;
 
 		string					name;
 	};

@@ -59,11 +59,11 @@ float4 PS( PS_INPUT	input	) : SV_Target
 	ray.z = farTopRight.z;
 	float3 p = ray*depthVal;
 
-	int shadowSplitIndex = 0;
-
-	for (int i = SHADOW_SPLIT_NUM - 1; i > 0; --i)
+	// 0, 1, 2 번째만 검사해보고 아니면 3번째 그림자맵.
+	int shadowSplitIndex = 3;
+	for (int i = 0; i < SHADOW_SPLIT_NUM - 1; ++i)
 	{
-		if (p.z > shadowSplitZ[i - 1])
+		if (p.z < shadowSplitZ[i])
 		{
 			shadowSplitIndex = i;
 			break;

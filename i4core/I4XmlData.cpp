@@ -276,10 +276,10 @@ namespace i4core
 	
 	bool I4XmlData::getAttrValue(string& result, const char* name)
 	{
-		assert(selNode != NULL);
+		assert(selNode != nullptr);
 
 		I4XmlAttribute* attr = selNode->first_attribute(name);
-		if (attr == NULL)
+		if (attr == nullptr)
 			return false;
 
 		result = attr->value();

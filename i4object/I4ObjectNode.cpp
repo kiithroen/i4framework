@@ -5,8 +5,9 @@
 
 namespace i4object {
 
-	I4ObjectNode::I4ObjectNode(I4ObjectNode* _parent, const char* _name)
-		: parent(_parent)
+	I4ObjectNode::I4ObjectNode(I4ObjectMgr* _objectMgr, I4ObjectNode* _parent, const char* _name)
+		: objectMgr(_objectMgr)
+		, parent(_parent)
 		, name(_name)
 	{
 		localRotation.makeIdentity();
@@ -16,14 +17,22 @@ namespace i4object {
 		localTM.makeIdentity();
 		worldTM.makeIdentity();
 
-		if (parent != NULL)
+		if (parent != nullptr)
 		{
-			parent->addChild(this);
+			parent->attachChild(this);
 		}
 	}
 
 	I4ObjectNode::~I4ObjectNode()
 	{
+		detachFromParent();
+
+		for (auto& itr : vecChild)
+		{
+			objectMgr->destroyObjectNode(itr);
+		}
+
+		vecChild.clear();
 	}
 
 	void I4ObjectNode::calcTM()
@@ -32,9 +41,9 @@ namespace i4object {
 		calcWorldTM();
 		
 		// 자식들 업데이트
-		for (ObjectNodeVector::iterator itr = vecChild.begin(); itr != vecChild.end(); ++itr)
+		for (auto& itr : vecChild)
 		{
-			(*itr)->calcTM();
+			itr->calcTM();
 		}
 	}
 
@@ -47,7 +56,7 @@ namespace i4object {
 		localTM._43 = localPosition.z;
 		localTM._44 = 1.0f;
 
-		if (localScale != I4Vector3(1, 1, 1))
+		if (localScale != I4VECTOR3_ONE)
 		{
 			I4Matrix4x4 scaleTM;
 			scaleTM.makeScale(localScale.x, localScale.y, localScale.z);
@@ -58,7 +67,7 @@ namespace i4object {
 
 	void I4ObjectNode::calcWorldTM()
 	{
-		if (parent == NULL)			// 부모가 없으면 월드변환행렬 --> 로컬
+		if (parent == nullptr)			// 부모가 없으면 월드변환행렬 --> 로컬
 		{
 			worldTM = localTM;
 		}
@@ -70,11 +79,13 @@ namespace i4object {
 
 	I4ObjectNode* I4ObjectNode::createChild(const char* name)
 	{
-		return I4ObjectMgr::getObjectMgr()->createObjectNode(this, name);
+		return objectMgr->createObjectNode(this, name);
 	}
 
-	void I4ObjectNode::addChild(I4ObjectNode* child)
+	void I4ObjectNode::attachChild(I4ObjectNode* child)
 	{
+		child->detachFromParent();
+
 		child->parent = this;
 		child->calcTM();
 
@@ -82,49 +93,24 @@ namespace i4object {
 	}
 
 
-	void I4ObjectNode::removeChild(I4ObjectNode* child)
+	void I4ObjectNode::detachChild(I4ObjectNode* child)
 	{
-		for (ObjectNodeVector::iterator itr = vecChild.begin(); itr != vecChild.end(); ++itr)
+		for (I4ObjectNodeVector::iterator itr = vecChild.begin(); itr != vecChild.end(); ++itr)
 		{
 			if (*itr == child)
 			{
-				(*itr)->parent = NULL;
-
 				vecChild.erase(itr);
 				return;
 			}
 		}
 	}
 	
-	void I4ObjectNode::removeFromParent()
+	void I4ObjectNode::detachFromParent()
 	{
-		if (parent != NULL)
+		if (parent != nullptr)
 		{
-			parent->removeChild(this);
+			parent->detachChild(this);
 		}
-	}
-
-	void I4ObjectNode::destroyChild(I4ObjectNode* child)
-	{
-		removeChild(child);
-		I4ObjectMgr::getObjectMgr()->destroyObjectNode(child);
-	}
-
-	void I4ObjectNode::destroyChildAll()
-	{
-		for (ObjectNodeVector::iterator itr = vecChild.begin(); itr != vecChild.end(); ++itr)
-		{
-			(*itr)->destroyChildAll();
-			I4ObjectMgr::getObjectMgr()->destroyObjectNode(*itr);
-		}
-		vecChild.clear();
-	}
-
-	void I4ObjectNode::destroyFromObject()
-	{
-		removeFromParent();
-		destroyChildAll();
-		I4ObjectMgr::getObjectMgr()->destroyObjectNode(this);
 	}
 
 	void I4ObjectNode::setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)

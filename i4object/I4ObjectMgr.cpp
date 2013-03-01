@@ -5,71 +5,50 @@
 namespace i4object {
 
 	I4ObjectMgr::I4ObjectMgr()
-		: rootNode(NULL)
+		: rootNode(nullptr)
 	{
-		rootNode = createObjectNode(NULL, "root");
+		rootNode = createObjectNode(nullptr, "root");
 	}
 
 
 	I4ObjectMgr::~I4ObjectMgr()
 	{
-		for (ObjectNodeMap::iterator itr = mapObjectNode.begin(); itr != mapObjectNode.end(); ++itr)
+		for (auto& itr : mapObjectNode)
 		{
-			delete itr->second;
+			delete itr.second;
 		}
 		mapObjectNode.clear();
 
-		rootNode = NULL;
+		rootNode = nullptr;
 	}
 	
-	void I4ObjectMgr::update(float dt)
-	{
-	}
-
-	void I4ObjectMgr::render()
-	{
-	}
-
 	I4ObjectNode* I4ObjectMgr::createObjectNode(I4ObjectNode* parent, const char* name)
 	{
-		assert(findObjectNode(name) == NULL);		// 같은 이름으로는 처음 생성되어야 한다.
+		assert(findObjectNode(name) == nullptr);		// 같은 이름으로는 처음 생성되어야 한다.
 
-		I4ObjectNode* sceneNode = new I4ObjectNode(parent, name);
+		I4ObjectNode* sceneNode = new I4ObjectNode(this, parent, name);
 		mapObjectNode.insert(make_pair(name, sceneNode));
 		
 		return sceneNode;
 	}
 
+	void I4ObjectMgr::destroyObjectNode(I4ObjectNode* node)
+	{
+		auto itr = mapObjectNode.find(node->getName());
+		assert(itr != mapObjectNode.end());
+
+		delete node;
+
+		mapObjectNode.erase(itr);
+	}
+
 	I4ObjectNode* I4ObjectMgr::findObjectNode(const char* name)
 	{
-		ObjectNodeMap::iterator itr = mapObjectNode.find(name);
+		auto itr = mapObjectNode.find(name);
 		if (itr == mapObjectNode.end())
-			return NULL;
+			return nullptr;
 
 		return itr->second;
 	}
 
-	void I4ObjectMgr::destroyObjectNode(I4ObjectNode* node)
-	{
-		ObjectNodeMap::iterator itr = mapObjectNode.find(node->getName());
-		assert(itr != mapObjectNode.end());
-
-		delete itr->second;
-		mapObjectNode.erase(itr);
-	}
-	
-	//---------------------------------------------------------------
-
-	I4ObjectMgr* I4ObjectMgr::objectMgr = NULL;
-
-	void I4ObjectMgr::createObjectMgr()
-	{
-		objectMgr = new I4ObjectMgr;
-	}
-
-	void I4ObjectMgr::destroyObjectMgr()
-	{
-		delete objectMgr;
-		objectMgr = NULL;
-	}
 }

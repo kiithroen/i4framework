@@ -103,6 +103,9 @@
     <ClInclude Include="I4ShaderD3D11.h">
       <Filter>driver</Filter>
     </ClInclude>
+    <ClInclude Include="I4Renderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="i4graphics.cpp" />

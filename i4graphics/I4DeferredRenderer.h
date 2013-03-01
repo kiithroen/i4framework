@@ -1,14 +1,8 @@
 #pragma once
 
-#include "I4AABB.h"
-#include "I4Sphere.h"
+#include "I4Renderer.h"
 #include "I4GeometryBuffer.h"
 #include "I4Camera.h"
-
-namespace i4core
-{	
-	class I4Camera;
-}
 using namespace i4core;
 
 namespace i4graphics
@@ -26,33 +20,7 @@ namespace i4graphics
 	class I4Mesh;
 	struct I4Material;
 
-	struct I4MeshRenderItem
-	{
-		I4Matrix4x4			worldTM;
-		I4AABB				worldAABB;
-		unsigned int		shaderMask;
-		unsigned int		boneCount;
-		I4Mesh*				mesh;
-		I4Material*			material;
-		I4Matrix4x4*		matrixPalette;
-		bool				shadowCaster;
-				
-		bool operator < (const I4MeshRenderItem& other) const;
-	};
-
-
-	struct I4DirectionalLight
-	{
-		I4Vector3	direction;
-		I4Vector3	color;
-	};
-
-	struct I4PointLight
-	{
-		I4Vector3	position;
-		float		radius;
-		I4Vector3	color;
-	};
+	
 
 	__declspec(align(16))
 	struct CBOnResize_G
@@ -192,25 +160,25 @@ namespace i4graphics
 		T*					data;
 	};
 
-	class I4GRAPHICS_API I4DeferredRenderer
+	class I4GRAPHICS_API I4DeferredRenderer : public I4Renderer
 	{
 		typedef vector<I4MeshRenderItem>		I4MeshRenderItemVector;
 		typedef vector<I4DirectionalLight>		I4DirectionalLightVector;
 		typedef vector<I4PointLight>			I4PointLightVector;
 	public:
 		I4DeferredRenderer();
-		~I4DeferredRenderer(void);
+		virtual ~I4DeferredRenderer(void);
 
-		bool				initialize(void* _windowID, unsigned int _width, unsigned int _height);
-		void				finalize();
+		virtual bool				initialize(void* _windowID, unsigned int _width, unsigned int _height) override;
+		virtual void				finalize() override;
 
-		void				commitToScene(const I4MeshRenderItem& item);
-		void				commitToScene(I4DirectionalLight* light);
-		void				commitToScene(I4PointLight* light);
+		virtual void				commitToScene(const I4MeshRenderItem& item) override;
+		virtual void				commitToScene(I4DirectionalLight* light) override;
+		virtual void				commitToScene(I4PointLight* light) override;
 
-		void				preRender(I4Camera* camera);
-		void				render(I4Camera* camera);
-		void				postRender(I4Camera* camera);
+		virtual void				preRender(I4Camera* camera) override;
+		virtual void				render(I4Camera* camera) override;
+		virtual void				postRender(I4Camera* camera) override;
 
 		bool				isWireMode() const				{ return wireMode; }
 		void				setWireMode(bool enable)		{ wireMode = enable; }
@@ -271,8 +239,6 @@ namespace i4graphics
 		I4CBHolder<CBEveryFrame_L_point>		cbEveryFrame_L_point;
 		I4CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
 		I4CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
-
-		bool		wireMode;
 
 		int			shadowSplitSize;
 		float		shadowSplitZ[SHADOW_SPLIT_NUM];

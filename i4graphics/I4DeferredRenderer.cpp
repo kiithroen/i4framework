@@ -54,7 +54,6 @@ namespace i4graphics
 		, rtShadow(nullptr)
 		, quadMesh(nullptr)
 		, sphereMesh(nullptr)
-		, wireMode(false)
 		, shadowSplitSize(1024)
 	{
 		static const float defaultShadowSplitZ[] = { 3.5f, 7.0f, 20.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
