@@ -170,7 +170,7 @@ namespace i4graphics
 		virtual ~I4DeferredRenderer(void);
 
 		virtual bool				initialize(void* _windowID, unsigned int _width, unsigned int _height) override;
-		virtual void				finalize() override;
+		void						finalize();
 
 		virtual void				commitToScene(const I4MeshRenderItem& item) override;
 		virtual void				commitToScene(I4DirectionalLight* light) override;

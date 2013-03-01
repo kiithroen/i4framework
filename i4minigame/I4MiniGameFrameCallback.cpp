@@ -59,6 +59,8 @@ bool I4MiniGameFrameCallback::onStart()
 	modelMgr = new I4ModelMgr;
 	
 	floor = modelMgr->createModel("floor");
+
+
 	if (!modelMgr->attachMesh(floor, "testmodel/floor.mesh.xml"))
 	{
 		return false;
