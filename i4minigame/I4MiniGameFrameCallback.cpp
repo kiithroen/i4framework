@@ -211,7 +211,7 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 		writer.write(I4ProfileManager::getRootNode());
 
 		elapsed = 0;
-		I4ProfileManager::reset();
+		I4ProfileManager::clear();
 	}
 
 	return true;

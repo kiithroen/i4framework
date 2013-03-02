@@ -33,6 +33,7 @@ namespace i4core
 		{
 			totalCalls = 0;
 			totalTime = 0;
+			recursionCounter = 0;
 
 			if (child)
 			{
@@ -43,6 +44,19 @@ namespace i4core
 			{
 				sibling->reset();
 			}
+		}
+
+		void clear()
+		{
+			totalCalls = 0;
+			totalTime = 0;
+			recursionCounter = 0;
+
+			delete child;
+			child = nullptr;
+
+			delete sibling;
+			sibling = nullptr;
 		}
 
 		void begin()
@@ -173,6 +187,11 @@ namespace i4core
 		static void	reset()
 		{
 			rootNode.reset();
+		}
+
+		static void	clear()
+		{
+			rootNode.clear();
 		}
 
 		static I4ProfileIterator	getRootIterator()									{ return I4ProfileIterator(&rootNode); }
