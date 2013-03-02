@@ -70,9 +70,9 @@ namespace i4graphics
 	}
 
 
-	void I4AnimationTrack::advanceFrame(float deltaSec)
+	void I4AnimationTrack::advanceFrame(float dt)
 	{
-		currentFrame += deltaSec*ANIMATION_FRAME_RATE;
+		currentFrame += dt*ANIMATION_FRAME_RATE;
 
 		if (currentFrame >= keyFrameSet->endFrame)
 		{

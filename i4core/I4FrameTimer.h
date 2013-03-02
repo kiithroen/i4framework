@@ -9,9 +9,9 @@ namespace i4core
 	public:
 		virtual ~I4FrameTimer();
 
-		virtual float	update()		{ return deltaSec; }
+		virtual float	update()		{ return dt; }
 
-		float			getDeltaSec()	{ return deltaSec; }
+		float			getDeltaSec()	{ return dt; }
 
 	protected:
 		I4FrameTimer();
@@ -26,6 +26,6 @@ namespace i4core
 		static I4FrameTimer*	timer;
 
 	protected:
-		float			deltaSec;
+		float			dt;
 	};
 }

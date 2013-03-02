@@ -16,8 +16,8 @@ namespace i4core
 		virtual ~I4FrameStateMgr();
 
 	public:
-		bool			onUpdate(float deltaSec);
-		bool			onRender(float deltaSec);
+		bool			onUpdate(float dt);
+		bool			onRender(float dt);
 
 		void			onKeyDown(unsigned int key);
 		void			onKeyUp(unsigned int key);	

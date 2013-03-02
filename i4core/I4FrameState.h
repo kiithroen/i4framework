@@ -15,8 +15,8 @@ namespace i4core
 		const char*		getFrameStateID()								{ return frameStateID.c_str(); }
 
 		virtual bool	onEnter()										{ return true; }
-		virtual	bool	onUpdate(float delta)							{ return true; }
-		virtual bool 	onRender(float deltaSec)						{ return true; }
+		virtual	bool	onUpdate(float dt)								{ return true; }
+		virtual bool 	onRender(float dt)								{ return true; }
 		virtual void	onExit()										{}
 
 		virtual void	onKeyDown(unsigned int key)						{}

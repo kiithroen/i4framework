@@ -57,7 +57,7 @@ namespace i4graphics
 		, shadowSplitSize(1024)
 	{
 		static const float defaultShadowSplitZ[] = { 3.5f, 7.0f, 20.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
-		static const float defaultShadowBias[] = { 0.005f, 0.003f, 0.002f, 0.001f };
+		static const float defaultShadowBias[] = { 0.005f, 0.003f, 0.0025f, 0.002f };
 		for (int  i = 0; i < 4; ++i)
 		{
 			shadowSplitZ[i] = defaultShadowSplitZ[i];
@@ -65,10 +65,16 @@ namespace i4graphics
 		}
 
 
-		// 디폴트 디렉셔널 라이팅 세팅.
-		directionalLight.direction = I4Vector3(1.0f, -1.0f, 1.0f);
-		directionalLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
-		commitToScene(&directionalLight);
+		// 디폴트 썬라이트 세팅.
+		/*
+		sunset=182,126,91
+		noon=192,191,173
+		clouds, haze=189,190,192
+		overcast=174,183,190
+		*/
+		sunLight.direction = I4Vector3(1.0f, -1.0f, 1.0f);
+		sunLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
+		commitToScene(&sunLight);
 	}
 
 
@@ -253,9 +259,9 @@ namespace i4graphics
 
 	void I4DeferredRenderer::commitToScene(I4DirectionalLight* light)
 	{
-		directionalLight = *light;
+		sunLight = *light;
 
-		directionalLightPerspectiveCamera.setLookAt(directionalLight.direction*-999.0f, directionalLight.direction, I4VECTOR3_AXISY);
+		directionalLightPerspectiveCamera.setLookAt(sunLight.direction*-999.0f, sunLight.direction, I4VECTOR3_AXISY);
 		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
 	}
 
@@ -687,11 +693,11 @@ namespace i4graphics
 		}
 		cbOnResize_L_directional.getData()->shadowSplitSize = (float)shadowSplitSize;
 		
-		const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(directionalLight.direction);
+		const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(sunLight.direction);
 
 		cbOnResize_L_directional.getData()->farTopRight = camera->getFarTopRight();
 		cbOnResize_L_directional.getData()->lightViewDirection = lightViewDir;
-		cbOnResize_L_directional.getData()->lightColor = directionalLight.color;
+		cbOnResize_L_directional.getData()->lightColor = sunLight.color;
 
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
 

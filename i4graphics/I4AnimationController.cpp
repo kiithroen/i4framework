@@ -20,12 +20,12 @@ namespace i4graphics
 		mapAnimationTrack.clear();
 	}
 
-	void I4AnimationController::animate(float deltaSec)
+	void I4AnimationController::animate(float dt)
 	{		
 		if (curAnimationTrack == nullptr)
 			return;
 
-		curAnimationTrack->advanceFrame(deltaSec);	
+		curAnimationTrack->advanceFrame(dt);	
 
 		I4Quaternion q;
 		if (curAnimationTrack->getKeyRotation(q) == true)

@@ -21,6 +21,7 @@ using namespace i4graphics;
 namespace i4object
 {
 	class I4ObjectMgr;
+	class I4ObjectNode;
 }
 using namespace i4object;
 
@@ -48,8 +49,8 @@ public:
 	virtual void	onRButtonUp(unsigned int x, unsigned int y);
 
 private:
-	void	updateCamera(float deltaTime);
-	void	commitToRenderer(float deltaTime);
+	void	updateCamera(float dt);
+	void	commitToRenderer(float dt);
 
 private:
 	I4FrameStateMgr*	frameStateMgr;
@@ -65,4 +66,5 @@ private:
 	float				camPitch;
 	float				camRoll;
 
+	I4ObjectNode*		nodeLight[100];
 };

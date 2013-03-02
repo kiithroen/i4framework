@@ -221,7 +221,7 @@ namespace i4graphics
 		I4MeshRenderItemVector			vecCulledMeshRenderItem;
 		I4PointLightVector				vecCulledPointLight;
 
-		I4DirectionalLight				directionalLight;
+		I4DirectionalLight				sunLight;
 
 		I4CBHolder<CBOnResize_G>				cbOnResize_G;
 		I4CBHolder<CBEveryFrame_G>				cbEveryFrame_G;

@@ -98,6 +98,8 @@ namespace i4graphics
 				return false;
 		}
 
+		animate(0);
+
 		return true;
 	}
 
@@ -119,21 +121,21 @@ namespace i4graphics
 		return nullptr;
 	}
 
-	void I4Model::animate(float deltaSec)
+	void I4Model::animate(float dt)
 	{
 		I4PROFILE_THISFUNC;
 
 		unsigned int boneSize = vecBone.size();
 		for (unsigned int i = 0; i < boneSize; ++i)
 		{
-			vecBone[i]->animate(deltaSec, vecBone[i]->getParentTM());
+			vecBone[i]->animate(dt, vecBone[i]->getParentTM());
 			vecSkinTM[i] = vecBone[i]->getSkinTM();
 		}
 
 		unsigned int meshSize = vecMesh.size();
 		for (unsigned int i = 0; i < meshSize; ++i)
 		{
-			vecMesh[i]->animate(deltaSec, vecMesh[i]->getParentTM());
+			vecMesh[i]->animate(dt, vecMesh[i]->getParentTM());
 		}
 	}
 

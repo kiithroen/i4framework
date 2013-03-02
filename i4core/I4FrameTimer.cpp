@@ -11,7 +11,7 @@ namespace i4core
 	I4FrameTimer* I4FrameTimer::timer = nullptr;
 
 	I4FrameTimer::I4FrameTimer()
-		: deltaSec(1.0f/30.0f)
+		: dt(1.0f/30.0f)
 	{
 	}
 

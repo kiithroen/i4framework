@@ -55,7 +55,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ModelElement::animate(float deltaSec, const I4Matrix4x4& parentTM)
+	void I4ModelElement::animate(float dt, const I4Matrix4x4& parentTM)
 	{
 		if (aniController == nullptr)
 		{
@@ -63,7 +63,7 @@ namespace i4graphics
 		}
 		else
 		{
-			aniController->animate(deltaSec);
+			aniController->animate(dt);
 			const I4Matrix4x4& animationTM = aniController->getAnimationTM();
 
 			resultTM = elementInfo->localTM*animationTM;
@@ -190,9 +190,9 @@ namespace i4graphics
 		return true;
 	}
 
-	void ModelSkinedMeshGPU::animate(float deltaSec, const I4Matrix4x4& parentTM)
+	void ModelSkinedMeshGPU::animate(float dt, const I4Matrix4x4& parentTM)
 	{
-		I4ModelMesh::animate(deltaSec, parentTM);
+		I4ModelMesh::animate(dt, parentTM);
 
 		assert(model->getBoneCount() <= matrixPalette.size());
 		for (unsigned int i = 0; i < model->getBoneCount(); ++i)

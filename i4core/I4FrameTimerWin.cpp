@@ -8,7 +8,7 @@ namespace i4core
 		QueryPerformanceFrequency(&frequency);
 		QueryPerformanceCounter(&last);
 
-		deltaSec = update();
+		dt = update();
 	}
 
 	I4FrameTimerWin::~I4FrameTimerWin()
@@ -18,10 +18,10 @@ namespace i4core
 	float I4FrameTimerWin::update()
 	{
 		QueryPerformanceCounter(&current);
-		deltaSec = (float)((double)(current.QuadPart - last.QuadPart)/(double)frequency.QuadPart); // 시간차 계산 (현재시간 - 이전시간)
+		dt = (float)((double)(current.QuadPart - last.QuadPart)/(double)frequency.QuadPart); // 시간차 계산 (현재시간 - 이전시간)
 		last = current;
 
-		return deltaSec;
+		return dt;
 	}
 
 }

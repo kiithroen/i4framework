@@ -19,7 +19,7 @@ namespace i4graphics {
 		void				addTrack(const char* name, I4KeyFrameSet* keyFrameSet);
 		void				playTrack(const char* name);
 
-		void				animate(float deltaSec);
+		void				animate(float dt);
 
 		const I4Matrix4x4&	getAnimationTM() const		{ return animationTM; }
 

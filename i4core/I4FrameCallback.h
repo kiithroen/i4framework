@@ -15,8 +15,8 @@ namespace i4core
 		virtual	bool	onStart()										{ return true; }
 		virtual void	onEnd()											{}
 
-		virtual bool 	onUpdate(float deltaSec)						{ return true; }
-		virtual bool 	onRender(float deltaSec)						{ return true; }
+		virtual bool 	onUpdate(float dt)						{ return true; }
+		virtual bool 	onRender(float dt)						{ return true; }
 
 		virtual void	onKeyDown(unsigned int key)						{}
 		virtual void	onKeyUp(unsigned int key)						{}

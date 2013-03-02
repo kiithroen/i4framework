@@ -25,7 +25,7 @@ namespace i4core {
 		frameStateMap.clear();
 	}
 
-	bool I4FrameStateMgr::onUpdate(float deltaSec)
+	bool I4FrameStateMgr::onUpdate(float dt)
 	{
 		if (nextFrameStateID != "")
 		{
@@ -37,17 +37,17 @@ namespace i4core {
 
 		if (curFrameState)
 		{
-			return curFrameState->onUpdate(deltaSec);
+			return curFrameState->onUpdate(dt);
 		}
 
 		return false;
 	}
 
-	bool I4FrameStateMgr::onRender(float deltaSec)
+	bool I4FrameStateMgr::onRender(float dt)
 	{
 		if (curFrameState)
 		{
-			return curFrameState->onRender(deltaSec);
+			return curFrameState->onRender(dt);
 		}
 
 		return false;

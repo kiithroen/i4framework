@@ -8,6 +8,9 @@
     <Filter Include="object">
       <UniqueIdentifier>{595da40c-e85a-4444-a25e-1618fe684c00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="component">
+      <UniqueIdentifier>{29ead952-2733-442b-aa53-27bdb330e504}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -25,7 +28,12 @@
     <ClInclude Include="I4ObjectComponent.h">
       <Filter>object</Filter>
     </ClInclude>
-    <ClInclude Include="I4ObjectViewComponent.h" />
+    <ClInclude Include="I4ObjectViewComponent.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ObjectPointLightComponent.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -37,6 +45,11 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="i4object.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="I4ObjectViewComponent.cpp" />
+    <ClCompile Include="I4ObjectViewComponent.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ObjectPointLightComponent.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

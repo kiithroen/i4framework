@@ -10,7 +10,7 @@ namespace i4graphics {
 		I4AnimationTrack(I4KeyFrameSet* keyFrameSet);
 		~I4AnimationTrack();
 
-		void 				advanceFrame(float deltaSec);
+		void 				advanceFrame(float dt);
 		void				resetStartFrame();
 
 		bool 				getKeyRotation(I4Quaternion& out) const;	

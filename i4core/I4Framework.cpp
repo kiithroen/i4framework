@@ -74,8 +74,8 @@ namespace i4core {
 
 		while (onRun())
 		{
-			float deltaSec = I4FrameTimer::getFrameTimer()->update();
-			elapsedSec += deltaSec;
+			float dt = I4FrameTimer::getFrameTimer()->update();
+			elapsedSec += dt;
 			frameCount += 1;
 			if (elapsedSec >= 1.0f)
 			{
@@ -87,7 +87,7 @@ namespace i4core {
 				I4LOG_INFO << "fps = " << fps;
 			}
 
-			if (mainLoop(deltaSec) == false)
+			if (mainLoop(dt) == false)
 				break;
 		}
 
@@ -97,12 +97,12 @@ namespace i4core {
 		}
 	}
 
-	bool I4Framework::mainLoop(float deltaSec)
+	bool I4Framework::mainLoop(float dt)
 	{
 		static float elapsedSec = 0;
 		const float TIMING = 1.0f/60;
 
-		elapsedSec += deltaSec;
+		elapsedSec += dt;
 		if (elapsedSec >= TIMING)
 		{
 			while (elapsedSec >= TIMING)
@@ -123,7 +123,7 @@ namespace i4core {
 
 		if (frameCallback)
 		{
-			if (frameCallback->onRender(deltaSec) == false)
+			if (frameCallback->onRender(dt) == false)
 				return false;
 		}
 

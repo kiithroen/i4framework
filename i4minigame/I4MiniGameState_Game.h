@@ -12,7 +12,7 @@ public:
 	virtual	bool	onEnter();
 	virtual void	onExit();
 
-	virtual bool	onUpdate(float deltaSec);
-	virtual bool	onRender(float deltaSec);
+	virtual bool	onUpdate(float dt);
+	virtual bool	onRender(float dt);
 	virtual void	onLButtonDown(unsigned int x, unsigned int y);
 };

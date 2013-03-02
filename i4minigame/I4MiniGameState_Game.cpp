@@ -18,12 +18,12 @@ void I4MiniGameState_Game::onExit()
 {
 }
 
-bool I4MiniGameState_Game::onUpdate(float deltaSec)
+bool I4MiniGameState_Game::onUpdate(float dt)
 {
 	return true;
 }
 
-bool I4MiniGameState_Game::onRender(float deltaSec)
+bool I4MiniGameState_Game::onRender(float dt)
 {
 	return true;
 }

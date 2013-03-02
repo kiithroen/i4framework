@@ -25,7 +25,7 @@ namespace i4graphics {
 		void					playAni(const char* name);
 
 		virtual bool			initialize();
-		virtual void			animate(float deltaSec, const I4Matrix4x4& parentTM);
+		virtual void			animate(float dt, const I4Matrix4x4& parentTM);
 		virtual void			render(I4Renderer* renderer, const I4Matrix4x4& parentTM)	{}
 
 		const I4Matrix4x4& 		getResultTM() const			{ return resultTM;	}
@@ -99,7 +99,7 @@ namespace i4graphics {
 		virtual ~ModelSkinedMeshGPU();
 
 		virtual bool	initialize() override;
-		virtual void	animate(float deltaSec, const I4Matrix4x4& parentTM) override;
+		virtual void	animate(float dt, const I4Matrix4x4& parentTM) override;
 
 		virtual void	render(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
 
