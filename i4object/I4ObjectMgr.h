@@ -20,7 +20,10 @@ namespace i4object {
 	public:
 		I4ObjectMgr();
 		~I4ObjectMgr();
-				
+
+		bool					init(I4Renderer* renderer, I4ModelMgr* modelMgr);
+
+		I4ObjectNode*			createNode(const char* name);
 		I4ObjectNode*			createObjectNode(I4ObjectNode* parent, const char* name);
 		void					destroyObjectNode(I4ObjectNode* node);
 
@@ -31,7 +34,6 @@ namespace i4object {
 		I4ObjectComponentMessenger&	getMessenger()		{ return messenger; }
 		I4Renderer*					getRenderer()		{ return renderer; }
 		I4ModelMgr*					getModelMgr()		{ return modelMgr; }
-
 	private:
 		I4ObjectNode*					rootNode;
 		I4ObjectNodeMap					mapObjectNode;

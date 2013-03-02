@@ -2,6 +2,7 @@
 #include "I4ModelMgr.h"
 #include "I4Model.h"
 #include "I4ModelResource.h"
+#include "I4Log.h"
 
 namespace i4graphics {
 
@@ -26,7 +27,7 @@ namespace i4graphics {
 		}
 		else
 		{
-			model = itr->second;
+			I4LOG_WARN << "duplicated model name : " << name.c_str();
 		}
 
 		return model;
@@ -42,6 +43,7 @@ namespace i4graphics {
 			boneResource = new I4ModelBoneResource;
 			if (boneResource->loadBone(fname) == false)
 			{
+				I4LOG_WARN << "model bone can't load : " << fname;
 				delete boneResource;
 				return false;
 			}
@@ -66,6 +68,7 @@ namespace i4graphics {
 			meshResource = new I4ModelMeshResource;
 			if (meshResource->loadMesh(fname) == false)
 			{
+				I4LOG_WARN << "model mesh can't load : " << fname;
 				delete meshResource;
 				return false;
 			}
@@ -90,6 +93,7 @@ namespace i4graphics {
 			mtrlResource = new I4ModelMaterialResource;
 			if (mtrlResource->loadMaterial(fname) == false)
 			{
+				I4LOG_WARN << "model material can't load : " << fname;
 				delete mtrlResource;
 				return false;
 			}
@@ -114,6 +118,7 @@ namespace i4graphics {
 			aniResource = new I4ModelAniResource;
 			if (aniResource->loadAni(fname) == false)
 			{
+				I4LOG_WARN << "model material can't load : " << fname;
 				delete aniResource;
 				return false;
 			}

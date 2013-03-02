@@ -14,6 +14,7 @@
 #include "i4ObjectNode.h"
 #include "I4ObjectViewComponent.h"
 #include "I4Messenger.h"
+using namespace i4core;
 
 I4MiniGameFrameCallback::I4MiniGameFrameCallback()
 : frameStateMgr(nullptr)
@@ -33,10 +34,7 @@ bool I4MiniGameFrameCallback::onStart()
 	I4Framework* framework = I4Framework::getFramework();
 	renderer = new I4DeferredRenderer;
 	if (renderer->initialize(framework->getWindowID(), framework->getWidth(), framework->getHeight()) == false)
-	{
-		I4LOG_ERROR << "renderer initalize failed.";
 		return false;
-	}
 	
 	camera = new I4Camera;
 	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
@@ -51,6 +49,11 @@ bool I4MiniGameFrameCallback::onStart()
 	camPitch = I4MathUtil::radianToDegree(camPitchRad);
 	camRoll = I4MathUtil::radianToDegree(camRollRad);
 
+	modelMgr = new I4ModelMgr;
+	objectMgr = new I4ObjectMgr;
+	if (objectMgr->init(renderer, modelMgr) == false)
+		return false;
+
 	frameStateMgr = new I4FrameStateMgr;
 	frameStateMgr->addFrameState("minigame", new I4MiniGameState_Game);
 	frameStateMgr->changeFrameState("minigame");
@@ -58,106 +61,52 @@ bool I4MiniGameFrameCallback::onStart()
 	framework->moveMouseCenter();
 	framework->getMousePos(prevMouseX, prevMouseY);
 
-	objectMgr = new I4ObjectMgr;
-	I4ObjectNode* node = objectMgr->getRootNode()->createChild("test");
-	node->addComponent(new I4ObjectViewComponent);
-	I4ObjectNode* node2 = objectMgr->getRootNode()->createChild("test2");
-	node2->addComponent(new I4ObjectViewComponent);
-
-	I4MessageArgs args;
-	objectMgr->getMessenger().send(0, args);
-	modelMgr = new I4ModelMgr;
-	
-	floor = modelMgr->createModel("floor");
-
-
-	if (!modelMgr->attachMesh(floor, "testmodel/floor.mesh.xml"))
+	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
+	nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
+	I4ObjectViewComponent* viewFloor = nodeFloor->addComponent<I4ObjectViewComponent>();
+	if (viewFloor)
 	{
-		return false;
+		viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 	}
 
-	floor->setShadowCaster(false);
-
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		char buf[128] = {0, };
-		_itoa_s(i, buf, 10);
-
-		model[i] = modelMgr->createModel("model_" + string(buf));
-		if (i%3 == 0)
+		for (int j = 0; j < 10; ++j)
 		{
-			if (!modelMgr->attachBone(model[i], "testmodel/cyberdemon.bone.xml"))
+			int idx = i*10 + j;
+
+			char name[256] = {0, };
+			sprintf(name, "object_%d", idx);
+			I4ObjectNode* node = objectMgr->createNode(name);
+
+			I4ObjectViewComponent* view = node->addComponent<I4ObjectViewComponent>();
+			if (view)
 			{
-				return false;
+				if (i%3 == 0)
+				{
+					node->setLocalScale(I4Vector3(0.006f, 0.006f, 0.006f));
+
+					view->attachModel(name, "testmodel/cyberdemon", true, true, true);
+					view->attachAni("testmodel/cyberdemon.ani.xml", "idle");
+					view->playAnimation("idle");
+				}
+				else if (i%3 == 1)
+				{
+					node->setLocalScale(I4Vector3(0.01f, 0.01f, 0.01f));
+
+					view->attachModel(name, "testmodel/guard", true, true, true);
+					view->attachAni("testmodel/guard_idle.ani.xml", "idle");
+					view->playAnimation("idle");
+				}
+				else
+				{
+					node->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
+
+					view->attachModel(name, "testmodel/elin", true, true, false);
+				}
 			}
 
-			if (!modelMgr->attachMesh(model[i], "testmodel/cyberdemon.mesh.xml"))
-			{
-				return false;
-			}
-
-			if (!modelMgr->attachMaterial(model[i], "testmodel/cyberdemon.mtrl.xml"))
-			{
-				return false;
-			}
-
-			if (!modelMgr->attachAni(model[i], "testmodel/cyberdemon.ani.xml", "idle"))
-			{
-				return false;
-			}
-
-			if (!model[i]->initialize())
-			{
-				return false;
-			}
-
-			model[i]->playAnimation("idle");
-		}
-		else if (i%3 == 1)
-		{
-			if (!modelMgr->attachBone(model[i], "testmodel/guard.bone.xml"))
-			{
-				return false;
-			}
-
-			if (!modelMgr->attachMesh(model[i], "testmodel/guard.mesh.xml"))
-			{
-				return false;
-			}
-
-			if (!modelMgr->attachMaterial(model[i], "testmodel/guard.mtrl.xml"))
-			{
-				return false;
-			}
-
-			if (!modelMgr->attachAni(model[i], "testmodel/guard_idle.ani.xml", "idle"))
-			{
-				return false;
-			}
-
-			if (!model[i]->initialize())
-			{
-				return false;
-			}
-
-			model[i]->playAnimation("idle");
-		}
-		else
-		{
-			if (!modelMgr->attachMesh(model[i], "testmodel/elin.mesh.xml"))
-			{
-				return false;
-			}
-
-			if (!modelMgr->attachMaterial(model[i], "testmodel/elin.mtrl.xml"))
-			{
-				return false;
-			}
-
-			if (!model[i]->initialize())
-			{
-				return false;
-			}
+			node->setLocalPosition(I4Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
 		}
 	}
 	
@@ -357,64 +306,13 @@ void I4MiniGameFrameCallback::commitToRenderer(float deltaTime)
 {
 	I4PROFILE_THISFUNC;
 
-	static float angle = 0;
+	I4MessageArgs aniArgs;
+	aniArgs.push_back(deltaTime);
+	objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
 
-	angle += 45*deltaTime;
-
-	if (angle > 360)
-	{
-		angle = 0;
-	}
-
-	I4Matrix4x4 matR;
-	matR.makeRotationY(I4MathUtil::degreeToRadian(angle));
-
-
-	I4Matrix4x4 matT;
-
-	for (int i = 0; i < 10; ++i)
-	{
-		for (int j = 0; j < 10; ++j)
-		{
-			int idx = i*10 + j;
-			matT.makeTranslation(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f);
-
-			if (i%2 == 0)
-			{
-				model[idx]->animate(deltaTime*2);
-			}
-			else
-			{
-				model[idx]->animate(deltaTime);
-			}
-
-			if (idx%3 == 0)	// cyberdemon
-			{
-				I4Matrix4x4 matS;
-				matS.makeScale(0.006f, 0.006f, 0.006f);
-				model[idx]->render(renderer, matS*matR*matT);
-			}
-			else if (idx%3 == 1)	// guard
-			{				
-				I4Matrix4x4 matS;
-				matS.makeScale(0.01f, 0.01f, 0.01f);
-				model[idx]->render(renderer, matS*matR*matT);
-			}
-			else	// elin
-			{
-				I4Matrix4x4 matS;
-				matS.makeScale(0.03f, 0.03f, 0.03f);
-				model[idx]->render(renderer, matS*matR*matT);
-			}
-		}
-	}
-
-	floor->animate(deltaTime);
-
-	I4Matrix4x4 matS;
-	matS.makeScale(1, 1, 1);
-	floor->render(renderer, matS);
-
+	I4MessageArgs renderArgs;
+	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
+	
 	I4DirectionalLight directionalLight;
 	directionalLight.direction = I4Vector3(0.7f, -1.0f, 0.75f);
 

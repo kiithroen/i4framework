@@ -14,7 +14,6 @@ using namespace i4core;
 namespace i4graphics
 {
 	class I4Renderer;
-	class I4Model;
 	class I4ModelMgr;
 }
 using namespace i4graphics;
@@ -57,6 +56,8 @@ private:
 	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;
 	I4Camera*			camera;
+	I4ModelMgr*			modelMgr;
+
 	int					prevMouseX;
 	int					prevMouseY;
 	bool				isRButtonDown;
@@ -64,7 +65,4 @@ private:
 	float				camPitch;
 	float				camRoll;
 
-	I4Model*			model[100];
-	I4Model*			floor;
-	I4ModelMgr*			modelMgr;
 };

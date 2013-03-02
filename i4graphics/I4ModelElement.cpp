@@ -22,6 +22,7 @@ namespace i4graphics
 		, parentElement(nullptr)
 		, aniController(nullptr)
 	{
+		resultTM = elementInfo->localTM;
 	}
 
 	I4ModelElement::~I4ModelElement()
@@ -49,8 +50,6 @@ namespace i4graphics
 
 	bool I4ModelElement::initialize()
 	{
-		resultTM = elementInfo->localTM;
-
 		parentElement = model->findElement(elementInfo->parentName.c_str());
 
 		return true;

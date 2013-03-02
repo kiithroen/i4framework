@@ -1,13 +1,18 @@
 #include "stdafx.h"
 #include "I4ObjectMgr.h"
 #include "I4ObjectNode.h"
+#include "I4DeferredRenderer.h"
+#include "I4ModelMgr.h"
 
 namespace i4object {
 
 	I4ObjectMgr::I4ObjectMgr()
 		: rootNode(nullptr)
+		, renderer(nullptr)
+		, modelMgr(nullptr)
 	{
 		rootNode = createObjectNode(nullptr, "root");
+
 	}
 
 
@@ -21,7 +26,20 @@ namespace i4object {
 
 		rootNode = nullptr;
 	}
-	
+
+	bool I4ObjectMgr::init(I4Renderer* _renderer, I4ModelMgr* _modelMgr)
+	{
+		renderer = _renderer;
+		modelMgr = _modelMgr;
+
+		return true;
+	}
+
+	I4ObjectNode* I4ObjectMgr::createNode(const char* name)
+	{
+		return rootNode->createChild(name);
+	}
+
 	I4ObjectNode* I4ObjectMgr::createObjectNode(I4ObjectNode* parent, const char* name)
 	{
 		assert(findObjectNode(name) == nullptr);		// 같은 이름으로는 처음 생성되어야 한다.

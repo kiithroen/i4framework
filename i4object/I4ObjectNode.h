@@ -30,9 +30,26 @@ namespace i4object {
 
 		void					destroyFromScene();
 
-		bool					addComponent(I4ObjectComponent* comp);
+		template <typename T>
+		T* addComponent()
+		{
+			T* comp = new T;
+			auto itr = mapComponent.find(comp->getComponentID());
+			if (itr != mapComponent.end())	// 중복추가
+			{
+				delete comp;
+				return nullptr;
+			}
 
-		template<typename T>
+			comp->setOwner(this);
+			comp->onAdd();
+
+			mapComponent.insert(make_pair(comp->getComponentID(), comp));
+
+			return comp;
+		}
+
+		template <typename T>
 		T* findComponentAs(const string& familyID)
 		{
 			auto itr = mapComponent.find(familyID);

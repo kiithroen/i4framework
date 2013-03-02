@@ -50,11 +50,6 @@ namespace i4object {
 	{		
 		localRotation.extractRotationMatrix(localTM);
 
-		localTM._41 = localPosition.x;
-		localTM._42 = localPosition.y;
-		localTM._43 = localPosition.z;
-		localTM._44 = 1.0f;
-
 		if (localScale != I4VECTOR3_ONE)
 		{
 			I4Matrix4x4 scaleTM;
@@ -62,6 +57,11 @@ namespace i4object {
 
 			localTM *= scaleTM;
 		}
+
+		localTM._41 = localPosition.x;
+		localTM._42 = localPosition.y;
+		localTM._43 = localPosition.z;
+		localTM._44 = 1.0f;
 	}
 
 	void I4ObjectNode::calcWorldTM()
@@ -128,20 +128,6 @@ namespace i4object {
 		detachFromParent();		
 		destroyAllChild();
 		objectMgr->destroyObjectNode(this);
-	}
-
-	bool I4ObjectNode::addComponent(I4ObjectComponent* comp)
-	{
-		auto itr = mapComponent.find(comp->getComponentID());
-		if (itr != mapComponent.end())	// 중복추가
-			return false;
-
-		comp->setOwner(this);
-		comp->onAdd();
-
-		mapComponent.insert(make_pair(comp->getComponentID(), comp));
-
-		return true;
 	}
 	
 	void I4ObjectNode::setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
