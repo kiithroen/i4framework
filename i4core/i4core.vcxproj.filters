@@ -105,6 +105,8 @@
     <ClInclude Include="I4StringUtil.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="I4Variant.h" />
+    <ClInclude Include="I4Messenger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4Log.cpp">

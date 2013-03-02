@@ -22,6 +22,10 @@
     <ClInclude Include="i4object.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="I4ObjectComponent.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ObjectViewComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -33,5 +37,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="i4object.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="I4ObjectViewComponent.cpp" />
   </ItemGroup>
 </Project>

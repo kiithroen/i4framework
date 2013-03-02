@@ -2,6 +2,7 @@
 #include "I4ObjectNode.h"
 #include "I4ObjectMgr.h"
 #include "I4Camera.h"
+#include "I4ObjectComponent.h"
 
 namespace i4object {
 
@@ -25,14 +26,12 @@ namespace i4object {
 
 	I4ObjectNode::~I4ObjectNode()
 	{
-		detachFromParent();
-
-		for (auto& itr : vecChild)
+		for (auto& itr : mapComponent)
 		{
-			objectMgr->destroyObjectNode(itr);
+			itr.second->onRemove();
+			delete itr.second;
 		}
-
-		vecChild.clear();
+		mapComponent.clear();
 	}
 
 	void I4ObjectNode::calcTM()
@@ -95,10 +94,11 @@ namespace i4object {
 
 	void I4ObjectNode::detachChild(I4ObjectNode* child)
 	{
-		for (I4ObjectNodeVector::iterator itr = vecChild.begin(); itr != vecChild.end(); ++itr)
+		for (auto itr = vecChild.begin(); itr != vecChild.end(); ++itr)
 		{
 			if (*itr == child)
 			{
+				(*itr)->parent = NULL;
 				vecChild.erase(itr);
 				return;
 			}
@@ -113,6 +113,37 @@ namespace i4object {
 		}
 	}
 
+	void I4ObjectNode::destroyAllChild()
+	{
+		for (auto& itr : vecChild)
+		{
+			itr->destroyAllChild();
+			objectMgr->destroyObjectNode(itr);
+		}
+		vecChild.clear();
+	}
+
+	void I4ObjectNode::destroyFromScene()
+	{
+		detachFromParent();		
+		destroyAllChild();
+		objectMgr->destroyObjectNode(this);
+	}
+
+	bool I4ObjectNode::addComponent(I4ObjectComponent* comp)
+	{
+		auto itr = mapComponent.find(comp->getComponentID());
+		if (itr != mapComponent.end())	// 중복추가
+			return false;
+
+		comp->setOwner(this);
+		comp->onAdd();
+
+		mapComponent.insert(make_pair(comp->getComponentID(), comp));
+
+		return true;
+	}
+	
 	void I4ObjectNode::setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
 	{
 		I4Matrix4x4 m;

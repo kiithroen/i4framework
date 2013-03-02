@@ -120,6 +120,7 @@
     <ClInclude Include="I4Log.h" />
     <ClInclude Include="I4MathUtil.h" />
     <ClInclude Include="I4Matrix4x4.h" />
+    <ClInclude Include="I4Messenger.h" />
     <ClInclude Include="I4Plane.h" />
     <ClInclude Include="I4Profile.h" />
     <ClInclude Include="I4ProfileWriterLog.h" />
@@ -128,6 +129,7 @@
     <ClInclude Include="I4Sphere.h" />
     <ClInclude Include="I4StopWatch.h" />
     <ClInclude Include="I4StringUtil.h" />
+    <ClInclude Include="I4Variant.h" />
     <ClInclude Include="I4Vector2.h" />
     <ClInclude Include="I4Vector3.h" />
     <ClInclude Include="I4Vector4.h" />

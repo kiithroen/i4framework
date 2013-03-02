@@ -19,6 +19,12 @@ namespace i4graphics
 }
 using namespace i4graphics;
 
+namespace i4object
+{
+	class I4ObjectMgr;
+}
+using namespace i4object;
+
 class I4MiniGameFrameCallback : public I4FrameCallback
 {
 public:
@@ -48,6 +54,7 @@ private:
 
 private:
 	I4FrameStateMgr*	frameStateMgr;
+	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;
 	I4Camera*			camera;
 	int					prevMouseX;

@@ -10,11 +10,14 @@
 #include "I4ProfileWriterLog.h"
 #include "I4Model.h"
 #include "I4ModelMgr.h"
-
-using namespace i4graphics;
+#include "I4ObjectMgr.h"
+#include "i4ObjectNode.h"
+#include "I4ObjectViewComponent.h"
+#include "I4Messenger.h"
 
 I4MiniGameFrameCallback::I4MiniGameFrameCallback()
 : frameStateMgr(nullptr)
+, objectMgr(nullptr)
 , renderer(nullptr)
 , camera(nullptr)
 , isRButtonDown(false)
@@ -55,7 +58,14 @@ bool I4MiniGameFrameCallback::onStart()
 	framework->moveMouseCenter();
 	framework->getMousePos(prevMouseX, prevMouseY);
 
+	objectMgr = new I4ObjectMgr;
+	I4ObjectNode* node = objectMgr->getRootNode()->createChild("test");
+	node->addComponent(new I4ObjectViewComponent);
+	I4ObjectNode* node2 = objectMgr->getRootNode()->createChild("test2");
+	node2->addComponent(new I4ObjectViewComponent);
 
+	I4MessageArgs args;
+	objectMgr->getMessenger().send(0, args);
 	modelMgr = new I4ModelMgr;
 	
 	floor = modelMgr->createModel("floor");
@@ -160,6 +170,7 @@ void I4MiniGameFrameCallback::onEnd()
 	delete modelMgr;
 	delete renderer;
 	delete camera;
+	delete objectMgr;
 	delete frameStateMgr;
 }
 

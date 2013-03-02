@@ -37,8 +37,7 @@ namespace i4object {
 		auto itr = mapObjectNode.find(node->getName());
 		assert(itr != mapObjectNode.end());
 
-		delete node;
-
+		delete itr->second;
 		mapObjectNode.erase(itr);
 	}
 

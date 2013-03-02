@@ -62,7 +62,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>i4core_d.lib;i4graphics_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>i4core_d.lib;i4graphics_d.lib;i4object_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../lib;../dependency/vld/lib/Win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
