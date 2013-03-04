@@ -10,6 +10,7 @@
 #include "I4ProfileWriterLog.h"
 #include "I4Model.h"
 #include "I4ModelMgr.h"
+#include "I4PhysXMgr.h"
 #include "I4ObjectMgr.h"
 #include "i4ObjectNode.h"
 #include "I4ObjectViewComponent.h"
@@ -21,6 +22,7 @@ I4MiniGameFrameCallback::I4MiniGameFrameCallback()
 : frameStateMgr(nullptr)
 , objectMgr(nullptr)
 , renderer(nullptr)
+, physXMgr(nullptr)
 , camera(nullptr)
 , isRButtonDown(false)
 {
@@ -51,6 +53,10 @@ bool I4MiniGameFrameCallback::onStart()
 	camRoll = I4MathUtil::radianToDegree(camRollRad);
 
 	modelMgr = new I4ModelMgr;
+	//physXMgr = new I4PhysXMgr;
+	//if (physXMgr->init() == false)
+	//	return false;
+
 	objectMgr = new I4ObjectMgr;
 	if (objectMgr->init(renderer, modelMgr) == false)
 		return false;
@@ -150,6 +156,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 void I4MiniGameFrameCallback::onEnd()
 {
+	//delete physXMgr;
 	delete modelMgr;
 	delete renderer;
 	delete camera;
@@ -166,6 +173,8 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 
 	if (frameStateMgr == nullptr)
 		return true; 
+
+	//physXMgr->step(dt);
 
 	if (frameStateMgr->onUpdate(dt) == false)
 		return false;

@@ -32,6 +32,7 @@ namespace i4object {
 
 	void I4ObjectPointLightComponent::onRemove()
 	{
+		getBroadcastMessenger().unsubscribe(I4Hash("onUpdate"), this);
 		getBroadcastMessenger().unsubscribe(I4Hash("onRender"), this);
 	}
 

@@ -15,7 +15,7 @@ namespace i4object
 	{
 	public:
 		I4ObjectViewComponent(void);
-		~I4ObjectViewComponent(void);
+		virtual ~I4ObjectViewComponent(void);
 
 		virtual const char*		getComponentID()	{ return "View"; }
 

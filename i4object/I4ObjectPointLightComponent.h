@@ -11,7 +11,7 @@ namespace i4object
 	{
 	public:
 		I4ObjectPointLightComponent(void);
-		~I4ObjectPointLightComponent(void);
+		virtual ~I4ObjectPointLightComponent(void);
 
 		virtual const char*		getComponentID()	{ return "PointLight"; }
 
