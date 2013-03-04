@@ -112,7 +112,6 @@
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
       <Filter>DirectXTex</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="I4AnimationController.cpp">
       <Filter>model</Filter>

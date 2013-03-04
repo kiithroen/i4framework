@@ -7,7 +7,7 @@ using namespace i4core;
 namespace i4object {
 	
 
-	class I4OBJECT_API I4ObjectComponent
+	class I4ObjectComponent
 	{
 	public:
 		I4ObjectComponent(void)				{}

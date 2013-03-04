@@ -7,7 +7,7 @@ using namespace i4core;
 
 namespace i4object
 {
-	class I4OBJECT_API I4ObjectPointLightComponent : public I4ObjectComponent
+	class I4ObjectPointLightComponent : public I4ObjectComponent
 	{
 	public:
 		I4ObjectPointLightComponent(void);

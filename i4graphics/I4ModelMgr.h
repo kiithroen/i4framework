@@ -15,7 +15,7 @@ namespace i4graphics {
 	class I4Texture;
 	class I4Mesh;
 
-	class I4GRAPHICS_API I4ModelMgr
+	class I4ModelMgr
 	{
 		typedef map<string, I4Model*>					I4ModelMap;
 		typedef map<string, I4ModelBoneResource*>		I4ModelBoneResourceMap;

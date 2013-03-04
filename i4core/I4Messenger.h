@@ -54,6 +54,7 @@ namespace i4core {
 
 			if (v->size() == 0)
 			{
+				delete v;
 				tableMessageCallback.erase(itr);
 			}
 		}

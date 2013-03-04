@@ -11,7 +11,7 @@ namespace i4graphics
 
 namespace i4object
 {
-	class I4OBJECT_API I4ObjectViewComponent : public I4ObjectComponent
+	class I4ObjectViewComponent : public I4ObjectComponent
 	{
 	public:
 		I4ObjectViewComponent(void);

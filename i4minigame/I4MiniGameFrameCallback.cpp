@@ -53,9 +53,9 @@ bool I4MiniGameFrameCallback::onStart()
 	camRoll = I4MathUtil::radianToDegree(camRollRad);
 
 	modelMgr = new I4ModelMgr;
-	//physXMgr = new I4PhysXMgr;
-	//if (physXMgr->init() == false)
-	//	return false;
+	physXMgr = new I4PhysXMgr;
+	if (physXMgr->init() == false)
+		return false;
 
 	objectMgr = new I4ObjectMgr;
 	if (objectMgr->init(renderer, modelMgr) == false)
@@ -156,7 +156,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 void I4MiniGameFrameCallback::onEnd()
 {
-	//delete physXMgr;
+	delete physXMgr;
 	delete modelMgr;
 	delete renderer;
 	delete camera;
@@ -174,7 +174,7 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	if (frameStateMgr == nullptr)
 		return true; 
 
-	//physXMgr->step(dt);
+	physXMgr->step(dt);
 
 	if (frameStateMgr->onUpdate(dt) == false)
 		return false;

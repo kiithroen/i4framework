@@ -37,6 +37,9 @@
     <ClInclude Include="I4ObjectPointLightComponent.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="I4PhysXMgr.h">
+      <Filter>physx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -45,7 +48,6 @@
     <ClCompile Include="I4ObjectNode.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="i4object.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="I4ObjectViewComponent.cpp">
@@ -53,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="I4ObjectPointLightComponent.cpp">
       <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="I4PhysXMgr.cpp">
+      <Filter>physx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

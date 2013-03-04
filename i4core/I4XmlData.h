@@ -15,7 +15,7 @@ namespace i4core
 	typedef rapidxml::xml_node<char>			I4XmlNode;
 	typedef rapidxml::xml_attribute<char>		I4XmlAttribute;
 
-	class I4CORE_API I4XmlData
+	class I4XmlData
 	{		
 	public:
 		I4XmlData();

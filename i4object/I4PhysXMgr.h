@@ -35,7 +35,7 @@ namespace i4object
 	};
 
 
-	class I4OBJECT_API I4PhysXMgr
+	class I4PhysXMgr
 	{
 	public:
 		I4PhysXMgr(void);

@@ -56,15 +56,14 @@ namespace i4object
 			I4LOG_ERROR << "PxCreateFoundation failed!";
 			return false;
 		}
-
-		bool recordMemoryAllocations = true;
+		/*
 		mProfileZoneManager = &PxProfileZoneManager::createProfileZoneManager(mFoundation);
 		if(!mProfileZoneManager)
 		{
 			I4LOG_ERROR << "PxProfileZoneManager::createProfileZoneManager failed!";
 			return false;
 		}
-
+		*/
 #ifdef PX_WINDOWS
 		pxtask::CudaContextManagerDesc cudaContextManagerDesc;
 		mCudaContextManager = pxtask::createCudaContextManager(*mFoundation, cudaContextManagerDesc, mProfileZoneManager);
@@ -77,7 +76,7 @@ namespace i4object
 			}
 		}
 #endif
-
+		bool recordMemoryAllocations = true;
 		mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, PxTolerancesScale(), recordMemoryAllocations, mProfileZoneManager );
 		if(!mPhysics)
 		{
@@ -173,6 +172,8 @@ namespace i4object
 			mPhysics->release();
 			mPhysics = nullptr;
 		}
+
+		delete mPvdConnectionHandler;
 
 #ifdef PX_WINDOWS
 		if (mCudaContextManager)

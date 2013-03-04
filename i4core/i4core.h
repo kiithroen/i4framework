@@ -25,11 +25,3 @@ using namespace std::placeholders;
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
 #include <windows.h>
 #include <windowsx.h>
-
-// dll macro
-#ifdef I4CORE_EXPORTS
-#define I4CORE_API __declspec(dllexport)
-#else
-#define I4CORE_API __declspec(dllimport)
-#endif
-

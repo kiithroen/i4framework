@@ -14,7 +14,7 @@ namespace i4object {
 
 	class I4ObjectNode;
 
-	class I4OBJECT_API I4ObjectMgr
+	class I4ObjectMgr
 	{
 		typedef map<string, I4ObjectNode*>			I4ObjectNodeMap;
 	public:

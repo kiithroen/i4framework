@@ -4,7 +4,7 @@ namespace i4core
 {
 	class I4ProfileNode;
 
-	class I4CORE_API I4ProfileWriterLog
+	class I4ProfileWriterLog
 	{
 	public:
 		void write(I4ProfileNode* node);

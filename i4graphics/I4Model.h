@@ -15,7 +15,7 @@ namespace i4graphics {
 	class I4ModelAniResource;
 	class I4Renderer;
 
-	class I4GRAPHICS_API I4Model
+	class I4Model
 	{
 		typedef map<string, I4ModelElement*>	I4ModelElementMap;
 		typedef vector<I4ModelBone*>			I4ModelBoneVector;

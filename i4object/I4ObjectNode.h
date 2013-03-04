@@ -13,7 +13,7 @@ namespace i4object {
 
 	typedef I4Messenger<I4ObjectComponent>			I4ObjectComponentMessenger;
 
-	class I4OBJECT_API I4ObjectNode
+	class I4ObjectNode
 	{
 		typedef vector<I4ObjectNode*>				I4ObjectNodeVector;
 		typedef map<string, I4ObjectComponent*>		I4ObjectComponentMap;

@@ -7,7 +7,7 @@ namespace i4core
 	class I4FrameCallback;
 	class I4FrameState;
 
-	class I4CORE_API I4FrameStateMgr
+	class I4FrameStateMgr
 	{
 		friend class I4FrameCallback;
 		typedef map<string, I4FrameState*>	I4FrameStateMap;

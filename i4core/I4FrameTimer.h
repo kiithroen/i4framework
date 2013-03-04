@@ -4,7 +4,7 @@
 
 namespace i4core
 {
-	class I4CORE_API I4FrameTimer
+	class I4FrameTimer
 	{
 	public:
 		virtual ~I4FrameTimer();

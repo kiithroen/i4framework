@@ -7,7 +7,7 @@
 
 namespace i4core
 {
-	class I4CORE_API I4Camera
+	class I4Camera
 	{
 	public:
 		I4Camera();

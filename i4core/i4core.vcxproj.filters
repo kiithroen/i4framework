@@ -126,7 +126,6 @@
     </ClCompile>
     <ClCompile Include="i4core.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="I4FrameStateMgr.cpp">
       <Filter>framework</Filter>
     </ClCompile>

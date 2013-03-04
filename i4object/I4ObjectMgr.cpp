@@ -23,7 +23,7 @@ namespace i4object {
 			delete itr.second;
 		}
 		mapObjectNode.clear();
-
+		
 		rootNode = nullptr;
 	}
 

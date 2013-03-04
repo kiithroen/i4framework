@@ -97,7 +97,7 @@ namespace i4core
 		const char*		name;		
 	};
 
-	class I4CORE_API I4ProfileIterator
+	class I4ProfileIterator
 	{
 	public:
 		I4ProfileIterator(I4ProfileNode* start)
@@ -163,7 +163,7 @@ namespace i4core
 		I4ProfileNode*		curChildNode;
 	};
 
-	class I4CORE_API I4ProfileManager
+	class I4ProfileManager
 	{
 	public:
 		static void	begin(const char* name)
@@ -202,7 +202,7 @@ namespace i4core
 		static I4ProfileNode*	curNode;
 	};
 
-	class I4CORE_API I4ProfileSample
+	class I4ProfileSample
 	{
 	public:
 		I4ProfileSample(const char* name)

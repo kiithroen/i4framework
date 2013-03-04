@@ -7,7 +7,7 @@ namespace i4core
 {
 	class I4FrameCallback;
 
-	class I4CORE_API I4Framework
+	class I4Framework
 	{
 	public:
 		I4Framework();

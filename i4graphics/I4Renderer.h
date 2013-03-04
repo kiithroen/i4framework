@@ -41,7 +41,7 @@ namespace i4graphics {
 		I4Vector3	color;
 	};
 
-	class I4GRAPHICS_API I4Renderer
+	class I4Renderer
 	{
 	public:
 		I4Renderer()

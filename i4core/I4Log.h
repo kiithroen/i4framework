@@ -2,7 +2,7 @@
 
 namespace i4core
 {
-	class I4CORE_API I4Log
+	class I4Log
 	{
 	public:
 		enum Flag

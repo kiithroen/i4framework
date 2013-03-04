@@ -2,7 +2,7 @@
 
 namespace i4core
 {
-	class I4CORE_API I4StopWatch
+	class I4StopWatch
 	{
 	public:
 		I4StopWatch();

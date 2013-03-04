@@ -160,7 +160,7 @@ namespace i4graphics
 		T*					data;
 	};
 
-	class I4GRAPHICS_API I4DeferredRenderer : public I4Renderer
+	class I4DeferredRenderer : public I4Renderer
 	{
 		typedef vector<I4MeshRenderItem>		I4MeshRenderItemVector;
 		typedef vector<I4DirectionalLight>		I4DirectionalLightVector;
