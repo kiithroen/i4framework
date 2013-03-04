@@ -18,7 +18,7 @@ namespace i4core {
 		I4Messenger(void)		{}
 		~I4Messenger(void)		{}
 		
-		void bind(unsigned int msgID, T* receiver, I4MessageCallback cb)
+		void subscribe(unsigned int msgID, T* receiver, I4MessageCallback cb)
 		{
 			I4MessageCallbackVector* v = nullptr;
 
@@ -41,7 +41,7 @@ namespace i4core {
 			v->push_back(make_pair(receiver, cb));
 		}
 
-		void unbind(unsigned int msgID, T* receiver)
+		void unsubscribe(unsigned int msgID, T* receiver)
 		{
 			auto itr = tableMessageCallback.find(msgID);
 			if (itr == tableMessageCallback.end())

@@ -26,13 +26,13 @@ namespace i4object {
 
 	void I4ObjectPointLightComponent::onAdd()
 	{
-		getBroadcastMessenger().bind(I4Hash("onUpdate"), this, bind(&I4ObjectPointLightComponent::onUpdate, this, _1));
-		getBroadcastMessenger().bind(I4Hash("onRender"), this, bind(&I4ObjectPointLightComponent::onRender, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onUpdate"), this, bind(&I4ObjectPointLightComponent::onUpdate, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onRender"), this, bind(&I4ObjectPointLightComponent::onRender, this, _1));
 	}
 
 	void I4ObjectPointLightComponent::onRemove()
 	{
-		getBroadcastMessenger().unbind(I4Hash("onRender"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onRender"), this);
 	}
 
 
