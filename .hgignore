@@ -15,5 +15,4 @@ syntax: regexp
 \.pdb$
 \.exe$
 \.lib$
-dependency/vld/
-dependency/PhysX/
+dependency/bullet/
