@@ -174,12 +174,14 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	if (frameStateMgr == nullptr)
 		return true; 
 	
-	if (frameStateMgr->onUpdate(dt) == false)
-		return false;
+	bulletPhysics->simulate(dt);
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onUpdate"), updateArgs);
+
+	if (frameStateMgr->onUpdate(dt) == false)
+		return false;
 
 	static float degree = 0;
 	degree += 30*dt;

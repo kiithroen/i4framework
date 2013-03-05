@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/vld/include;../dependency/PhysX/Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/bullet/src</AdditionalIncludeDirectories>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -79,7 +79,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/PhysX/Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/bullet/src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
