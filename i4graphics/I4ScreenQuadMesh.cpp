@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "I4QuadMesh.h"
+#include "I4ScreenQuadMesh.h"
 #include "I4VideoDriver.h"
 
 namespace i4graphics
 {
-	I4QuadMesh::I4QuadMesh(void)
+	I4ScreenQuadMesh::I4ScreenQuadMesh(void)
 	{
 	}
 
 
-	I4QuadMesh::~I4QuadMesh(void)
+	I4ScreenQuadMesh::~I4ScreenQuadMesh(void)
 	{
 		destroy();
 	}
 
-	bool I4QuadMesh::create()
+	bool I4ScreenQuadMesh::create()
 	{
 		const static I4Vertex_Pos_Tex quad[] =
 		{			
@@ -47,25 +47,25 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4QuadMesh::destroy()
+	void I4ScreenQuadMesh::destroy()
 	{
 		delete indexBuffer;
 		delete vertexBuffer;
 	}
 
-	void I4QuadMesh::bind()
+	void I4ScreenQuadMesh::bind()
 	{
 		vertexBuffer->bind();
 		indexBuffer->bind();
 	}
 
-	void I4QuadMesh::unbind()
+	void I4ScreenQuadMesh::unbind()
 	{
 		indexBuffer->unbind();
 		vertexBuffer->unbind();
 	}
 
-	void I4QuadMesh::draw()
+	void I4ScreenQuadMesh::draw()
 	{		
 		indexBuffer->draw(I4PT_TRIANGLELIST);
 	}

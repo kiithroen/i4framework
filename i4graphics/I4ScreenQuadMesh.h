@@ -5,13 +5,13 @@
 namespace i4graphics
 {
 
-	class I4SphereMesh
+	class I4ScreenQuadMesh
 	{
 	public:
-		I4SphereMesh(void);
-		~I4SphereMesh(void);
+		I4ScreenQuadMesh(void);
+		~I4ScreenQuadMesh(void);
 
-		bool	create(float r, unsigned short ringCount, unsigned short segmentCount);
+		bool	create();
 		void	destroy();
 
 		void	bind();

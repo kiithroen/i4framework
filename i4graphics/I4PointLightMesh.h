@@ -5,13 +5,13 @@
 namespace i4graphics
 {
 
-	class I4QuadMesh
+	class I4PointLightMesh
 	{
 	public:
-		I4QuadMesh(void);
-		~I4QuadMesh(void);
+		I4PointLightMesh(void);
+		~I4PointLightMesh(void);
 
-		bool	create();
+		bool	create(float r, unsigned short ringCount, unsigned short segmentCount);
 		void	destroy();
 
 		void	bind();

@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "I4SphereMesh.h"
+#include "I4PointLightMesh.h"
 #include "I4VideoDriver.h"
 
 namespace i4graphics
 {
-	I4SphereMesh::I4SphereMesh(void)
+	I4PointLightMesh::I4PointLightMesh(void)
 	{
 	}
 
 
-	I4SphereMesh::~I4SphereMesh(void)
+	I4PointLightMesh::~I4PointLightMesh(void)
 	{
 		destroy();
 	}
 
-	bool I4SphereMesh::create(float r, unsigned short ringCount, unsigned short segmentCount)
+	bool I4PointLightMesh::create(float r, unsigned short ringCount, unsigned short segmentCount)
 	{	
 		int vertexCount = (ringCount + 1)*(segmentCount + 1);
 		vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
@@ -86,25 +86,25 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4SphereMesh::destroy()
+	void I4PointLightMesh::destroy()
 	{
 		delete indexBuffer;
 		delete vertexBuffer;
 	}
 
-	void I4SphereMesh::bind()
+	void I4PointLightMesh::bind()
 	{
 		vertexBuffer->bind();
 		indexBuffer->bind();
 	}
 
-	void I4SphereMesh::unbind()
+	void I4PointLightMesh::unbind()
 	{
 		indexBuffer->unbind();
 		vertexBuffer->unbind();
 	}
 
-	void I4SphereMesh::draw()
+	void I4PointLightMesh::draw()
 	{
 		indexBuffer->draw(I4PT_TRIANGLELIST);
 	}

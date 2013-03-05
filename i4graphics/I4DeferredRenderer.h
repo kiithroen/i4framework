@@ -13,8 +13,8 @@ namespace i4graphics
 	class I4ShaderMgr;
 	class I4ModelMgr;
 	class I4RenderTarget;
-	class I4QuadMesh;
-	class I4SphereMesh;
+	class I4ScreenQuadMesh;
+	class I4PointLightMesh;
 	class I4Model;
 	class I4ModelMgr;
 	class I4Mesh;
@@ -212,8 +212,8 @@ namespace i4graphics
 		I4RenderTarget*					rtLight;
 		I4RenderTarget*					rtShadow;
 
-		I4QuadMesh*						quadMesh;
-		I4SphereMesh*					sphereMesh;
+		I4ScreenQuadMesh*						quadMesh;
+		I4PointLightMesh*					sphereMesh;
 
 		I4MeshRenderItemVector			vecSceneMeshRenderItem;
 		I4PointLightVector				vecScenePointLight;

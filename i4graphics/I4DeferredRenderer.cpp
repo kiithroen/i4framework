@@ -4,8 +4,8 @@
 #include "I4ShaderMgr.h"
 #include "I4ModelMgr.h"
 #include "I4RenderTarget.h"
-#include "I4QuadMesh.h"
-#include "I4SphereMesh.h"
+#include "I4ScreenQuadMesh.h"
+#include "I4PointLightMesh.h"
 #include "I4Mesh.h"
 #include "I4Material.h"
 #include "I4Camera.h"
@@ -181,14 +181,14 @@ namespace i4graphics
 		}
 
 		// light mesh
-		quadMesh = new I4QuadMesh;
+		quadMesh = new I4ScreenQuadMesh;
 		if (quadMesh->create() == false)
 		{
 			I4LOG_ERROR << L"quad mesh create failed.";
 			return false;
 		}
 
-		sphereMesh = new I4SphereMesh;
+		sphereMesh = new I4PointLightMesh;
 		if (sphereMesh->create(1.0f, 16, 16) == false)
 		{
 			I4LOG_ERROR << L"sphere mesh create failed.";
