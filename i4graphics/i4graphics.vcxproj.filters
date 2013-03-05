@@ -91,9 +91,6 @@
     <ClInclude Include="I4SphereMesh.h">
       <Filter>renderer</Filter>
     </ClInclude>
-    <ClInclude Include="I4Mesh.h">
-      <Filter>driver</Filter>
-    </ClInclude>
     <ClInclude Include="I4Material.h">
       <Filter>renderer</Filter>
     </ClInclude>
@@ -104,6 +101,9 @@
       <Filter>driver</Filter>
     </ClInclude>
     <ClInclude Include="I4Renderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="I4Mesh.h">
       <Filter>renderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -164,11 +164,11 @@
     <ClCompile Include="I4SphereMesh.cpp">
       <Filter>renderer</Filter>
     </ClCompile>
-    <ClCompile Include="I4Mesh.cpp">
-      <Filter>renderer</Filter>
-    </ClCompile>
     <ClCompile Include="I4ShaderD3D11.cpp">
       <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="I4Mesh.cpp">
+      <Filter>renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

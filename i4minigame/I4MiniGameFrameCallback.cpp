@@ -15,6 +15,7 @@
 #include "i4ObjectNode.h"
 #include "I4ObjectViewComponent.h"
 #include "I4ObjectPointLightComponent.h"
+#include "I4ObjectRigidBodyComponent.h"
 #include "I4Messenger.h"
 using namespace i4core;
 
@@ -58,7 +59,7 @@ bool I4MiniGameFrameCallback::onStart()
 		return false;
 
 	objectMgr = new I4ObjectMgr;
-	if (objectMgr->init(renderer, modelMgr) == false)
+	if (objectMgr->init(renderer, modelMgr, bulletPhysics) == false)
 		return false;
 
 	frameStateMgr = new I4FrameStateMgr;
@@ -69,13 +70,15 @@ bool I4MiniGameFrameCallback::onStart()
 	framework->getMousePos(prevMouseX, prevMouseY);
 
 	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
-	nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
+	//nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
 	I4ObjectViewComponent* viewFloor = nodeFloor->addComponent<I4ObjectViewComponent>();
-	if (viewFloor)
-	{
-		viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
-	}
+	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 
+	btTransform t;
+	t.setIdentity();
+	t.setOrigin(btVector3(0, -50, 0));
+	bulletPhysics->createBox(t, btVector3(50, 50, 50), 0, 1, 0.5f, 0.1f, 0.1f);
+	
 	I4Vector3 lightPointColor[] =
 	{
 		I4Vector3(1.0f, 0.125f, 0.93f),
@@ -105,30 +108,27 @@ bool I4MiniGameFrameCallback::onStart()
 			nodeChar->setLocalPosition(I4Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
 
 			I4ObjectViewComponent* view = nodeChar->addComponent<I4ObjectViewComponent>();
-			if (view)
+			if (i%3 == 0)
 			{
-				if (i%3 == 0)
-				{
-					nodeChar->setLocalScale(I4Vector3(0.006f, 0.006f, 0.006f));
+				nodeChar->setLocalScale(I4Vector3(0.006f, 0.006f, 0.006f));
 
-					view->attachModel(charName, "testmodel/cyberdemon", true, true, true);
-					view->attachAni("testmodel/cyberdemon.ani.xml", "idle");
-					view->playAnimation("idle");
-				}
-				else if (i%3 == 1)
-				{
-					nodeChar->setLocalScale(I4Vector3(0.01f, 0.01f, 0.01f));
+				view->attachModel(charName, "testmodel/cyberdemon", true, true, true);
+				view->attachAni("testmodel/cyberdemon.ani.xml", "idle");
+				view->playAnimation("idle");
+			}
+			else if (i%3 == 1)
+			{
+				nodeChar->setLocalScale(I4Vector3(0.01f, 0.01f, 0.01f));
 
-					view->attachModel(charName, "testmodel/guard", true, true, true);
-					view->attachAni("testmodel/guard_idle.ani.xml", "idle");
-					view->playAnimation("idle");
-				}
-				else
-				{
-					nodeChar->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
+				view->attachModel(charName, "testmodel/guard", true, true, true);
+				view->attachAni("testmodel/guard_idle.ani.xml", "idle");
+				view->playAnimation("idle");
+			}
+			else
+			{
+				nodeChar->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
 
-					view->attachModel(charName, "testmodel/elin", true, true, false);
-				}
+				view->attachModel(charName, "testmodel/elin", true, true, false);
 			}
 
 			char lightName[256] = {0, };
@@ -175,6 +175,9 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 		return true; 
 	
 	bulletPhysics->simulate(dt);
+
+	I4MessageArgs postSimulateArgs;
+	objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
@@ -268,6 +271,17 @@ void I4MiniGameFrameCallback::onMouseMove(unsigned int x, unsigned int y)
 
 void I4MiniGameFrameCallback::onLButtonDown(unsigned int x, unsigned int y)
 {
+	static int i = 0;
+	char name[256] = {0, };
+	sprintf(name, "box_%d", i);
+	i++;
+	I4ObjectNode* nodeBox = objectMgr->createNode(name);
+	nodeBox->setLocalPosition(I4Vector3(0, 5, 2));
+	I4ObjectViewComponent* viewBox = nodeBox->addComponent<I4ObjectViewComponent>();
+	viewBox->attachModel(name, "testmodel/box", true, false, false);
+	I4ObjectRigidBodyComponent* rigidBox = nodeBox->addComponent<I4ObjectRigidBodyComponent>();
+	rigidBox->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0, 0);
+
 	if (frameStateMgr)
 	{
 		frameStateMgr->onLButtonDown(x, y);

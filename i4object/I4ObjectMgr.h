@@ -8,10 +8,12 @@ namespace i4graphics {
 	class I4Renderer;
 	class I4ModelMgr;
 }
+
 using namespace i4graphics;
 
 namespace i4object {
 
+	class I4BulletPhysics;
 	class I4ObjectNode;
 
 	class I4ObjectMgr
@@ -21,7 +23,7 @@ namespace i4object {
 		I4ObjectMgr();
 		~I4ObjectMgr();
 
-		bool					init(I4Renderer* renderer, I4ModelMgr* modelMgr);
+		bool					init(I4Renderer* renderer, I4ModelMgr* modelMgr, I4BulletPhysics* bulletPhysics);
 
 		I4ObjectNode*			createNode(const char* name);
 		I4ObjectNode*			createObjectNode(I4ObjectNode* parent, const char* name);
@@ -34,12 +36,15 @@ namespace i4object {
 		I4ObjectComponentMessenger&	getMessenger()		{ return messenger; }
 		I4Renderer*					getRenderer()		{ return renderer; }
 		I4ModelMgr*					getModelMgr()		{ return modelMgr; }
+		I4BulletPhysics*			getBulletPhysics()	{ return bulletPhysics; }
+
 	private:
 		I4ObjectNode*					rootNode;
 		I4ObjectNodeMap					mapObjectNode;
 		I4ObjectComponentMessenger		messenger;
 		I4Renderer*						renderer;
 		I4ModelMgr*						modelMgr;
+		I4BulletPhysics*				bulletPhysics;
 	};
 
 }
