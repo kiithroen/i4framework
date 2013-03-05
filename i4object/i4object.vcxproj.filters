@@ -11,7 +11,7 @@
     <Filter Include="base">
       <UniqueIdentifier>{595da40c-e85a-4444-a25e-1618fe684c00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="physx">
+    <Filter Include="physics">
       <UniqueIdentifier>{64bd1274-8ec6-429e-82a1-b58dfb82a2c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -37,8 +37,8 @@
     <ClInclude Include="I4ObjectPointLightComponent.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="I4PhysXMgr.h">
-      <Filter>physx</Filter>
+    <ClInclude Include="I4BulletPhysics.h">
+      <Filter>physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -56,8 +56,8 @@
     <ClCompile Include="I4ObjectPointLightComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
-    <ClCompile Include="I4PhysXMgr.cpp">
-      <Filter>physx</Filter>
+    <ClCompile Include="I4BulletPhysics.cpp">
+      <Filter>physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

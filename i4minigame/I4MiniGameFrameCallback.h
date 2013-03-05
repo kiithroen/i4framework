@@ -22,7 +22,7 @@ namespace i4object
 {
 	class I4ObjectMgr;
 	class I4ObjectNode;
-	class I4PhysXMgr;
+	class I4BulletPhysics;
 }
 using namespace i4object;
 
@@ -59,7 +59,7 @@ private:
 	I4Renderer*			renderer;
 	I4Camera*			camera;
 	I4ModelMgr*			modelMgr;
-	I4PhysXMgr*			physXMgr;
+	I4BulletPhysics*	bulletPhysics;
 
 	int					prevMouseX;
 	int					prevMouseY;
