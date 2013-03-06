@@ -43,6 +43,14 @@ namespace i4graphics {
 		I4Vector3	color;
 	};
 
+	struct I4DebugLine
+	{
+		I4Vector3	p0;
+		I4Vector3	p1;
+		I4Vector4	color;
+		float		life;
+	};
+
 	class I4Renderer
 	{
 	public:
@@ -60,7 +68,7 @@ namespace i4graphics {
 		virtual void	commitToScene(const I4MeshRenderItem& item)				{}
 		virtual void	commitToScene(I4DirectionalLight* light)				{}
 		virtual void	commitToScene(I4PointLight* light)						{}
-		virtual void	commitToScene(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)	{}
+		virtual void	commitToScene(const I4DebugLine& line)					{}
 
 		virtual void	preRender(I4Camera* camera)								{}
 		virtual void	render(I4Camera* camera)								{}

@@ -180,7 +180,7 @@ namespace i4graphics
 		virtual void				commitToScene(const I4MeshRenderItem& item) override;
 		virtual void				commitToScene(I4DirectionalLight* light) override;
 		virtual void				commitToScene(I4PointLight* light) override;
-		virtual void				commitToScene(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color) override;
+		virtual void				commitToScene(const I4DebugLine& line) override;
 
 		virtual void				preRender(I4Camera* camera) override;
 		virtual void				render(I4Camera* camera) override;
@@ -253,7 +253,7 @@ namespace i4graphics
 		I4Camera	directionalLightPerspectiveCamera;
 		I4Camera	directionalLightSplitOrthoCamera[4];
 
-		vector<I4Vertex_Pos_Col>			vecDebugLine;
+		list<I4DebugLine>					listDebugLine;
 		I4LineMesh*							lineDebugMesh;
 		I4CBHolder<CBEachFrame_Line>		cbEachFrame_Line;
 	};

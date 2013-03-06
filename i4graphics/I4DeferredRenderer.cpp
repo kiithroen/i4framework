@@ -13,6 +13,7 @@
 #include "I4Profile.h"
 #include "I4TextureMgr.h"
 #include "I4LineMesh.h"
+#include "I4FrameTimer.h"
 
 namespace i4graphics
 {
@@ -244,12 +245,14 @@ namespace i4graphics
 		if (cbEachFrame_Line.create() == false)
 			return false;
 
-		lineDebugMesh = new I4LineMesh;
-		lineDebugMesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-		lineDebugMesh->vertexBuffer->create(10000, sizeof(I4Vertex_Pos_Col));
+		lineDebugMesh = new I4LineMesh;		
 
-		commitToScene(I4Vector3(0, 0, 0), I4Vector3(0, 5, 0), I4Vector4(1, 0, 0, 1));
-		commitToScene(I4Vector3(0, 5, 0), I4Vector3(5, 5, 0), I4Vector4(1, 0, 0, 1));
+		I4DebugLine line;
+		line.p0 = I4Vector3(0, 0, 0);
+		line.p1 = I4Vector3(0, 5, 0);
+		line.color = I4Vector4(1, 0, 0, 1);
+		line.life = 10;
+		commitToScene(line);
 
 		return true;
 	}
@@ -288,17 +291,9 @@ namespace i4graphics
 		vecScenePointLight.push_back(*light);
 	}
 
-	void I4DeferredRenderer::commitToScene(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)
+	void I4DeferredRenderer::commitToScene(const I4DebugLine& line)
 	{
-		I4Vertex_Pos_Col v0;
-		v0.color = color;
-		v0.pos = p0;
-		vecDebugLine.push_back(v0);
-
-		I4Vertex_Pos_Col v1;
-		v1.color = color;
-		v1.pos = p1;
-		vecDebugLine.push_back(v1);
+		listDebugLine.push_back(line);
 	}
 
 	void I4DeferredRenderer::preRender(I4Camera* camera)
@@ -317,18 +312,64 @@ namespace i4graphics
 		renderStageMerge(camera);
 
 		videoDriver->resetBackBufferRenderTarget(true);
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
 
-		cbEachFrame_Line.getData()->viewProjection = camera->getViewProjectionMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
 
-		lineDebugMesh->vertexBuffer->copyFrom(&vecDebugLine[0], vecDebugLine.size());
-		lineDebugMesh->bind();
-		lineDebugMesh->draw(vecDebugLine.size(), 0);
-		lineDebugMesh->unbind();
+		if (listDebugLine.size() > 0)
+		{
+			// 어차피 디버깅용이니까  메모리 계속 먹고 갱신하느라 복잡해지는것보단 매번 지우고 생성하도록 한다.
+			if (lineDebugMesh->vertexBuffer)
+			{
+				delete lineDebugMesh->vertexBuffer;
+			}
 
-		shaderMgr->end();
+			lineDebugMesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+			lineDebugMesh->vertexBuffer->create(listDebugLine.size()*2, sizeof(I4Vertex_Pos_Col));
+
+			I4Vertex_Pos_Col* vertices;
+			lineDebugMesh->vertexBuffer->lock((void**)&vertices);
+			for (auto& itr : listDebugLine)
+			{
+				vertices->pos = itr.p0;
+				vertices->color = itr.color;
+
+				++vertices;
+
+				vertices->pos = itr.p1;
+				vertices->color = itr.color;
+			}
+
+			lineDebugMesh->vertexBuffer->unlock();
+
+			// ----------------------------------------
+
+			I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
+			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
+
+			cbEachFrame_Line.getData()->viewProjection = camera->getViewProjectionMatrix();
+			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
+			lineDebugMesh->bind();
+			lineDebugMesh->draw();
+			lineDebugMesh->unbind();
+
+			shaderMgr->end();
+
+			// ----------------------------------------
+
+			float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
+			auto itr = listDebugLine.begin(); 
+			while (itr != listDebugLine.end())
+			{
+				itr->life -= dt;
+				if (itr->life < 0)
+				{
+					itr = listDebugLine.erase(itr);
+				}
+				else
+				{
+					itr++;
+				}
+			}
+		}		
 	}
 
 	void I4DeferredRenderer::postRender(I4Camera* camera)
