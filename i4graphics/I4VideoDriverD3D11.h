@@ -31,7 +31,7 @@ namespace i4graphics
 		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget) override;
 		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil) override;
 		virtual void				setRenderTargetDepthStencil(I4RenderTarget* depthStencil) override;
-		virtual void				resetRenderTarget() override;
+		virtual void				resetBackBufferRenderTarget(bool enableDepthStencil) override;
 
 		virtual void				setRasterizerMode(I4RasterizerMode mode) override;
 		virtual void				setBlendMode(I4BlendMode mode) override;

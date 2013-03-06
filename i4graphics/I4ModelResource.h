@@ -1,7 +1,7 @@
 #pragma once
 
 #include "I4Material.h"
-#include "I4Mesh.h"
+#include "I4TriangleMesh.h"
 #include "I4ModelElementInfo.h"
 #include "I4XmlData.h"
 #include "I4GeometryBuffer.h"
@@ -62,7 +62,7 @@ namespace i4graphics {
 	class I4ModelMeshResource
 	{
 		typedef vector<I4ModelElementInfo*>	I4ModelInfoVector;
-		typedef vector<I4Mesh*>				I4MeshVector;
+		typedef vector<I4TriangleMesh*>				I4MeshVector;
 
 	public:
 		I4ModelMeshResource();
@@ -74,7 +74,7 @@ namespace i4graphics {
 
 		unsigned int			getMeshCount() const				{ return vecMeshInfo.size(); }
 		I4ModelElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
-		I4Mesh*					getMesh(unsigned int i) const		{ return vecMesh[i]; }
+		I4TriangleMesh*					getMesh(unsigned int i) const		{ return vecMesh[i]; }
 
 	private:
 		void					parseMesh(I4XmlData& xml);
@@ -91,7 +91,7 @@ namespace i4graphics {
 		void					parseMeshWeight(I4ParsedMeshData& out,I4XmlData& xml);
 		void					mergeMeshTextureUV(I4ParsedMeshData& out,I4XmlData& xml);
 
-		I4Mesh*					buildMesh(I4ParsedMeshData &I4ParsedMeshData);
+		I4TriangleMesh*					buildMesh(I4ParsedMeshData &I4ParsedMeshData);
 
 		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);

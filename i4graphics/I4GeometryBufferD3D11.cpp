@@ -95,13 +95,18 @@ namespace i4graphics
 
 	bool I4VertexBufferD3D11::copyFrom(const void* data)
 	{
+		return copyFrom(data, count);
+	}
+
+	bool I4VertexBufferD3D11::copyFrom(const void* data, unsigned int _count)
+	{
 		void* vertices;
 		if (lock(&vertices) == false)
 		{
 			return false;
 		}
 
-		memcpy(vertices, data, count*stride);
+		memcpy(vertices, data, _count*stride);
 		unlock();
 
 		return true;
@@ -117,6 +122,12 @@ namespace i4graphics
 	{		
 		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		immediateContext->Draw(count, 0);
+	}
+
+	void I4VertexBufferD3D11::draw(I4PrimitiveType pt, unsigned int _count, unsigned int _start)
+	{
+		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
+		immediateContext->Draw(_count, _start);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -205,13 +216,18 @@ namespace i4graphics
 
 	bool I4IndexBufferD3D11::copyFrom(const void* data)
 	{
+		return copyFrom(data, count);
+	}
+
+	bool I4IndexBufferD3D11::copyFrom(const void* data, unsigned int _count)
+	{
 		void* indices;
 		if (lock(&indices) == false)
 		{
 			return false;
 		}
 
-		memcpy(indices, data, count*stride);
+		memcpy(indices, data, _count*stride);
 		unlock();
 
 		return true;
@@ -226,6 +242,12 @@ namespace i4graphics
 	{
 		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		immediateContext->DrawIndexed(count, 0, 0);
+	}
+
+	void I4IndexBufferD3D11::draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex)
+	{
+		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
+		immediateContext->DrawIndexed(_count, _startIndex, _baseVertex);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

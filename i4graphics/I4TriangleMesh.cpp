@@ -1,35 +1,35 @@
 #include "stdafx.h"
-#include "I4Mesh.h"
+#include "I4TriangleMesh.h"
 #include "I4GeometryBuffer.h"
 
 namespace i4graphics
 {
-	I4Mesh::I4Mesh()
+	I4TriangleMesh::I4TriangleMesh()
 		: vertexBuffer(nullptr)
 		, indexBuffer(nullptr)
 	{
 		
 	}
 
-	I4Mesh::~I4Mesh()
+	I4TriangleMesh::~I4TriangleMesh()
 	{
 		delete indexBuffer;
 		delete vertexBuffer;
 	}
 
-	void I4Mesh::bind()
+	void I4TriangleMesh::bind()
 	{
 		vertexBuffer->bind();
 		indexBuffer->bind();
 	}
 
-	void I4Mesh::unbind()
+	void I4TriangleMesh::unbind()
 	{
 		indexBuffer->unbind();
 		vertexBuffer->unbind();
 	}
 
-	void I4Mesh::draw()
+	void I4TriangleMesh::draw()
 	{
 		indexBuffer->draw(I4PT_TRIANGLELIST);
 	}

@@ -176,7 +176,7 @@ namespace i4graphics
 			parseMeshWeight(data, xml);
 			mergeMeshTextureUV(data, xml);
 
-			I4Mesh* mesh = buildMesh(data);
+			I4TriangleMesh* mesh = buildMesh(data);
 			vecMesh.push_back(mesh);
 
 		} while (xml.selectNextSiblingNode("node"));
@@ -539,9 +539,9 @@ namespace i4graphics
 			out.vecUV, out.vecIndex.size(), out.vecIndex, out.vecTangent);
 	}
 
-	I4Mesh* I4ModelMeshResource::buildMesh(I4ParsedMeshData &data)
+	I4TriangleMesh* I4ModelMeshResource::buildMesh(I4ParsedMeshData &data)
 	{
-		I4Mesh* mesh = new I4Mesh();
+		I4TriangleMesh* mesh = new I4TriangleMesh();
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;

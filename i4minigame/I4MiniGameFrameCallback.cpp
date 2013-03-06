@@ -149,7 +149,6 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 		}
 	}
-	
 
 	return true;
 }

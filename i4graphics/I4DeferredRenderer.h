@@ -17,10 +17,9 @@ namespace i4graphics
 	class I4PointLightMesh;
 	class I4Model;
 	class I4ModelMgr;
-	class I4Mesh;
+	class I4TriangleMesh;
+	class I4LineMesh;
 	struct I4Material;
-
-	
 
 	__declspec(align(16))
 	struct CBOnResize_G
@@ -122,6 +121,12 @@ namespace i4graphics
 		I4Matrix4x4 Projection;
 	};
 	
+	__declspec(align(16))
+	struct CBEachFrame_Line
+	{
+		I4Matrix4x4 viewProjection;
+	};
+
 	template <typename T>
 	class I4CBHolder
 	{
@@ -175,6 +180,7 @@ namespace i4graphics
 		virtual void				commitToScene(const I4MeshRenderItem& item) override;
 		virtual void				commitToScene(I4DirectionalLight* light) override;
 		virtual void				commitToScene(I4PointLight* light) override;
+		virtual void				commitToScene(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color) override;
 
 		virtual void				preRender(I4Camera* camera) override;
 		virtual void				render(I4Camera* camera) override;
@@ -212,8 +218,8 @@ namespace i4graphics
 		I4RenderTarget*					rtLight;
 		I4RenderTarget*					rtShadow;
 
-		I4ScreenQuadMesh*						quadMesh;
-		I4PointLightMesh*					sphereMesh;
+		I4ScreenQuadMesh*				screenQuadMesh;
+		I4PointLightMesh*				pointLightMesh;
 
 		I4MeshRenderItemVector			vecSceneMeshRenderItem;
 		I4PointLightVector				vecScenePointLight;
@@ -246,6 +252,10 @@ namespace i4graphics
 		
 		I4Camera	directionalLightPerspectiveCamera;
 		I4Camera	directionalLightSplitOrthoCamera[4];
+
+		vector<I4Vertex_Pos_Col>			vecDebugLine;
+		I4LineMesh*							lineDebugMesh;
+		I4CBHolder<CBEachFrame_Line>		cbEachFrame_Line;
 	};
 
 }

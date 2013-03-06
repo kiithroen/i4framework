@@ -43,7 +43,7 @@ namespace i4graphics
 		for (unsigned int i = 0; i < meshCount; ++i)
 		{
 			I4ModelElementInfo* meshInfo = meshResource->getMeshInfo(i);
-			I4Mesh* mesh = meshResource->getMesh(i);
+			I4TriangleMesh* mesh = meshResource->getMesh(i);
 
 			I4ModelMesh* modelMesh = nullptr;
 			if (mesh->skined)

@@ -31,6 +31,11 @@ namespace i4graphics
 		return true;
 	}
 
+	bool I4VertexBuffer::copyFrom(const void* data, unsigned int count)
+	{
+		return true;
+	}
+
 	bool I4VertexBuffer::lock(void** data)
 	{
 		return true;
@@ -52,6 +57,11 @@ namespace i4graphics
 	}
 
 	void I4VertexBuffer::draw(I4PrimitiveType pt)
+	{
+
+	}
+
+	void I4VertexBuffer::draw(I4PrimitiveType pt, unsigned int count, unsigned int start)
 	{
 
 	}
@@ -97,6 +107,11 @@ namespace i4graphics
 		return true;
 	}
 
+	bool I4IndexBuffer::copyFrom(const void* data, unsigned int count)
+	{
+		return true;
+	}
+
 	bool I4IndexBuffer::lock(void** data)
 	{
 		return true;
@@ -118,6 +133,11 @@ namespace i4graphics
 	}
 
 	void I4IndexBuffer::draw(I4PrimitiveType pt)
+	{
+
+	}
+
+	void I4IndexBuffer::draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex)
 	{
 
 	}

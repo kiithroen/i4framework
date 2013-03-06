@@ -2,6 +2,8 @@
 
 #include "I4AABB.h"
 #include "I4Sphere.h"
+#include "I4Vector4.h"
+
 using namespace i4core;
 
 namespace i4core {
@@ -10,7 +12,7 @@ namespace i4core {
 
 namespace i4graphics {
 
-	class I4Mesh;
+	class I4TriangleMesh;
 	struct I4Material;
 
 	struct I4MeshRenderItem
@@ -19,7 +21,7 @@ namespace i4graphics {
 		I4AABB				worldAABB;
 		unsigned int		shaderMask;
 		unsigned int		boneCount;
-		I4Mesh*				mesh;
+		I4TriangleMesh*		mesh;
 		I4Material*			material;
 		I4Matrix4x4*		matrixPalette;
 		bool				shadowCaster;
@@ -55,13 +57,14 @@ namespace i4graphics {
 
 		virtual bool	initialize(void* _windowID, unsigned int _width, unsigned int _height)	{ return true; }
 
-		virtual void	commitToScene(const I4MeshRenderItem& item)		{}
-		virtual void	commitToScene(I4DirectionalLight* light)		{}
-		virtual void	commitToScene(I4PointLight* light)				{}
+		virtual void	commitToScene(const I4MeshRenderItem& item)				{}
+		virtual void	commitToScene(I4DirectionalLight* light)				{}
+		virtual void	commitToScene(I4PointLight* light)						{}
+		virtual void	commitToScene(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)	{}
 
-		virtual void	preRender(I4Camera* camera)						{}
-		virtual void	render(I4Camera* camera)						{}
-		virtual void	postRender(I4Camera* camera)					{}
+		virtual void	preRender(I4Camera* camera)								{}
+		virtual void	render(I4Camera* camera)								{}
+		virtual void	postRender(I4Camera* camera)							{}
 
 		bool			isWireMode() const				{ return wireMode; }
 		void			setWireMode(bool enable)		{ wireMode = enable; }

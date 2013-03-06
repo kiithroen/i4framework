@@ -104,13 +104,13 @@ namespace i4graphics
 	struct I4Vertex_Pos_Col
 	{
 		I4Vector3		pos;
-		unsigned int	color;	
+		I4Vector4		color;	
 	};
 
 	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_COL[] = 
 	{
 		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, I4FORMAT_R8G8B8A8_UNORM, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	struct I4Vertex_Pos_Tex
@@ -188,6 +188,7 @@ namespace i4graphics
 		virtual bool		create(unsigned int count, unsigned int stride, const void* vertices = 0);
 
 		virtual bool		copyFrom(const void* data);
+		virtual bool		copyFrom(const void* data, unsigned int count);
 
 		virtual bool		lock(void** data);
 		virtual void		unlock();
@@ -196,6 +197,7 @@ namespace i4graphics
 		virtual void		unbind();
 
 		virtual void		draw(I4PrimitiveType pt);
+		virtual void		draw(I4PrimitiveType pt, unsigned int count, unsigned int start);
 
 		unsigned int		getCount()			{ return count; }
 		unsigned int		getStride()			{ return stride; }
@@ -217,6 +219,7 @@ namespace i4graphics
 		virtual bool		create(unsigned int count, unsigned int stride, const void* indices = 0);
 
 		virtual bool		copyFrom(const void* data);
+		virtual bool		copyFrom(const void* data, unsigned int count);
 
 		virtual bool		lock(void** data);
 		virtual void		unlock();
@@ -225,6 +228,7 @@ namespace i4graphics
 		virtual void		unbind();
 
 		virtual void		draw(I4PrimitiveType pt);
+		virtual void		draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex);
 
 		unsigned int		getCount()			{ return count; }
 		unsigned int		getStride()			{ return stride; }

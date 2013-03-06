@@ -89,7 +89,7 @@ namespace i4graphics
 	{
 	}
 
-	void I4VideoDriver::resetRenderTarget()
+	void I4VideoDriver::resetBackBufferRenderTarget(bool enableDepthStencil)
 	{
 	}
 

@@ -111,8 +111,8 @@
     <ClInclude Include="I4Format.h" />
     <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4KeyFrameSet.h" />
+    <ClInclude Include="I4LineMesh.h" />
     <ClInclude Include="I4Material.h" />
-    <ClInclude Include="I4Mesh.h" />
     <ClInclude Include="I4Model.h" />
     <ClInclude Include="I4ModelElement.h" />
     <ClInclude Include="I4ModelElementInfo.h" />
@@ -130,6 +130,7 @@
     <ClInclude Include="I4Texture.h" />
     <ClInclude Include="I4TextureD3D11.h" />
     <ClInclude Include="I4TextureMgr.h" />
+    <ClInclude Include="I4TriangleMesh.h" />
     <ClInclude Include="I4VideoDriver.h" />
     <ClInclude Include="i4graphics.h" />
     <ClInclude Include="I4VideoDriverD3D11.h" />
@@ -142,7 +143,7 @@
     <ClCompile Include="I4AnimationTrack.cpp" />
     <ClCompile Include="I4DeferredRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D11.cpp" />
-    <ClCompile Include="I4Mesh.cpp" />
+    <ClCompile Include="I4LineMesh.cpp" />
     <ClCompile Include="I4Model.cpp" />
     <ClCompile Include="I4ModelElement.cpp" />
     <ClCompile Include="I4ModelMgr.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="I4ShaderMgr.cpp" />
     <ClCompile Include="I4TextureD3D11.cpp" />
     <ClCompile Include="I4TextureMgr.cpp" />
+    <ClCompile Include="I4TriangleMesh.cpp" />
     <ClCompile Include="I4VideoDriver.cpp" />
     <ClCompile Include="i4graphics.cpp" />
     <ClCompile Include="I4VideoDriverD3D11.cpp" />

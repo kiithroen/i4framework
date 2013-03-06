@@ -6,12 +6,13 @@
 #include "I4RenderTarget.h"
 #include "I4ScreenQuadMesh.h"
 #include "I4PointLightMesh.h"
-#include "I4Mesh.h"
+#include "I4TriangleMesh.h"
 #include "I4Material.h"
 #include "I4Camera.h"
 #include "I4Log.h"
 #include "I4Profile.h"
 #include "I4TextureMgr.h"
+#include "I4LineMesh.h"
 
 namespace i4graphics
 {
@@ -52,8 +53,8 @@ namespace i4graphics
 		, rtDepth(nullptr)
 		, rtLight(nullptr)
 		, rtShadow(nullptr)
-		, quadMesh(nullptr)
-		, sphereMesh(nullptr)
+		, screenQuadMesh(nullptr)
+		, pointLightMesh(nullptr)
 		, shadowSplitSize(1024)
 	{
 		static const float defaultShadowSplitZ[] = { 3.5f, 7.0f, 20.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
@@ -136,6 +137,12 @@ namespace i4graphics
 			I4LOG_ERROR << L"shader default add failed.";
 			return false;
 		}
+
+		if (I4ShaderMgr::addShaderMgr("shader/line.fx") == false)
+		{
+			I4LOG_ERROR << L"shader line add failed.";
+			return false;
+		}
 		
 		// render target
 		rtDiffuse = videoDriver->createRenderTarget();
@@ -181,15 +188,15 @@ namespace i4graphics
 		}
 
 		// light mesh
-		quadMesh = new I4ScreenQuadMesh;
-		if (quadMesh->create() == false)
+		screenQuadMesh = new I4ScreenQuadMesh;
+		if (screenQuadMesh->create() == false)
 		{
 			I4LOG_ERROR << L"quad mesh create failed.";
 			return false;
 		}
 
-		sphereMesh = new I4PointLightMesh;
-		if (sphereMesh->create(1.0f, 16, 16) == false)
+		pointLightMesh = new I4PointLightMesh;
+		if (pointLightMesh->create(1.0f, 16, 16) == false)
 		{
 			I4LOG_ERROR << L"sphere mesh create failed.";
 			return false;
@@ -234,13 +241,24 @@ namespace i4graphics
 		if (cbEachLight_L_point_PS.create() == false)
 			return false;
 
+		if (cbEachFrame_Line.create() == false)
+			return false;
+
+		lineDebugMesh = new I4LineMesh;
+		lineDebugMesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+		lineDebugMesh->vertexBuffer->create(10000, sizeof(I4Vertex_Pos_Col));
+
+		commitToScene(I4Vector3(0, 0, 0), I4Vector3(0, 5, 0), I4Vector4(1, 0, 0, 1));
+		commitToScene(I4Vector3(0, 5, 0), I4Vector3(5, 5, 0), I4Vector4(1, 0, 0, 1));
+
 		return true;
 	}
 
 	void I4DeferredRenderer::finalize()
 	{
-		delete sphereMesh;
-		delete quadMesh;
+		delete lineDebugMesh;
+		delete pointLightMesh;
+		delete screenQuadMesh;
 		delete rtShadow;
 		delete rtLight;
 		delete rtDepth;
@@ -270,6 +288,19 @@ namespace i4graphics
 		vecScenePointLight.push_back(*light);
 	}
 
+	void I4DeferredRenderer::commitToScene(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)
+	{
+		I4Vertex_Pos_Col v0;
+		v0.color = color;
+		v0.pos = p0;
+		vecDebugLine.push_back(v0);
+
+		I4Vertex_Pos_Col v1;
+		v1.color = color;
+		v1.pos = p1;
+		vecDebugLine.push_back(v1);
+	}
+
 	void I4DeferredRenderer::preRender(I4Camera* camera)
 	{
 		videoDriver->beginScene();
@@ -280,15 +311,24 @@ namespace i4graphics
 		I4PROFILE_THISFUNC;
 		clearAllRenderTarget();
 
-		I4RenderTarget*	renderTargetG[] = { rtShadow };
-		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, rtShadow);
-		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
-		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
-
 		renderStageGeometry(camera);
 		renderStageShadow(camera);
 		renderStageLight(camera);
 		renderStageMerge(camera);
+
+		videoDriver->resetBackBufferRenderTarget(true);
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
+		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
+
+		cbEachFrame_Line.getData()->viewProjection = camera->getViewProjectionMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
+
+		lineDebugMesh->vertexBuffer->copyFrom(&vecDebugLine[0], vecDebugLine.size());
+		lineDebugMesh->bind();
+		lineDebugMesh->draw(vecDebugLine.size(), 0);
+		lineDebugMesh->unbind();
+
+		shaderMgr->end();
 	}
 
 	void I4DeferredRenderer::postRender(I4Camera* camera)
@@ -701,9 +741,9 @@ namespace i4graphics
 
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
 
-		quadMesh->bind();
-		quadMesh->draw();
-		quadMesh->unbind();
+		screenQuadMesh->bind();
+		screenQuadMesh->draw();
+		screenQuadMesh->unbind();
 
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);
@@ -748,7 +788,7 @@ namespace i4graphics
 		cbEveryFrame_L_point.getData()->view = camera->getViewMatrix();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEveryFrame_L_point.getBuffer(), cbEveryFrame_L_point.getData());
 
-		sphereMesh->bind();
+		pointLightMesh->bind();
 
 		I4Matrix4x4 matLight;
 
@@ -785,9 +825,9 @@ namespace i4graphics
 			cbEachLight_L_point_PS.getData()->lightColor = light.color;
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 4, cbEachLight_L_point_PS.getBuffer(), cbEachLight_L_point_PS.getData());
 
-			sphereMesh->draw();
+			pointLightMesh->draw();
 		}
-		sphereMesh->unbind();
+		pointLightMesh->unbind();
 		
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);
@@ -799,7 +839,7 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 
-		videoDriver->resetRenderTarget();
+		videoDriver->resetBackBufferRenderTarget(false);
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
@@ -811,9 +851,9 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, rtSpecular);
 		shaderMgr->setRenderTarget(2, rtLight);
 		
-		quadMesh->bind();
-		quadMesh->draw();
-		quadMesh->unbind();
+		screenQuadMesh->bind();
+		screenQuadMesh->draw();
+		screenQuadMesh->unbind();
 		
 		shaderMgr->setRenderTarget(0, nullptr);
 		shaderMgr->setRenderTarget(1, nullptr);

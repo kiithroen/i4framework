@@ -1,6 +1,6 @@
 #pragma once
 
-#include "I4Mesh.h"
+#include "I4TriangleMesh.h"
 #include "I4ModelElementInfo.h"
 
 namespace i4graphics {
@@ -68,13 +68,13 @@ namespace i4graphics {
 	class I4ModelMesh : public I4ModelElement
 	{
 	public:
-		I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* mesh);
+		I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
 		virtual ~I4ModelMesh();
 	
 		void			setMaterial(I4Material*	mtrl)		{ material = mtrl;}
 
 	protected:
-		I4Mesh*			mesh;
+		I4TriangleMesh*			mesh;
 		I4Material*		material;
 	};
 
@@ -84,7 +84,7 @@ namespace i4graphics {
 	class ModelRigidMesh : public I4ModelMesh
 	{
 	public:
-		ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* mesh);
+		ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
 		virtual ~ModelRigidMesh();
 
 		virtual void	render(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
@@ -95,7 +95,7 @@ namespace i4graphics {
 	class ModelSkinedMeshGPU : public I4ModelMesh
 	{
 	public:
-		ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4Mesh* mesh);
+		ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
 		virtual ~ModelSkinedMeshGPU();
 
 		virtual bool	initialize() override;

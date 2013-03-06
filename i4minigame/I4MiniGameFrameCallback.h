@@ -15,6 +15,8 @@ namespace i4graphics
 {
 	class I4Renderer;
 	class I4ModelMgr;
+
+	class I4LineMesh;
 }
 using namespace i4graphics;
 

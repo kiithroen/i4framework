@@ -45,15 +45,19 @@ namespace i4object
 		void simulate(float dt);
 
 		btRigidBody* createBox(const btTransform& bodyTM, const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+		btRigidBody* createSphere(const btTransform& bodyTM, btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+		btRigidBody* createCapsule(const btTransform& bodyTM, btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 
-		private:
-			btDefaultCollisionConfiguration*		collisionConfiguration;
-			btCollisionDispatcher*					dispatcher;
-			btBroadphaseInterface*					overlappingPairCache;
-			btSequentialImpulseConstraintSolver*	solver;
-			btDiscreteDynamicsWorld*				dynamicsWorld;
+	private:
+		btRigidBody* createRigidBody(btCollisionShape* shape, const btTransform& bodyTM, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+	private:
+		btDefaultCollisionConfiguration*		collisionConfiguration;
+		btCollisionDispatcher*					dispatcher;
+		btBroadphaseInterface*					overlappingPairCache;
+		btSequentialImpulseConstraintSolver*	solver;
+		btDiscreteDynamicsWorld*				dynamicsWorld;
 
-			btAlignedObjectArray<btCollisionShape*> collisionShapes;
+		btAlignedObjectArray<btCollisionShape*> collisionShapes;
 	};
 
 

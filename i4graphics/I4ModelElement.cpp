@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "I4ModelElement.h"
-#include "I4Mesh.h"
+#include "I4TriangleMesh.h"
 #include "I4AnimationController.h"
 #include "I4Model.h"
 #include "I4ShaderMgr.h"
@@ -114,7 +114,7 @@ namespace i4graphics
 
 	static I4Material defaultMaterial;
 
-	I4ModelMesh::I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* _mesh)
+	I4ModelMesh::I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
 	: I4ModelElement(model, info)
 	, mesh(_mesh)
 	, material(&defaultMaterial)
@@ -127,7 +127,7 @@ namespace i4graphics
 
 	//------------------------- ModelRigidMesh -------------------------
 
-	ModelRigidMesh::ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4Mesh* _mesh)
+	ModelRigidMesh::ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
 	: I4ModelMesh(model, info, _mesh)
 	{
 	}
@@ -171,7 +171,7 @@ namespace i4graphics
 
 	//------------------------- ModelSkinedMeshGPU -------------------------
 
-	ModelSkinedMeshGPU::ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4Mesh* _mesh)
+	ModelSkinedMeshGPU::ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
 	: I4ModelMesh(model, info, _mesh)
 	{
 	}

@@ -13,7 +13,7 @@ namespace i4graphics {
 	class I4ModelAniResource;
 	class I4ModelMaterialResource;
 	class I4Texture;
-	class I4Mesh;
+	class I4TriangleMesh;
 
 	class I4ModelMgr
 	{

@@ -427,9 +427,16 @@ namespace i4graphics
 		immediateContext->OMSetRenderTargets(1, &nullView, static_cast<I4RenderTargetD3D11*>(depthStencil)->getDepthStencilView());
 	}
 
-	void I4VideoDriverD3D11::resetRenderTarget()
+	void I4VideoDriverD3D11::resetBackBufferRenderTarget(bool enableDepthStencil)
 	{
-		immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
+		if (enableDepthStencil)
+		{
+			immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
+		}
+		else
+		{
+			immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, nullptr);
+		}
 	}
 
 	void I4VideoDriverD3D11::setRasterizerMode(I4RasterizerMode mode)

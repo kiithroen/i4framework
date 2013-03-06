@@ -1,31 +1,26 @@
 #pragma once
 
-#include "I4AABB.h"
-using namespace i4core;
-
 namespace i4graphics
 {
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 	class I4Texture;
 
-	class I4Mesh
+	class I4LineMesh
 	{
 	public:
-		I4Mesh();
-		~I4Mesh();
+		I4LineMesh();
+		~I4LineMesh();
 		
 		void			bind();
 		void			unbind();
 
 		void 			draw();
+		void			draw(unsigned int count, unsigned int start);
 
 		//-------------------------------
 		
-		I4AABB				localAABB;
 		I4VertexBuffer*		vertexBuffer;
-		I4IndexBuffer*		indexBuffer;
-		bool				skined;
 	};
 	
 }

@@ -72,22 +72,37 @@ namespace i4object
 
 	btRigidBody* I4BulletPhysics::createBox(const btTransform& bodyTM, const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
 	{
-		btCollisionShape* boxShape = new btBoxShape(ext);
-		collisionShapes.push_back(boxShape);
+		return createRigidBody(new btBoxShape(ext), bodyTM, mass, restitution, friction, linDamping, angDamping);
+
+	}
+
+	btRigidBody* I4BulletPhysics::createSphere(const btTransform& bodyTM, btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	{
+		return createRigidBody(new btSphereShape(radius), bodyTM, mass, restitution, friction, linDamping, angDamping);
+	}
+
+	btRigidBody* I4BulletPhysics::createCapsule(const btTransform& bodyTM, btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	{
+		return createRigidBody(new btCapsuleShape(radius, height), bodyTM, mass, restitution, friction, linDamping, angDamping);
+	}
+
+	btRigidBody* I4BulletPhysics::createRigidBody(btCollisionShape* shape, const btTransform& bodyTM, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	{
+		collisionShapes.push_back(shape);
 
 		btVector3 localInertia(0,0,0);
 		if (mass != 0)
 		{
-			boxShape->calculateLocalInertia(mass, localInertia);
+			shape->calculateLocalInertia(mass, localInertia);
 		}
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(bodyTM);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, boxShape, localInertia);		
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);		
 		rbInfo.m_restitution = restitution;
 		rbInfo.m_friction = friction;
 		rbInfo.m_linearDamping = linDamping;
 		rbInfo.m_angularDamping = angDamping;
-		
+
 		btRigidBody* body = new btRigidBody(rbInfo);
 		dynamicsWorld->addRigidBody(body);
 

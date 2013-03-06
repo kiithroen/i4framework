@@ -15,6 +15,7 @@ namespace i4graphics
 		void			destroy();
 
 		virtual bool	copyFrom(const void* data) override;
+		virtual bool	copyFrom(const void* data, unsigned int _count) override;
 
 		virtual bool	lock(void** data) override;
 		virtual void	unlock() override;
@@ -22,6 +23,7 @@ namespace i4graphics
 		virtual void	bind() override;
 
 		virtual void	draw(I4PrimitiveType type) override;
+		virtual void	draw(I4PrimitiveType pt, unsigned int _count, unsigned int _start);
 
 	private:
 		ID3D11Device*				d3dDevice;
@@ -42,6 +44,7 @@ namespace i4graphics
 		void			destroy();
 
 		virtual bool	copyFrom(const void* data) override;
+		virtual bool	copyFrom(const void* data, unsigned int _count) override;
 
 		virtual bool	lock(void** data) override;
 		virtual void	unlock() override;
@@ -49,6 +52,7 @@ namespace i4graphics
 		virtual void	bind() override;
 
 		virtual void	draw(I4PrimitiveType pt) override;
+		virtual void	draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex);
 
 	private:
 		ID3D11Device*				d3dDevice;
