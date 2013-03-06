@@ -184,6 +184,8 @@ namespace i4graphics
 
 		virtual void				preRender(I4Camera* camera) override;
 		virtual void				render(I4Camera* camera) override;
+
+
 		virtual void				postRender(I4Camera* camera) override;
 
 		bool				isWireMode() const				{ return wireMode; }
@@ -196,6 +198,7 @@ namespace i4graphics
 		void				renderStageGeometry(I4Camera* camera);
 		void				renderStageLight(I4Camera* camera);
 		void				renderStageMerge(I4Camera* camera);
+		void				renderDebugLine(I4Camera* camera);
 
 		void				cullAndSortMeshGeometryRenderItem(I4Camera* camera);
 		void				renderMeshGeometryRenderItem(I4Camera* camera);
