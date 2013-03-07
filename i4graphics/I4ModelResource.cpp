@@ -548,10 +548,9 @@ namespace i4graphics
 
 		if (data.skined)	
 		{
-			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan_SkinInfo));
-			I4Vertex_Pos_Normal_Tex_Tan_SkinInfo* vertices = nullptr;
-			mesh->vertexBuffer->lock((void**)&vertices);
+			vector<I4Vertex_Pos_Normal_Tex_Tan_SkinInfo> vertices;
+			vertices.resize(data.vecPosition.size());
+
 			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 			{
 				vertices[i].position = data.vecPosition[i];
@@ -561,14 +560,18 @@ namespace i4graphics
 				vertices[i].boneID = data.vecBoneID[i];
 				vertices[i].weight = data.vecWeight[i];
 			}
-			mesh->vertexBuffer->unlock();
+
+			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+			if (mesh->vertexBuffer->create(vertices.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan_SkinInfo), &vertices[0]) == false)
+			{
+				return nullptr;
+			}
 		}
 		else
 		{
-			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan));
-			I4Vertex_Pos_Normal_Tex_Tan* vertices = nullptr;
-			mesh->vertexBuffer->lock((void**)&vertices);
+			vector<I4Vertex_Pos_Normal_Tex_Tan> vertices;
+			vertices.resize(data.vecPosition.size());
+
 			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 			{
 				vertices[i].position = data.vecPosition[i];
@@ -576,12 +579,13 @@ namespace i4graphics
 				vertices[i].tangent = data.vecTangent[i];
 				vertices[i].uv = data.vecUV[i];
 			}
-			mesh->vertexBuffer->unlock();
+
+			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan), &vertices[0]);
 		}
 
 		mesh->indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
-		mesh->indexBuffer->create(data.vecIndex.size()*3, sizeof(unsigned short));
-		mesh->indexBuffer->copyFrom((void**)&data.vecIndex[0]);
+		mesh->indexBuffer->create(data.vecIndex.size()*3, sizeof(unsigned short), &data.vecIndex[0]);
 
 		return mesh;
 	}

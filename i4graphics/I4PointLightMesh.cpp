@@ -17,72 +17,65 @@ namespace i4graphics
 	bool I4PointLightMesh::create(float r, unsigned short ringCount, unsigned short segmentCount)
 	{	
 		int vertexCount = (ringCount + 1)*(segmentCount + 1);
-		vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-		if (vertexBuffer->create(vertexCount, sizeof(I4Vertex_Pos)) == false)
-		{
-			destroy();
-			return false;
-		}
+		vector<I4Vertex_Pos> vertices;
+		vertices.resize(vertexCount);
 
-		I4Vertex_Pos* vertices = nullptr;
-		if (vertexBuffer->lock((void**)&vertices) == false)
-		{
-			destroy();
-			return false;
-		}
- 
 		int indexCount = 6*ringCount*(segmentCount + 1);
-		indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
-		if (indexBuffer->create(indexCount, sizeof(unsigned short)) == false)
-		{
-			destroy();
-			return false;
-		}
-
-		unsigned short* indices = nullptr;
-		if (indexBuffer->lock((void**)&indices) == false)
-		{
-			destroy();
-			return false;
-		}
+		vector<unsigned short> indices;
+		indices.resize(indexCount);
 
 		float deltaRingAngle = (I4PI/ringCount);
 		float deltaSegAngle = (2*I4PI/segmentCount);
 
 		unsigned short verticeIndex = 0 ;
- 
-		 for( int ring = 0; ring <= ringCount; ring++ )
-		 {
-			 float r0 = r * sinf (ring * deltaRingAngle);
-			 float y0 = r * cosf (ring * deltaRingAngle);
- 
-			 for(int seg = 0; seg <= segmentCount; seg++)
-			 {
-				 float x0 = r0 * sinf(seg * deltaSegAngle);
-				 float z0 = r0 * cosf(seg * deltaSegAngle);
- 
-				 vertices->x = x0;
-				 vertices->y = y0;
-				 vertices->z = z0;
 
-				 ++vertices;
- 
-				 if (ring != ringCount)
-				 {
-					 *indices++ = verticeIndex + segmentCount + 1;
-					 *indices++ = verticeIndex;               
-					 *indices++ = verticeIndex + segmentCount;
-					 *indices++ = verticeIndex + segmentCount + 1;
-					 *indices++ = verticeIndex + 1;
-					 *indices++ = verticeIndex;
+		I4Vertex_Pos* pV = &vertices[0];
+		unsigned short* pI = &indices[0];
 
-					 ++verticeIndex;
-				 }
-			 }
-		 }
+		for( int ring = 0; ring <= ringCount; ring++ )
+		{
+			float r0 = r * sinf (ring * deltaRingAngle);
+			float y0 = r * cosf (ring * deltaRingAngle);
+
+			for(int seg = 0; seg <= segmentCount; seg++)
+			{
+				float x0 = r0 * sinf(seg * deltaSegAngle);
+				float z0 = r0 * cosf(seg * deltaSegAngle);
+
+				pV->x = x0;
+				pV->y = y0;
+				pV->z = z0;
+
+				++pV;
+
+				if (ring != ringCount)
+				{
+					*pI++ = verticeIndex + segmentCount + 1;
+					*pI++ = verticeIndex;               
+					*pI++ = verticeIndex + segmentCount;
+					*pI++ = verticeIndex + segmentCount + 1;
+					*pI++ = verticeIndex + 1;
+					*pI++ = verticeIndex;
+
+					++verticeIndex;
+				}
+			}
+		}
+
+		vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+		if (vertexBuffer->create(vertexCount, sizeof(I4Vertex_Pos), &vertices[0]) == false)
+		{
+			destroy();
+			return false;
+		}
  
-		 vertexBuffer->unlock();
-		 indexBuffer->unlock();
+		
+		indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
+		if (indexBuffer->create(indexCount, sizeof(unsigned short), &indices[0]) == false)
+		{
+			destroy();
+			return false;
+		}
 
 		return true;
 	}

@@ -294,6 +294,8 @@ namespace i4graphics
 
 	void I4DeferredRenderer::preRender(I4Camera* camera)
 	{
+		I4PROFILE_THISFUNC;
+
 		videoDriver->beginScene();
 	}
 
@@ -315,6 +317,8 @@ namespace i4graphics
 
 	void I4DeferredRenderer::postRender(I4Camera* camera)
 	{
+		I4PROFILE_THISFUNC;
+
 		videoDriver->endScene();
 		vecSceneMeshRenderItem.clear();
 		vecScenePointLight.clear();

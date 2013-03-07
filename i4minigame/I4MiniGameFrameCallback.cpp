@@ -309,17 +309,17 @@ void I4MiniGameFrameCallback::onLButtonDown(unsigned int x, unsigned int y)
 		I4ObjectViewComponent* view = nodePhysics->addComponent<I4ObjectViewComponent>();
 		view->attachModel(name, "testmodel/box", true, false, false);
 		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-		rigid->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0, 0);
+		rigid->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0.1f, 0.5f);
 	}
 	else if (i%3 == 1)
 	{
 		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-		rigid->attachSphere(0.1f, 1, 0.3f, 0.5f, 0, 0);
+		rigid->attachSphere(0.1f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
 	}
 	else if (i%3 == 2)
 	{
 		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-		rigid->attachCapsule(0.3f, 1.0f, 1, 0.3f, 0.5f, 0, 0);
+		rigid->attachCapsule(0.3f, 1.0f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
 	}
 	
 	i++;
