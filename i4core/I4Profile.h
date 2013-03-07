@@ -29,23 +29,6 @@ namespace i4core
 			return child;
 		}
 
-		void reset()
-		{
-			totalCalls = 0;
-			totalTime = 0;
-			recursionCounter = 0;
-
-			if (child)
-			{
-				child->reset();
-			}
-
-			if (sibling)
-			{
-				sibling->reset();
-			}
-		}
-
 		void clear()
 		{
 			totalCalls = 0;
@@ -57,6 +40,8 @@ namespace i4core
 
 			delete sibling;
 			sibling = nullptr;
+
+			parent = nullptr;
 		}
 
 		void begin()
@@ -183,15 +168,11 @@ namespace i4core
 				curNode = curNode->getParent();
 			}
 		}
-
-		static void	reset()
-		{
-			rootNode.reset();
-		}
-
+		
 		static void	clear()
 		{
 			rootNode.clear();
+			curNode = &rootNode;
 		}
 
 		static I4ProfileIterator	getRootIterator()									{ return I4ProfileIterator(&rootNode); }

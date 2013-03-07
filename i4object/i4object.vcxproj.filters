@@ -43,6 +43,9 @@
     <ClInclude Include="I4ObjectRigidBodyComponent.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="I4BulletDebugDraw.h">
+      <Filter>physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -64,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="I4ObjectRigidBodyComponent.cpp">
       <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="I4BulletDebugDraw.cpp">
+      <Filter>physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

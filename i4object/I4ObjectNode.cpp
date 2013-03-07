@@ -11,10 +11,6 @@ namespace i4object {
 		, parent(_parent)
 		, name(_name)
 	{
-		localRotation.makeIdentity();
-		localScale.x = localScale.y = localScale.z = 1.0f;
-		localPosition.x = localPosition.y = localPosition.z = 0.0f;
-
 		localTM.makeIdentity();
 		worldTM.makeIdentity();
 
@@ -34,36 +30,17 @@ namespace i4object {
 		mapComponent.clear();
 	}
 
-	void I4ObjectNode::calcTM()
+	void I4ObjectNode::updateWorldTM()
 	{
-		calcLocalTM();
 		calcWorldTM();
 		
 		// 자식들 업데이트
 		for (auto& itr : vecChild)
 		{
-			itr->calcTM();
+			itr->updateWorldTM();
 		}
 	}
-
-	void I4ObjectNode::calcLocalTM()
-	{		
-		localRotation.extractRotationMatrix(localTM);
-
-		if (localScale != I4VECTOR3_ONE)
-		{
-			I4Matrix4x4 scaleTM;
-			scaleTM.makeScale(localScale.x, localScale.y, localScale.z);
-
-			localTM *= scaleTM;
-		}
-
-		localTM._41 = localPosition.x;
-		localTM._42 = localPosition.y;
-		localTM._43 = localPosition.z;
-		localTM._44 = 1.0f;
-	}
-
+	
 	void I4ObjectNode::calcWorldTM()
 	{
 		if (parent == nullptr)			// 부모가 없으면 월드변환행렬 --> 로컬
@@ -86,7 +63,7 @@ namespace i4object {
 		child->detachFromParent();
 
 		child->parent = this;
-		child->calcTM();
+		child->updateWorldTM();
 
 		vecChild.push_back(child);
 	}
@@ -138,40 +115,34 @@ namespace i4object {
 		setLocalTM(m);
 	}
 
-	void I4ObjectNode::setLocalTM(const I4Matrix4x4& localTM)
+	void I4ObjectNode::setLocalTM(const I4Matrix4x4& _localTM)
 	{
-		I4Matrix4x4 rotation;
-		localTM.decompose(&localScale, &rotation, &localPosition);
-		localRotation.makeRotationMatrix(rotation);
+		localTM = _localTM;
 
-		calcTM();
-	}
-
-	void I4ObjectNode::setLocalRotation(const I4Quaternion& rotation)
-	{
-		localRotation = rotation;
-
-		calcTM();
+		updateWorldTM();
 	}
 
 	void I4ObjectNode::setLocalRotationYawPitchRoll(float yaw, float pitch, float roll)
 	{
-		localRotation.makeRotationYawPitchRoll(yaw, pitch, roll);
+		localTM.makeRotationYawPitchRoll(yaw, pitch, roll);
 
-		calcTM();
+		updateWorldTM();
 	}
 
 	void I4ObjectNode::setLocalPosition(const I4Vector3& t)
 	{
-		localPosition = t;
+		localTM.setTranslation(t);
 
-		calcTM();
+		updateWorldTM();
 	}
 
 	void I4ObjectNode::setLocalScale(const I4Vector3& s)
 	{
-		localScale = s;
+		I4Matrix4x4 m;
+		m.makeScale(s.x, s.y, s.z);
 
-		calcTM();
+		localTM = m*localTM;
+
+		updateWorldTM();
 	}
 }

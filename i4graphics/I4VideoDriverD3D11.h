@@ -34,6 +34,7 @@ namespace i4graphics
 		virtual void				resetBackBufferRenderTarget(bool enableDepthStencil) override;
 
 		virtual void				setRasterizerMode(I4RasterizerMode mode) override;
+		virtual void				setDepthStencilMode(I4DepthStencilMode mode) override;
 		virtual void				setBlendMode(I4BlendMode mode) override;
 
 		virtual I4Shader*	createShader() override;
@@ -48,7 +49,6 @@ namespace i4graphics
 
 	private:
 		I4VideoDriverD3D11();
-
 	private:
 		ID3D11Device*				d3dDevice;
 		ID3D11DeviceContext*		immediateContext;
@@ -57,6 +57,7 @@ namespace i4graphics
 		ID3D11Texture2D*			backBufferDepthStencilTex;
 		ID3D11DepthStencilView*		backBufferDepthStencilView;
 		ID3D11RasterizerState*		rasterizerStates[I4RASTERIZER_MODE_NUM];
+		ID3D11DepthStencilState*    depthStencilStates[I4DEPTHSTENCIL_MODE_NUM];
 		ID3D11BlendState*			blendModes[I4BLEND_MODE_NUM];		
 		ID3D11SamplerState*			samplerStates[I4SAMPLER_STATE_NUM];
 		D3D_DRIVER_TYPE				driverType;

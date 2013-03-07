@@ -15,6 +15,7 @@ namespace i4graphics
 		: width(0)
 		, height(0)
 		, curRasterizerMode(I4RASTERIZER_MODE_INVALID)
+		, curDepthStencilMode(I4DEPTHSTENCIL_MODE_INVAILD)
 		, curBlendMode(I4BLEND_MODE_INVALID)
 		, textureMgr(nullptr)
 	{
@@ -96,6 +97,11 @@ namespace i4graphics
 	void I4VideoDriver::setRasterizerMode(I4RasterizerMode mode)
 	{
 		curRasterizerMode = mode;
+	}
+
+	void I4VideoDriver::setDepthStencilMode(I4DepthStencilMode mode)
+	{
+		curDepthStencilMode = mode;
 	}
 
 	void I4VideoDriver::setBlendMode(I4BlendMode mode)

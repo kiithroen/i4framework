@@ -65,7 +65,7 @@ namespace i4graphics
 				 vertices->y = y0;
 				 vertices->z = z0;
 
-				 vertices++;
+				 ++vertices;
  
 				 if (ring != ringCount)
 				 {
@@ -75,7 +75,8 @@ namespace i4graphics
 					 *indices++ = verticeIndex + segmentCount + 1;
 					 *indices++ = verticeIndex + 1;
 					 *indices++ = verticeIndex;
-					 verticeIndex ++;
+
+					 ++verticeIndex;
 				 }
 			 }
 		 }

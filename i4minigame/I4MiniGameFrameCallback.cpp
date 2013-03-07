@@ -42,7 +42,7 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	camera = new I4Camera;
 	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
-	camera->setLookAt(I4Vector3(0.0f, 3.0f, -0.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));  
+	camera->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));  
 	
 	float camYawRad;
 	float camPitchRad;
@@ -55,7 +55,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 	modelMgr = new I4ModelMgr;
 	bulletPhysics = new I4BulletPhysics;
-	if (bulletPhysics->init() == false)
+	if (bulletPhysics->init(renderer) == false)
 		return false;
 
 	objectMgr = new I4ObjectMgr;
@@ -108,13 +108,20 @@ bool I4MiniGameFrameCallback::onStart()
 			nodeChar->setLocalPosition(I4Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
 
 			I4ObjectViewComponent* view = nodeChar->addComponent<I4ObjectViewComponent>();
+			I4ObjectRigidBodyComponent* rigid = nodeChar->addComponent<I4ObjectRigidBodyComponent>();
+
 			if (i%3 == 0)
 			{
 				nodeChar->setLocalScale(I4Vector3(0.006f, 0.006f, 0.006f));
 
 				view->attachModel(charName, "testmodel/cyberdemon", true, true, true);
 				view->attachAni("testmodel/cyberdemon.ani.xml", "idle");
-				view->playAnimation("idle");
+				view->playAnimation("idle");	
+
+				I4Matrix4x4 offset;
+				offset.makeTranslation(0, -0.85f, 0);
+				rigid->setOffset(offset);
+				rigid->attachCapsule(0.4f, 0.9f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
 			}
 			else if (i%3 == 1)
 			{
@@ -123,12 +130,21 @@ bool I4MiniGameFrameCallback::onStart()
 				view->attachModel(charName, "testmodel/guard", true, true, true);
 				view->attachAni("testmodel/guard_idle.ani.xml", "idle");
 				view->playAnimation("idle");
+
+				I4Matrix4x4 offset;
+				offset.makeTranslation(0, -0.65f, 0);
+				rigid->setOffset(offset);
+				rigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
 			}
 			else
 			{
 				nodeChar->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
 
 				view->attachModel(charName, "testmodel/elin", true, true, false);
+				I4Matrix4x4 offset;
+				offset.makeTranslation(0, -0.55f, 0.1f);
+				rigid->setOffset(offset);
+				rigid->attachCapsule(0.2f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
 			}
 
 			char lightName[256] = {0, };
@@ -165,6 +181,8 @@ void I4MiniGameFrameCallback::onEnd()
 
 bool I4MiniGameFrameCallback::onUpdate(float dt)
 {
+	I4PROFILE_THISFUNC;
+
 	I4Framework* framework = I4Framework::getFramework();
 	
 	if (framework->isKeyPressed(VK_ESCAPE))
@@ -230,6 +248,11 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 
 bool I4MiniGameFrameCallback::onRender(float dt)
 {
+	if (renderer->isDebugMode())
+	{
+		bulletPhysics->debugDraw();
+	}
+
 	commitToRenderer(dt);
 
 	renderer->preRender(camera);
@@ -241,10 +264,15 @@ bool I4MiniGameFrameCallback::onRender(float dt)
 
 void I4MiniGameFrameCallback::onKeyDown(unsigned int key)
 {
-	if (key == VK_F2)
+	if (key == VK_F1)
+	{
+		renderer->setDebugMode(!renderer->isDebugMode());
+	}
+	else if (key == VK_F2)
 	{
 		renderer->setWireMode(!renderer->isWireMode());
 	}
+
 
 	if (frameStateMgr)
 	{
@@ -272,14 +300,29 @@ void I4MiniGameFrameCallback::onLButtonDown(unsigned int x, unsigned int y)
 {
 	static int i = 0;
 	char name[256] = {0, };
-	sprintf(name, "box_%d", i);
+	sprintf(name, "physics_%d", i);
+	I4ObjectNode* nodePhysics = objectMgr->createNode(name);
+	nodePhysics->setLocalPosition(I4Vector3(0, 5, 2));
+
+	if (i%3 == 0)
+	{
+		I4ObjectViewComponent* view = nodePhysics->addComponent<I4ObjectViewComponent>();
+		view->attachModel(name, "testmodel/box", true, false, false);
+		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+		rigid->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0, 0);
+	}
+	else if (i%3 == 1)
+	{
+		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+		rigid->attachSphere(0.1f, 1, 0.3f, 0.5f, 0, 0);
+	}
+	else if (i%3 == 2)
+	{
+		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+		rigid->attachCapsule(0.3f, 1.0f, 1, 0.3f, 0.5f, 0, 0);
+	}
+	
 	i++;
-	I4ObjectNode* nodeBox = objectMgr->createNode(name);
-	nodeBox->setLocalPosition(I4Vector3(0, 5, 2));
-	I4ObjectViewComponent* viewBox = nodeBox->addComponent<I4ObjectViewComponent>();
-	viewBox->attachModel(name, "testmodel/box", true, false, false);
-	I4ObjectRigidBodyComponent* rigidBox = nodeBox->addComponent<I4ObjectRigidBodyComponent>();
-	rigidBox->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0, 0);
 
 	if (frameStateMgr)
 	{

@@ -136,25 +136,12 @@ namespace i4core
 			_13 = v.z;
 		}
 
-		void extractAxisX(I4Vector3& v) const
-		{
-			v.x = _11;
-			v.y = _12;
-			v.z = _13;
-		}
 
 		void setAxisY(const I4Vector3& v)
 		{
 			_21 = v.x;
 			_22 = v.y;
 			_23 = v.z;
-		}
-
-		void extractAxisY(I4Vector3& v) const
-		{
-			v.x = _21;
-			v.y = _22;
-			v.z = _23;
 		}
 
 		void setAxisZ(const I4Vector3& v)
@@ -164,18 +151,33 @@ namespace i4core
 			_33 = v.z;
 		}
 
-		void extractAxisZ(I4Vector3& v) const
-		{
-			v.x = _31;
-			v.y = _32;
-			v.z = _33;
-		}
 
 		void setTranslation(const I4Vector3& pos)
 		{
 			_41 = pos.x;
 			_42 = pos.y;
 			_43 = pos.z;
+		}
+
+		void extractAxisX(I4Vector3& v) const
+		{
+			v.x = _11;
+			v.y = _12;
+			v.z = _13;
+		}
+
+		void extractAxisY(I4Vector3& v) const
+		{
+			v.x = _21;
+			v.y = _22;
+			v.z = _23;
+		}
+
+		void extractAxisZ(I4Vector3& v) const
+		{
+			v.x = _31;
+			v.y = _32;
+			v.z = _33;
 		}
 
 		void extractTranslation(I4Vector3& v) const
@@ -378,7 +380,20 @@ namespace i4core
 			_44 = 1.0f;
 		}
 
-		
+		void makeRotationYawPitchRoll(float yaw, float pitch, float roll) 
+		{
+			_11 = cos(roll)*cos(yaw) + sin(roll)*sin(pitch)*sin(yaw);
+			_12 = sin(roll)*cos(pitch);
+			_13 = cos(roll)*-sin(yaw) + sin(roll)*sin(pitch)*cos(yaw);
+			_21 = -sin(roll)*cos(yaw) + cos(roll)*sin(pitch)*sin(yaw);
+			_22 = cos(roll)*cos(pitch);
+			_23 = sin(roll)*sin(yaw) + cos(roll)*sin(pitch)*cos(yaw);
+			_31 = cos(pitch)*sin(yaw);
+			_32 = -sin(pitch);
+			_33 = cos(pitch)*cos(yaw);
+			_14 = _24 = _34 = 0;
+			_44 = 1;
+		}
 
 		void makeOrthoLH(float width, float height, float zNear, float zFar)
 		{
@@ -582,7 +597,9 @@ namespace i4core
 			result._43 = a._41*b._13 + a._42*b._23 + a._43*b._33 + a._44*b._43;
 			result._44 = a._41*b._14 + a._42*b._24 + a._43*b._34 + a._44*b._44;
 		}
-		
+
+
+
 	public:
 		union
 		{

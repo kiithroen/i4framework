@@ -30,6 +30,21 @@ namespace i4graphics
 		I4RASTERIZER_MODE_NUM,
 	};
 
+	enum I4DepthStencilMode
+	{
+		I4DEPTHSTENCIL_MODE_INVAILD = -1,
+		I4DEPTH_OFF_STENCIL_OFF = 0,
+		I4DEPTH_LESS_STENCIL_OFF,
+		I4DEPTH_GREATER_STENCIL_OFF,
+		I4DEPTH_OFF_STENCIL_INC_ON_FAIL,
+		I4DEPTH_LESS_STENCIL_INC_ON_FAIL,
+		I4DEPTH_GREATER_STENCIL_INC_ON_FAIL,
+		I4DEPTH_OFF_STENCIL_INC_ON_PASS,
+		I4DEPTH_LESS_STENCIL_INC_ON_PASS,
+		I4DEPTH_GREATER_STENCIL_INC_ON_PASS,
+		I4DEPTHSTENCIL_MODE_NUM,
+	};
+
 	enum I4BlendMode
 	{		
 		I4BLEND_MODE_INVALID		= -1,
@@ -77,6 +92,7 @@ namespace i4graphics
 		virtual void				resetBackBufferRenderTarget(bool enableDepthStencil);
 
 		virtual void				setRasterizerMode(I4RasterizerMode mode);
+		virtual void				setDepthStencilMode(I4DepthStencilMode mode);
 		virtual void				setBlendMode(I4BlendMode mode);
 
 		virtual I4Shader*	createShader();
@@ -107,6 +123,7 @@ namespace i4graphics
 		unsigned int				width;
 		unsigned int				height;		
 		I4RasterizerMode			curRasterizerMode;
+		I4DepthStencilMode			curDepthStencilMode;
 		I4BlendMode					curBlendMode;
 		I4TextureMgr*				textureMgr;
 

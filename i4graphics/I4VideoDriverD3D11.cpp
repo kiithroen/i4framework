@@ -24,6 +24,11 @@ namespace i4graphics
 			rasterizerStates[i] = nullptr;
 		}
 
+		for (int i = 0; i < I4DEPTHSTENCIL_MODE_NUM; ++i)
+		{
+			depthStencilStates[i] = nullptr;
+		}
+
 		for (int i = 0; i < I4BLEND_MODE_NUM; ++i)
 		{
 			blendModes[i] = nullptr;
@@ -79,6 +84,15 @@ namespace i4graphics
 			d3dDevice = nullptr;
 		}
 		
+		for (int i = 0; i < I4DEPTHSTENCIL_MODE_NUM; ++i)
+		{
+			if (depthStencilStates[i] != nullptr)
+			{
+				depthStencilStates[i]->Release();
+				depthStencilStates[i] = nullptr;
+			}
+		}
+
 		for (int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
 		{
 			if (rasterizerStates[i] != nullptr)
@@ -207,6 +221,7 @@ namespace i4graphics
 
 		immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 
+		//------ rasterizer mode --------
 		D3D11_FILL_MODE fill[I4RASTERIZER_MODE_NUM] = 
 		{ 
 			D3D11_FILL_SOLID,
@@ -244,6 +259,106 @@ namespace i4graphics
 				return false;
 		}
 
+		//------ depth stencil mode --------
+
+		BOOL bDepthEnable[ I4DEPTHSTENCIL_MODE_NUM ] =
+		{
+			FALSE,
+			TRUE,
+			TRUE,
+			FALSE,
+			TRUE,
+			TRUE,
+			FALSE,
+			TRUE,
+			TRUE
+		};
+
+		BOOL bStencilEnable[ I4DEPTHSTENCIL_MODE_NUM ] =
+		{
+			FALSE,
+			FALSE,
+			FALSE,
+			TRUE,
+			TRUE,
+			TRUE,
+			TRUE,
+			TRUE,
+			TRUE
+		};
+
+		D3D11_COMPARISON_FUNC compFunc[ I4DEPTHSTENCIL_MODE_NUM ] =
+		{
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_GREATER,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_GREATER,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_GREATER,
+		};
+
+		D3D11_STENCIL_OP FailOp[ I4DEPTHSTENCIL_MODE_NUM ] =
+		{
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+
+			D3D11_STENCIL_OP_INCR,
+			D3D11_STENCIL_OP_INCR,
+			D3D11_STENCIL_OP_INCR,
+
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+		};
+
+		D3D11_STENCIL_OP PassOp[ I4DEPTHSTENCIL_MODE_NUM ] =
+		{
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP_KEEP,
+
+			D3D11_STENCIL_OP_INCR,
+			D3D11_STENCIL_OP_INCR,
+			D3D11_STENCIL_OP_INCR,
+		};
+
+		for( UINT i = 0; i < I4DEPTHSTENCIL_MODE_NUM; i++ )
+		{
+			D3D11_DEPTH_STENCIL_DESC dsDesc;
+			dsDesc.DepthEnable = bDepthEnable[i];
+			dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			dsDesc.DepthFunc = compFunc[i];
+
+			// Stencil test parameters
+			dsDesc.StencilEnable = bStencilEnable[i];
+			dsDesc.StencilReadMask = 0xFF;
+			dsDesc.StencilWriteMask = 0xFF;
+
+			// Stencil operations if pixel is front-facing
+			dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+			dsDesc.FrontFace.StencilDepthFailOp = FailOp[i];
+			dsDesc.FrontFace.StencilPassOp = PassOp[i];
+			dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+			// Stencil operations if pixel is back-facing
+			dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+			dsDesc.BackFace.StencilDepthFailOp = FailOp[i];
+			dsDesc.BackFace.StencilPassOp = PassOp[i];
+			dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+			// Create depth stencil state
+			d3dDevice->CreateDepthStencilState( &dsDesc, &depthStencilStates[i] );
+		}
+
+		//----- blend state --------
 		// default
 		D3D11_BLEND_DESC BlendState;
 		ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
@@ -287,6 +402,7 @@ namespace i4graphics
 		if (FAILED(hr))
 			return false;
 
+		//----- sampler state --------
 		D3D11_SAMPLER_DESC sampDescPoint;
 		ZeroMemory( &sampDescPoint, sizeof(sampDescPoint) );
 		sampDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -333,7 +449,8 @@ namespace i4graphics
 			return false;
 
 		resetViewport();
-		setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);		
+		setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
+		setDepthStencilMode(I4DEPTH_LESS_STENCIL_OFF);
 		setBlendMode(I4BLEND_MODE_NONE);
 
 		return true;
@@ -449,6 +566,16 @@ namespace i4graphics
 		}
 	}
 
+	void I4VideoDriverD3D11::setDepthStencilMode(I4DepthStencilMode mode)
+	{
+		if (curDepthStencilMode != mode)
+		{
+			I4VideoDriver::setDepthStencilMode(mode);
+
+			immediateContext->OMSetDepthStencilState(depthStencilStates[mode], 0);
+		}
+	}
+
 	void I4VideoDriverD3D11::setBlendMode(I4BlendMode mode)
 	{
 		if (curBlendMode != mode)
@@ -488,4 +615,5 @@ namespace i4graphics
 	{
 		return new I4RenderTargetD3D11(d3dDevice);
 	}
+
 }

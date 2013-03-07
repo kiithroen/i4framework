@@ -47,7 +47,8 @@ namespace i4graphics {
 	{
 		I4Vector3	p0;
 		I4Vector3	p1;
-		I4Vector4	color;
+		I4Vector4	color0;
+		I4Vector4	color1;
 		float		life;
 	};
 
@@ -56,6 +57,7 @@ namespace i4graphics {
 	public:
 		I4Renderer()
 			: wireMode(false)
+			, debugMode(false)
 		{
 		}
 
@@ -77,7 +79,11 @@ namespace i4graphics {
 		bool			isWireMode() const				{ return wireMode; }
 		void			setWireMode(bool enable)		{ wireMode = enable; }
 
+		bool			isDebugMode() const				{ return debugMode; }
+		void			setDebugMode(bool enable)		{ debugMode = enable; }
+
 	protected:
 		bool		wireMode;
+		bool		debugMode;
 	};
 }

@@ -256,7 +256,7 @@ namespace i4graphics
 		I4Camera	directionalLightPerspectiveCamera;
 		I4Camera	directionalLightSplitOrthoCamera[4];
 
-		list<I4DebugLine>					listDebugLine;
+		vector<I4DebugLine>					vecDebugLine;
 		I4LineMesh*							lineDebugMesh;
 		I4CBHolder<CBEachFrame_Line>		cbEachFrame_Line;
 	};

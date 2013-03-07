@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "I4BulletPhysics.h"
+#include "I4BulletDebugDraw.h"
 #include "I4Log.h"
 #include "I4Profile.h"
+#include "I4Renderer.h"
 using namespace i4core;
 
 namespace i4object
@@ -12,6 +14,7 @@ namespace i4object
 	, overlappingPairCache(nullptr)
 	, dispatcher(nullptr)
 	, collisionConfiguration(nullptr)
+	, debugDrawer(nullptr)
 	{
 	}
 
@@ -20,15 +23,20 @@ namespace i4object
 		destroy();
 	}
 
-	bool I4BulletPhysics::init()
+	bool I4BulletPhysics::init(I4Renderer* renderer)
 	{
 		collisionConfiguration = new btDefaultCollisionConfiguration();
 		dispatcher = new btCollisionDispatcher(collisionConfiguration);
 		overlappingPairCache = new btDbvtBroadphase();
 		solver = new btSequentialImpulseConstraintSolver;
-		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache , solver , collisionConfiguration );
-		dynamicsWorld -> setGravity ( btVector3 (0 , -10 ,0));
+		debugDrawer = new I4BulletDebugDraw(renderer);
+		debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache , solver , collisionConfiguration);
+		dynamicsWorld->setDebugDrawer(debugDrawer);
+		
+		dynamicsWorld->setGravity(btVector3 (0 , -10 ,0));
 
+		
 		return true;
 	}
 
@@ -55,6 +63,7 @@ namespace i4object
 		}
 
 		delete dynamicsWorld;
+		delete debugDrawer;
 		delete solver;
 		delete overlappingPairCache;
 		delete dispatcher;
@@ -67,8 +76,16 @@ namespace i4object
 	{
 		I4PROFILE_THISFUNC;
 
-		dynamicsWorld->stepSimulation(dt);
+		dynamicsWorld->stepSimulation(dt);		
 	}
+
+	void I4BulletPhysics::debugDraw()
+	{
+		I4PROFILE_THISFUNC;
+
+		dynamicsWorld->debugDrawWorld();
+	}
+
 
 	btRigidBody* I4BulletPhysics::createBox(const btTransform& bodyTM, const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
 	{

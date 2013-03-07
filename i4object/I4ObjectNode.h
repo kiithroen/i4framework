@@ -61,7 +61,6 @@ namespace i4object {
 
 		void 					setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up);
 		void 					setLocalTM(const I4Matrix4x4& localTM);
-		void					setLocalRotation(const I4Quaternion& rotation);
 		void 					setLocalRotationYawPitchRoll(float yaw, float pitch, float roll);
 		void 					setLocalPosition(const I4Vector3& t);
 		void 					setLocalScale(const I4Vector3& s);
@@ -72,14 +71,10 @@ namespace i4object {
 		const string&			getName()							{ return name; }
 		
 		const I4Matrix4x4&		getLocalTM() const					{ return localTM; }
-		const I4Quaternion&		getLocalRotation() const			{ return localRotation; }
-		const I4Vector3&		getLocalPosition() const			{ return localPosition; }
-		const I4Vector3&		getLocalScale() const				{ return localScale; }
 		const I4Matrix4x4&		getWorldTM() const					{ return worldTM; }
 
 	private:
-		void					calcTM();
-		void					calcLocalTM();
+		void					updateWorldTM();
 		void					calcWorldTM();
 
 		void					destroyAllChild();
@@ -87,9 +82,6 @@ namespace i4object {
 	protected:
 		I4Matrix4x4						localTM;
 		I4Matrix4x4						worldTM;
-		I4Quaternion					localRotation;
-		I4Vector3						localScale;
-		I4Vector3						localPosition;
 		string							name;
 		I4ObjectMgr*					objectMgr;
 		I4ObjectNode*					parent;

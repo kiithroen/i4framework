@@ -18,11 +18,20 @@ namespace i4object
 		virtual void			onAdd() override;
 		virtual void			onRemove() override;
 		
+		void setOffset(const I4Matrix4x4& m)		{ matOffset = m; }
+
 		void attachBox(const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+		void attachSphere(btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+		void attachCapsule(btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 
 		void onPostSimulate(I4MessageArgs& args);
 
 	private:
+		void btTransform2objectTM(I4Matrix4x4& matWorldTM);
+		void objectTM2btTransform(btTransform& transform);
+
+	private:
+		I4Matrix4x4			matOffset;
 		btRigidBody*		body;
 	};
 }

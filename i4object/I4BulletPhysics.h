@@ -4,6 +4,12 @@
 #include "I4Matrix4x4.h"
 using namespace i4core;
 
+namespace i4graphics
+{
+	class I4Renderer;
+}
+using namespace i4graphics;
+
 namespace i4object
 {
 	inline void btTransformToI4Matrix4x4(I4Matrix4x4& mat, const btTransform& transform)
@@ -33,16 +39,19 @@ namespace i4object
 		transform.setOrigin(P);
 	}
 
+	class I4BulletDebugDraw;
+
 	class I4BulletPhysics
 	{
 	public:
 		I4BulletPhysics(void);
 		~I4BulletPhysics(void);
 
-		bool init();
+		bool init(I4Renderer* renderer);
 		void destroy();
 
 		void simulate(float dt);
+		void debugDraw();
 
 		btRigidBody* createBox(const btTransform& bodyTM, const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 		btRigidBody* createSphere(const btTransform& bodyTM, btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
@@ -58,6 +67,8 @@ namespace i4object
 		btDiscreteDynamicsWorld*				dynamicsWorld;
 
 		btAlignedObjectArray<btCollisionShape*> collisionShapes;
+
+		I4BulletDebugDraw*						debugDrawer;
 	};
 
 

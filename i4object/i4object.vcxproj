@@ -99,6 +99,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="I4BulletDebugDraw.h" />
     <ClInclude Include="I4BulletPhysics.h" />
     <ClInclude Include="i4object.h" />
     <ClInclude Include="I4ObjectComponent.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="I4BulletDebugDraw.cpp" />
     <ClCompile Include="I4BulletPhysics.cpp" />
     <ClCompile Include="i4object.cpp" />
     <ClCompile Include="I4ObjectMgr.cpp" />
