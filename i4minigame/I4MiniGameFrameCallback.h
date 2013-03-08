@@ -51,4 +51,6 @@ private:
 	I4ModelMgr*			modelMgr;
 	I4BulletPhysics*	bulletPhysics;
 	I4ObjectNode*		nodeLight[100];
+
+	I4ObjectNode*		freeCamera;
 };

@@ -15,8 +15,7 @@
 #include "I4ObjectPointLightComponent.h"
 #include "I4ObjectRigidBodyComponent.h"
 #include "I4Messenger.h"
-#include "I4ObjectCameraComponent.h"
-#include "I4ObjectFPSControllerComponent.h"
+#include "I4ObjectFPSCameraComponent.h"
 
 using namespace i4core;
 
@@ -52,13 +51,22 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	framework->moveMouseCenter();
 
+	freeCamera =  objectMgr->createNode("free_camera");
+	freeCamera->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+
+	I4ObjectFPSCameraComponent* free = freeCamera->addComponent<I4ObjectFPSCameraComponent>();
+
 	player =  objectMgr->createNode("player");
 	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
-	I4ObjectCameraComponent* camera = player->addComponent<I4ObjectCameraComponent>();
-	camera->makeMainCamera(true);
+	I4ObjectRigidBodyComponent* rigid = player->addComponent<I4ObjectRigidBodyComponent>();
+	I4Matrix4x4 offset;
+	offset.makeTranslation(0, -0.9f, 0);
+	rigid->setOffset(offset);
+	rigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
 
-	I4ObjectFPSControllerComponent* controller = player->addComponent<I4ObjectFPSControllerComponent>();
+	I4ObjectFPSCameraComponent* fps = player->addComponent<I4ObjectFPSCameraComponent>();
+	fps->activate(true);
 
 	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
 	//nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
@@ -178,7 +186,7 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	bulletPhysics->simulate(dt);
 
 	I4MessageArgs postSimulateArgs;
-	objectMgr->getMessenger().send(I4Hash("onSyncSimulate"), postSimulateArgs);
+	objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
@@ -265,6 +273,18 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 			else if (state.key == VK_F2)
 			{
 				renderer->setWireMode(!renderer->isWireMode());
+			}
+			else if (state.key == VK_F3)
+			{
+				static bool isFree = false;
+
+				isFree = !isFree;
+
+				I4ObjectFPSCameraComponent* fps = player->findComponent<I4ObjectFPSCameraComponent>();
+				fps->activate(!isFree);
+
+				I4ObjectFPSCameraComponent* free = freeCamera->findComponent<I4ObjectFPSCameraComponent>();
+				free->activate(isFree);
 			}
 		}
 		break;

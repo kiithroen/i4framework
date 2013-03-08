@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "I4ObjectCameraComponent.h"
+#include "I4ObjectStaticCameraComponent.h"
 #include "I4Camera.h"
 #include "I4Hash.h"
 #include "I4Renderer.h"
@@ -8,31 +8,31 @@
 namespace i4object
 {
 
-	I4ObjectCameraComponent::I4ObjectCameraComponent(void)
+	I4ObjectStaticCameraComponent::I4ObjectStaticCameraComponent(void)
 		: isActivate(false)
 	{
 	}
 
 
-	I4ObjectCameraComponent::~I4ObjectCameraComponent(void)
+	I4ObjectStaticCameraComponent::~I4ObjectStaticCameraComponent(void)
 	{
 	}
 
-	void I4ObjectCameraComponent::onAdd()
+	void I4ObjectStaticCameraComponent::onAdd()
 	{
 		
 	}
 
-	void I4ObjectCameraComponent::onRemove()
+	void I4ObjectStaticCameraComponent::onRemove()
 	{
 		getBroadcastMessenger().unsubscribe(I4Hash("onReadyToRender"), this);
 	}
 
-	void I4ObjectCameraComponent::makeMainCamera(bool isMainCam)
+	void I4ObjectStaticCameraComponent::activate(bool isActive)
 	{
-		if (isMainCam)
+		if (isActive)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onReadyToRender"), this, bind(&I4ObjectCameraComponent::onReadyToRender, this, _1));
+			getBroadcastMessenger().subscribe(I4Hash("onReadyToRender"), this, bind(&I4ObjectStaticCameraComponent::onReadyToRender, this, _1));
 		}
 		else
 		{
@@ -40,7 +40,7 @@ namespace i4object
 		}
 	}
 
-	void I4ObjectCameraComponent::onReadyToRender(I4MessageArgs& args)
+	void I4ObjectStaticCameraComponent::onReadyToRender(I4MessageArgs& args)
 	{
 		I4Matrix4x4 matView;
 		getOwner()->getWorldTM().extractInversePrimitive(matView);

@@ -12,18 +12,18 @@ namespace i4core
 namespace i4object
 {
 
-	class I4ObjectCameraComponent : public I4ObjectComponent
+	class I4ObjectStaticCameraComponent : public I4ObjectComponent
 	{
 	public:
-		I4ObjectCameraComponent(void);
-		virtual ~I4ObjectCameraComponent(void);
+		I4ObjectStaticCameraComponent(void);
+		virtual ~I4ObjectStaticCameraComponent(void);
 
 		static const char*	getComponentID()	{ return "Camera"; }
 
 		virtual void		onAdd() override;
 		virtual void		onRemove() override;
 
-		void makeMainCamera(bool val);
+		void activate(bool isActive);
 
 		void onReadyToRender(I4MessageArgs& args);
 

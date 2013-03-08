@@ -46,10 +46,10 @@
     <ClInclude Include="I4BulletDebugDraw.h">
       <Filter>physics</Filter>
     </ClInclude>
-    <ClInclude Include="I4ObjectCameraComponent.h">
+    <ClInclude Include="I4ObjectFPSCameraComponent.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="I4ObjectFPSControllerComponent.h">
+    <ClInclude Include="I4ObjectStaticCameraComponent.h">
       <Filter>component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,10 +77,10 @@
     <ClCompile Include="I4BulletDebugDraw.cpp">
       <Filter>physics</Filter>
     </ClCompile>
-    <ClCompile Include="I4ObjectCameraComponent.cpp">
+    <ClCompile Include="I4ObjectFPSCameraComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
-    <ClCompile Include="I4ObjectFPSControllerComponent.cpp">
+    <ClCompile Include="I4ObjectStaticCameraComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>
