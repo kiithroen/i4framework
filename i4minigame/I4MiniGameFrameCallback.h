@@ -33,40 +33,22 @@ public:
 	I4MiniGameFrameCallback();
 	virtual ~I4MiniGameFrameCallback();
 
-	virtual	bool	onStart();
-	virtual void	onEnd();
+	virtual	bool	onStart() override;
+	virtual void	onEnd() override;
 
-	virtual bool	onUpdate(float delta);	
-	virtual bool	onRender(float delta);
+	virtual bool	onUpdate(float dt) override;	
+	virtual bool	onRender(float dt) override;
 
-	virtual void	onKeyDown(unsigned int key);
-	virtual void	onKeyUp(unsigned int key);	
-
-	virtual void	onMouseMove(unsigned int x, unsigned int y);
-
-	virtual void	onLButtonDown(unsigned int x, unsigned int y);
-	virtual void	onLButtonUp(unsigned int x, unsigned int y);
-
-	virtual void	onRButtonDown(unsigned int x, unsigned int y);
-	virtual void	onRButtonUp(unsigned int x, unsigned int y);
+	virtual void	onInput(const I4InputState& state) override;
 
 private:
 	void	updateCamera(float dt);
-	void	commitToRenderer(float dt);
 
 private:
 	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;
-	I4ObjectNode*		mainCamera;
+	I4ObjectNode*		player;
 	I4ModelMgr*			modelMgr;
 	I4BulletPhysics*	bulletPhysics;
-
-	int					prevMouseX;
-	int					prevMouseY;
-	bool				isRButtonDown;
-	float				camYaw;
-	float				camPitch;
-	float				camRoll;
-
 	I4ObjectNode*		nodeLight[100];
 };

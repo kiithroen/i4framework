@@ -16,14 +16,15 @@
 #include "I4ObjectRigidBodyComponent.h"
 #include "I4Messenger.h"
 #include "I4ObjectCameraComponent.h"
+#include "I4ObjectFPSControllerComponent.h"
+
 using namespace i4core;
 
 I4MiniGameFrameCallback::I4MiniGameFrameCallback()
 : objectMgr(nullptr)
 , renderer(nullptr)
 , bulletPhysics(nullptr)
-, mainCamera(nullptr)
-, isRButtonDown(false)
+, player(nullptr)
 {
 }
 
@@ -50,26 +51,14 @@ bool I4MiniGameFrameCallback::onStart()
 		return false;
 	
 	framework->moveMouseCenter();
-	framework->getMousePos(prevMouseX, prevMouseY);
 
-	mainCamera =  objectMgr->createNode("main_camera");
-	mainCamera->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	player =  objectMgr->createNode("player");
+	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
-	I4ObjectCameraComponent* camera = mainCamera->addComponent<I4ObjectCameraComponent>();
+	I4ObjectCameraComponent* camera = player->addComponent<I4ObjectCameraComponent>();
 	camera->makeMainCamera(true);
 
-	float camYawRad;
-	float camPitchRad;
-	float camRollRad;
-
-	I4Quaternion camRotation;
-	camRotation.makeRotationMatrix(mainCamera->getLocalTM());
-	camRotation.extractYawPitchRoll(camYawRad, camPitchRad, camRollRad);
-
-	camYaw = I4MathUtil::radianToDegree(camYawRad);
-	camPitch = I4MathUtil::radianToDegree(camPitchRad);
-	camRoll = I4MathUtil::radianToDegree(camRollRad);
-
+	I4ObjectFPSControllerComponent* controller = player->addComponent<I4ObjectFPSControllerComponent>();
 
 	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
 	//nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
@@ -183,15 +172,13 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 {
 	I4PROFILE_THISFUNC;
 
-	I4Framework* framework = I4Framework::getFramework();
-	
-	if (framework->isKeyPressed(VK_ESCAPE))
+	if (I4InputState::KeyPressed[VK_ESCAPE])
 		return false;
 		
 	bulletPhysics->simulate(dt);
 
 	I4MessageArgs postSimulateArgs;
-	objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
+	objectMgr->getMessenger().send(I4Hash("onSyncSimulate"), postSimulateArgs);
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
@@ -222,7 +209,10 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 		}
 	}
 
-	updateCamera(dt);
+
+	I4MessageArgs postUpdateArgs;
+	postUpdateArgs.push_back(dt);
+	objectMgr->getMessenger().send(I4Hash("onPostUpdate"), postUpdateArgs);
 
 	static float elapsed = 0;
 
@@ -241,8 +231,7 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 }
 
 bool I4MiniGameFrameCallback::onRender(float dt)
-{
-	
+{	
 	I4MessageArgs aniArgs;
 	aniArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
@@ -263,147 +252,66 @@ bool I4MiniGameFrameCallback::onRender(float dt)
 	return true;
 }
 
-void I4MiniGameFrameCallback::onKeyDown(unsigned int key)
+void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 {
-	if (key == VK_F1)
+	switch (state.type)
 	{
-		renderer->setDebugMode(!renderer->isDebugMode());
-	}
-	else if (key == VK_F2)
-	{
-		renderer->setWireMode(!renderer->isWireMode());
-	}
-}
+	case I4INPUT_KEY_DOWN:
+		{
+			if (state.key == VK_F1)
+			{
+				renderer->setDebugMode(!renderer->isDebugMode());
+			}
+			else if (state.key == VK_F2)
+			{
+				renderer->setWireMode(!renderer->isWireMode());
+			}
+		}
+		break;
+	case I4INPUT_KEY_UP:
+		break;
+	case I4INPUT_LEFT_MOUSE_DOWN:
+		{
+			static int i = 0;
+			char name[256] = {0, };
+			sprintf(name, "physics_%d", i);
+			I4ObjectNode* nodePhysics = objectMgr->createNode(name);
+			nodePhysics->setLocalPosition(I4Vector3(0, 5, 2));
 
-void I4MiniGameFrameCallback::onKeyUp(unsigned int key)
-{
-}
+			if (i%3 == 0)
+			{
+				I4ObjectViewComponent* view = nodePhysics->addComponent<I4ObjectViewComponent>();
+				view->attachModel(name, "testmodel/box", true, false, false);
+				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+				rigid->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0.1f, 0.5f);
+			}
+			else if (i%3 == 1)
+			{
+				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+				rigid->attachSphere(0.1f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+			}
+			else if (i%3 == 2)
+			{
+				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+				rigid->attachCapsule(0.3f, 1.0f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+			}
 
-void I4MiniGameFrameCallback::onMouseMove(unsigned int x, unsigned int y)
-{
-}
-
-void I4MiniGameFrameCallback::onLButtonDown(unsigned int x, unsigned int y)
-{
-	static int i = 0;
-	char name[256] = {0, };
-	sprintf(name, "physics_%d", i);
-	I4ObjectNode* nodePhysics = objectMgr->createNode(name);
-	nodePhysics->setLocalPosition(I4Vector3(0, 5, 2));
-
-	if (i%3 == 0)
-	{
-		I4ObjectViewComponent* view = nodePhysics->addComponent<I4ObjectViewComponent>();
-		view->attachModel(name, "testmodel/box", true, false, false);
-		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-		rigid->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0.1f, 0.5f);
-	}
-	else if (i%3 == 1)
-	{
-		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-		rigid->attachSphere(0.1f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
-	}
-	else if (i%3 == 2)
-	{
-		I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-		rigid->attachCapsule(0.3f, 1.0f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+			i++;
+		}
+		break;
+	case I4INPUT_LEFT_MOUSE_UP:
+		break;
+	case I4INPUT_RIGHT_MOUSE_DOWN:
+		break;
+	case I4INPUT_RIGHT_MOUSE_UP:
+		break;
+	default:
+		break;
 	}
 	
-	i++;
-}
-
-void I4MiniGameFrameCallback::onLButtonUp(unsigned int x, unsigned int y)
-{
-}
-
-void I4MiniGameFrameCallback::onRButtonDown(unsigned int x, unsigned int y)
-{
-	isRButtonDown = true;
-}
-
-void I4MiniGameFrameCallback::onRButtonUp(unsigned int x, unsigned int y)
-{
-	isRButtonDown = false;
 }
 
 void I4MiniGameFrameCallback::updateCamera(float dt)
 {
-	I4Framework* framework = I4Framework::getFramework();
 
-	float camMoveSpeed = 6.0f*dt;
-
-	I4Vector3 camRight;
-	I4Vector3 camDirection;
-	I4Vector3 newCamEye;
-
-	mainCamera->getLocalTM().extractAxisX(camRight);
-	mainCamera->getLocalTM().extractAxisZ(camDirection);
-	mainCamera->getLocalTM().extractTranslation(newCamEye);
-
-	if (framework->isKeyPressed('w') || framework->isKeyPressed('W'))
-	{
-		newCamEye += camDirection*camMoveSpeed;
-	}
-
-	if (framework->isKeyPressed('s') || framework->isKeyPressed('S'))
-	{
-		newCamEye -= camDirection*camMoveSpeed;
-	}
-
-	if (framework->isKeyPressed('a') || framework->isKeyPressed('A'))
-	{
-		newCamEye -= camRight*camMoveSpeed;
-	}
-
-	if (framework->isKeyPressed('d') || framework->isKeyPressed('D'))
-	{
-		newCamEye += camRight*camMoveSpeed;
-	}
-
-	int curMouseX = 0;
-	int curMouseY = 0;
-
-	framework->getMousePos(curMouseX, curMouseY);
-
-	if (isRButtonDown)
-	{
-		int dx = curMouseX - prevMouseX;
-		int dy = curMouseY - prevMouseY;
-
-		const float CAMERA_SENSITIVE = 0.35f;
-		camYaw += dx*CAMERA_SENSITIVE;
-		camPitch += dy*CAMERA_SENSITIVE;
-
-		if (camYaw > 360)
-		{
-			camYaw -= 360;
-		}
-
-		if (camPitch < -90)
-		{
-			camPitch = -90;
-		}
-		
-		if (camPitch > 90)
-		{
-			camPitch = 90;
-		}		
-	}
-
-	I4Matrix4x4 matCam;
-	matCam.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(camYaw), I4MathUtil::degreeToRadian(camPitch), I4MathUtil::degreeToRadian(camRoll));
-	matCam.setTranslation(newCamEye);
-
-	mainCamera->setLocalTM(matCam);
-	
-	prevMouseX = curMouseX;
-	prevMouseY = curMouseY;
-}
-
-
-void I4MiniGameFrameCallback::commitToRenderer(float dt)
-{
-	I4PROFILE_THISFUNC;
-	
-	
 }

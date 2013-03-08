@@ -251,7 +251,7 @@ namespace i4core
 			pitch = atan2f(2.0f*x*w-2.0f*y*z , 1.0f - 2.0f*sqx - 2.0f*sqz);
 		}
 
-		void extractRotationMatrix(I4Matrix4x4& mat) const
+		void extractMatrix(I4Matrix4x4& mat) const
 		{
 			float x2 = x + x;
 			float y2 = y + y;

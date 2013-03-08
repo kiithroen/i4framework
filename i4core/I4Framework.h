@@ -7,6 +7,28 @@ namespace i4core
 {
 	class I4FrameCallback;
 
+	enum I4InputStateType
+	{
+		I4INPUT_KEY_DOWN = 0,
+		I4INPUT_KEY_UP,
+		I4INPUT_LEFT_MOUSE_DOWN,
+		I4INPUT_LEFT_MOUSE_UP,
+		I4INPUT_RIGHT_MOUSE_DOWN,
+		I4INPUT_RIGHT_MOUSE_UP,
+	};
+
+	struct I4InputState
+	{
+		I4InputStateType	type;
+		int					key;
+
+		static int			mouseX;
+		static int			mouseY;
+		static bool			KeyPressed[256];
+		static bool			LeftMousePressed;
+		static bool			RightMousePressed;
+	};
+
 	class I4Framework
 	{
 	public:
@@ -24,9 +46,7 @@ namespace i4core
 		unsigned int		getWidth() const						{ return width; }
 		unsigned int		getHeight() const						{ return height; }
 		bool				isActivated() const						{ return activated; }
-		bool				isKeyPressed(unsigned int key) const	{ return keyPressed[key]; }
 
-		virtual void		getMousePos(int& x, int& y)				{}
 		virtual void		moveMouseCenter()						{}
 
 	public:
@@ -50,7 +70,6 @@ namespace i4core
 		unsigned int		width;
 		unsigned int		height;
 		bool				activated;
-		bool				keyPressed[256];
 
 		I4FrameCallback*	frameCallback;
 

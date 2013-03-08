@@ -140,13 +140,16 @@ namespace i4core {
 		case WM_KEYDOWN:
 			{
 				unsigned int key = (unsigned int)wParam;
-				if (keyPressed[key] == false)
+				if (I4InputState::KeyPressed[key] == false)
 				{
-					keyPressed[key] = true;
+					I4InputState::KeyPressed[key] = true;
 
 					if (frameCallback)
-					{
-						frameCallback->onKeyDown(key);
+					{						
+						I4InputState state;
+						state.type = I4INPUT_KEY_DOWN;
+						state.key = key;
+						frameCallback->onInput(state);
 					}
 				}
 			}
@@ -154,13 +157,16 @@ namespace i4core {
 		case WM_KEYUP:
 			{
 				unsigned int key = (unsigned int)wParam;
-				if (keyPressed[key] == true)
+				if (I4InputState::KeyPressed[key] == true)
 				{
-					keyPressed[key] = false;
+					I4InputState::KeyPressed[key] = false;
 
 					if (frameCallback)
 					{
-						frameCallback->onKeyUp(key);
+						I4InputState state;
+						state.type = I4INPUT_KEY_UP;
+						state.key = key;
+						frameCallback->onInput(state);
 					}
 				}
 			}
@@ -168,51 +174,80 @@ namespace i4core {
 			break;
 		case WM_LBUTTONDOWN:
 			{
-				SetCapture(hWnd);
-
-				if (frameCallback)
+				if (I4InputState::LeftMousePressed == false)
 				{
-					frameCallback->onLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+					SetCapture(hWnd);
+
+					I4InputState::LeftMousePressed = true;
+
+					if (frameCallback)
+					{
+						I4InputState state;
+						state.type = I4INPUT_LEFT_MOUSE_DOWN;
+						state.key = -1;
+						frameCallback->onInput(state);
+					}
 				}
+				
 			}
 			break;
 		case WM_LBUTTONUP:
 			{
-				SetCapture(nullptr);
-
-				if (frameCallback)
+				if (I4InputState::LeftMousePressed == true)
 				{
-					frameCallback->onLButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+					SetCapture(nullptr);
+
+					I4InputState::LeftMousePressed = false;
+
+					if (frameCallback)
+					{
+						I4InputState state;
+						state.type = I4INPUT_LEFT_MOUSE_UP;
+						state.key = -1;
+						frameCallback->onInput(state);
+					}
 				}
 			}
 			break;
 		case WM_RBUTTONDOWN:
 			{
-				SetCapture(hWnd);
-
-				if (frameCallback)
+				if (I4InputState::RightMousePressed == false)
 				{
-					frameCallback->onRButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+					I4InputState::RightMousePressed = true;
+
+					SetCapture(hWnd);
+
+					if (frameCallback)
+					{
+						I4InputState state;
+						state.type = I4INPUT_RIGHT_MOUSE_DOWN;
+						state.key = -1;
+						frameCallback->onInput(state);
+					}
 				}
 			}
 			break;
 		case WM_RBUTTONUP:
 			{
-				SetCapture(nullptr);
-
-				if (frameCallback)
+				if (I4InputState::RightMousePressed == true)
 				{
-					frameCallback->onRButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+					I4InputState::RightMousePressed = false;
+
+					SetCapture(nullptr);
+
+					if (frameCallback)
+					{
+						I4InputState state;
+						state.type = I4INPUT_RIGHT_MOUSE_UP;
+						state.key = -1;
+						frameCallback->onInput(state);
+					}
 				}
 			}
 			break;
 		case WM_MOUSEMOVE:
-			{
-				if (frameCallback)
-				{
-					frameCallback->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				}
-			}
+			I4InputState::mouseX = GET_X_LPARAM(lParam);
+			I4InputState::mouseY = GET_Y_LPARAM(lParam);
 			break;
 		case WM_ACTIVATEAPP:
 			if (wParam == TRUE)

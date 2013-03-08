@@ -42,8 +42,6 @@ namespace i4object
 
 	void I4ObjectCameraComponent::onReadyToRender(I4MessageArgs& args)
 	{
-		I4PROFILE_THISFUNC;
-
 		I4Matrix4x4 matView;
 		getOwner()->getWorldTM().extractInversePrimitive(matView);
 		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matView);

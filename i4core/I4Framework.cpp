@@ -11,6 +11,12 @@
 
 namespace i4core {
 
+	int	 I4InputState::mouseX;
+	int	 I4InputState::mouseY;
+	bool I4InputState::KeyPressed[256];
+	bool I4InputState::LeftMousePressed;
+	bool I4InputState::RightMousePressed;
+
 	I4Framework::I4Framework()
 		: windowID(nullptr)
 		, title("Untitled")
@@ -20,7 +26,7 @@ namespace i4core {
 	{
 		for (int i = 0; i < 256; ++i)
 		{
-			keyPressed[i] = false;
+			I4InputState::KeyPressed[i] = false;
 		}
 	}
 
@@ -169,4 +175,5 @@ namespace i4core {
 		delete framework;
 		framework = nullptr;
 	}
+
 }
