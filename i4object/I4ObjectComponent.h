@@ -13,7 +13,6 @@ namespace i4object {
 		I4ObjectComponent(void)				{}
 		virtual ~I4ObjectComponent(void)	{}
 
-		virtual const char*			getComponentID()	= 0;
 		virtual void				onAdd()						{}
 		virtual void				onRemove()					{}
 

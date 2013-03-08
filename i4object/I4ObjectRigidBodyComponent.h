@@ -13,10 +13,10 @@ namespace i4object
 		I4ObjectRigidBodyComponent();
 		virtual ~I4ObjectRigidBodyComponent(void);
 
-		virtual const char*		getComponentID()	{ return "RigidBody"; }
+		static const char*	getComponentID()	{ return "RigidBody"; }
 
-		virtual void			onAdd() override;
-		virtual void			onRemove() override;
+		virtual void		onAdd() override;
+		virtual void		onRemove() override;
 		
 		void setOffset(const I4Matrix4x4& m)		{ matOffset = m; }
 

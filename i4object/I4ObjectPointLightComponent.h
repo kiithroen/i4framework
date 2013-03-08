@@ -13,7 +13,7 @@ namespace i4object
 		I4ObjectPointLightComponent(void);
 		virtual ~I4ObjectPointLightComponent(void);
 
-		virtual const char*		getComponentID()	{ return "PointLight"; }
+		static const char*		getComponentID()	{ return "PointLight"; }
 
 		virtual void			onAdd() override;
 		virtual void			onRemove() override;

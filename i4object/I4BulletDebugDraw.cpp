@@ -27,7 +27,7 @@ namespace i4object
 		line.color0 = I4Vector4(color.x(), color.y(), color.z(), 1);
 		line.color1 = I4Vector4(color.x(), color.y(), color.z(), 1);
 		line.life = -1;	// 바로 삭제.
-		renderer->commitToScene(line);
+		renderer->commit(line);
 	}
 	
 	void I4BulletDebugDraw::setDebugMode(int _debugMode)

@@ -59,7 +59,7 @@ private:
 	I4FrameStateMgr*	frameStateMgr;
 	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;
-	I4Camera*			camera;
+	I4ObjectNode*		mainCamera;
 	I4ModelMgr*			modelMgr;
 	I4BulletPhysics*	bulletPhysics;
 

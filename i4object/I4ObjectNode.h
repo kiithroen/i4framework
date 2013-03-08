@@ -34,7 +34,7 @@ namespace i4object {
 		T* addComponent()
 		{
 			T* comp = new T;
-			auto itr = mapComponent.find(comp->getComponentID());
+			auto itr = mapComponent.find(T::getComponentID());
 			if (itr != mapComponent.end())	// 중복추가
 			{
 				delete comp;
@@ -44,15 +44,15 @@ namespace i4object {
 			comp->setOwner(this);
 			comp->onAdd();
 
-			mapComponent.insert(make_pair(comp->getComponentID(), comp));
+			mapComponent.insert(make_pair(T::getComponentID(), comp));
 
 			return comp;
 		}
 
 		template <typename T>
-		T* findComponentAs(const string& familyID)
+		T* findComponent()
 		{
-			auto itr = mapComponent.find(familyID);
+			auto itr = mapComponent.find(T::getComponentID());
 			if (itr == mapComponent.end())
 				return NULL;
 

@@ -17,7 +17,7 @@ namespace i4object
 		I4ObjectViewComponent(void);
 		virtual ~I4ObjectViewComponent(void);
 
-		virtual const char*		getComponentID()	{ return "View"; }
+		static const char*		getComponentID()	{ return "View"; }
 
 		virtual void			onAdd() override;
 		virtual void			onRemove() override;

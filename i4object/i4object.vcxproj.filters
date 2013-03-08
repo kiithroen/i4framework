@@ -46,6 +46,9 @@
     <ClInclude Include="I4BulletDebugDraw.h">
       <Filter>physics</Filter>
     </ClInclude>
+    <ClInclude Include="I4ObjectCameraComponent.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -70,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="I4BulletDebugDraw.cpp">
       <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ObjectCameraComponent.cpp">
+      <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

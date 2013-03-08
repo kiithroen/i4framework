@@ -165,7 +165,7 @@ namespace i4graphics
 		item.worldAABB = mesh->localAABB.transform(matWorld);
 		item.worldTM = matWorld;
 		item.matrixPalette = nullptr;
-		renderer->commitToScene(item);
+		renderer->commit(item);
 	}
 
 
@@ -230,7 +230,7 @@ namespace i4graphics
 		item.worldAABB = mesh->localAABB.transform(resultTM*parentTM);
 		item.worldTM = parentTM;
 		item.matrixPalette = &matrixPalette[0];
-		renderer->commitToScene(item);
+		renderer->commit(item);
 	}
 
 }

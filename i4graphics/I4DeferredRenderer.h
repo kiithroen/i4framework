@@ -177,16 +177,12 @@ namespace i4graphics
 		virtual bool				initialize(void* _windowID, unsigned int _width, unsigned int _height) override;
 		void						finalize();
 
-		virtual void				commitToScene(const I4MeshRenderItem& item) override;
-		virtual void				commitToScene(I4DirectionalLight* light) override;
-		virtual void				commitToScene(I4PointLight* light) override;
-		virtual void				commitToScene(const I4DebugLine& line) override;
+		virtual void				commit(const I4MeshRenderItem& item) override;
+		virtual void				commit(I4DirectionalLight* light) override;
+		virtual void				commit(I4PointLight* light) override;
+		virtual void				commit(const I4DebugLine& line) override;
 
-		virtual void				preRender(I4Camera* camera) override;
-		virtual void				render(I4Camera* camera) override;
-
-
-		virtual void				postRender(I4Camera* camera) override;
+		virtual void				render() override;
 
 		bool				isWireMode() const				{ return wireMode; }
 		void				setWireMode(bool enable)		{ wireMode = enable; }
@@ -194,21 +190,22 @@ namespace i4graphics
 	private:
 		void				clearAllRenderTarget();
 
-		void				renderStageShadow(I4Camera* camera);
-		void				renderStageGeometry(I4Camera* camera);
-		void				renderStageLight(I4Camera* camera);
-		void				renderStageMerge(I4Camera* camera);
-		void				renderDebugLine(I4Camera* camera);
+		void				renderStageShadow();
+		void				renderStageGeometry();
+		void				renderStageLight();
+		void				renderStageMerge();
+		void				renderDebugLine();
 
-		void				cullAndSortMeshGeometryRenderItem(I4Camera* camera);
-		void				renderMeshGeometryRenderItem(I4Camera* camera);
-		void				cullAndSortMeshShadowRenderItem(I4Camera* camera);
-		void				renderMeshShadowRenderItem(I4Camera* camera);
+		void				cullAndSortMeshGeometryRenderItem();
+		void				renderMeshGeometryRenderItem();
 
-		void				renderDirectionalLight(I4Camera* camera);
+		void				cullAndSortMeshShadowRenderItem(const I4Camera& camera);
+		void				renderMeshShadowRenderItem(const I4Camera& camera);
 
-		void				cullAndSortPointLight(I4Camera* camera);
-		void				renderPointLight(I4Camera* camera);
+		void				renderDirectionalLight();
+
+		void				cullAndSortPointLight();
+		void				renderPointLight();
 
 	private:
 		I4VideoDriver*					videoDriver;

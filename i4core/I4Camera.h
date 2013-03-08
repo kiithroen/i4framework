@@ -17,7 +17,6 @@ namespace i4core
 		void				setOrthoOffCenter(float left, float right, float bottom, float top, float znearPlane, float zfarPlane);
 
 		void				setLookAt(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up);
-		void				setTransform(const I4Quaternion& rotation, const I4Vector3& eye);
 		void				setViewMatrix(const I4Matrix4x4& view);
 
 		bool				isVisiblePoint(const I4Vector3& p) const			{ return frustum.isInPoint(p); }
@@ -29,13 +28,8 @@ namespace i4core
 		const I4Matrix4x4&	getViewMatrix()	const								{ return viewMatrix; }
 		const I4Matrix4x4&	getWorldMatrix()	const							{ return worldMatrix; }
 		const I4Matrix4x4&	getViewProjectionMatrix()	const					{ return viewProjectionMatrix; }
-
-		const I4Quaternion&	getRotation() const									{ return rotation; }
-
+		
 		const I4Vector3&	getEye() const										{ return eye; }
-		const I4Vector3&	getRight() const									{ return right; }
-		const I4Vector3&	getUp() const										{ return up; }
-		const I4Vector3&	getDirection() const								{ return direction; }
 
 		const I4Vector3&	getNearTopLeft() const								{ return nearTopLeft; }
 		const I4Vector3&	getNearTopRight() const								{ return nearTopRight; }
@@ -62,12 +56,7 @@ namespace i4core
 		I4Matrix4x4			worldMatrix;
 		I4Matrix4x4			viewProjectionMatrix;
 
-		I4Quaternion		rotation;
-
 		I4Vector3			eye;
-		I4Vector3			right;
-		I4Vector3			direction;
-		I4Vector3			up;
 
 		I4Vector3			nearTopLeft;
 		I4Vector3			nearTopRight;

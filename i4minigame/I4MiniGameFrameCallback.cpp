@@ -17,6 +17,7 @@
 #include "I4ObjectPointLightComponent.h"
 #include "I4ObjectRigidBodyComponent.h"
 #include "I4Messenger.h"
+#include "I4ObjectCameraComponent.h"
 using namespace i4core;
 
 I4MiniGameFrameCallback::I4MiniGameFrameCallback()
@@ -24,7 +25,7 @@ I4MiniGameFrameCallback::I4MiniGameFrameCallback()
 , objectMgr(nullptr)
 , renderer(nullptr)
 , bulletPhysics(nullptr)
-, camera(nullptr)
+, mainCamera(nullptr)
 , isRButtonDown(false)
 {
 }
@@ -39,19 +40,8 @@ bool I4MiniGameFrameCallback::onStart()
 	renderer = new I4DeferredRenderer;
 	if (renderer->initialize(framework->getWindowID(), framework->getWidth(), framework->getHeight()) == false)
 		return false;
-	
-	camera = new I4Camera;
-	camera->setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
-	camera->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));  
-	
-	float camYawRad;
-	float camPitchRad;
-	float camRollRad;
-	camera->getRotation().extractYawPitchRoll(camYawRad, camPitchRad, camRollRad);
 
-	camYaw = I4MathUtil::radianToDegree(camYawRad);
-	camPitch = I4MathUtil::radianToDegree(camPitchRad);
-	camRoll = I4MathUtil::radianToDegree(camRollRad);
+	renderer->getMainCamera().setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
 
 	modelMgr = new I4ModelMgr;
 	bulletPhysics = new I4BulletPhysics;
@@ -68,6 +58,25 @@ bool I4MiniGameFrameCallback::onStart()
 
 	framework->moveMouseCenter();
 	framework->getMousePos(prevMouseX, prevMouseY);
+
+	mainCamera =  objectMgr->createNode("main_camera");
+	mainCamera->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+
+	I4ObjectCameraComponent* camera = mainCamera->addComponent<I4ObjectCameraComponent>();
+	camera->makeMainCamera(true);
+
+	float camYawRad;
+	float camPitchRad;
+	float camRollRad;
+
+	I4Quaternion camRotation;
+	camRotation.makeRotationMatrix(mainCamera->getLocalTM());
+	camRotation.extractYawPitchRoll(camYawRad, camPitchRad, camRollRad);
+
+	camYaw = I4MathUtil::radianToDegree(camYawRad);
+	camPitch = I4MathUtil::radianToDegree(camPitchRad);
+	camRoll = I4MathUtil::radianToDegree(camRollRad);
+
 
 	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
 	//nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
@@ -174,7 +183,6 @@ void I4MiniGameFrameCallback::onEnd()
 	delete bulletPhysics;
 	delete modelMgr;
 	delete renderer;
-	delete camera;
 	delete objectMgr;
 	delete frameStateMgr;
 }
@@ -248,16 +256,23 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 
 bool I4MiniGameFrameCallback::onRender(float dt)
 {
+	
+	I4MessageArgs aniArgs;
+	aniArgs.push_back(dt);
+	objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
+
+	I4MessageArgs prepareRenderArgs;
+	objectMgr->getMessenger().send(I4Hash("onReadyToRender"), prepareRenderArgs);
+
+	I4MessageArgs renderArgs;
+	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
+
 	if (renderer->isDebugMode())
 	{
 		bulletPhysics->debugDraw();
 	}
 
-	commitToRenderer(dt);
-
-	renderer->preRender(camera);
-	renderer->render(camera);
-	renderer->postRender(camera);
+	renderer->render();
 
 	return true;
 }
@@ -363,39 +378,42 @@ void I4MiniGameFrameCallback::updateCamera(float dt)
 	I4Framework* framework = I4Framework::getFramework();
 
 	float camMoveSpeed = 6.0f*dt;
-	I4Vector3 newCamEye = camera->getEye();
-	I4Quaternion newCamRotation = camera->getRotation();
+
+	I4Vector3 camRight;
+	I4Vector3 camDirection;
+	I4Vector3 newCamEye;
+
+	mainCamera->getLocalTM().extractAxisX(camRight);
+	mainCamera->getLocalTM().extractAxisZ(camDirection);
+	mainCamera->getLocalTM().extractTranslation(newCamEye);
 
 	if (framework->isKeyPressed('w') || framework->isKeyPressed('W'))
 	{
-		newCamEye += camera->getDirection()*camMoveSpeed;
+		newCamEye += camDirection*camMoveSpeed;
 	}
 
 	if (framework->isKeyPressed('s') || framework->isKeyPressed('S'))
 	{
-		newCamEye -= camera->getDirection()*camMoveSpeed;
+		newCamEye -= camDirection*camMoveSpeed;
 	}
 
 	if (framework->isKeyPressed('a') || framework->isKeyPressed('A'))
 	{
-		newCamEye -= camera->getRight()*camMoveSpeed;
+		newCamEye -= camRight*camMoveSpeed;
 	}
 
 	if (framework->isKeyPressed('d') || framework->isKeyPressed('D'))
 	{
-		newCamEye += camera->getRight()*camMoveSpeed;
+		newCamEye += camRight*camMoveSpeed;
 	}
+
+	int curMouseX = 0;
+	int curMouseY = 0;
+
+	framework->getMousePos(curMouseX, curMouseY);
 
 	if (isRButtonDown)
 	{
-		POINT pt;
-		GetCursorPos(&pt);
-
-		int curMouseX = 0;
-		int curMouseY = 0;
-
-		framework->getMousePos(curMouseX, curMouseY);
-
 		int dx = curMouseX - prevMouseX;
 		int dy = curMouseY - prevMouseY;
 
@@ -416,16 +434,17 @@ void I4MiniGameFrameCallback::updateCamera(float dt)
 		if (camPitch > 90)
 		{
 			camPitch = 90;
-		}
-
-
-		newCamRotation.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(camYaw), I4MathUtil::degreeToRadian(camPitch), I4MathUtil::degreeToRadian(camRoll));
+		}		
 	}
 
-	camera->setTransform(newCamRotation, newCamEye);
+	I4Matrix4x4 matCam;
+	matCam.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(camYaw), I4MathUtil::degreeToRadian(camPitch), I4MathUtil::degreeToRadian(camRoll));
+	matCam.setTranslation(newCamEye);
 
+	mainCamera->setLocalTM(matCam);
 	
-	framework->getMousePos(prevMouseX, prevMouseY);
+	prevMouseX = curMouseX;
+	prevMouseY = curMouseY;
 }
 
 
@@ -433,10 +452,5 @@ void I4MiniGameFrameCallback::commitToRenderer(float dt)
 {
 	I4PROFILE_THISFUNC;
 	
-	I4MessageArgs aniArgs;
-	aniArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
 	
-	I4MessageArgs renderArgs;
-	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
 }

@@ -4,6 +4,7 @@
 #include "I4ModelMgr.h"
 #include "I4Model.h"
 #include "I4Renderer.h"
+#include "I4Profile.h"
 
 namespace i4object {
 
@@ -39,6 +40,8 @@ namespace i4object {
 
 	void I4ObjectPointLightComponent::onUpdate(I4MessageArgs& args)
 	{
+		I4PROFILE_THISFUNC;
+
 		if (blinkEnable == true)
 		{
 			blinkElapsedTime += args[0].asFloat();
@@ -68,7 +71,7 @@ namespace i4object {
 		if (isTurnOn)
 		{
 			getOwner()->getWorldTM().extractTranslation(light.position);
-			getOwner()->getObjectMgr()->getRenderer()->commitToScene(&light);
+			getOwner()->getObjectMgr()->getRenderer()->commit(&light);
 		}
 	}
 

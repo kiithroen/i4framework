@@ -40,7 +40,7 @@ namespace i4core
 		farDownLeft = farCenter - (I4VECTOR3_AXISY * hFar/2) - (I4VECTOR3_AXISX * wFar/2);
 		farDownRight = farCenter - (I4VECTOR3_AXISY * hFar/2) + (I4VECTOR3_AXISX * wFar/2);
 
-		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+		viewProjectionMatrix = viewMatrix*projectionMatrix;
 
 		frustum.make(viewProjectionMatrix);
 	}
@@ -62,47 +62,16 @@ namespace i4core
 		farDownLeft = I4Vector3(left, bottom, zfarPlane);
 		farDownRight = I4Vector3(right, bottom, zfarPlane);
 
-		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+		viewProjectionMatrix = viewMatrix*projectionMatrix;
 
 		frustum.make(viewProjectionMatrix);
 	}
 
 	void I4Camera::setLookAt(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
 	{
-		eye = _eye;
-		up = _up;
-
 		viewMatrix.makeCameraLookAtLH(_eye, _lookAt, _up);
-		viewMatrix.extractInversePrimitive(worldMatrix);
 
-		worldMatrix.extractAxisX(right);
-		worldMatrix.extractAxisZ(direction);
-
-		I4Matrix4x4 rotationMatrix;
-		worldMatrix.decompose(nullptr, &rotationMatrix, nullptr);
-		rotation.makeRotationMatrix(rotationMatrix);
-
-		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
-
-		frustum.make(viewProjectionMatrix);
-	}
-
-	void I4Camera::setTransform(const I4Quaternion& _rotation, const I4Vector3& _eye)
-	{
-		rotation = _rotation;
-		eye = _eye;
-
-		rotation.extractRotationMatrix(worldMatrix);
-		worldMatrix.setTranslation(_eye);
-		worldMatrix.extractInversePrimitive(viewMatrix);
-
-		worldMatrix.extractAxisX(right);
-		worldMatrix.extractAxisY(up);
-		worldMatrix.extractAxisZ(direction);
-
-		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
-
-		frustum.make(viewProjectionMatrix);
+		setViewMatrix(viewMatrix);
 	}
 
 	void I4Camera::setViewMatrix(const I4Matrix4x4& view)
@@ -110,14 +79,7 @@ namespace i4core
 		viewMatrix = view;
 		viewMatrix.extractInversePrimitive(worldMatrix);
 
-		worldMatrix.extractAxisX(right);
-		worldMatrix.extractAxisY(up);
-		worldMatrix.extractAxisZ(direction);
 		worldMatrix.extractTranslation(eye);
-
-		I4Matrix4x4 rotationMatrix;
-		worldMatrix.decompose(nullptr, &rotationMatrix, nullptr);
-		rotation.makeRotationMatrix(rotationMatrix);
 
 		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
 

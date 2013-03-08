@@ -76,7 +76,7 @@ namespace i4graphics
 		*/
 		sunLight.direction = I4Vector3(1.0f, -1.0f, 1.0f);
 		sunLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
-		commitToScene(&sunLight);
+		commit(&sunLight);
 	}
 
 
@@ -266,12 +266,12 @@ namespace i4graphics
 		I4VideoDriver::destroyVideoDriver();
 	}
 
-	void I4DeferredRenderer::commitToScene(const I4MeshRenderItem& item)
+	void I4DeferredRenderer::commit(const I4MeshRenderItem& item)
 	{
 		vecSceneMeshRenderItem.push_back(item);
 	}
 
-	void I4DeferredRenderer::commitToScene(I4DirectionalLight* light)
+	void I4DeferredRenderer::commit(I4DirectionalLight* light)
 	{
 		sunLight = *light;
 
@@ -279,12 +279,12 @@ namespace i4graphics
 		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
 	}
 
-	void I4DeferredRenderer::commitToScene(I4PointLight* light)
+	void I4DeferredRenderer::commit(I4PointLight* light)
 	{
 		vecScenePointLight.push_back(*light);
 	}
 
-	void I4DeferredRenderer::commitToScene(const I4DebugLine& line)
+	void I4DeferredRenderer::commit(const I4DebugLine& line)
 	{
 		if (debugMode)
 		{
@@ -292,38 +292,30 @@ namespace i4graphics
 		}
 	}
 
-	void I4DeferredRenderer::preRender(I4Camera* camera)
+	void I4DeferredRenderer::render()
 	{
 		I4PROFILE_THISFUNC;
 
 		videoDriver->beginScene();
-	}
 
-	void I4DeferredRenderer::render(I4Camera* camera)
-	{
-		I4PROFILE_THISFUNC;
 		clearAllRenderTarget();
 
-		renderStageGeometry(camera);
-		renderStageShadow(camera);
-		renderStageLight(camera);
-		renderStageMerge(camera);
+		renderStageGeometry();
+		renderStageShadow();
+		renderStageLight();
+		renderStageMerge();
 
 		if (debugMode)
 		{
-			renderDebugLine(camera);
+			renderDebugLine();
 		}
-	}
-
-	void I4DeferredRenderer::postRender(I4Camera* camera)
-	{
-		I4PROFILE_THISFUNC;
 
 		videoDriver->endScene();
+
 		vecSceneMeshRenderItem.clear();
 		vecScenePointLight.clear();
 	}
-
+	
 	void I4DeferredRenderer::clearAllRenderTarget()
 	{
 		I4PROFILE_THISFUNC;
@@ -339,7 +331,7 @@ namespace i4graphics
 		videoDriver->clearDepthStencil(rtShadow, 1.0f, 0);
 	}
 
-	void I4DeferredRenderer::renderStageGeometry(I4Camera* camera)
+	void I4DeferredRenderer::renderStageGeometry()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -347,11 +339,11 @@ namespace i4graphics
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
 
-		cullAndSortMeshGeometryRenderItem(camera);
-		renderMeshGeometryRenderItem(camera);		
+		cullAndSortMeshGeometryRenderItem();
+		renderMeshGeometryRenderItem();		
 	}
 
-	void I4DeferredRenderer::cullAndSortMeshGeometryRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortMeshGeometryRenderItem()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -359,7 +351,7 @@ namespace i4graphics
 
 		for (auto& itr : vecSceneMeshRenderItem)
 		{
-			if (camera->isVisibleAABB(itr.worldAABB))
+			if (mainCamera.isVisibleAABB(itr.worldAABB))
 			{
 				vecCulledMeshRenderItem.push_back(itr);
 			}
@@ -369,7 +361,7 @@ namespace i4graphics
 	}
 
 	
-	void I4DeferredRenderer::renderMeshGeometryRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::renderMeshGeometryRenderItem()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -440,11 +432,11 @@ namespace i4graphics
 					
 				shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
 
-				cbOnResize_G.getData()->projection = camera->getProjectionMatrix(); 
-				cbOnResize_G.getData()->farDistance = camera->getZFar();
+				cbOnResize_G.getData()->projection = mainCamera.getProjectionMatrix(); 
+				cbOnResize_G.getData()->farDistance = mainCamera.getZFar();
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
 
-				cbEveryFrame_G.getData()->view = camera->getViewMatrix();
+				cbEveryFrame_G.getData()->view = mainCamera.getViewMatrix();
 				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
 		
@@ -522,7 +514,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderStageShadow(I4Camera* camera)
+	void I4DeferredRenderer::renderStageShadow()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -532,7 +524,7 @@ namespace i4graphics
 		videoDriver->setBlendMode(I4BLEND_MODE_NONE);		
 
 		I4Camera tempSplitCamera;
-		tempSplitCamera.setViewMatrix(camera->getViewMatrix());
+		tempSplitCamera.setViewMatrix(mainCamera.getViewMatrix());
 
 		I4Matrix4x4 matInvView;
 		tempSplitCamera.getViewMatrix().extractInverse(matInvView);
@@ -545,8 +537,8 @@ namespace i4graphics
 
 			videoDriver->setViewport(i*shadowSplitSize, 0, shadowSplitSize, shadowSplitSize);
 			
-			float nearZ = camera->getZNear();
-			float farZ = camera->getZFar();
+			float nearZ = mainCamera.getZNear();
+			float farZ = mainCamera.getZFar();
 			
 			if (i != 0)
 			{
@@ -557,7 +549,7 @@ namespace i4graphics
 			{
 				farZ = shadowSplitZ[i];
 			}
-			tempSplitCamera.setPerspectiveFov(camera->getFovY(), camera->getAspect(), nearZ, farZ);
+			tempSplitCamera.setPerspectiveFov(mainCamera.getFovY(), mainCamera.getAspect(), nearZ, farZ);
 																											
 			I4Vector3 corners[8];
 			tempSplitCamera.extractCorners(corners);
@@ -582,14 +574,14 @@ namespace i4graphics
 
 			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(aabbInLightSpace.minEdge.x, aabbInLightSpace.maxEdge.x, aabbInLightSpace.minEdge.y, aabbInLightSpace.maxEdge.y, vMin.z, vMax.z);
 
-			cullAndSortMeshShadowRenderItem(&directionalLightSplitOrthoCamera[i]);
-			renderMeshShadowRenderItem(&directionalLightSplitOrthoCamera[i]);		
+			cullAndSortMeshShadowRenderItem(directionalLightSplitOrthoCamera[i]);
+			renderMeshShadowRenderItem(directionalLightSplitOrthoCamera[i]);		
 		}
 
 		videoDriver->resetViewport();
 	}
 
-	void I4DeferredRenderer::cullAndSortMeshShadowRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortMeshShadowRenderItem(const I4Camera& camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -597,7 +589,7 @@ namespace i4graphics
 
 		for (auto& itr : vecSceneMeshRenderItem)
 		{
-			if (itr.shadowCaster == true && camera->isVisibleAABB(itr.worldAABB) == true)
+			if (itr.shadowCaster == true && camera.isVisibleAABB(itr.worldAABB) == true)
 			{
 				vecCulledMeshRenderItem.push_back(itr);
 			}
@@ -606,7 +598,7 @@ namespace i4graphics
 		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end());
 	}
 
-	void I4DeferredRenderer::renderMeshShadowRenderItem(I4Camera* camera)
+	void I4DeferredRenderer::renderMeshShadowRenderItem(const I4Camera& camera)
 	{
 		I4PROFILE_THISFUNC;
 
@@ -658,7 +650,7 @@ namespace i4graphics
 				itr.mesh->bind();
 			}
 	
-			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera->getViewProjectionMatrix(); 
+			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
 			if (itr.boneCount != 0)
 			{
@@ -681,7 +673,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderStageLight(I4Camera* camera)
+	void I4DeferredRenderer::renderStageLight()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -689,13 +681,13 @@ namespace i4graphics
 		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
 		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
 
-		renderDirectionalLight(camera);
+		renderDirectionalLight();
 
-		cullAndSortPointLight(camera);
-		renderPointLight(camera);
+		cullAndSortPointLight();
+		renderPointLight();
 	}
 
-	void I4DeferredRenderer::renderDirectionalLight(I4Camera* camera)
+	void I4DeferredRenderer::renderDirectionalLight()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -709,19 +701,19 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, rtDepth);
 		shaderMgr->setRenderTarget(2, rtShadow);
 
-		I4Matrix4x4 matViewInv;
-		camera->getViewMatrix().extractInverse(matViewInv);
+		I4Matrix4x4 matInvView;
+		mainCamera.getViewMatrix().extractInverse(matInvView);
 		for (int i = 0; i < SHADOW_SPLIT_NUM; ++i)
 		{
-			cbOnResize_L_directional.getData()->viewInvLightViewProjection[i] = matViewInv*directionalLightSplitOrthoCamera[i].getViewProjectionMatrix();
+			cbOnResize_L_directional.getData()->viewInvLightViewProjection[i] = matInvView*directionalLightSplitOrthoCamera[i].getViewProjectionMatrix();
 			cbOnResize_L_directional.getData()->shadowSplitZ[i] = shadowSplitZ[i];
 			cbOnResize_L_directional.getData()->shadowBias[i] = shadowBias[i];
 		}
 		cbOnResize_L_directional.getData()->shadowSplitSize = (float)shadowSplitSize;
 		
-		const I4Vector3 lightViewDir = camera->getViewMatrix().transformVector(sunLight.direction);
+		const I4Vector3 lightViewDir = mainCamera.getViewMatrix().transformVector(sunLight.direction);
 
-		cbOnResize_L_directional.getData()->farTopRight = camera->getFarTopRight();
+		cbOnResize_L_directional.getData()->farTopRight = mainCamera.getFarTopRight();
 		cbOnResize_L_directional.getData()->lightViewDirection = lightViewDir;
 		cbOnResize_L_directional.getData()->lightColor = sunLight.color;
 
@@ -738,7 +730,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::cullAndSortPointLight(I4Camera* camera)
+	void I4DeferredRenderer::cullAndSortPointLight()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -746,14 +738,14 @@ namespace i4graphics
 		
 		for (auto& itr : vecScenePointLight)
 		{
-			if (camera->isVisibleSphere(itr.position, itr.radius))
+			if (mainCamera.isVisibleSphere(itr.position, itr.radius))
 			{
 				vecCulledPointLight.push_back(itr);
 			}
 		}
 	}
 
-	void I4DeferredRenderer::renderPointLight(I4Camera* camera)
+	void I4DeferredRenderer::renderPointLight()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -765,13 +757,13 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(0, rtNormal);
 		shaderMgr->setRenderTarget(1, rtDepth);
 		
-		cbOnResize_L_point_VS.getData()->projection = camera->getProjectionMatrix();
+		cbOnResize_L_point_VS.getData()->projection = mainCamera.getProjectionMatrix();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_L_point_VS.getBuffer(), cbOnResize_L_point_VS.getData());
 
-		cbOnResize_L_point_PS.getData()->farTopRight = camera->getFarTopRight();
+		cbOnResize_L_point_PS.getData()->farTopRight = mainCamera.getFarTopRight();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbOnResize_L_point_PS.getBuffer(), cbOnResize_L_point_PS.getData());
 
-		cbEveryFrame_L_point.getData()->view = camera->getViewMatrix();
+		cbEveryFrame_L_point.getData()->view = mainCamera.getViewMatrix();
 		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEveryFrame_L_point.getBuffer(), cbEveryFrame_L_point.getData());
 
 		pointLightMesh->bind();
@@ -786,11 +778,11 @@ namespace i4graphics
 			matLight.setTranslation(light.position);
 
 			
-			const I4Vector3 lightViewPos =  camera->getViewMatrix().transformCoord(light.position);
+			const I4Vector3 lightViewPos =  mainCamera.getViewMatrix().transformCoord(light.position);
 
 			// 카메라와 라이트의 관계를 찾는데 near plane 을 고려해서 생각해야한다.
 			// 안그러면 카메라가 라이트의 외부에 있지만 near plane 안쪽에 있을때 깜박이는 현상이 생긴다.
-			float lightRadiusPlusZNear = light.radius + camera->getZNear();
+			float lightRadiusPlusZNear = light.radius + mainCamera.getZNear();
 			if (lightViewPos.getLengthSq() - lightRadiusPlusZNear*lightRadiusPlusZNear > 0)
 			{
 				// 카메라가 라이트의 외부에 있으므로 일반 방식으로 그리면 된다. 
@@ -821,7 +813,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderStageMerge(I4Camera* camera)
+	void I4DeferredRenderer::renderStageMerge()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -848,7 +840,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderDebugLine(I4Camera* camera)
+	void I4DeferredRenderer::renderDebugLine()
 	{
 		I4PROFILE_THISFUNC;
 
@@ -893,7 +885,7 @@ namespace i4graphics
 			I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
 			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
 
-			cbEachFrame_Line.getData()->viewProjection = camera->getViewProjectionMatrix();
+			cbEachFrame_Line.getData()->viewProjection = mainCamera.getViewProjectionMatrix();
 			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
 			lineDebugMesh->bind();
 			lineDebugMesh->draw();

@@ -3,12 +3,8 @@
 #include "I4AABB.h"
 #include "I4Sphere.h"
 #include "I4Vector4.h"
-
+#include "I4Camera.h"
 using namespace i4core;
-
-namespace i4core {
-	class I4Camera;
-}
 
 namespace i4graphics {
 
@@ -58,6 +54,7 @@ namespace i4graphics {
 		I4Renderer()
 			: wireMode(false)
 			, debugMode(false)
+			, mainCamera()
 		{
 		}
 
@@ -67,14 +64,14 @@ namespace i4graphics {
 
 		virtual bool	initialize(void* _windowID, unsigned int _width, unsigned int _height)	{ return true; }
 
-		virtual void	commitToScene(const I4MeshRenderItem& item)				{}
-		virtual void	commitToScene(I4DirectionalLight* light)				{}
-		virtual void	commitToScene(I4PointLight* light)						{}
-		virtual void	commitToScene(const I4DebugLine& line)					{}
+		virtual void	commit(const I4MeshRenderItem& item)			{}
+		virtual void	commit(I4DirectionalLight* light)				{}
+		virtual void	commit(I4PointLight* light)						{}
+		virtual void	commit(const I4DebugLine& line)					{}
 
-		virtual void	preRender(I4Camera* camera)								{}
-		virtual void	render(I4Camera* camera)								{}
-		virtual void	postRender(I4Camera* camera)							{}
+		virtual void	render()										{}
+
+		I4Camera&		getMainCamera()					{ return mainCamera; }
 
 		bool			isWireMode() const				{ return wireMode; }
 		void			setWireMode(bool enable)		{ wireMode = enable; }
@@ -83,6 +80,7 @@ namespace i4graphics {
 		void			setDebugMode(bool enable)		{ debugMode = enable; }
 
 	protected:
+		I4Camera	mainCamera;
 		bool		wireMode;
 		bool		debugMode;
 	};
