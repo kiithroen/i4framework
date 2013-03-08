@@ -6,7 +6,6 @@ using namespace i4core;
 
 namespace i4core
 {
-	class I4FrameStateMgr;
 	class I4Camera;
 }
 using namespace i4core;
@@ -56,7 +55,6 @@ private:
 	void	commitToRenderer(float dt);
 
 private:
-	I4FrameStateMgr*	frameStateMgr;
 	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;
 	I4ObjectNode*		mainCamera;

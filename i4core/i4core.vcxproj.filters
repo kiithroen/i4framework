@@ -78,12 +78,6 @@
     <ClInclude Include="I4FrameCallback.h">
       <Filter>framework</Filter>
     </ClInclude>
-    <ClInclude Include="I4FrameState.h">
-      <Filter>framework</Filter>
-    </ClInclude>
-    <ClInclude Include="I4FrameStateMgr.h">
-      <Filter>framework</Filter>
-    </ClInclude>
     <ClInclude Include="I4FrameTimer.h">
       <Filter>framework</Filter>
     </ClInclude>
@@ -126,9 +120,6 @@
     </ClCompile>
     <ClCompile Include="i4core.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="I4FrameStateMgr.cpp">
-      <Filter>framework</Filter>
-    </ClCompile>
     <ClCompile Include="I4FrameTimer.cpp">
       <Filter>framework</Filter>
     </ClCompile>

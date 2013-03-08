@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "I4FrameworkWin.h"
 #include "I4FrameCallback.h"
-#include "I4FrameStateMgr.h"
 #include "I4StringUtil.h"
 #include "I4Log.h"
 

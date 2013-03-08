@@ -2,7 +2,6 @@
 #include "I4Framework.h"
 #include "I4Log.h"
 #include "I4FrameCallback.h"
-#include "I4FrameStateMgr.h"
 #include "I4FrameTimer.h"
 #include "I4StopWatch.h"
 

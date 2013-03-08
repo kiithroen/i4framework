@@ -1,10 +1,8 @@
 #include "stdafx.h"
 #include "I4MiniGameFrameCallback.h"
-#include "I4MiniGameState_Game.h"
 #include "I4Framework.h"
 #include "I4DeferredRenderer.h"
 #include "I4Camera.h"
-#include "I4FrameStateMgr.h"
 #include "I4Log.h"
 #include "I4Profile.h"
 #include "I4ProfileWriterLog.h"
@@ -21,8 +19,7 @@
 using namespace i4core;
 
 I4MiniGameFrameCallback::I4MiniGameFrameCallback()
-: frameStateMgr(nullptr)
-, objectMgr(nullptr)
+: objectMgr(nullptr)
 , renderer(nullptr)
 , bulletPhysics(nullptr)
 , mainCamera(nullptr)
@@ -51,11 +48,7 @@ bool I4MiniGameFrameCallback::onStart()
 	objectMgr = new I4ObjectMgr;
 	if (objectMgr->init(renderer, modelMgr, bulletPhysics) == false)
 		return false;
-
-	frameStateMgr = new I4FrameStateMgr;
-	frameStateMgr->addFrameState("minigame", new I4MiniGameState_Game);
-	frameStateMgr->changeFrameState("minigame");
-
+	
 	framework->moveMouseCenter();
 	framework->getMousePos(prevMouseX, prevMouseY);
 
@@ -184,7 +177,6 @@ void I4MiniGameFrameCallback::onEnd()
 	delete modelMgr;
 	delete renderer;
 	delete objectMgr;
-	delete frameStateMgr;
 }
 
 bool I4MiniGameFrameCallback::onUpdate(float dt)
@@ -195,10 +187,7 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	
 	if (framework->isKeyPressed(VK_ESCAPE))
 		return false;
-
-	if (frameStateMgr == nullptr)
-		return true; 
-	
+		
 	bulletPhysics->simulate(dt);
 
 	I4MessageArgs postSimulateArgs;
@@ -207,9 +196,6 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onUpdate"), updateArgs);
-
-	if (frameStateMgr->onUpdate(dt) == false)
-		return false;
 
 	static float degree = 0;
 	degree += 30*dt;
@@ -287,28 +273,14 @@ void I4MiniGameFrameCallback::onKeyDown(unsigned int key)
 	{
 		renderer->setWireMode(!renderer->isWireMode());
 	}
-
-
-	if (frameStateMgr)
-	{
-		frameStateMgr->onKeyDown(key);
-	}
 }
 
 void I4MiniGameFrameCallback::onKeyUp(unsigned int key)
 {
-	if (frameStateMgr)
-	{
-		frameStateMgr->onKeyUp(key);
-	}
 }
 
 void I4MiniGameFrameCallback::onMouseMove(unsigned int x, unsigned int y)
 {
-	if (frameStateMgr)
-	{
-		frameStateMgr->onMouseMove(x, y);
-	}
 }
 
 void I4MiniGameFrameCallback::onLButtonDown(unsigned int x, unsigned int y)
@@ -338,39 +310,20 @@ void I4MiniGameFrameCallback::onLButtonDown(unsigned int x, unsigned int y)
 	}
 	
 	i++;
-
-	if (frameStateMgr)
-	{
-		frameStateMgr->onLButtonDown(x, y);
-	}
 }
 
 void I4MiniGameFrameCallback::onLButtonUp(unsigned int x, unsigned int y)
 {
-	if (frameStateMgr)
-	{
-		frameStateMgr->onLButtonUp(x, y);
-	}
 }
 
 void I4MiniGameFrameCallback::onRButtonDown(unsigned int x, unsigned int y)
 {
 	isRButtonDown = true;
-
-	if (frameStateMgr)
-	{
-		frameStateMgr->onRButtonUp(x, y);
-	}
 }
 
 void I4MiniGameFrameCallback::onRButtonUp(unsigned int x, unsigned int y)
 {
 	isRButtonDown = false;
-
-	if (frameStateMgr)
-	{
-		frameStateMgr->onRButtonUp(x, y);
-	}
 }
 
 void I4MiniGameFrameCallback::updateCamera(float dt)
