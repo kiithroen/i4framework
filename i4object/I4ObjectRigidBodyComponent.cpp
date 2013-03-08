@@ -21,16 +21,16 @@ namespace i4object {
 
 	void I4ObjectRigidBodyComponent::onAdd()
 	{
-		getBroadcastMessenger().subscribe(I4Hash("onPostSimulate"), this, bind(&I4ObjectRigidBodyComponent::onPostSimulate, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onSyncSimulate"), this, bind(&I4ObjectRigidBodyComponent::onSyncSimulate, this, _1));
 	}
 
 	void I4ObjectRigidBodyComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onPostSimulate"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onSyncSimulate"), this);
 	}
 
 
-	void I4ObjectRigidBodyComponent::onPostSimulate(I4MessageArgs& args)
+	void I4ObjectRigidBodyComponent::onSyncSimulate(I4MessageArgs& args)
 	{
 		I4PROFILE_THISFUNC;
 

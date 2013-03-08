@@ -24,7 +24,7 @@ namespace i4object
 		void attachSphere(btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 		void attachCapsule(btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 
-		void onPostSimulate(I4MessageArgs& args);
+		void onSyncSimulate(I4MessageArgs& args);
 
 	private:
 		void btTransform2objectTM(I4Matrix4x4& matWorldTM);
