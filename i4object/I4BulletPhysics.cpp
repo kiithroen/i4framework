@@ -8,6 +8,28 @@ using namespace i4core;
 
 namespace i4object
 {
+	ATTRIBUTE_ALIGNED16(struct)	I4BulletMotionState : public btMotionState
+	{
+		btTransform objectWorldTrans;
+
+		BT_DECLARE_ALIGNED_ALLOCATOR();
+
+		I4BulletMotionState(const btTransform& startTrans)
+			: objectWorldTrans(startTrans)
+		{
+		}
+
+		virtual void getWorldTransform(btTransform& worldTrans) const 
+		{
+			worldTrans = objectWorldTrans ;
+		}
+
+		virtual void setWorldTransform(const btTransform& worldTrans)
+		{
+			objectWorldTrans = worldTrans;
+		}
+	};
+
 	I4BulletPhysics::I4BulletPhysics(void)
 	: dynamicsWorld(nullptr)
 	, solver(nullptr)
@@ -113,7 +135,7 @@ namespace i4object
 			shape->calculateLocalInertia(mass, localInertia);
 		}
 
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(bodyTM);
+		I4BulletMotionState* myMotionState = new I4BulletMotionState(bodyTM);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);		
 		rbInfo.m_restitution = restitution;
 		rbInfo.m_friction = friction;
