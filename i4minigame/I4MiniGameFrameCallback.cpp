@@ -64,6 +64,7 @@ bool I4MiniGameFrameCallback::onStart()
 	offset.makeTranslation(0, -0.9f, 0);
 	rigid->setOffset(offset);
 	rigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+	rigid->setKinematic(true);
 
 	I4ObjectFPSCameraComponent* fps = player->addComponent<I4ObjectFPSCameraComponent>();
 	fps->activate(true);
@@ -182,7 +183,10 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 
 	if (I4InputState::KeyPressed[VK_ESCAPE])
 		return false;
-		
+	
+	I4MessageArgs preSimulateArgs;
+	objectMgr->getMessenger().send(I4Hash("onPreSimulate"), preSimulateArgs);
+
 	bulletPhysics->simulate(dt);
 
 	I4MessageArgs postSimulateArgs;

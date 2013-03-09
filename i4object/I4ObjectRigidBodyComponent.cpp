@@ -26,16 +26,49 @@ namespace i4object {
 
 	void I4ObjectRigidBodyComponent::onRemove()
 	{
+		getBroadcastMessenger().unsubscribe(I4Hash("onPreSimulate"), this);
 		getBroadcastMessenger().unsubscribe(I4Hash("onPostSimulate"), this);
 	}
 
 
-	void I4ObjectRigidBodyComponent::onPostSimulate(I4MessageArgs& args)
+
+	void I4ObjectRigidBodyComponent::setOffset(const I4Matrix4x4& m)
+	{
+		matOffset = m;
+	}
+
+	void I4ObjectRigidBodyComponent::setKinematic(bool isKinematic)
+	{
+		if (isKinematic)
+		{
+			getBroadcastMessenger().subscribe(I4Hash("onPreSimulate"), this, bind(&I4ObjectRigidBodyComponent::onPreSimulate, this, _1));
+
+			body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setActivationState(DISABLE_DEACTIVATION);
+			body->activate(true);
+		}
+		else
+		{
+			getBroadcastMessenger().unsubscribe(I4Hash("onPreSimulate"), this);
+
+			body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setActivationState(WANTS_DEACTIVATION);
+		}
+	}
+
+	void I4ObjectRigidBodyComponent::onPreSimulate(I4MessageArgs& args)
 	{
 		I4PROFILE_THISFUNC;
 
-		if (body == nullptr)
-			return;
+		btTransform transform;
+		objectTM2btTransform(transform);
+
+		body->getMotionState()->setWorldTransform(transform);
+	}
+
+	void I4ObjectRigidBodyComponent::onPostSimulate(I4MessageArgs& args)
+	{
+		I4PROFILE_THISFUNC;
 
 		I4Matrix4x4 matWorldTM;
 		btTransform2objectTM(matWorldTM);
