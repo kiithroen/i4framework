@@ -52,6 +52,9 @@
     <ClInclude Include="I4ObjectFlyControllerComponent.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="I4ObjectCharacterControllerComponent.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -81,6 +84,9 @@
       <Filter>component</Filter>
     </ClCompile>
     <ClCompile Include="I4ObjectFlyControllerComponent.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ObjectCharacterControllerComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>

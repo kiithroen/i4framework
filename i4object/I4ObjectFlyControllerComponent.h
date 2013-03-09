@@ -12,7 +12,7 @@ namespace i4object
 		I4ObjectFlyControllerComponent(void);
 		virtual ~I4ObjectFlyControllerComponent(void);
 
-		static const char*	getComponentID()	{ return "FPSController"; }
+		static const char*	getComponentID()	{ return "FlyController"; }
 
 		virtual void		onAdd() override;
 		virtual void		onRemove() override;

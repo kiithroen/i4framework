@@ -17,6 +17,7 @@
 #include "I4Messenger.h"
 #include "I4ObjectFlyControllerComponent.h"
 #include "I4ObjectStaticCameraComponent.h"
+#include "I4ObjectCharacterControllerComponent.h"
 
 using namespace i4core;
 
@@ -52,6 +53,9 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	framework->moveMouseCenter();
 
+	I4ObjectNode* test = objectMgr->createNode("test");
+	test->addComponent<I4ObjectCharacterControllerComponent>();
+
 	spectator =  objectMgr->createNode("spectator");
 	spectator->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
@@ -84,7 +88,8 @@ bool I4MiniGameFrameCallback::onStart()
 	btTransform t;
 	t.setIdentity();
 	t.setOrigin(btVector3(0, -50, 0));
-	bulletPhysics->createBox(t, btVector3(50, 50, 50), 0, 1, 0.5f, 0.1f, 0.1f);
+	btRigidBody* body = bulletPhysics->createBox(t, btVector3(50, 50, 50), 0, 1, 0.5f, 0.1f, 0.1f);
+	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	
 	I4Vector3 lightPointColor[] =
 	{
@@ -192,11 +197,13 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 		return false;
 	
 	I4MessageArgs preSimulateArgs;
+	preSimulateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onPreSimulate"), preSimulateArgs);
 
 	bulletPhysics->simulate(dt);
 
 	I4MessageArgs postSimulateArgs;
+	postSimulateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
 
 	I4MessageArgs updateArgs;

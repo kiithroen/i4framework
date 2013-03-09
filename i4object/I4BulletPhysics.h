@@ -57,8 +57,12 @@ namespace i4object
 		btRigidBody* createSphere(const btTransform& bodyTM, btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 		btRigidBody* createCapsule(const btTransform& bodyTM, btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
 
+		btDiscreteDynamicsWorld*	getWorld()		{ return dynamicsWorld; }
+
 	private:
 		btRigidBody* createRigidBody(btCollisionShape* shape, const btTransform& bodyTM, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+
+
 	private:
 		btDefaultCollisionConfiguration*		collisionConfiguration;
 		btCollisionDispatcher*					dispatcher;

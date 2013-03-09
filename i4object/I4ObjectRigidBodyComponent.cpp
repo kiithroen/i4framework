@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "I4ObjectRigidBodyComponent.h"
 #include "I4Log.h"
-#include "I4ModelMgr.h"
-#include "I4Model.h"
-#include "I4Renderer.h"
+#include "I4Hash.h"
 #include "I4Profile.h"
 
 namespace i4object {
