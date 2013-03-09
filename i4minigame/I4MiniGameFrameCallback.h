@@ -52,5 +52,5 @@ private:
 	I4BulletPhysics*	bulletPhysics;
 	I4ObjectNode*		nodeLight[100];
 
-	I4ObjectNode*		freeCamera;
+	I4ObjectNode*		spectator;
 };

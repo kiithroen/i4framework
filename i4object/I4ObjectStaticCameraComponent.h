@@ -18,17 +18,19 @@ namespace i4object
 		I4ObjectStaticCameraComponent(void);
 		virtual ~I4ObjectStaticCameraComponent(void);
 
-		static const char*	getComponentID()	{ return "Camera"; }
+		static const char*	getComponentID()	{ return "StaticCamera"; }
 
 		virtual void		onAdd() override;
 		virtual void		onRemove() override;
 
-		void activate(bool isActive);
+		void setMainCamera(bool isMain);
+		void setOffset(const I4Vector3& _offset)		{ offset = _offset; }
 
 		void onReadyToRender(I4MessageArgs& args);
 
 	private:
-		bool	isActivate;
+		I4Vector3	offset;
+		bool		isMainCamera;
 	};
 
 }

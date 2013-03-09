@@ -9,7 +9,8 @@ namespace i4object
 {
 
 	I4ObjectStaticCameraComponent::I4ObjectStaticCameraComponent(void)
-		: isActivate(false)
+		: offset(I4VECTOR3_ZERO)
+		, isMainCamera(false)
 	{
 	}
 
@@ -28,9 +29,9 @@ namespace i4object
 		getBroadcastMessenger().unsubscribe(I4Hash("onReadyToRender"), this);
 	}
 
-	void I4ObjectStaticCameraComponent::activate(bool isActive)
+	void I4ObjectStaticCameraComponent::setMainCamera(bool isMain)
 	{
-		if (isActive)
+		if (isMain)
 		{
 			getBroadcastMessenger().subscribe(I4Hash("onReadyToRender"), this, bind(&I4ObjectStaticCameraComponent::onReadyToRender, this, _1));
 		}
@@ -42,9 +43,13 @@ namespace i4object
 
 	void I4ObjectStaticCameraComponent::onReadyToRender(I4MessageArgs& args)
 	{
-		I4Matrix4x4 matView;
-		getOwner()->getWorldTM().extractInversePrimitive(matView);
-		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matView);
+		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
+		matTarget.addTranslation(offset);
+
+		I4Matrix4x4 matCamView;
+		matTarget.extractInversePrimitive(matCamView);
+
+		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matCamView);
 	}
 
 }

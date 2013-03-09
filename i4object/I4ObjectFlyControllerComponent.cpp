@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "I4ObjectFPSCameraComponent.h"
+#include "I4ObjectFlyControllerComponent.h"
 #include "I4Hash.h"
 #include "I4Renderer.h"
 #include "I4Framework.h"
@@ -7,17 +7,17 @@
 namespace i4object
 {
 
-	I4ObjectFPSCameraComponent::I4ObjectFPSCameraComponent(void)
+	I4ObjectFlyControllerComponent::I4ObjectFlyControllerComponent(void)
 		: eyeHeight(1.5f)
 	{
 	}
 
 
-	I4ObjectFPSCameraComponent::~I4ObjectFPSCameraComponent(void)
+	I4ObjectFlyControllerComponent::~I4ObjectFlyControllerComponent(void)
 	{
 	}
 
-	void I4ObjectFPSCameraComponent::onAdd()
+	void I4ObjectFlyControllerComponent::onAdd()
 	{
 		prevMouseX = I4InputState::mouseX;
 		prevMouseY = I4InputState::mouseY;
@@ -35,27 +35,24 @@ namespace i4object
 		roll = I4MathUtil::radianToDegree(rollRad);
 	}
 
-	void I4ObjectFPSCameraComponent::onRemove()
+	void I4ObjectFlyControllerComponent::onRemove()
 	{
 		getBroadcastMessenger().unsubscribe(I4Hash("onPostUpdate"), this);
-		getBroadcastMessenger().unsubscribe(I4Hash("onReadyToRender"), this);
 	}
 	
-	void I4ObjectFPSCameraComponent::activate(bool isActive)
+	void I4ObjectFlyControllerComponent::activate(bool isActive)
 	{
 		if (isActive)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onPostUpdate"), this, bind(&I4ObjectFPSCameraComponent::onPostUpdate, this, _1));
-			getBroadcastMessenger().subscribe(I4Hash("onReadyToRender"), this, bind(&I4ObjectFPSCameraComponent::onReadyToRender, this, _1));
+			getBroadcastMessenger().subscribe(I4Hash("onPostUpdate"), this, bind(&I4ObjectFlyControllerComponent::onPostUpdate, this, _1));
 		}
 		else
 		{
 			getBroadcastMessenger().unsubscribe(I4Hash("onPostUpdate"), this);
-			getBroadcastMessenger().unsubscribe(I4Hash("onReadyToRender"), this);
 		}
 	}
 
-	void I4ObjectFPSCameraComponent::onPostUpdate(I4MessageArgs& args)
+	void I4ObjectFlyControllerComponent::onPostUpdate(I4MessageArgs& args)
 	{
 		float moveSpeed = 6.0f*args[0].asFloat();
 
@@ -119,16 +116,5 @@ namespace i4object
 
 		prevMouseX = curMouseX;
 		prevMouseY = curMouseY;
-	}
-	
-	void I4ObjectFPSCameraComponent::onReadyToRender(I4MessageArgs& args)
-	{
-		I4Matrix4x4 matCamWorld = getOwner()->getWorldTM();
-		matCamWorld.setTranslation(I4Vector3(position.x, position.y + eyeHeight, position.z));
-
-		I4Matrix4x4 matCamView;
-		matCamWorld.extractInversePrimitive(matCamView);
-
-		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matCamView);
 	}
 }

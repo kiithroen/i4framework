@@ -15,7 +15,8 @@
 #include "I4ObjectPointLightComponent.h"
 #include "I4ObjectRigidBodyComponent.h"
 #include "I4Messenger.h"
-#include "I4ObjectFPSCameraComponent.h"
+#include "I4ObjectFlyControllerComponent.h"
+#include "I4ObjectStaticCameraComponent.h"
 
 using namespace i4core;
 
@@ -51,23 +52,29 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	framework->moveMouseCenter();
 
-	freeCamera =  objectMgr->createNode("free_camera");
-	freeCamera->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	spectator =  objectMgr->createNode("spectator");
+	spectator->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
-	I4ObjectFPSCameraComponent* free = freeCamera->addComponent<I4ObjectFPSCameraComponent>();
+	I4ObjectFlyControllerComponent* spectatorController = spectator->addComponent<I4ObjectFlyControllerComponent>();
+	spectatorController->activate(false);
+	I4ObjectStaticCameraComponent* spectatorCamera = spectator->addComponent<I4ObjectStaticCameraComponent>();
+	spectatorCamera->setMainCamera(false);
 
 	player =  objectMgr->createNode("player");
 	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
-	I4ObjectRigidBodyComponent* rigid = player->addComponent<I4ObjectRigidBodyComponent>();
+	I4ObjectRigidBodyComponent* playerRigid = player->addComponent<I4ObjectRigidBodyComponent>();
 	I4Matrix4x4 offset;
 	offset.makeTranslation(0, -0.9f, 0);
-	rigid->setOffset(offset);
-	rigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
-	rigid->setKinematic(true);
+	playerRigid->setOffset(offset);
+	playerRigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+	playerRigid->setKinematic(true);
 
-	I4ObjectFPSCameraComponent* fps = player->addComponent<I4ObjectFPSCameraComponent>();
-	fps->activate(true);
+	I4ObjectFlyControllerComponent* playerController = player->addComponent<I4ObjectFlyControllerComponent>();
+	playerController->activate(true);
+
+	I4ObjectStaticCameraComponent* playerCamera = player->addComponent<I4ObjectStaticCameraComponent>();
+	playerCamera->setMainCamera(true);
 
 	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
 	//nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
@@ -284,11 +291,17 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 
 				isFree = !isFree;
 
-				I4ObjectFPSCameraComponent* fps = player->findComponent<I4ObjectFPSCameraComponent>();
-				fps->activate(!isFree);
+				I4ObjectFlyControllerComponent* playerController = player->findComponent<I4ObjectFlyControllerComponent>();
+				playerController->activate(!isFree);
 
-				I4ObjectFPSCameraComponent* free = freeCamera->findComponent<I4ObjectFPSCameraComponent>();
-				free->activate(isFree);
+				I4ObjectStaticCameraComponent* playerCam = player->findComponent<I4ObjectStaticCameraComponent>();
+				playerCam->setMainCamera(!isFree);
+
+				I4ObjectStaticCameraComponent* spectatorCamera = spectator->findComponent<I4ObjectStaticCameraComponent>();
+				spectatorCamera->setMainCamera(isFree);
+
+				I4ObjectFlyControllerComponent* spectatorController = spectator->findComponent<I4ObjectFlyControllerComponent>();
+				spectatorController->activate(isFree);
 			}
 		}
 		break;

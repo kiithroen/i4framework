@@ -6,11 +6,11 @@ using namespace i4core;
 
 namespace i4object
 {
-	class I4ObjectFPSCameraComponent : public I4ObjectComponent
+	class I4ObjectFlyControllerComponent : public I4ObjectComponent
 	{
 	public:
-		I4ObjectFPSCameraComponent(void);
-		virtual ~I4ObjectFPSCameraComponent(void);
+		I4ObjectFlyControllerComponent(void);
+		virtual ~I4ObjectFlyControllerComponent(void);
 
 		static const char*	getComponentID()	{ return "FPSController"; }
 
@@ -20,7 +20,6 @@ namespace i4object
 		void activate(bool isActive);
 
 		void onPostUpdate(I4MessageArgs& args);
-		void onReadyToRender(I4MessageArgs& args);
 
 	private:
 		I4Vector3			right;

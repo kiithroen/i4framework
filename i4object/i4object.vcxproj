@@ -103,7 +103,7 @@
     <ClInclude Include="I4BulletPhysics.h" />
     <ClInclude Include="i4object.h" />
     <ClInclude Include="I4ObjectComponent.h" />
-    <ClInclude Include="I4ObjectFPSCameraComponent.h" />
+    <ClInclude Include="I4ObjectFlyControllerComponent.h" />
     <ClInclude Include="I4ObjectMgr.h" />
     <ClInclude Include="I4ObjectNode.h" />
     <ClInclude Include="I4ObjectPointLightComponent.h" />
@@ -117,7 +117,7 @@
     <ClCompile Include="I4BulletDebugDraw.cpp" />
     <ClCompile Include="I4BulletPhysics.cpp" />
     <ClCompile Include="i4object.cpp" />
-    <ClCompile Include="I4ObjectFPSCameraComponent.cpp" />
+    <ClCompile Include="I4ObjectFlyControllerComponent.cpp" />
     <ClCompile Include="I4ObjectMgr.cpp" />
     <ClCompile Include="I4ObjectNode.cpp" />
     <ClCompile Include="I4ObjectPointLightComponent.cpp" />

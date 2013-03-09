@@ -159,6 +159,13 @@ namespace i4core
 			_43 = pos.z;
 		}
 
+		void addTranslation(const I4Vector3& pos)
+		{
+			_41 += pos.x;
+			_42 += pos.y;
+			_43 += pos.z;
+		}
+
 		void extractAxisX(I4Vector3& v) const
 		{
 			v.x = _11;
