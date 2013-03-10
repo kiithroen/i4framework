@@ -27,11 +27,11 @@ namespace i4object {
 		rootNode = nullptr;
 	}
 
-	bool I4ObjectMgr::init(I4Renderer* _renderer, I4ModelMgr* _modelMgr, I4BulletPhysics* _bulletPhysics)
+	bool I4ObjectMgr::init(I4Renderer* _renderer, I4ModelMgr* _modelMgr, I4PhysXMgr* _physXMgr)
 	{
 		renderer = _renderer;
 		modelMgr = _modelMgr;
-		bulletPhysics = _bulletPhysics;
+		physXMgr = _physXMgr;
 
 		return true;
 	}

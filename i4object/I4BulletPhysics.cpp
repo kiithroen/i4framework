@@ -56,7 +56,7 @@ namespace i4object
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache , solver , collisionConfiguration);
 		dynamicsWorld->setDebugDrawer(debugDrawer);
 		
-		dynamicsWorld->setGravity(btVector3 (0 , -10 ,0));
+		dynamicsWorld->setGravity(I4Vector3 (0 , -10 ,0));
 
 		
 		return true;
@@ -109,27 +109,27 @@ namespace i4object
 	}
 
 
-	btRigidBody* I4BulletPhysics::createBox(const btTransform& bodyTM, const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	btRigidBody* I4BulletPhysics::createBox(const btTransform& bodyTM, const I4Vector3& ext, float mass, float restitution, float friction, float linDamping, float angDamping)
 	{
 		return createRigidBody(new btBoxShape(ext), bodyTM, mass, restitution, friction, linDamping, angDamping);
 
 	}
 
-	btRigidBody* I4BulletPhysics::createSphere(const btTransform& bodyTM, btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	btRigidBody* I4BulletPhysics::createSphere(const btTransform& bodyTM, float radius, float mass, float restitution, float friction, float linDamping, float angDamping)
 	{
 		return createRigidBody(new btSphereShape(radius), bodyTM, mass, restitution, friction, linDamping, angDamping);
 	}
 
-	btRigidBody* I4BulletPhysics::createCapsule(const btTransform& bodyTM, btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	btRigidBody* I4BulletPhysics::createCapsule(const btTransform& bodyTM, float radius, float height, float mass, float restitution, float friction, float linDamping, float angDamping)
 	{
 		return createRigidBody(new btCapsuleShape(radius, height), bodyTM, mass, restitution, friction, linDamping, angDamping);
 	}
 
-	btRigidBody* I4BulletPhysics::createRigidBody(btCollisionShape* shape, const btTransform& bodyTM, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping)
+	btRigidBody* I4BulletPhysics::createRigidBody(btCollisionShape* shape, const btTransform& bodyTM, float mass, float restitution, float friction, float linDamping, float angDamping)
 	{
 		collisionShapes.push_back(shape);
 
-		btVector3 localInertia(0,0,0);
+		I4Vector3 localInertia(0,0,0);
 		if (mass != 0)
 		{
 			shape->calculateLocalInertia(mass, localInertia);

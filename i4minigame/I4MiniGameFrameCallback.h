@@ -23,7 +23,7 @@ namespace i4object
 {
 	class I4ObjectMgr;
 	class I4ObjectNode;
-	class I4BulletPhysics;
+	class I4PhysXMgr;
 }
 using namespace i4object;
 
@@ -49,7 +49,7 @@ private:
 	I4Renderer*			renderer;
 	I4ObjectNode*		player;
 	I4ModelMgr*			modelMgr;
-	I4BulletPhysics*	bulletPhysics;
+	I4PhysXMgr*			physXMgr;
 	I4ObjectNode*		nodeLight[100];
 
 	I4ObjectNode*		spectator;

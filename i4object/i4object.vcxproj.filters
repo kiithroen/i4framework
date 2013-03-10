@@ -11,8 +11,8 @@
     <Filter Include="base">
       <UniqueIdentifier>{595da40c-e85a-4444-a25e-1618fe684c00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="physics">
-      <UniqueIdentifier>{64bd1274-8ec6-429e-82a1-b58dfb82a2c6}</UniqueIdentifier>
+    <Filter Include="physx">
+      <UniqueIdentifier>{ccccef56-e429-42c6-b898-3ee9dad667f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,14 +37,8 @@
     <ClInclude Include="I4ObjectPointLightComponent.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="I4BulletPhysics.h">
-      <Filter>physics</Filter>
-    </ClInclude>
     <ClInclude Include="I4ObjectRigidBodyComponent.h">
       <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="I4BulletDebugDraw.h">
-      <Filter>physics</Filter>
     </ClInclude>
     <ClInclude Include="I4ObjectStaticCameraComponent.h">
       <Filter>component</Filter>
@@ -52,8 +46,8 @@
     <ClInclude Include="I4ObjectFlyControllerComponent.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="I4ObjectCharacterControllerComponent.h">
-      <Filter>component</Filter>
+    <ClInclude Include="I4PhysXMgr.h">
+      <Filter>physx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,14 +65,8 @@
     <ClCompile Include="I4ObjectPointLightComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
-    <ClCompile Include="I4BulletPhysics.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
     <ClCompile Include="I4ObjectRigidBodyComponent.cpp">
       <Filter>component</Filter>
-    </ClCompile>
-    <ClCompile Include="I4BulletDebugDraw.cpp">
-      <Filter>physics</Filter>
     </ClCompile>
     <ClCompile Include="I4ObjectStaticCameraComponent.cpp">
       <Filter>component</Filter>
@@ -86,8 +74,8 @@
     <ClCompile Include="I4ObjectFlyControllerComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
-    <ClCompile Include="I4ObjectCharacterControllerComponent.cpp">
-      <Filter>component</Filter>
+    <ClCompile Include="I4PhysXMgr.cpp">
+      <Filter>physx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

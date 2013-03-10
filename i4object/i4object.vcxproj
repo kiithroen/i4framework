@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/bullet/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/PhysX/Include</AdditionalIncludeDirectories>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -79,7 +79,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/bullet/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../i4graphics;../dependency/PhysX/Include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -99,33 +99,29 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="I4BulletDebugDraw.h" />
-    <ClInclude Include="I4BulletPhysics.h" />
     <ClInclude Include="i4object.h" />
     <ClInclude Include="I4ObjectComponent.h" />
     <ClInclude Include="I4ObjectFlyControllerComponent.h" />
-    <ClInclude Include="I4ObjectCharacterControllerComponent.h" />
     <ClInclude Include="I4ObjectMgr.h" />
     <ClInclude Include="I4ObjectNode.h" />
     <ClInclude Include="I4ObjectPointLightComponent.h" />
     <ClInclude Include="I4ObjectRigidBodyComponent.h" />
     <ClInclude Include="I4ObjectStaticCameraComponent.h" />
     <ClInclude Include="I4ObjectViewComponent.h" />
+    <ClInclude Include="I4PhysXMgr.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="I4BulletDebugDraw.cpp" />
-    <ClCompile Include="I4BulletPhysics.cpp" />
     <ClCompile Include="i4object.cpp" />
     <ClCompile Include="I4ObjectFlyControllerComponent.cpp" />
-    <ClCompile Include="I4ObjectCharacterControllerComponent.cpp" />
     <ClCompile Include="I4ObjectMgr.cpp" />
     <ClCompile Include="I4ObjectNode.cpp" />
     <ClCompile Include="I4ObjectPointLightComponent.cpp" />
     <ClCompile Include="I4ObjectRigidBodyComponent.cpp" />
     <ClCompile Include="I4ObjectStaticCameraComponent.cpp" />
     <ClCompile Include="I4ObjectViewComponent.cpp" />
+    <ClCompile Include="I4PhysXMgr.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

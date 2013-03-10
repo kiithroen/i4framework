@@ -2,7 +2,7 @@
 
 #include "I4ObjectComponent.h"
 #include "I4Messenger.h"
-#include "I4BulletPhysics.h"
+#include "I4PhysXMgr.h"
 using namespace i4core;
 
 namespace i4object
@@ -21,18 +21,19 @@ namespace i4object
 		void setOffset(const I4Matrix4x4& m);
 		void setKinematic(bool isKinematic);
 
-		void attachBox(const btVector3& ext, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
-		void attachSphere(btScalar radius, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
-		void attachCapsule(btScalar radius, btScalar height, btScalar mass, btScalar restitution, btScalar friction, btScalar linDamping, btScalar angDamping);
+		void attachBox(const I4Vector3& ext, float density, bool kinematic);
+		void attachSphere(float radius, float density, bool kinematic);
+		void attachCapsule(float radius, float height, float density, bool kinematic);
 
 		void onPreSimulate(I4MessageArgs& args);
 		void onPostSimulate(I4MessageArgs& args);
 
 	private:
-		void btTransform2objectTM(I4Matrix4x4& matWorldTM);
-		void objectTM2btTransform(btTransform& transform);
+		void WorldTM2PxTransform(PxTransform& transform);
+		void PxTransform2WorldTM(I4Matrix4x4& matWorldTM);
+
 	private:
 		I4Matrix4x4			matOffset;
-		btRigidBody*		body;
+		PxRigidDynamic*		body;
 	};
 }

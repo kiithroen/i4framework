@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../i4core;../i4graphics;../i4object;../dependency/bullet/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../i4graphics;../i4object;../dependency/PhysX/Include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -63,8 +63,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>i4core_d.lib;i4graphics_d.lib;i4object_d.lib;BulletCollision_vs2012_debug.lib;BulletDynamics_vs2012_debug.lib;LinearMath_vs2012_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../lib;../dependency/bullet/lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>i4core_d.lib;i4graphics_d.lib;i4object_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;../dependency/bullet/lib;../dependency/PhysX/Lib/win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -76,7 +76,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../i4core;../i4graphics;../i4object;../dependency/bullet/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../i4core;../i4graphics;../i4object;../dependency/PhysX/Include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -85,8 +85,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>i4core.lib;i4graphics.lib;i4object.lib;BulletCollision_vs2012.lib;BulletDynamics_vs2012.lib;LinearMath_vs2012.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../lib;../dependency/bullet/lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>i4core.lib;i4graphics.lib;i4object.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;../dependency/bullet/lib;;../dependency/PhysX/Lib/win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

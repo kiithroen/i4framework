@@ -19,7 +19,7 @@ namespace i4object
 	}
 
 
-	void I4BulletDebugDraw::drawLine(const btVector3& from,const btVector3& to,const btVector3& color)
+	void I4BulletDebugDraw::drawLine(const I4Vector3& from,const I4Vector3& to,const I4Vector3& color)
 	{
 		I4DebugLine line;
 		line.p0 = I4Vector3(from.x(), from.y(), from.z());
@@ -35,7 +35,7 @@ namespace i4object
 		debugMode = _debugMode;
 	}
 
-	void I4BulletDebugDraw::draw3dText(const btVector3& location,const char* textString)
+	void I4BulletDebugDraw::draw3dText(const I4Vector3& location,const char* textString)
 	{
 	}
 
@@ -44,10 +44,10 @@ namespace i4object
 		I4LOG_WARN << warningString;
 	}
 
-	void I4BulletDebugDraw::drawContactPoint(const btVector3& pointOnB,const btVector3& normalOnB,btScalar distance,int lifeTime,const btVector3& color)
+	void I4BulletDebugDraw::drawContactPoint(const I4Vector3& pointOnB,const I4Vector3& normalOnB,float distance,int lifeTime,const I4Vector3& color)
 	{
-		btVector3 to=pointOnB+normalOnB*1;//distance;
-		const btVector3&from = pointOnB;
+		I4Vector3 to=pointOnB+normalOnB*1;//distance;
+		const I4Vector3&from = pointOnB;
 		drawLine(from, to, color);
 	}
 

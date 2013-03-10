@@ -110,28 +110,15 @@ namespace i4core {
 		elapsedSec += dt;
 		if (elapsedSec >= TIMING)
 		{
-			if (elapsedSec < TIMING*6)	// 정상적인 루프 속도라 볼수 있는 경우 고정프레임 업데이트
+			while (elapsedSec >= TIMING)
 			{
-				while (elapsedSec >= TIMING)
-				{
-					elapsedSec -= TIMING;
+				elapsedSec -= TIMING;
 
-					if (frameCallback)
-					{
-						if (frameCallback->onUpdate(TIMING) == false)
-							return false;
-					}
-				}
-			}
-			else // 로딩이라던지 너무 큰 병목이 생긴 경우나 너무 느린 컴퓨터에서는 가변프레임 업데이트.
-			{
 				if (frameCallback)
 				{
-					if (frameCallback->onUpdate(elapsedSec) == false)
+					if (frameCallback->onUpdate(TIMING) == false)
 						return false;
 				}
-
-				elapsedSec = 0;
 			}
 		}
 		else

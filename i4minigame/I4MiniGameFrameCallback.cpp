@@ -8,7 +8,7 @@
 #include "I4ProfileWriterLog.h"
 #include "I4Model.h"
 #include "I4ModelMgr.h"
-#include "I4BulletPhysics.h"
+#include "I4PhysXMgr.h"
 #include "I4ObjectMgr.h"
 #include "i4ObjectNode.h"
 #include "I4ObjectViewComponent.h"
@@ -17,14 +17,14 @@
 #include "I4Messenger.h"
 #include "I4ObjectFlyControllerComponent.h"
 #include "I4ObjectStaticCameraComponent.h"
-#include "I4ObjectCharacterControllerComponent.h"
+//#include "I4ObjectCharacterControllerComponent.h"
 
 using namespace i4core;
 
 I4MiniGameFrameCallback::I4MiniGameFrameCallback()
 : objectMgr(nullptr)
 , renderer(nullptr)
-, bulletPhysics(nullptr)
+, physXMgr(nullptr)
 , player(nullptr)
 {
 }
@@ -43,18 +43,15 @@ bool I4MiniGameFrameCallback::onStart()
 	renderer->getMainCamera().setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
 
 	modelMgr = new I4ModelMgr;
-	bulletPhysics = new I4BulletPhysics;
-	if (bulletPhysics->init(renderer) == false)
+	physXMgr = new I4PhysXMgr;
+	if (physXMgr->init() == false)
 		return false;
 
 	objectMgr = new I4ObjectMgr;
-	if (objectMgr->init(renderer, modelMgr, bulletPhysics) == false)
+	if (objectMgr->init(renderer, modelMgr, physXMgr) == false)
 		return false;
 	
 	framework->moveMouseCenter();
-
-	I4ObjectNode* test = objectMgr->createNode("test");
-	test->addComponent<I4ObjectCharacterControllerComponent>();
 
 	spectator =  objectMgr->createNode("spectator");
 	spectator->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
@@ -66,14 +63,13 @@ bool I4MiniGameFrameCallback::onStart()
 
 	player =  objectMgr->createNode("player");
 	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-
+	
 	I4ObjectRigidBodyComponent* playerRigid = player->addComponent<I4ObjectRigidBodyComponent>();
 	I4Matrix4x4 offset;
 	offset.makeTranslation(0, -0.9f, 0);
 	playerRigid->setOffset(offset);
-	playerRigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
-	playerRigid->setKinematic(true);
-
+	playerRigid->attachCapsule(0.3f, 0.7f, 1, true);
+	
 	I4ObjectFlyControllerComponent* playerController = player->addComponent<I4ObjectFlyControllerComponent>();
 	playerController->activate(true);
 
@@ -85,11 +81,7 @@ bool I4MiniGameFrameCallback::onStart()
 	I4ObjectViewComponent* viewFloor = nodeFloor->addComponent<I4ObjectViewComponent>();
 	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 
-	btTransform t;
-	t.setIdentity();
-	t.setOrigin(btVector3(0, -50, 0));
-	btRigidBody* body = bulletPhysics->createBox(t, btVector3(50, 50, 50), 0, 1, 0.5f, 0.1f, 0.1f);
-	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+	physXMgr->createPlane();
 	
 	I4Vector3 lightPointColor[] =
 	{
@@ -133,7 +125,7 @@ bool I4MiniGameFrameCallback::onStart()
 				I4Matrix4x4 offset;
 				offset.makeTranslation(0, -0.85f, 0);
 				rigid->setOffset(offset);
-				rigid->attachCapsule(0.4f, 0.9f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+				rigid->attachCapsule(0.4f, 0.9f, 1, false);
 			}
 			else if (i%3 == 1)
 			{
@@ -146,7 +138,7 @@ bool I4MiniGameFrameCallback::onStart()
 				I4Matrix4x4 offset;
 				offset.makeTranslation(0, -0.65f, 0);
 				rigid->setOffset(offset);
-				rigid->attachCapsule(0.3f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+				rigid->attachCapsule(0.3f, 0.7f, 1, false);
 			}
 			else
 			{
@@ -156,7 +148,7 @@ bool I4MiniGameFrameCallback::onStart()
 				I4Matrix4x4 offset;
 				offset.makeTranslation(0, -0.55f, 0.1f);
 				rigid->setOffset(offset);
-				rigid->attachCapsule(0.2f, 0.7f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+				rigid->attachCapsule(0.2f, 0.7f, 1, false);
 			}
 
 			char lightName[256] = {0, };
@@ -183,7 +175,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 void I4MiniGameFrameCallback::onEnd()
 {
-	delete bulletPhysics;
+	delete physXMgr;
 	delete modelMgr;
 	delete renderer;
 	delete objectMgr;
@@ -200,7 +192,7 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	preSimulateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onPreSimulate"), preSimulateArgs);
 
-	bulletPhysics->simulate(dt);
+	physXMgr->simulate(dt);
 
 	I4MessageArgs postSimulateArgs;
 	postSimulateArgs.push_back(dt);
@@ -268,11 +260,6 @@ bool I4MiniGameFrameCallback::onRender(float dt)
 	I4MessageArgs renderArgs;
 	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
 
-	if (renderer->isDebugMode())
-	{
-		bulletPhysics->debugDraw();
-	}
-
 	renderer->render();
 
 	return true;
@@ -327,17 +314,17 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 				I4ObjectViewComponent* view = nodePhysics->addComponent<I4ObjectViewComponent>();
 				view->attachModel(name, "testmodel/box", true, false, false);
 				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-				rigid->attachBox(btVector3(0.1f, 0.1f, 0.1f), 1, 0.3f, 0.5f, 0.1f, 0.5f);
+				rigid->attachBox(I4Vector3(0.1f, 0.1f, 0.1f), 1, false);
 			}
 			else if (i%3 == 1)
 			{
 				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-				rigid->attachSphere(0.1f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+				rigid->attachSphere(0.1f, 1, false);
 			}
 			else if (i%3 == 2)
 			{
 				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
-				rigid->attachCapsule(0.3f, 1.0f, 1, 0.3f, 0.5f, 0.1f, 0.5f);
+				rigid->attachCapsule(0.3f, 1.0f, 1, false);
 			}
 
 			i++;
