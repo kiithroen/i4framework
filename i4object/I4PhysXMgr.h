@@ -5,11 +5,28 @@
 using namespace physx;
 
 #include "I4Vector3.h"
+#include "I4Vector4.h"
 #include "I4Matrix4x4.h"
 using namespace i4core;
 
+namespace i4graphics
+{
+	class I4Renderer;
+}
+using namespace i4graphics;
+
 namespace i4object
 {
+	inline void convertToI4Color(I4Vector4& color, const PxU32 rgba)
+	{
+		const float inv255 = 1.0f / 255.0f;
+
+		color.b = (float)((rgba>>16) & 0xff)*inv255;
+		color.g = (float)((rgba>>8)  & 0xff)*inv255;
+		color.r = (float)((rgba)     & 0xff)*inv255;
+		color.a = 1.0f;
+	}
+
 	inline void convertToI4Vector3(I4Vector3& out, const PxVec3& vec)
 	{
 		out.x = vec.x;
@@ -74,6 +91,7 @@ namespace i4object
 		void destroy();
 
 		void simulate(PxReal dt);
+		void debugRender(I4Renderer* renderer);
 
 		PxActor* createPlane();
 		PxRigidDynamic* createBox(const PxTransform& transform, const I4Vector3& ext, float density);

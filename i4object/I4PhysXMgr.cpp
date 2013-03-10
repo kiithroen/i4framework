@@ -2,6 +2,7 @@
 #include "I4PhysXMgr.h"
 #include "I4Log.h"
 #include "I4Profile.h"
+#include "I4Renderer.h"
 using namespace i4core;
 
 //#define PHYSX_PROFILE
@@ -161,6 +162,11 @@ namespace i4object
 			I4LOG_ERROR << "createScene failed!";
 			return false;
 		}
+
+		mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_STATIC, 1.0f);
+		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_COMPOUNDS, 1.0f);
 
 		mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.1f);    //static friction, dynamic friction, restitution
 		if(!mMaterial)
@@ -359,5 +365,56 @@ namespace i4object
 		if (theConnection)
 			theConnection->release();
 	}
-	
+
+	void I4PhysXMgr::debugRender(I4Renderer* renderer)
+	{
+		const PxDebugLine* lines = mScene->getRenderBuffer().getLines();
+		PxU32 numLine = mScene->getRenderBuffer().getNbLines();
+		for (PxU32 i = 0; i < numLine; ++i)
+		{
+			I4DebugLine l;
+			l.life = -1;
+
+			convertToI4Vector3(l.p0, lines[i].pos0);
+			convertToI4Vector3(l.p1, lines[i].pos1);
+			convertToI4Color(l.color0, lines[i].color0);
+			convertToI4Color(l.color1, lines[i].color1);
+			
+			renderer->commit(l);
+		}
+
+		const PxDebugTriangle* triangles = mScene->getRenderBuffer().getTriangles();
+		PxU32 numTriangle = mScene->getRenderBuffer().getNbTriangles();
+		for (PxU32 i = 0; i < numTriangle; ++i)
+		{
+			I4DebugLine l;
+			l.life = -1;
+
+			convertToI4Vector3(l.p0, triangles[i].pos0);
+			convertToI4Vector3(l.p1, triangles[i].pos1);
+			convertToI4Color(l.color0, triangles[i].color0);
+			convertToI4Color(l.color1, triangles[i].color1);
+
+			renderer->commit(l);
+
+			convertToI4Vector3(l.p0, triangles[i].pos1);
+			convertToI4Vector3(l.p1, triangles[i].pos2);
+			convertToI4Color(l.color0, triangles[i].color1);
+			convertToI4Color(l.color1, triangles[i].color2);
+
+			renderer->commit(l);
+
+			convertToI4Vector3(l.p0, triangles[i].pos2);
+			convertToI4Vector3(l.p1, triangles[i].pos0);
+			convertToI4Color(l.color0, triangles[i].color2);
+			convertToI4Color(l.color1, triangles[i].color0);
+
+			renderer->commit(l);
+		}
+
+
+		// point 는 필요가 없어서 생략. 혹시 중요한 정보가 생기면 그때 구현하도록 한다.
+	}
+
+
 }

@@ -20,7 +20,8 @@ namespace i4object {
 	{
 		getBroadcastMessenger().subscribe(I4Hash("onPreSimulate"), this, bind(&I4ObjectCharacterComponent::onPreSimulate, this, _1));
 
-		gravity = PxVec3(0, -9.8f, 0);
+		velocity = PxVec3(0, 0, 0.1f);
+		gravity = PxVec3(0.0, -9.8f, 0.0);
 	}
 
 	void I4ObjectCharacterComponent::onRemove()
@@ -40,7 +41,8 @@ namespace i4object {
 		I4PROFILE_THISFUNC;
 
 		float dt = args[0].asFloat();
-		const PxVec3 dist = gravity*dt;
+		PxVec3 dist = velocity*dt;
+		dist += gravity*dt;
 		const PxU32 flag = controller->move(dist, 0.001f, dt, PxControllerFilters());
 
 		const PxExtendedVec3 p = controller->getFootPosition();

@@ -69,7 +69,7 @@ bool I4MiniGameFrameCallback::onStart()
 	view->attachModel("player", "testmodel/elin", true, true, false);
 
 	I4ObjectCharacterComponent* playerCharacter = player->addComponent<I4ObjectCharacterComponent>();
-	playerCharacter->attach(0.3f, 1.4f, cos(I4MathUtil::degreeToRadian(70)), 0.2f);
+	playerCharacter->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.2f);
 	
 	I4ObjectStaticCameraComponent* playerCamera = player->addComponent<I4ObjectStaticCameraComponent>();
 	playerCamera->setMainCamera(true);
@@ -260,6 +260,10 @@ bool I4MiniGameFrameCallback::onRender(float dt)
 
 	renderer->render();
 
+	if (renderer->isDebugMode())
+	{
+		physXMgr->debugRender(renderer);
+	}
 	return true;
 }
 
