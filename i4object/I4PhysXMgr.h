@@ -79,6 +79,7 @@ namespace i4object
 		PxRigidDynamic* createBox(const PxTransform& transform, const I4Vector3& ext, float density);
 		PxRigidDynamic* createSphere(const PxTransform& transform, float radius, float density);
 		PxRigidDynamic* createCapsule(const PxTransform& transform, float radius, float height, float density);
+		PxController* createCapsuleController(const I4Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
 
 	private:
 		void togglePvdConnection();
@@ -96,6 +97,8 @@ namespace i4object
 		pxtask::CudaContextManager*		mCudaContextManager;
 #endif
 		I4PvdConnectionHandler*			mPvdConnectionHandler;
+		PxControllerManager*			mControllerManager;
+		float							mAccumulator;
 	};
 }
 

@@ -49,6 +49,9 @@
     <ClInclude Include="I4PhysXMgr.h">
       <Filter>physx</Filter>
     </ClInclude>
+    <ClInclude Include="I4ObjectCharacterComponent.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="I4ObjectMgr.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="I4PhysXMgr.cpp">
       <Filter>physx</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ObjectCharacterComponent.cpp">
+      <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

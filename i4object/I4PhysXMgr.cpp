@@ -12,6 +12,7 @@ using namespace i4core;
 #pragma comment(lib, "PhysX3CommonDEBUG_x86.lib")
 #pragma comment(lib, "PhysX3ExtensionsDEBUG.lib")
 #pragma comment(lib, "PhysX3CookingDEBUG_x86.lib")
+#pragma comment(lib, "PhysX3CharacterKinematicDEBUG_x86.lib")
 #pragma comment(lib, "PhysXProfileSDKDEBUG.lib")
 #pragma comment(lib, "PhysXVisualDebuggerSDKDEBUG.lib")
 #pragma comment(lib, "PxTaskDEBUG.lib")
@@ -24,6 +25,7 @@ using namespace i4core;
 #pragma comment(lib, "PhysX3CommonPROFILE_x86.lib")
 #pragma comment(lib, "PhysX3ExtensionsPROFILE.lib")
 #pragma comment(lib, "PhysX3CookingPROFILE_x86.lib")
+#pragma comment(lib, "PhysX3CharacterKinematicPROFILE_x86.lib")
 #pragma comment(lib, "PhysXProfileSDKPROFILE.lib")
 #pragma comment(lib, "PhysXVisualDebuggerSDKPROFILE.lib")
 #pragma comment(lib, "PxTaskPROFILE.lib")
@@ -34,6 +36,7 @@ using namespace i4core;
 #pragma comment(lib, "PhysX3Common_x86.lib")
 #pragma comment(lib, "PhysX3Extensions.lib")
 #pragma comment(lib, "PhysX3Cooking_x86.lib")
+#pragma comment(lib, "PhysX3CharacterKinematic_x86.lib")
 #pragma comment(lib, "PhysXProfileSDK.lib")
 #pragma comment(lib, "PhysXVisualDebuggerSDK.lib")
 #pragma comment(lib, "PxTask.lib")
@@ -59,6 +62,11 @@ namespace i4object
 		, mCooking(nullptr)
 		, mScene(nullptr)
 		, mMaterial(nullptr)
+		, mCpuDispatcher(nullptr)
+		, mCudaContextManager(nullptr)
+		, mPvdConnectionHandler(nullptr)
+		, mControllerManager(nullptr)
+		, mAccumulator(0)
 	{
 	}
 
@@ -161,11 +169,19 @@ namespace i4object
 			return false;
 		};
 
+		mControllerManager = PxCreateControllerManager(*mFoundation);
+
 		return true;
 	}
 
 	void I4PhysXMgr::destroy()
 	{
+		if (mControllerManager)
+		{
+			mControllerManager->release();
+			mControllerManager = nullptr;
+		}
+
 		if (mScene)
 		{
 			mScene->release();
@@ -218,7 +234,15 @@ namespace i4object
 	{
 		I4PROFILE_THISFUNC;
 
-		mScene->simulate(dt);
+		const float STEP_SIZE = 1.0f/60.0f;
+
+		mAccumulator  += dt;
+		if(mAccumulator < STEP_SIZE)
+			return;
+
+		mAccumulator -= STEP_SIZE;
+
+		mScene->simulate(STEP_SIZE);
 
 		while (!mScene->fetchResults())
 		{
@@ -253,7 +277,7 @@ namespace i4object
 		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxBoxGeometry(PxVec3(ext.x, ext.y, ext.z)), *mMaterial, density);
 		if (!actor)
 		{
-			I4LOG_WARN << "create actor failed!";
+			I4LOG_WARN << "create box failed!";
 		}
 
 		mScene->addActor(*actor);
@@ -268,7 +292,7 @@ namespace i4object
 		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxSphereGeometry(radius), *mMaterial, density);
 		if (!actor)
 		{
-			I4LOG_WARN << "create actor failed!";
+			I4LOG_WARN << "create sphere failed!";
 		}
 
 		mScene->addActor(*actor);
@@ -282,12 +306,34 @@ namespace i4object
 		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxCapsuleGeometry(radius, height*0.5f), *mMaterial, density, PxTransform(PxQuat(I4PI/2, PxVec3(0, 0, 1))));
 		if (!actor)
 		{
-			I4LOG_WARN << "create actor failed!";
+			I4LOG_WARN << "create capsule failed!";
 		}
 
 		mScene->addActor(*actor);
 
 		return actor;
+	}
+
+	PxController* I4PhysXMgr::createCapsuleController(const I4Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback)
+	{
+		PxCapsuleControllerDesc desc;		
+		desc.setToDefault();
+		desc.radius = radius;
+		desc.height = height;
+		desc.position.set(p.x, p.y, p.z);
+		desc.slopeLimit = slopeLimit;
+		desc.stepOffset = stepOffset;
+		desc.material = mMaterial;
+		desc.callback = hitCallback;
+		desc.behaviorCallback = behaviorCallback;
+
+		PxController* c = mControllerManager->createController(*mPhysics, mScene, desc);
+		if (!c)
+		{
+			I4LOG_WARN << "create controller failed!";
+		}
+
+		return c;
 	}
 
 	void I4PhysXMgr::togglePvdConnection()
@@ -304,7 +350,7 @@ namespace i4object
 		if(mPhysics->getPvdConnectionManager() == NULL)
 			return;
 
-		PxVisualDebuggerConnectionFlags theConnectionFlags( PxVisualDebuggerExt::getAllConnectionFlags() );
+		PxVisualDebuggerConnectionFlags theConnectionFlags( PxVisualDebuggerExt::getDefaultConnectionFlags() );
 
 		const char* pvdHost = "127.0.0.1";
 		PxU32 pvdPort = 5425;

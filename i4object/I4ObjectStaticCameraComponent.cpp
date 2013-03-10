@@ -9,8 +9,6 @@ namespace i4object
 {
 
 	I4ObjectStaticCameraComponent::I4ObjectStaticCameraComponent(void)
-		: offset(I4VECTOR3_ZERO)
-		, isMainCamera(false)
 	{
 	}
 
@@ -44,7 +42,6 @@ namespace i4object
 	void I4ObjectStaticCameraComponent::onReadyToRender(I4MessageArgs& args)
 	{
 		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
-		matTarget.addTranslation(offset);
 
 		I4Matrix4x4 matCamView;
 		matTarget.extractInversePrimitive(matCamView);

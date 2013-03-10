@@ -17,7 +17,7 @@
 #include "I4Messenger.h"
 #include "I4ObjectFlyControllerComponent.h"
 #include "I4ObjectStaticCameraComponent.h"
-//#include "I4ObjectCharacterControllerComponent.h"
+#include "I4ObjectCharacterComponent.h"
 
 using namespace i4core;
 
@@ -62,17 +62,15 @@ bool I4MiniGameFrameCallback::onStart()
 	spectatorCamera->setMainCamera(false);
 
 	player =  objectMgr->createNode("player");
-	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-	
-	I4ObjectRigidBodyComponent* playerRigid = player->addComponent<I4ObjectRigidBodyComponent>();
-	I4Matrix4x4 offset;
-	offset.makeTranslation(0, -0.9f, 0);
-	playerRigid->setOffset(offset);
-	playerRigid->attachCapsule(0.3f, 0.7f, 1, true);
-	
-	I4ObjectFlyControllerComponent* playerController = player->addComponent<I4ObjectFlyControllerComponent>();
-	playerController->activate(true);
+	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	player->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
 
+	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
+	view->attachModel("player", "testmodel/elin", true, true, false);
+
+	I4ObjectCharacterComponent* playerCharacter = player->addComponent<I4ObjectCharacterComponent>();
+	playerCharacter->attach(0.3f, 1.4f, cos(I4MathUtil::degreeToRadian(70)), 0.2f);
+	
 	I4ObjectStaticCameraComponent* playerCamera = player->addComponent<I4ObjectStaticCameraComponent>();
 	playerCamera->setMainCamera(true);
 
@@ -285,8 +283,7 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 
 				isFree = !isFree;
 
-				I4ObjectFlyControllerComponent* playerController = player->findComponent<I4ObjectFlyControllerComponent>();
-				playerController->activate(!isFree);
+				I4ObjectCharacterComponent* playerController = player->findComponent<I4ObjectCharacterComponent>();
 
 				I4ObjectStaticCameraComponent* playerCam = player->findComponent<I4ObjectStaticCameraComponent>();
 				playerCam->setMainCamera(!isFree);

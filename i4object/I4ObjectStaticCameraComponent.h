@@ -24,12 +24,10 @@ namespace i4object
 		virtual void		onRemove() override;
 
 		void setMainCamera(bool isMain);
-		void setOffset(const I4Vector3& _offset)		{ offset = _offset; }
 
 		void onReadyToRender(I4MessageArgs& args);
 
 	private:
-		I4Vector3	offset;
 		bool		isMainCamera;
 	};
 
