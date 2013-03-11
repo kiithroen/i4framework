@@ -109,6 +109,9 @@
     <ClInclude Include="I4TriangleMesh.h">
       <Filter>renderer</Filter>
     </ClInclude>
+    <ClInclude Include="I4LineBatch.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="i4graphics.cpp" />
@@ -174,6 +177,9 @@
       <Filter>renderer</Filter>
     </ClCompile>
     <ClCompile Include="I4TriangleMesh.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="I4LineBatch.cpp">
       <Filter>renderer</Filter>
     </ClCompile>
   </ItemGroup>

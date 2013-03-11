@@ -125,11 +125,11 @@ namespace i4object
 			return false;
 		}
 
-		togglePvdConnection();
-
-		mPvdConnectionHandler = new I4PvdConnectionHandler(mPhysics);
 		if(mPhysics->getPvdConnectionManager())
+		{
+			mPvdConnectionHandler = new I4PvdConnectionHandler(mPhysics);
 			mPhysics->getPvdConnectionManager()->addHandler(*mPvdConnectionHandler);
+		}
 
 		PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
 		sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
@@ -162,12 +162,7 @@ namespace i4object
 			I4LOG_ERROR << "createScene failed!";
 			return false;
 		}
-
-		mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
-		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
-		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_STATIC, 1.0f);
-		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_COMPOUNDS, 1.0f);
-
+				
 		mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.1f);    //static friction, dynamic friction, restitution
 		if(!mMaterial)
 		{
@@ -240,15 +235,7 @@ namespace i4object
 	{
 		I4PROFILE_THISFUNC;
 
-		const float STEP_SIZE = 1.0f/60.0f;
-
-		mAccumulator  += dt;
-		if(mAccumulator < STEP_SIZE)
-			return;
-
-		mAccumulator -= STEP_SIZE;
-
-		mScene->simulate(STEP_SIZE);
+		mScene->simulate(dt);
 
 		while (!mScene->fetchResults())
 		{
@@ -342,13 +329,24 @@ namespace i4object
 		return c;
 	}
 
-	void I4PhysXMgr::togglePvdConnection()
+	void I4PhysXMgr::togglePvdConnection(bool enable)
 	{
 		if(!mPhysics->getPvdConnectionManager()) return;
-		if (mPhysics->getPvdConnectionManager()->isConnected())
-			mPhysics->getPvdConnectionManager()->disconnect();
+
+		if (enable)
+		{
+			if (mPhysics->getPvdConnectionManager()->isConnected() == false)
+			{
+				createPvdConnection();
+			}
+		}
 		else
-			createPvdConnection();
+		{
+			if (mPhysics->getPvdConnectionManager()->isConnected())
+			{
+				mPhysics->getPvdConnectionManager()->disconnect();
+			}
+		}
 	}
 
 	void I4PhysXMgr::createPvdConnection()
@@ -368,52 +366,64 @@ namespace i4object
 
 	void I4PhysXMgr::debugRender(I4Renderer* renderer)
 	{
+		I4PROFILE_THISFUNC;
+
+		I4Vector3 p0;
+		I4Vector3 p1;
+		I4Vector4 color;
+
 		const PxDebugLine* lines = mScene->getRenderBuffer().getLines();
 		PxU32 numLine = mScene->getRenderBuffer().getNbLines();
+				
 		for (PxU32 i = 0; i < numLine; ++i)
 		{
-			I4DebugLine l;
-			l.life = -1;
+			convertToI4Color(color, lines[i].color0);
 
-			convertToI4Vector3(l.p0, lines[i].pos0);
-			convertToI4Vector3(l.p1, lines[i].pos1);
-			convertToI4Color(l.color0, lines[i].color0);
-			convertToI4Color(l.color1, lines[i].color1);
+			convertToI4Vector3(p0, lines[i].pos0);
+			convertToI4Vector3(p1, lines[i].pos1);
 			
-			renderer->commit(l);
+			renderer->debugLine(p0, p1, color);
 		}
 
 		const PxDebugTriangle* triangles = mScene->getRenderBuffer().getTriangles();
 		PxU32 numTriangle = mScene->getRenderBuffer().getNbTriangles();
 		for (PxU32 i = 0; i < numTriangle; ++i)
 		{
-			I4DebugLine l;
-			l.life = -1;
+			convertToI4Color(color, triangles[i].color0);
 
-			convertToI4Vector3(l.p0, triangles[i].pos0);
-			convertToI4Vector3(l.p1, triangles[i].pos1);
-			convertToI4Color(l.color0, triangles[i].color0);
-			convertToI4Color(l.color1, triangles[i].color1);
+			convertToI4Vector3(p0, triangles[i].pos0);
+			convertToI4Vector3(p1, triangles[i].pos1);
 
-			renderer->commit(l);
+			renderer->debugLine(p0, p1, color);
 
-			convertToI4Vector3(l.p0, triangles[i].pos1);
-			convertToI4Vector3(l.p1, triangles[i].pos2);
-			convertToI4Color(l.color0, triangles[i].color1);
-			convertToI4Color(l.color1, triangles[i].color2);
+			convertToI4Vector3(p0, triangles[i].pos1);
+			convertToI4Vector3(p1, triangles[i].pos2);
 
-			renderer->commit(l);
+			renderer->debugLine(p0, p1, color);
 
-			convertToI4Vector3(l.p0, triangles[i].pos2);
-			convertToI4Vector3(l.p1, triangles[i].pos0);
-			convertToI4Color(l.color0, triangles[i].color2);
-			convertToI4Color(l.color1, triangles[i].color0);
+			convertToI4Vector3(p0, triangles[i].pos2);
+			convertToI4Vector3(p1, triangles[i].pos0);
 
-			renderer->commit(l);
+			renderer->debugLine(p0, p1, color);
+		}
+		
+		// point 는 필요가 없어서 미구현. 혹시 중요한 정보가 생기면 그때 구현하도록 한다.
+	}
+
+	void I4PhysXMgr::setDebugMode(bool enable)
+	{
+		float val = 0.0f;
+		if (enable)
+		{
+			val = 1.0f;
 		}
 
-
-		// point 는 필요가 없어서 생략. 혹시 중요한 정보가 생기면 그때 구현하도록 한다.
+		mScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, val);
+		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, val);
+		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_STATIC, val);
+		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_COMPOUNDS, val);
+		
+		togglePvdConnection(enable);
 	}
 
 

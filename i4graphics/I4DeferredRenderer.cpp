@@ -12,7 +12,7 @@
 #include "I4Log.h"
 #include "I4Profile.h"
 #include "I4TextureMgr.h"
-#include "I4LineMesh.h"
+#include "I4LineBatch.h"
 #include "I4FrameTimer.h"
 
 namespace i4graphics
@@ -245,14 +245,15 @@ namespace i4graphics
 		if (cbEachFrame_Line.create() == false)
 			return false;
 
-		lineDebugMesh = new I4LineMesh;
+		debugLineBatch = new I4LineBatch;
+		debugLineBatch->create(2048*100);
 
 		return true;
 	}
 
 	void I4DeferredRenderer::finalize()
 	{
-		delete lineDebugMesh;
+		delete debugLineBatch;
 		delete pointLightMesh;
 		delete screenQuadMesh;
 		delete rtShadow;
@@ -284,11 +285,11 @@ namespace i4graphics
 		vecScenePointLight.push_back(*light);
 	}
 
-	void I4DeferredRenderer::commit(const I4DebugLine& line)
+	void I4DeferredRenderer::debugLine(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)
 	{
 		if (debugMode)
 		{
-			vecDebugLine.push_back(line);
+			debugLineBatch->add(p0, p1, color);
 		}
 	}
 
@@ -847,52 +848,16 @@ namespace i4graphics
 		videoDriver->resetBackBufferRenderTarget(true);
 //		videoDriver->setDepthStencilMode(I4DEPTH_OFF_STENCIL_OFF);
 
-		if (vecDebugLine.size() > 0)
-		{
-			// 어차피 디버깅용이니까 메모리 계속 먹고 버퍼 갱신하느라 복잡해지는것보단 매번 지우고 생성하도록 한다.
-			// 디버깅할게 너무 많아져서 병목이 심해져서 너무 느려지면 수정해보도록 하자.
-			if (lineDebugMesh->vertexBuffer)
-			{
-				delete lineDebugMesh->vertexBuffer;
-			}
 
-			lineDebugMesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			lineDebugMesh->vertexBuffer->create(vecDebugLine.size()*2, sizeof(I4Vertex_Pos_Col));
+		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
+		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
 
-			I4Vertex_Pos_Col* vertices;
-			lineDebugMesh->vertexBuffer->lock((void**)&vertices);
+		cbEachFrame_Line.getData()->viewProjection = mainCamera.getViewProjectionMatrix();
+		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
 
-			float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
-			for (auto& itr : vecDebugLine)
-			{
-				vertices->pos = itr.p0;
-				vertices->color = itr.color0;
+		debugLineBatch->draw();
 
-				++vertices;
-
-				vertices->pos = itr.p1;
-				vertices->color = itr.color1;
-
-				++vertices;
-
-				itr.life -= dt;
-			}
-			lineDebugMesh->vertexBuffer->unlock();
-
-			// 라이프가 없어진 애들 지운다.
-			vecDebugLine.erase(remove_if(vecDebugLine.begin(), vecDebugLine.end(), [](const I4DebugLine& l) { return l.life < 0; }), vecDebugLine.end());
-
-			I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
-			shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
-
-			cbEachFrame_Line.getData()->viewProjection = mainCamera.getViewProjectionMatrix();
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
-			lineDebugMesh->bind();
-			lineDebugMesh->draw();
-			lineDebugMesh->unbind();
-
-			shaderMgr->end();
-		}
+		shaderMgr->end();
 
 //		videoDriver->setDepthStencilMode(I4DEPTH_LESS_STENCIL_OFF);
 	}

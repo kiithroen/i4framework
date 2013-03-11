@@ -18,7 +18,7 @@ namespace i4graphics
 	class I4Model;
 	class I4ModelMgr;
 	class I4TriangleMesh;
-	class I4LineMesh;
+	class I4LineBatch;
 	struct I4Material;
 
 	__declspec(align(16))
@@ -180,7 +180,8 @@ namespace i4graphics
 		virtual void				commit(const I4MeshRenderItem& item) override;
 		virtual void				commit(I4DirectionalLight* light) override;
 		virtual void				commit(I4PointLight* light) override;
-		virtual void				commit(const I4DebugLine& line) override;
+
+		virtual void				debugLine(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color) override;
 
 		virtual void				render() override;
 
@@ -253,8 +254,7 @@ namespace i4graphics
 		I4Camera	directionalLightPerspectiveCamera;
 		I4Camera	directionalLightSplitOrthoCamera[4];
 
-		vector<I4DebugLine>					vecDebugLine;
-		I4LineMesh*							lineDebugMesh;
+		I4LineBatch*						debugLineBatch;
 		I4CBHolder<CBEachFrame_Line>		cbEachFrame_Line;
 	};
 

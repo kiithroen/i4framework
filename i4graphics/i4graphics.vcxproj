@@ -111,6 +111,7 @@
     <ClInclude Include="I4Format.h" />
     <ClInclude Include="I4GeometryBufferD3D11.h" />
     <ClInclude Include="I4KeyFrameSet.h" />
+    <ClInclude Include="I4LineBatch.h" />
     <ClInclude Include="I4LineMesh.h" />
     <ClInclude Include="I4Material.h" />
     <ClInclude Include="I4Model.h" />
@@ -143,6 +144,7 @@
     <ClCompile Include="I4AnimationTrack.cpp" />
     <ClCompile Include="I4DeferredRenderer.cpp" />
     <ClCompile Include="I4GeometryBufferD3D11.cpp" />
+    <ClCompile Include="I4LineBatch.cpp" />
     <ClCompile Include="I4LineMesh.cpp" />
     <ClCompile Include="I4Model.cpp" />
     <ClCompile Include="I4ModelElement.cpp" />

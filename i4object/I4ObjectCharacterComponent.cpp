@@ -41,11 +41,13 @@ namespace i4object {
 		I4PROFILE_THISFUNC;
 
 		float dt = args[0].asFloat();
-		PxVec3 dist = velocity*dt;
-		dist += gravity*dt;
-		const PxU32 flag = controller->move(dist, 0.001f, dt, PxControllerFilters());
+
+		PxVec3 disp = velocity*dt;
+		disp += gravity*dt;
+
+		const PxU32 flag = controller->move(disp, 0.001f, dt, PxControllerFilters());
 
 		const PxExtendedVec3 p = controller->getFootPosition();
-		getOwner()->setLocalPosition(I4Vector3(p.x, p.y, p.z));
+		getOwner()->setLocalPosition(I4Vector3((float)p.x, (float)p.y, (float)p.z));
 	}
 }

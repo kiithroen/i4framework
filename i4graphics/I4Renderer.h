@@ -67,7 +67,8 @@ namespace i4graphics {
 		virtual void	commit(const I4MeshRenderItem& item)			{}
 		virtual void	commit(I4DirectionalLight* light)				{}
 		virtual void	commit(I4PointLight* light)						{}
-		virtual void	commit(const I4DebugLine& line)					{}
+
+		virtual void	debugLine(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)	{}
 
 		virtual void	render()										{}
 

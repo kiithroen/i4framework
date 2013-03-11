@@ -88,6 +88,9 @@ namespace i4object
 		~I4PhysXMgr(void);
 
 		bool init();
+
+		void setDebugMode(bool enable);
+
 		void destroy();
 
 		void simulate(PxReal dt);
@@ -100,7 +103,7 @@ namespace i4object
 		PxController* createCapsuleController(const I4Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
 
 	private:
-		void togglePvdConnection();
+		void togglePvdConnection(bool enable);
 		void createPvdConnection();
 	private:
 		PxFoundation*					mFoundation;

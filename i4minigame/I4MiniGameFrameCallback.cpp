@@ -258,12 +258,14 @@ bool I4MiniGameFrameCallback::onRender(float dt)
 	I4MessageArgs renderArgs;
 	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
 
-	renderer->render();
 
 	if (renderer->isDebugMode())
 	{
 		physXMgr->debugRender(renderer);
 	}
+
+	renderer->render();
+
 	return true;
 }
 
@@ -276,6 +278,7 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 			if (state.key == VK_F1)
 			{
 				renderer->setDebugMode(!renderer->isDebugMode());
+				physXMgr->setDebugMode(renderer->isDebugMode());
 			}
 			else if (state.key == VK_F2)
 			{
