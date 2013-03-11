@@ -17,16 +17,16 @@ namespace i4core
 		if (depth != 0)
 		{
 			wstring depthStr = L"";
-			for (int i = 0; i < depth; ++i)
+			for (int i = 1; i < depth; ++i)
 			{
-				depthStr += L"\t";
+				depthStr += L"    ";
 			}
 			
 			float nodeTotalTimeSec = node->getTotalTime();
-			float nodePercentPerParent = nodeTotalTimeSec/parentTotalTime*100.0f;
+			float nodePercentPerParent = (nodeTotalTimeSec*100.0f)/parentTotalTime;
 			float nodeTimePerCalls = nodeTotalTimeSec/(float)node->getTotalCalls();
 
-			I4LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f/fps << L"ms/frame : " << nodePercentPerParent << " %/parent : " << nodeTimePerCalls*1000.0f << L" ms/call" << " : " << node->getTotalCalls() << " call";
+			I4LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f/fps << L" ms/frame : " << nodePercentPerParent << " %/parent : " << nodeTimePerCalls*1000.0f << L" ms/call" << " : " << node->getTotalCalls() << " call";
 		}
 
 		I4ProfileNode* child = nullptr;

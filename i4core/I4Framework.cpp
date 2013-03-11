@@ -4,6 +4,8 @@
 #include "I4FrameCallback.h"
 #include "I4FrameTimer.h"
 #include "I4StopWatch.h"
+#include "I4Profile.h"
+#include "I4ProfileWriterLog.h"
 
 #ifdef _WIN32
 #include "I4FrameworkWin.h"
@@ -80,6 +82,9 @@ namespace i4core {
 		while (onRun())
 		{
 			float dt = I4FrameTimer::getFrameTimer()->update();
+			if (mainLoop(dt) == false)
+				break;
+
 			elapsedSec += dt;
 			frameCount += 1;
 			if (elapsedSec >= 1.0f)
@@ -88,10 +93,12 @@ namespace i4core {
 
 				elapsedSec = 0;
 				frameCount = 0;
-			}
 
-			if (mainLoop(dt) == false)
-				break;
+				I4ProfileWriterLog	writer;
+				writer.write(I4ProfileManager::getRootNode(), fps);
+
+				I4ProfileManager::clear();
+			}
 		}
 
 		if (frameCallback)

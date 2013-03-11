@@ -5,7 +5,6 @@
 #include "I4Camera.h"
 #include "I4Log.h"
 #include "I4Profile.h"
-#include "I4ProfileWriterLog.h"
 #include "I4Model.h"
 #include "I4ModelMgr.h"
 #include "I4PhysXMgr.h"
@@ -252,22 +251,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 	I4MessageArgs postUpdateArgs;
 	postUpdateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onPostUpdate"), postUpdateArgs);
-
-	static float elapsed = 0;
-
-	elapsed += dt;
-
-	if (elapsed >= 1.0f)
-	{
-		float fps = I4Framework::getFramework()->getFps();
-
-		I4ProfileWriterLog	writer;
-		writer.write(I4ProfileManager::getRootNode(), fps);
-
-		elapsed = 0;
-		I4ProfileManager::clear();
-	}
-
+	
 	return true;
 }
 
