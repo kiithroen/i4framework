@@ -3,6 +3,7 @@
 #include "I4Shader.h"
 #include "I4VideoDriver.h"
 #include "I4Log.h"
+#include "I4Profile.h"
 
 namespace i4graphics
 {
@@ -131,6 +132,8 @@ namespace i4graphics
 
 	I4Shader* I4ShaderMgr::createShader(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
+		I4PROFILE_THISFUNC;
+
 		string finalShaderCode = "";
 
 		if (mask & I4SHADER_MASK_TEX_DIFFUSE)

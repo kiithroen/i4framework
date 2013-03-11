@@ -54,7 +54,9 @@ namespace i4object
 
 	void I4ObjectFlyControllerComponent::onPostUpdate(I4MessageArgs& args)
 	{
-		float moveSpeed = 6.0f*args[0].asFloat();
+		float dt = args[0].asFloat();
+
+		float moveSpeed = 6.0f*dt;
 
 		getOwner()->getLocalTM().extractAxisX(right);
 		getOwner()->getLocalTM().extractAxisZ(direction);

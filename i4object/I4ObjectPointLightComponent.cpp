@@ -42,9 +42,11 @@ namespace i4object {
 	{
 		I4PROFILE_THISFUNC;
 
+		float dt = args[0].asFloat();
+
 		if (blinkEnable == true)
 		{
-			blinkElapsedTime += args[0].asFloat();
+			blinkElapsedTime += dt;
 
 			if (isTurnOn)
 			{

@@ -36,8 +36,10 @@ public:
 	virtual	bool	onStart() override;
 	virtual void	onEnd() override;
 
-	virtual bool	onUpdate(float dt) override;	
-	virtual bool	onRender(float dt) override;
+	virtual bool	onSimulate(float dt) override;
+
+	virtual bool	onUpdate() override;
+	virtual bool	onRender() override;
 
 	virtual void	onInput(const I4InputState& state) override;
 

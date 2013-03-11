@@ -16,8 +16,9 @@ namespace i4core
 		virtual	bool	onStart()								{ return true; }
 		virtual void	onEnd()									{}
 
-		virtual bool 	onUpdate(float dt)						{ return true; }
-		virtual bool 	onRender(float dt)						{ return true; }
+		virtual bool 	onSimulate(float dt)				{ return true; }
+		virtual bool	onUpdate()								{ return true; }
+		virtual bool 	onRender()								{ return true; }
 
 		virtual void	onInput(const I4InputState& state)		{}
 	};

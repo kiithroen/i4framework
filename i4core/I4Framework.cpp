@@ -108,6 +108,7 @@ namespace i4core {
 		const float TIMING = 1.0f/60;
 
 		elapsedSec += dt;
+
 		if (elapsedSec >= TIMING)
 		{
 			while (elapsedSec >= TIMING)
@@ -116,7 +117,7 @@ namespace i4core {
 
 				if (frameCallback)
 				{
-					if (frameCallback->onUpdate(TIMING) == false)
+					if (frameCallback->onSimulate(TIMING) == false)
 						return false;
 				}
 			}
@@ -128,7 +129,10 @@ namespace i4core {
 
 		if (frameCallback)
 		{
-			if (frameCallback->onRender(dt) == false)
+			if (frameCallback->onUpdate() == false)
+				return false;
+
+			if (frameCallback->onRender() == false)
 				return false;
 		}
 

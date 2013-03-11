@@ -18,6 +18,7 @@
 #include "I4ObjectFlyControllerComponent.h"
 #include "I4ObjectStaticCameraComponent.h"
 #include "I4ObjectCharacterComponent.h"
+#include "I4FrameTimer.h"
 
 using namespace i4core;
 
@@ -179,12 +180,9 @@ void I4MiniGameFrameCallback::onEnd()
 	delete objectMgr;
 }
 
-bool I4MiniGameFrameCallback::onUpdate(float dt)
+bool I4MiniGameFrameCallback::onSimulate(float dt)
 {
 	I4PROFILE_THISFUNC;
-
-	if (I4InputState::KeyPressed[VK_ESCAPE])
-		return false;
 	
 	I4MessageArgs preSimulateArgs;
 	preSimulateArgs.push_back(dt);
@@ -195,6 +193,16 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	I4MessageArgs postSimulateArgs;
 	postSimulateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
+
+	return true;
+}
+
+bool I4MiniGameFrameCallback::onUpdate()
+{
+	if (I4InputState::KeyPressed[VK_ESCAPE])
+		return false;
+
+	float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
@@ -246,14 +254,16 @@ bool I4MiniGameFrameCallback::onUpdate(float dt)
 	return true;
 }
 
-bool I4MiniGameFrameCallback::onRender(float dt)
+bool I4MiniGameFrameCallback::onRender()
 {	
+	float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
+
 	I4MessageArgs aniArgs;
 	aniArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
 
-	I4MessageArgs prepareRenderArgs;
-	objectMgr->getMessenger().send(I4Hash("onReadyToRender"), prepareRenderArgs);
+	I4MessageArgs readyToRenderArgs;
+	objectMgr->getMessenger().send(I4Hash("onReadyToRender"), readyToRenderArgs);
 
 	I4MessageArgs renderArgs;
 	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
