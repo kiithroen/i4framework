@@ -193,16 +193,16 @@ namespace i4graphics
 	void ModelSkinedMeshGPU::animate(float dt, const I4Matrix4x4& parentTM)
 	{
 		I4ModelMesh::animate(dt, parentTM);
+	}
 
+	void ModelSkinedMeshGPU::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
+	{
 		assert(model->getBoneCount() <= matrixPalette.size());
 		for (unsigned int i = 0; i < model->getBoneCount(); ++i)
 		{
 			matrixPalette[i] = resultTM*model->getSkinTM(i);
 		}
-	}
 
-	void ModelSkinedMeshGPU::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
-	{
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
 		I4MeshRenderItem item;

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "I4PhysXMgr.h"
 #include "I4Log.h"
-#include "I4Profile.h"
 #include "I4Renderer.h"
 using namespace i4core;
 
@@ -233,8 +232,6 @@ namespace i4object
 
 	void I4PhysXMgr::simulate(PxReal dt)
 	{
-		I4PROFILE_THISFUNC;
-
 		mScene->simulate(dt);
 
 		while (!mScene->fetchResults())
@@ -366,8 +363,6 @@ namespace i4object
 
 	void I4PhysXMgr::commitDebugToRenderer(I4Renderer* renderer)
 	{
-		I4PROFILE_THISFUNC;
-
 		I4DebugLine l;
 
 		const PxDebugLine* lines = mScene->getRenderBuffer().getLines();

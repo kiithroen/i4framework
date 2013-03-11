@@ -22,6 +22,7 @@ namespace i4core {
 		, title("Untitled")
 		, width(800)
 		, height(600)
+		, fps(0)
 		, frameCallback(nullptr)
 	{
 		for (int i = 0; i < 256; ++i)
@@ -64,7 +65,6 @@ namespace i4core {
 	{
 		int frameCount = 0;
 		float elapsedSec = 0;
-		float fps = 0;
 
 		if (frameCallback)
 		{
@@ -88,8 +88,6 @@ namespace i4core {
 
 				elapsedSec = 0;
 				frameCount = 0;
-
-				I4LOG_INFO << "fps = " << fps;
 			}
 
 			if (mainLoop(dt) == false)
@@ -166,5 +164,4 @@ namespace i4core {
 		delete framework;
 		framework = nullptr;
 	}
-
 }

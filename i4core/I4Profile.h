@@ -153,6 +153,11 @@ namespace i4core
 	public:
 		static void	begin(const char* name)
 		{
+			if (curNode == &rootNode)
+			{
+				curNode->begin();
+			}
+
 			if (name != curNode->getName())
 			{
 				curNode = curNode->findSubNode(name);
@@ -166,6 +171,11 @@ namespace i4core
 			if (curNode->end())
 			{
 				curNode = curNode->getParent();
+			}
+
+			if (curNode == &rootNode)
+			{
+				curNode->end();
 			}
 		}
 		

@@ -46,6 +46,7 @@ namespace i4core
 		unsigned int		getWidth() const						{ return width; }
 		unsigned int		getHeight() const						{ return height; }
 		bool				isActivated() const						{ return activated; }
+		float				getFps()								{ return fps; }
 
 		virtual void		moveMouseCenter()						{}
 
@@ -63,14 +64,13 @@ namespace i4core
 
 	private:
 		bool				mainLoop(float deltaMs);
-
 	protected:
 		void*				windowID;
 		string				title;
 		unsigned int		width;
 		unsigned int		height;
 		bool				activated;
-
+		float				fps;
 		I4FrameCallback*	frameCallback;
 
 	private:

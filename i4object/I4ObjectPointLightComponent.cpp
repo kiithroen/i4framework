@@ -4,7 +4,6 @@
 #include "I4ModelMgr.h"
 #include "I4Model.h"
 #include "I4Renderer.h"
-#include "I4Profile.h"
 
 namespace i4object {
 
@@ -40,8 +39,6 @@ namespace i4object {
 
 	void I4ObjectPointLightComponent::onUpdate(I4MessageArgs& args)
 	{
-		I4PROFILE_THISFUNC;
-
 		float dt = args[0].asFloat();
 
 		if (blinkEnable == true)

@@ -42,10 +42,7 @@ public:
 	virtual bool	onRender() override;
 
 	virtual void	onInput(const I4InputState& state) override;
-
-private:
-	void	updateCamera(float dt);
-
+	
 private:
 	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;

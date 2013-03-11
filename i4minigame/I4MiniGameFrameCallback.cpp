@@ -184,21 +184,36 @@ bool I4MiniGameFrameCallback::onSimulate(float dt)
 {
 	I4PROFILE_THISFUNC;
 	
-	I4MessageArgs preSimulateArgs;
-	preSimulateArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onPreSimulate"), preSimulateArgs);
+	{
+		I4PROFILE_BLOCK("onPreSimulate");
 
-	physXMgr->simulate(dt);
+		I4MessageArgs preSimulateArgs;
+		preSimulateArgs.push_back(dt);
+		objectMgr->getMessenger().send(I4Hash("onPreSimulate"), preSimulateArgs);
+	}
+	
+	{
+		I4PROFILE_BLOCK("PhysX simulate");
 
-	I4MessageArgs postSimulateArgs;
-	postSimulateArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
+		physXMgr->simulate(dt);
+	}
+
+	{
+		I4PROFILE_BLOCK("onPostSimulate");
+
+		I4MessageArgs postSimulateArgs;
+		postSimulateArgs.push_back(dt);
+		objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
+	}
+	
 
 	return true;
 }
 
 bool I4MiniGameFrameCallback::onUpdate()
 {
+	I4PROFILE_THISFUNC;
+
 	if (I4InputState::KeyPressed[VK_ESCAPE])
 		return false;
 
@@ -244,8 +259,10 @@ bool I4MiniGameFrameCallback::onUpdate()
 
 	if (elapsed >= 1.0f)
 	{
+		float fps = I4Framework::getFramework()->getFps();
+
 		I4ProfileWriterLog	writer;
-		writer.write(I4ProfileManager::getRootNode());
+		writer.write(I4ProfileManager::getRootNode(), fps);
 
 		elapsed = 0;
 		I4ProfileManager::clear();
@@ -255,26 +272,40 @@ bool I4MiniGameFrameCallback::onUpdate()
 }
 
 bool I4MiniGameFrameCallback::onRender()
-{	
+{
+	I4PROFILE_THISFUNC;
+
 	float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
 
-	I4MessageArgs aniArgs;
-	aniArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
+	{
+		I4PROFILE_BLOCK("onAnimate");
+		I4MessageArgs aniArgs;
+		aniArgs.push_back(dt);
+		objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
+	}
 
-	I4MessageArgs readyToRenderArgs;
-	objectMgr->getMessenger().send(I4Hash("onReadyToRender"), readyToRenderArgs);
-
-	I4MessageArgs renderArgs;
-	objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
-
-
+	{
+		I4PROFILE_BLOCK("onReadyToRender");
+		I4MessageArgs readyToRenderArgs;
+		objectMgr->getMessenger().send(I4Hash("onReadyToRender"), readyToRenderArgs);
+	}
+	
+	{
+		I4PROFILE_BLOCK("onRender");
+		I4MessageArgs renderArgs;
+		objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
+	}
+	
 	if (renderer->isDebugMode())
 	{
+		I4PROFILE_BLOCK("physXMgr->commitDebugToRenderer(renderer)");
 		physXMgr->commitDebugToRenderer(renderer);
 	}
 
-	renderer->render();
+	{
+		I4PROFILE_BLOCK("renderer->render()");
+		renderer->render();
+	}
 
 	return true;
 }
@@ -356,9 +387,4 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 		break;
 	}
 	
-}
-
-void I4MiniGameFrameCallback::updateCamera(float dt)
-{
-
 }
