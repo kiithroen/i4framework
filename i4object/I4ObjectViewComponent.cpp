@@ -97,7 +97,7 @@ namespace i4object {
 	{
 		if (model)
 		{
-			model->render(getOwner()->getObjectMgr()->getRenderer(), getOwner()->getWorldTM());
+			model->commitToRenderer(getOwner()->getObjectMgr()->getRenderer(), getOwner()->getWorldTM());
 		}
 	}
 

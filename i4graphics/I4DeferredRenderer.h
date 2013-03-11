@@ -181,7 +181,7 @@ namespace i4graphics
 		virtual void				commit(I4DirectionalLight* light) override;
 		virtual void				commit(I4PointLight* light) override;
 
-		virtual void				debugLine(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color) override;
+		virtual void				commit(const I4DebugLine& line) override;
 
 		virtual void				render() override;
 

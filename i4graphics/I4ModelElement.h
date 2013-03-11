@@ -26,7 +26,7 @@ namespace i4graphics {
 
 		virtual bool			initialize();
 		virtual void			animate(float dt, const I4Matrix4x4& parentTM);
-		virtual void			render(I4Renderer* renderer, const I4Matrix4x4& parentTM)	{}
+		virtual void			commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)	{}
 
 		const I4Matrix4x4& 		getResultTM() const			{ return resultTM;	}
 
@@ -54,7 +54,7 @@ namespace i4graphics {
 		virtual ~I4ModelBone();
 
 		virtual bool	initialize() override;
-		virtual void	render(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
+		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
 
 		I4Matrix4x4		getSkinTM() const	{ return worldInverseTM*resultTM; }
 
@@ -87,7 +87,7 @@ namespace i4graphics {
 		ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
 		virtual ~ModelRigidMesh();
 
-		virtual void	render(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
+		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
 	};
 
 	//------------------------- ModelSkinedMeshGPU -------------------------
@@ -101,7 +101,7 @@ namespace i4graphics {
 		virtual bool	initialize() override;
 		virtual void	animate(float dt, const I4Matrix4x4& parentTM) override;
 
-		virtual void	render(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
+		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
 
 	private:
 		vector<I4Matrix4x4>		matrixPalette;

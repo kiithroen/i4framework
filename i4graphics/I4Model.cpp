@@ -140,14 +140,14 @@ namespace i4graphics
 	}
 
 
-	void I4Model::render(I4Renderer* renderer, const I4Matrix4x4& worldTM)
+	void I4Model::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM)
 	{
 		I4PROFILE_THISFUNC;
 
 		unsigned int meshSize = vecMesh.size();
 		for (unsigned int i = 0; i < meshSize; ++i)
 		{
-			vecMesh[i]->render(renderer, worldTM);
+			vecMesh[i]->commitToRenderer(renderer, worldTM);
 		}
 	}
 

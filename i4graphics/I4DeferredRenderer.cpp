@@ -246,7 +246,7 @@ namespace i4graphics
 			return false;
 
 		debugLineBatch = new I4LineBatch;
-		debugLineBatch->create(2048*100);
+		debugLineBatch->create(1024);
 
 		return true;
 	}
@@ -285,11 +285,11 @@ namespace i4graphics
 		vecScenePointLight.push_back(*light);
 	}
 
-	void I4DeferredRenderer::debugLine(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)
+	void I4DeferredRenderer::commit(const I4DebugLine& line)
 	{
 		if (debugMode)
 		{
-			debugLineBatch->add(p0, p1, color);
+			debugLineBatch->add(line.p0, line.p1, line.color);
 		}
 	}
 

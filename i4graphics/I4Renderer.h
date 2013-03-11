@@ -43,9 +43,7 @@ namespace i4graphics {
 	{
 		I4Vector3	p0;
 		I4Vector3	p1;
-		I4Vector4	color0;
-		I4Vector4	color1;
-		float		life;
+		I4Vector4	color;
 	};
 
 	class I4Renderer
@@ -67,8 +65,7 @@ namespace i4graphics {
 		virtual void	commit(const I4MeshRenderItem& item)			{}
 		virtual void	commit(I4DirectionalLight* light)				{}
 		virtual void	commit(I4PointLight* light)						{}
-
-		virtual void	debugLine(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)	{}
+		virtual void	commit(const I4DebugLine& line)					{}
 
 		virtual void	render()										{}
 

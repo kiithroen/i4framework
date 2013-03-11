@@ -329,7 +329,7 @@ namespace i4object
 		return c;
 	}
 
-	void I4PhysXMgr::togglePvdConnection(bool enable)
+	void I4PhysXMgr::enablePvdConnection(bool enable)
 	{
 		if(!mPhysics->getPvdConnectionManager()) return;
 
@@ -364,54 +364,54 @@ namespace i4object
 			theConnection->release();
 	}
 
-	void I4PhysXMgr::debugRender(I4Renderer* renderer)
+	void I4PhysXMgr::commitDebugToRenderer(I4Renderer* renderer)
 	{
 		I4PROFILE_THISFUNC;
 
-		I4Vector3 p0;
-		I4Vector3 p1;
-		I4Vector4 color;
+		I4DebugLine l;
 
 		const PxDebugLine* lines = mScene->getRenderBuffer().getLines();
 		PxU32 numLine = mScene->getRenderBuffer().getNbLines();
 				
 		for (PxU32 i = 0; i < numLine; ++i)
 		{
-			convertToI4Color(color, lines[i].color0);
+			convertToI4Color(l.color, lines[i].color0);
 
-			convertToI4Vector3(p0, lines[i].pos0);
-			convertToI4Vector3(p1, lines[i].pos1);
+			convertToI4Vector3(l.p0, lines[i].pos0);
+			convertToI4Vector3(l.p1, lines[i].pos1);
 			
-			renderer->debugLine(p0, p1, color);
+			renderer->commit(l);
 		}
 
 		const PxDebugTriangle* triangles = mScene->getRenderBuffer().getTriangles();
 		PxU32 numTriangle = mScene->getRenderBuffer().getNbTriangles();
 		for (PxU32 i = 0; i < numTriangle; ++i)
 		{
-			convertToI4Color(color, triangles[i].color0);
+			convertToI4Color(l.color, triangles[i].color0);
 
-			convertToI4Vector3(p0, triangles[i].pos0);
-			convertToI4Vector3(p1, triangles[i].pos1);
+			convertToI4Vector3(l.p0, triangles[i].pos0);
+			convertToI4Vector3(l.p1, triangles[i].pos1);
 
-			renderer->debugLine(p0, p1, color);
+			renderer->commit(l);
 
-			convertToI4Vector3(p0, triangles[i].pos1);
-			convertToI4Vector3(p1, triangles[i].pos2);
+			convertToI4Vector3(l.p0, triangles[i].pos1);
+			convertToI4Vector3(l.p1, triangles[i].pos2);
 
-			renderer->debugLine(p0, p1, color);
+			renderer->commit(l);
 
-			convertToI4Vector3(p0, triangles[i].pos2);
-			convertToI4Vector3(p1, triangles[i].pos0);
+			convertToI4Vector3(l.p0, triangles[i].pos2);
+			convertToI4Vector3(l.p1, triangles[i].pos0);
 
-			renderer->debugLine(p0, p1, color);
+			renderer->commit(l);
 		}
 		
 		// point 는 필요가 없어서 미구현. 혹시 중요한 정보가 생기면 그때 구현하도록 한다.
 	}
 
-	void I4PhysXMgr::setDebugMode(bool enable)
+	void I4PhysXMgr::enableVisualization(bool enable)
 	{
+		// 활성화하면 엄청 느려짐!
+
 		float val = 0.0f;
 		if (enable)
 		{
@@ -423,7 +423,7 @@ namespace i4object
 		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_STATIC, val);
 		mScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_COMPOUNDS, val);
 		
-		togglePvdConnection(enable);
+		enablePvdConnection(enable);
 	}
 
 

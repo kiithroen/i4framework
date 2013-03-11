@@ -89,12 +89,12 @@ namespace i4object
 
 		bool init();
 
-		void setDebugMode(bool enable);
+		void enableVisualization(bool enable);
 
 		void destroy();
 
 		void simulate(PxReal dt);
-		void debugRender(I4Renderer* renderer);
+		void commitDebugToRenderer(I4Renderer* renderer);
 
 		PxActor* createPlane();
 		PxRigidDynamic* createBox(const PxTransform& transform, const I4Vector3& ext, float density);
@@ -103,7 +103,7 @@ namespace i4object
 		PxController* createCapsuleController(const I4Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
 
 	private:
-		void togglePvdConnection(bool enable);
+		void enablePvdConnection(bool enable);
 		void createPvdConnection();
 	private:
 		PxFoundation*					mFoundation;

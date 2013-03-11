@@ -38,7 +38,7 @@ namespace i4graphics {
 		void					playAnimation(const char* aniName);
 
 		void					animate(float dt);	
-		void					render(I4Renderer* renderer, const I4Matrix4x4& worldTM);
+		void					commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM);
 
 		const I4Matrix4x4&		getSkinTM(unsigned int i) const		{ return vecSkinTM[i]; }
 

@@ -106,7 +106,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ModelBone::render(I4Renderer* renderer, const I4Matrix4x4& parentTM)
+	void I4ModelBone::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
 	{
 	}
 
@@ -137,7 +137,7 @@ namespace i4graphics
 		
 	}
 
-	void ModelRigidMesh::render(I4Renderer* renderer, const I4Matrix4x4& parentTM)
+	void ModelRigidMesh::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		const I4Matrix4x4 matWorld = resultTM*parentTM;
 		I4MeshRenderItem item;
@@ -201,7 +201,7 @@ namespace i4graphics
 		}
 	}
 
-	void ModelSkinedMeshGPU::render(I4Renderer* renderer, const I4Matrix4x4& parentTM)
+	void ModelSkinedMeshGPU::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
 	{
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.

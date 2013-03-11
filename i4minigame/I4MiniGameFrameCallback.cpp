@@ -69,7 +69,7 @@ bool I4MiniGameFrameCallback::onStart()
 	view->attachModel("player", "testmodel/elin", true, true, false);
 
 	I4ObjectCharacterComponent* playerCharacter = player->addComponent<I4ObjectCharacterComponent>();
-	playerCharacter->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.2f);
+	playerCharacter->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
 	
 	I4ObjectStaticCameraComponent* playerCamera = player->addComponent<I4ObjectStaticCameraComponent>();
 	playerCamera->setMainCamera(true);
@@ -261,7 +261,7 @@ bool I4MiniGameFrameCallback::onRender(float dt)
 
 	if (renderer->isDebugMode())
 	{
-		physXMgr->debugRender(renderer);
+		physXMgr->commitDebugToRenderer(renderer);
 	}
 
 	renderer->render();
@@ -277,8 +277,10 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 		{
 			if (state.key == VK_F1)
 			{
-				renderer->setDebugMode(!renderer->isDebugMode());
-				physXMgr->setDebugMode(renderer->isDebugMode());
+				bool isDebugMode = renderer->isDebugMode();
+
+				renderer->setDebugMode(!isDebugMode);
+				physXMgr->enableVisualization(!isDebugMode);
 			}
 			else if (state.key == VK_F2)
 			{
