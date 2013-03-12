@@ -920,6 +920,7 @@ namespace i4graphics
 		I4PROFILE_THISFUNC;
 
 		videoDriver->resetBackBufferRenderTarget(true);
+
 //		videoDriver->setDepthStencilMode(I4DEPTH_OFF_STENCIL_OFF);
 
 

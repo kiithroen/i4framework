@@ -94,8 +94,26 @@ namespace i4core {
 	}
 
 
-	bool I4FrameworkWin::onRun()
+	bool I4FrameworkWin::onMessagePump()
 	{
+		POINT pt;
+		GetCursorPos(&pt);
+
+		I4InputState::MouseX = pt.x;
+		I4InputState::MouseY = pt.y;
+
+		if (I4InputState::MoveMouseCenter)
+		{
+			// 마우스를 윈도우의 중앙으로 초기화
+			POINT pt;
+			RECT rc;	
+			GetClientRect((HWND)windowID, &rc);
+			pt.x = (rc.right - rc.left)/2;
+			pt.y = (rc.bottom - rc.top)/2;
+			ClientToScreen((HWND)windowID, &pt);
+			SetCursorPos(pt.x, pt.y);
+		}
+
 		MSG msg;
 		memset(&msg, 0, sizeof(MSG));
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -110,27 +128,6 @@ namespace i4core {
 	void I4FrameworkWin::onYield()
 	{
 	//	Sleep(1);
-	}
-
-	void I4FrameworkWin::getMousePos(int& x, int& y)
-	{
-		POINT pt;
-		GetCursorPos(&pt);
-
-		x = pt.x;
-		y = pt.y;
-	}
-
-	void I4FrameworkWin::moveMouseCenter()
-	{
-		// 마우스를 윈도우의 중앙으로 초기화
-		POINT pt;
-		RECT rc;	
-		GetClientRect((HWND)windowID, &rc);
-		pt.x = (rc.right - rc.left)/2;
-		pt.y = (rc.bottom - rc.top)/2;
-		ClientToScreen((HWND)windowID, &pt);
-		SetCursorPos(pt.x, pt.y);
 	}
 
 	LRESULT CALLBACK I4FrameworkWin::wndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam)
@@ -246,8 +243,6 @@ namespace i4core {
 			}
 			break;
 		case WM_MOUSEMOVE:
-			I4InputState::mouseX = GET_X_LPARAM(lParam);
-			I4InputState::mouseY = GET_Y_LPARAM(lParam);
 			break;
 		case WM_ACTIVATEAPP:
 			if (wParam == TRUE)
@@ -257,6 +252,7 @@ namespace i4core {
 			else
 			{
 				activated = false;
+				I4InputState::initialize();
 			}
 			break;
 		case WM_CLOSE:

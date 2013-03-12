@@ -49,8 +49,8 @@ namespace i4object
 			}
 		}
 
-		void onUpdate(I4MessageArgs& args);
-		void onRender(I4MessageArgs& args);
+		void onUpdateLogic(I4MessageArgs& args);
+		void onCommitToRenderer(I4MessageArgs& args);
 
 	private:
 		I4PointLight	light;

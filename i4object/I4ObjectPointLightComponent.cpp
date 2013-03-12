@@ -26,18 +26,18 @@ namespace i4object {
 
 	void I4ObjectPointLightComponent::onAdd()
 	{
-		getBroadcastMessenger().subscribe(I4Hash("onUpdate"), this, bind(&I4ObjectPointLightComponent::onUpdate, this, _1));
-		getBroadcastMessenger().subscribe(I4Hash("onRender"), this, bind(&I4ObjectPointLightComponent::onRender, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onUpdateLogic"), this, bind(&I4ObjectPointLightComponent::onUpdateLogic, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onCommitToRenderer"), this, bind(&I4ObjectPointLightComponent::onCommitToRenderer, this, _1));
 	}
 
 	void I4ObjectPointLightComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onUpdate"), this);
-		getBroadcastMessenger().unsubscribe(I4Hash("onRender"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onCommitToRenderer"), this);
 	}
 
 
-	void I4ObjectPointLightComponent::onUpdate(I4MessageArgs& args)
+	void I4ObjectPointLightComponent::onUpdateLogic(I4MessageArgs& args)
 	{
 		float dt = args[0].asFloat();
 
@@ -65,7 +65,7 @@ namespace i4object {
 		}
 	}
 	
-	void I4ObjectPointLightComponent::onRender(I4MessageArgs& args)
+	void I4ObjectPointLightComponent::onCommitToRenderer(I4MessageArgs& args)
 	{
 		if (isTurnOn)
 		{

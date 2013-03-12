@@ -8,7 +8,6 @@ namespace i4object
 {
 
 	I4ObjectFlyControllerComponent::I4ObjectFlyControllerComponent(void)
-		: eyeHeight(1.5f)
 	{
 	}
 
@@ -19,8 +18,8 @@ namespace i4object
 
 	void I4ObjectFlyControllerComponent::onAdd()
 	{
-		prevMouseX = I4InputState::mouseX;
-		prevMouseY = I4InputState::mouseY;
+		prevMouseX = I4InputState::MouseX;
+		prevMouseY = I4InputState::MouseY;
 
 		float yawRad;
 		float pitchRad;
@@ -32,44 +31,50 @@ namespace i4object
 
 		yaw = I4MathUtil::radianToDegree(yawRad);
 		pitch = I4MathUtil::radianToDegree(pitchRad);
-		roll = I4MathUtil::radianToDegree(rollRad);
 	}
 
 	void I4ObjectFlyControllerComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onPostUpdate"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
 	}
 	
 	void I4ObjectFlyControllerComponent::activate(bool isActive)
 	{
 		if (isActive)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onPostUpdate"), this, bind(&I4ObjectFlyControllerComponent::onPostUpdate, this, _1));
+			getBroadcastMessenger().subscribe(I4Hash("onUpdateLogic"), this, bind(&I4ObjectFlyControllerComponent::onUpdateLogic, this, _1));
 		}
 		else
 		{
-			getBroadcastMessenger().unsubscribe(I4Hash("onPostUpdate"), this);
+			getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
 		}
 	}
 
-	void I4ObjectFlyControllerComponent::onPostUpdate(I4MessageArgs& args)
+	void I4ObjectFlyControllerComponent::onUpdateLogic(I4MessageArgs& args)
 	{
 		float dt = args[0].asFloat();
 
 		float moveSpeed = 6.0f*dt;
 
+		I4Vector3			right;
+		I4Vector3			forward;
+		I4Vector3			position;
+
 		getOwner()->getLocalTM().extractAxisX(right);
-		getOwner()->getLocalTM().extractAxisZ(direction);
-		getOwner()->getLocalTM().extractTranslation(position);
+		getOwner()->getLocalTM().extractAxisZ(forward);
+		getOwner()->getLocalTM().extractTranslation(position);;
+
+		right.normalize();
+		forward.normalize();
 
 		if (I4InputState::KeyPressed['w'] || I4InputState::KeyPressed['W'])
 		{
-			position += direction*moveSpeed;
+			position += forward*moveSpeed;
 		}
 
 		if (I4InputState::KeyPressed['s'] || I4InputState::KeyPressed['S'])
 		{
-			position -= direction*moveSpeed;
+			position -= forward*moveSpeed;
 		}
 
 		if (I4InputState::KeyPressed['a'] || I4InputState::KeyPressed['A'])
@@ -82,8 +87,8 @@ namespace i4object
 			position += right*moveSpeed;
 		}
 
-		int curMouseX = I4InputState::mouseX;
-		int curMouseY = I4InputState::mouseY;
+		int curMouseX = I4InputState::MouseX;
+		int curMouseY = I4InputState::MouseY;
 
 		if (I4InputState::RightMousePressed)
 		{
@@ -111,7 +116,7 @@ namespace i4object
 		}
 
 		I4Matrix4x4 mat;
-		mat.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(yaw), I4MathUtil::degreeToRadian(pitch), I4MathUtil::degreeToRadian(roll));
+		mat.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(yaw), I4MathUtil::degreeToRadian(pitch), 0);
 		mat.setTranslation(position);
 
 		getOwner()->setLocalTM(mat);

@@ -24,22 +24,22 @@ namespace i4object
 
 	void I4ObjectStaticCameraComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onReadyToRender"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onLateUpdate"), this);
 	}
 
 	void I4ObjectStaticCameraComponent::setMainCamera(bool isMain)
 	{
 		if (isMain)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onReadyToRender"), this, bind(&I4ObjectStaticCameraComponent::onReadyToRender, this, _1));
+			getBroadcastMessenger().subscribe(I4Hash("onLateUpdate"), this, bind(&I4ObjectStaticCameraComponent::onLateUpdate, this, _1));
 		}
 		else
 		{
-			getBroadcastMessenger().unsubscribe(I4Hash("onReadyToRender"), this);
+			getBroadcastMessenger().unsubscribe(I4Hash("onLateUpdate"), this);
 		}
 	}
 
-	void I4ObjectStaticCameraComponent::onReadyToRender(I4MessageArgs& args)
+	void I4ObjectStaticCameraComponent::onLateUpdate(I4MessageArgs& args)
 	{
 		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
 

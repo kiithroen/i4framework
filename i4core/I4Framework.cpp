@@ -13,11 +13,28 @@
 
 namespace i4core {
 
-	int	 I4InputState::mouseX;
-	int	 I4InputState::mouseY;
+	int	 I4InputState::MouseX;
+	int	 I4InputState::MouseY;
 	bool I4InputState::KeyPressed[256];
 	bool I4InputState::LeftMousePressed;
 	bool I4InputState::RightMousePressed;
+	bool I4InputState::MoveMouseCenter;
+
+	void I4InputState::initialize()
+	{
+		MouseX = 0;
+		MouseY = 0;
+
+		for (int i = 0; i < 256; ++i)
+		{
+			KeyPressed[i] = false;
+		}
+
+		LeftMousePressed = false;
+		RightMousePressed = false;
+		MoveMouseCenter = false;
+	}
+
 
 	I4Framework::I4Framework()
 		: windowID(nullptr)
@@ -27,10 +44,7 @@ namespace i4core {
 		, fps(0)
 		, frameCallback(nullptr)
 	{
-		for (int i = 0; i < 256; ++i)
-		{
-			I4InputState::KeyPressed[i] = false;
-		}
+		I4InputState::initialize();
 	}
 
 	I4Framework::~I4Framework()
@@ -79,7 +93,7 @@ namespace i4core {
 
 		I4FrameTimer::getFrameTimer()->update();
 
-		while (onRun())
+		while (onMessagePump())
 		{
 			float dt = I4FrameTimer::getFrameTimer()->update();
 			if (mainLoop(dt) == false)
@@ -171,4 +185,5 @@ namespace i4core {
 		delete framework;
 		framework = nullptr;
 	}
+
 }

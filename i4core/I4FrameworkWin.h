@@ -14,11 +14,9 @@ namespace i4core
 	public:
 		virtual bool		onCreate();
 		virtual void		onDestroy();
-		virtual bool		onRun();
+		virtual bool		onMessagePump();
 		virtual void		onYield();
 
-		virtual void		getMousePos(int& x, int& y);
-		virtual void		moveMouseCenter();
 	public:
 		LRESULT CALLBACK	wndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam);
 

@@ -87,7 +87,7 @@ namespace i4object {
 		I4ObjectNode*					parent;
 		I4ObjectNodeVector				vecChild;
 		I4ObjectComponentMap			mapComponent;
-		I4ObjectComponentMessenger	messenger;
+		I4ObjectComponentMessenger		messenger;
 	};
 
 }

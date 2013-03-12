@@ -27,8 +27,8 @@ namespace i4object
 		
 		void playAnimation(const char* name);
 
-		void onAnimate(I4MessageArgs& args);
-		void onRender(I4MessageArgs& args);
+		void onUpateAnimation(I4MessageArgs& args);
+		void onCommitToRenderer(I4MessageArgs& args);
 
 		void setOffset(const I4Matrix4x4& _offset)		{ offset = _offset; }
 

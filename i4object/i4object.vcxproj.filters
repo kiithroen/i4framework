@@ -49,10 +49,13 @@
     <ClInclude Include="I4PhysXMgr.h">
       <Filter>physx</Filter>
     </ClInclude>
-    <ClInclude Include="I4ObjectCharacterComponent.h">
+    <ClInclude Include="I4ObjectTPSCameraComponent.h">
       <Filter>component</Filter>
     </ClInclude>
-    <ClInclude Include="I4ObjectTPSCameraComponent.h">
+    <ClInclude Include="I4ObjectCharacterControllerComponent.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="I4ObjectCharacterMovementComponent.h">
       <Filter>component</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,10 +86,13 @@
     <ClCompile Include="I4PhysXMgr.cpp">
       <Filter>physx</Filter>
     </ClCompile>
-    <ClCompile Include="I4ObjectCharacterComponent.cpp">
+    <ClCompile Include="I4ObjectTPSCameraComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
-    <ClCompile Include="I4ObjectTPSCameraComponent.cpp">
+    <ClCompile Include="I4ObjectCharacterControllerComponent.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="I4ObjectCharacterMovementComponent.cpp">
       <Filter>component</Filter>
     </ClCompile>
   </ItemGroup>

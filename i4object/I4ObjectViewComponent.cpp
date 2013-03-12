@@ -23,7 +23,7 @@ namespace i4object {
 	void I4ObjectViewComponent::onRemove()
 	{
 		getBroadcastMessenger().unsubscribe(I4Hash("onAnimate"), this);
-		getBroadcastMessenger().unsubscribe(I4Hash("onRender"), this);
+		getBroadcastMessenger().unsubscribe(I4Hash("onCommitToRenderer"), this);
 	}
 
 	bool I4ObjectViewComponent::attachModel(const char* name, const char* modelPrefixName, bool hasMesh, bool hasMtrl, bool hasBone)
@@ -59,7 +59,7 @@ namespace i4object {
 
 		model->initialize();
 
-		getBroadcastMessenger().subscribe(I4Hash("onRender"), this, bind(&I4ObjectViewComponent::onRender, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onCommitToRenderer"), this, bind(&I4ObjectViewComponent::onCommitToRenderer, this, _1));
 
 		return true;
 	}
@@ -73,7 +73,7 @@ namespace i4object {
 		if (!modelMgr->attachAni(model, fname, aniName))
 			return false;
 
-		getBroadcastMessenger().subscribe(I4Hash("onAnimate"), this, bind(&I4ObjectViewComponent::onAnimate, this, _1));
+		getBroadcastMessenger().subscribe(I4Hash("onAnimate"), this, bind(&I4ObjectViewComponent::onUpateAnimation, this, _1));
 
 		return true;
 	}
@@ -86,7 +86,7 @@ namespace i4object {
 		}
 	}
 
-	void I4ObjectViewComponent::onAnimate(I4MessageArgs& args)
+	void I4ObjectViewComponent::onUpateAnimation(I4MessageArgs& args)
 	{
 		if (model)
 		{
@@ -94,7 +94,7 @@ namespace i4object {
 		}
 	}
 
-	void I4ObjectViewComponent::onRender(I4MessageArgs& args)
+	void I4ObjectViewComponent::onCommitToRenderer(I4MessageArgs& args)
 	{
 		if (model)
 		{

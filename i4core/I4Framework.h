@@ -19,14 +19,17 @@ namespace i4core
 
 	struct I4InputState
 	{
+		static void initialize();
+
 		I4InputStateType	type;
 		int					key;
 
-		static int			mouseX;
-		static int			mouseY;
+		static int			MouseX;
+		static int			MouseY;
 		static bool			KeyPressed[256];
 		static bool			LeftMousePressed;
 		static bool			RightMousePressed;
+		static bool			MoveMouseCenter;
 	};
 
 	class I4Framework
@@ -47,9 +50,6 @@ namespace i4core
 		unsigned int		getHeight() const						{ return height; }
 		bool				isActivated() const						{ return activated; }
 		float				getFps()								{ return fps; }
-
-		virtual void		moveMouseCenter()						{}
-
 	public:
 		static I4Framework*	getFramework()		{ return framework; }
 
@@ -59,7 +59,7 @@ namespace i4core
 	protected:	
 		virtual	bool		onCreate()								{ return true; }
 		virtual void		onDestroy()								{}
-		virtual bool		onRun()									{ return true; }
+		virtual bool		onMessagePump()									{ return true; }
 		virtual void		onYield()								{}
 
 	private:

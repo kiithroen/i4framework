@@ -16,8 +16,9 @@
 #include "I4Messenger.h"
 #include "I4ObjectFlyControllerComponent.h"
 #include "I4ObjectStaticCameraComponent.h"
+#include "I4ObjectCharacterMovementComponent.h"
+#include "I4ObjectCharacterControllerComponent.h"
 #include "I4ObjectTPSCameraComponent.h"
-#include "I4ObjectCharacterComponent.h"
 #include "I4FrameTimer.h"
 
 using namespace i4core;
@@ -51,8 +52,6 @@ bool I4MiniGameFrameCallback::onStart()
 	objectMgr = new I4ObjectMgr;
 	if (objectMgr->init(renderer, modelMgr, physXMgr) == false)
 		return false;
-	
-	framework->moveMouseCenter();
 
 	spectator =  objectMgr->createNode("spectator");
 	spectator->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
@@ -69,9 +68,15 @@ bool I4MiniGameFrameCallback::onStart()
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
 	view->attachModel("player", "testmodel/elin", true, true, false);
 
-	I4ObjectCharacterComponent* playerCharacter = player->addComponent<I4ObjectCharacterComponent>();
-	playerCharacter->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
-	
+	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
+	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
+	playerMovement->setGravity(I4Vector3(0, -9.8f, 0));
+	playerMovement->setDirection(I4VECTOR3_AXISZ);
+	playerMovement->setMoveSpeed(0);
+
+	I4ObjectCharacterControllerComponent* playerController = player->addComponent<I4ObjectCharacterControllerComponent>();	
+	playerController->activate(true);
+
 	I4ObjectTPSCameraComponent* playerCamera = player->addComponent<I4ObjectTPSCameraComponent>();
 	playerCamera->setMainCamera(true);
 
@@ -221,7 +226,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onUpdate"), updateArgs);
+	objectMgr->getMessenger().send(I4Hash("onUpdateLogic"), updateArgs);
 
 	static float degree = 0;
 	degree += 30*dt;
@@ -249,10 +254,21 @@ bool I4MiniGameFrameCallback::onUpdate()
 	}
 
 
-	I4MessageArgs postUpdateArgs;
-	postUpdateArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onPostUpdate"), postUpdateArgs);
-	
+
+	{
+		I4PROFILE_BLOCK("onAnimate");
+		I4MessageArgs aniArgs;
+		aniArgs.push_back(dt);
+		objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
+	}
+
+	{
+		I4PROFILE_BLOCK("onLateUpdate");
+		I4MessageArgs readyToRenderArgs;
+		objectMgr->getMessenger().send(I4Hash("onLateUpdate"), readyToRenderArgs);
+	}
+
+
 	return true;
 }
 
@@ -263,22 +279,9 @@ bool I4MiniGameFrameCallback::onRender()
 	float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
 
 	{
-		I4PROFILE_BLOCK("onAnimate");
-		I4MessageArgs aniArgs;
-		aniArgs.push_back(dt);
-		objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
-	}
-
-	{
-		I4PROFILE_BLOCK("onReadyToRender");
-		I4MessageArgs readyToRenderArgs;
-		objectMgr->getMessenger().send(I4Hash("onReadyToRender"), readyToRenderArgs);
-	}
-	
-	{
-		I4PROFILE_BLOCK("onRender");
+		I4PROFILE_BLOCK("onCommitToRenderer");
 		I4MessageArgs renderArgs;
-		objectMgr->getMessenger().send(I4Hash("onRender"), renderArgs);
+		objectMgr->getMessenger().send(I4Hash("onCommitToRenderer"), renderArgs);
 	}
 	
 	if (renderer->isDebugMode())
@@ -318,7 +321,7 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 
 				isFree = !isFree;
 
-				I4ObjectCharacterComponent* playerController = player->findComponent<I4ObjectCharacterComponent>();
+				I4ObjectCharacterMovementComponent* playerController = player->findComponent<I4ObjectCharacterMovementComponent>();
 
 				I4ObjectTPSCameraComponent* playerCam = player->findComponent<I4ObjectTPSCameraComponent>();
 				playerCam->setMainCamera(!isFree);

@@ -25,7 +25,7 @@ namespace i4object
 
 		void setMainCamera(bool isMain);
 
-		void onReadyToRender(I4MessageArgs& args);
+		void onLateUpdate(I4MessageArgs& args);
 
 	private:
 		bool		isMainCamera;
