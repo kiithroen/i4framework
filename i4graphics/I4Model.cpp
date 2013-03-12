@@ -11,6 +11,7 @@ namespace i4graphics
 
 	I4Model::I4Model()
 		: shadowCaster(true)
+		, shadowReceiver(true)
 	{
 	}
 

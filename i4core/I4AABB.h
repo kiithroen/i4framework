@@ -94,9 +94,25 @@ namespace i4core
 
 		const I4AABB transform(const I4Matrix4x4& mat) const
 		{
+			/*
+			// 최적화된 AABB가 아니다.
+			// 최적화된 AABB를 만드려면 8개점을 모두 옮기고 다시 AABB를 구해야함.
 			I4AABB aabb(mat.transformCoord(minEdge), mat.transformCoord(maxEdge));
 			aabb.repair();
+			*/
+			I4Vector3 edges[8];
+			extractEdges(edges);
 
+			I4AABB aabb;
+			for (int i = 0; i < 8; ++i)
+			{
+				edges[i] = mat.transformCoord(edges[i]);
+			}
+
+			for (int i = 0; i < 8; ++i)
+			{
+				aabb.merge(edges[i]);
+			}
 			return aabb;
 		}
 

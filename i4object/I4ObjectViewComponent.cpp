@@ -101,5 +101,15 @@ namespace i4object {
 		}
 	}
 
+	void I4ObjectViewComponent::setShadowCaster(bool enable)
+	{
+		model->setShadowCaster(enable);
+	}
+
+	void I4ObjectViewComponent::setShadowReceiver(bool enable)
+	{
+		model->setShadowReceiver(enable);
+	}
+
 
 }

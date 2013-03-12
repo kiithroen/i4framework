@@ -59,7 +59,7 @@ namespace i4graphics
 		, shadowSplitSize(1024)
 	{
 		static const float defaultShadowSplitZ[] = { 3.5f, 7.0f, 20.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
-		static const float defaultShadowBias[] = { 0.005f, 0.005f, 0.002f, 0.002f };
+		static const float defaultShadowBias[] = { 0.001f, 0.001f, 0.002f, 0.003f };
 		for (int  i = 0; i < 4; ++i)
 		{
 			shadowSplitZ[i] = defaultShadowSplitZ[i];
@@ -74,7 +74,7 @@ namespace i4graphics
 		clouds, haze=189,190,192
 		overcast=174,183,190
 		*/
-		sunLight.direction = I4Vector3(1.0f, -1.0f, 1.0f);
+		sunLight.direction = I4Vector3(-0.3f, -1.0f, 0.85f);
 		sunLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
 		commit(&sunLight);
 	}
@@ -276,7 +276,7 @@ namespace i4graphics
 	{
 		sunLight = *light;
 
-		directionalLightPerspectiveCamera.setLookAt(sunLight.direction*-999.0f, sunLight.direction, I4VECTOR3_AXISY);
+		directionalLightPerspectiveCamera.setLookAt(sunLight.direction*-100.0f, sunLight.direction, I4VECTOR3_AXISY);
 		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
 	}
 
@@ -566,15 +566,69 @@ namespace i4graphics
 				aabbInLightSpace.merge(corners[j]);
 			}
 
-			I4Sphere spereInLightSpace;
-			spereInLightSpace.fromAABB(aabbInLightSpace);
+			float minx = aabbInLightSpace.minEdge.x;
+			float maxx = aabbInLightSpace.maxEdge.x;
+			float miny = aabbInLightSpace.minEdge.y;
+			float maxy = aabbInLightSpace.maxEdge.y;
+			float minz = 0;
+			float maxz = aabbInLightSpace.maxEdge.z;
+			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(minx, maxx, miny, maxy, minz, maxz);
+			
+			float finalMinX = FLT_MAX;
+			float finalMaxX = -FLT_MAX;
+			float finalMinY = FLT_MAX;
+			float finalMaxY = -FLT_MAX;
+			float finalMinZ = FLT_MAX;
+			float finalMaxZ = -FLT_MAX;
 
-			// 정확하게는 라이트의 위치에서 뷰프러스텀사이에 끼어드는 메시를 찾아서 zFar, zNear를 구해야하지만 임의로 구를 만들어서 구한다.
-			I4Vector3 vMin = spereInLightSpace.center - I4VECTOR3_ONE*spereInLightSpace.radius;
-			I4Vector3 vMax = spereInLightSpace.center + I4VECTOR3_ONE*spereInLightSpace.radius;
+			for (auto& itr : vecSceneMeshRenderItem)
+			{
+				if (itr.shadowCaster == true || itr.shadowReceiver == true)
+				{
+					if (directionalLightSplitOrthoCamera[i].isVisibleAABB(itr.worldAABB) == true)
+					{
+						I4AABB aabb = itr.worldAABB.transform(directionalLightSplitOrthoCamera[i].getViewMatrix());
+						if (aabb.minEdge.x < finalMinX)
+						{
+							finalMinX = aabb.minEdge.x;
+						}
 
-			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(aabbInLightSpace.minEdge.x, aabbInLightSpace.maxEdge.x, aabbInLightSpace.minEdge.y, aabbInLightSpace.maxEdge.y, vMin.z, vMax.z);
+						if (aabb.maxEdge.x > finalMaxX)
+						{
+							finalMaxX = aabb.maxEdge.x;
+						}
 
+						if (aabb.minEdge.y < finalMinY)
+						{
+							finalMinY = aabb.minEdge.y;
+						}
+
+						if (aabb.maxEdge.y > finalMaxY)
+						{
+							finalMaxY = aabb.maxEdge.y;
+						}
+
+						if (aabb.minEdge.z < finalMinZ)
+						{
+							finalMinZ = aabb.minEdge.z;
+						}
+
+						if (aabb.maxEdge.z > finalMaxZ)
+						{
+							finalMaxZ = aabb.maxEdge.z;
+						}						
+					}					
+				}
+			}
+
+			minx = max(minx, finalMinX);
+			maxx = min(maxx, finalMaxX);
+			miny = max(miny, finalMinY);
+			maxy = min(maxy, finalMaxY);
+			minz = max(minz, finalMinZ);
+			maxz = min(maxz, finalMaxZ);
+			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(minx, maxx, miny, maxy, minz, maxz);
+			
 			cullAndSortMeshShadowRenderItem(directionalLightSplitOrthoCamera[i]);
 			renderMeshShadowRenderItem(directionalLightSplitOrthoCamera[i]);		
 		}

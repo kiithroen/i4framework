@@ -145,6 +145,7 @@ namespace i4graphics
 		item.material = material;
 		item.mesh = mesh;
 		item.shadowCaster = model->isShadowCaster();
+		item.shadowReceiver = model->isShadowReceiver();
 
 		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{
@@ -210,6 +211,7 @@ namespace i4graphics
 		item.material = material;
 		item.shaderMask = I4SHADER_MASK_SKINNING;
 		item.shadowCaster = model->isShadowCaster();
+		item.shadowReceiver = model->isShadowReceiver();
 
 		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{

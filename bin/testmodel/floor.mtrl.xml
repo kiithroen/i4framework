@@ -2,6 +2,30 @@
 	<version>1.0.0</version>
 	<node name="Box001" parent_name="undefined">
 	</node>
-	<node name="Box002" parent_name="undefined">
+	<node name="Cylinder001" parent_name="undefined">
+	</node>
+	<node name="Pyramid001" parent_name="undefined">
+	</node>
+	<node name="GeoSphere001" parent_name="undefined">
+	</node>
+	<node name="Cone001" parent_name="undefined">
+	</node>
+	<node name="Cylinder002" parent_name="undefined">
+	</node>
+	<node name="Cylinder003" parent_name="undefined">
+	</node>
+	<node name="Cylinder004" parent_name="undefined">
+	</node>
+	<node name="Cylinder005" parent_name="undefined">
+	</node>
+	<node name="Cylinder006" parent_name="undefined">
+	</node>
+	<node name="Cylinder007" parent_name="undefined">
+	</node>
+	<node name="Cylinder008" parent_name="undefined">
+	</node>
+	<node name="Hedra002" parent_name="undefined">
+	</node>
+	<node name="Torus Knot001" parent_name="undefined">
 	</node>
 </material>

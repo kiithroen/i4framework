@@ -50,13 +50,17 @@ namespace i4graphics {
 
 		void					setShadowCaster(bool enable)		{ shadowCaster = enable; }
 		bool					isShadowCaster() const				{ return shadowCaster; }
-		
+
+		void					setShadowReceiver(bool enable)		{ shadowReceiver = enable; }
+		bool					isShadowReceiver() const			{ return shadowReceiver; }
+
 	private:
 		I4ModelElementMap		mapElement;
 		I4ModelBoneVector		vecBone;
 		I4ModelMeshVector		vecMesh;
 		I4ModelSkinTMVector		vecSkinTM;
 		bool					shadowCaster;
+		bool					shadowReceiver;
 	};
 
 }

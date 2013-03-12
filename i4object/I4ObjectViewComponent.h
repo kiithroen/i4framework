@@ -29,7 +29,8 @@ namespace i4object
 
 		void onAnimate(I4MessageArgs& args);
 		void onRender(I4MessageArgs& args);
-
+		void setShadowCaster(bool enable);
+		void setShadowReceiver(bool enable);
 	private:
 		I4Model*		model;
 	};
