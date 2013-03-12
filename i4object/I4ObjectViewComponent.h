@@ -29,9 +29,13 @@ namespace i4object
 
 		void onAnimate(I4MessageArgs& args);
 		void onRender(I4MessageArgs& args);
+
+		void setOffset(const I4Matrix4x4& _offset)		{ offset = _offset; }
+
 		void setShadowCaster(bool enable);
 		void setShadowReceiver(bool enable);
 	private:
 		I4Model*		model;
+		I4Matrix4x4		offset;
 	};
 }

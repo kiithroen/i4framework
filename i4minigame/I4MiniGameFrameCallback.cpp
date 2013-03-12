@@ -16,6 +16,7 @@
 #include "I4Messenger.h"
 #include "I4ObjectFlyControllerComponent.h"
 #include "I4ObjectStaticCameraComponent.h"
+#include "I4ObjectTPSCameraComponent.h"
 #include "I4ObjectCharacterComponent.h"
 #include "I4FrameTimer.h"
 
@@ -71,7 +72,7 @@ bool I4MiniGameFrameCallback::onStart()
 	I4ObjectCharacterComponent* playerCharacter = player->addComponent<I4ObjectCharacterComponent>();
 	playerCharacter->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
 	
-	I4ObjectStaticCameraComponent* playerCamera = player->addComponent<I4ObjectStaticCameraComponent>();
+	I4ObjectTPSCameraComponent* playerCamera = player->addComponent<I4ObjectTPSCameraComponent>();
 	playerCamera->setMainCamera(true);
 
 	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
@@ -319,7 +320,7 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 
 				I4ObjectCharacterComponent* playerController = player->findComponent<I4ObjectCharacterComponent>();
 
-				I4ObjectStaticCameraComponent* playerCam = player->findComponent<I4ObjectStaticCameraComponent>();
+				I4ObjectTPSCameraComponent* playerCam = player->findComponent<I4ObjectTPSCameraComponent>();
 				playerCam->setMainCamera(!isFree);
 
 				I4ObjectStaticCameraComponent* spectatorCamera = spectator->findComponent<I4ObjectStaticCameraComponent>();

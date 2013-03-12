@@ -74,7 +74,7 @@ namespace i4graphics
 		clouds, haze=189,190,192
 		overcast=174,183,190
 		*/
-		sunLight.direction = I4Vector3(-0.3f, -1.0f, 0.85f);
+		sunLight.direction = I4Vector3(-0.3f, -1.0f, -0.85f);
 		sunLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
 		commit(&sunLight);
 	}
@@ -277,7 +277,7 @@ namespace i4graphics
 		sunLight = *light;
 
 		directionalLightPerspectiveCamera.setLookAt(sunLight.direction*-100.0f, sunLight.direction, I4VECTOR3_AXISY);
-		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 1000.0f);
+		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 100.0f);
 	}
 
 	void I4DeferredRenderer::commit(I4PointLight* light)
@@ -296,27 +296,39 @@ namespace i4graphics
 	void I4DeferredRenderer::render()
 	{
 		I4PROFILE_THISFUNC;
-
-		videoDriver->beginScene();
-
-		clearAllRenderTarget();
+		
+		beginRender();
 
 		renderStageGeometry();
 		renderStageShadow();
 		renderStageLight();
 		renderStageMerge();
+		renderDebug();
+		
+		endRender();
 
-		if (debugMode)
-		{
-			renderDebugLine();
-		}
+	}
+	
+	void I4DeferredRenderer::beginRender()
+	{
+		I4PROFILE_THISFUNC;
+
+		videoDriver->beginScene();
+
+		clearAllRenderTarget();
+	}
+
+	void I4DeferredRenderer::endRender()
+	{
+		I4PROFILE_THISFUNC;
 
 		videoDriver->endScene();
 
 		vecSceneMeshRenderItem.clear();
 		vecScenePointLight.clear();
 	}
-	
+
+
 	void I4DeferredRenderer::clearAllRenderTarget()
 	{
 		I4PROFILE_THISFUNC;
@@ -893,6 +905,14 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(2, nullptr);
 
 		shaderMgr->end();
+	}
+
+	void I4DeferredRenderer::renderDebug()
+	{
+		if (debugMode)
+		{
+			renderDebugLine();
+		}
 	}
 
 	void I4DeferredRenderer::renderDebugLine()

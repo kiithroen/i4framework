@@ -185,6 +185,11 @@ namespace i4graphics
 
 		virtual void				render() override;
 
+		void renderDebug();
+
+		void						beginRender();
+		void						endRender();
+
 		bool				isWireMode() const				{ return wireMode; }
 		void				setWireMode(bool enable)		{ wireMode = enable; }
 

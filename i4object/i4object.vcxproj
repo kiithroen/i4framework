@@ -108,6 +108,7 @@
     <ClInclude Include="I4ObjectPointLightComponent.h" />
     <ClInclude Include="I4ObjectRigidBodyComponent.h" />
     <ClInclude Include="I4ObjectStaticCameraComponent.h" />
+    <ClInclude Include="I4ObjectTPSCameraComponent.h" />
     <ClInclude Include="I4ObjectViewComponent.h" />
     <ClInclude Include="I4PhysXMgr.h" />
     <ClInclude Include="stdafx.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="I4ObjectPointLightComponent.cpp" />
     <ClCompile Include="I4ObjectRigidBodyComponent.cpp" />
     <ClCompile Include="I4ObjectStaticCameraComponent.cpp" />
+    <ClCompile Include="I4ObjectTPSCameraComponent.cpp" />
     <ClCompile Include="I4ObjectViewComponent.cpp" />
     <ClCompile Include="I4PhysXMgr.cpp" />
     <ClCompile Include="stdafx.cpp">

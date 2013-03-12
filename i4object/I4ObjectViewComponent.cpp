@@ -7,6 +7,7 @@
 namespace i4object {
 
 	I4ObjectViewComponent::I4ObjectViewComponent(void)
+		: offset(I4MATRIX4X4_IDENTITY)
 	{
 	}
 
@@ -97,7 +98,7 @@ namespace i4object {
 	{
 		if (model)
 		{
-			model->commitToRenderer(getOwner()->getObjectMgr()->getRenderer(), getOwner()->getWorldTM());
+			model->commitToRenderer(getOwner()->getObjectMgr()->getRenderer(), offset*getOwner()->getWorldTM());
 		}
 	}
 
