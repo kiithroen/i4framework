@@ -6,21 +6,18 @@
 
 namespace i4object {
 
-	I4ObjectNode::I4ObjectNode(I4ObjectMgr* _objectMgr, I4ObjectNode* _parent, const char* _name)
+	I4Object::I4Object(I4ObjectMgr* _objectMgr, const char* _name)
 		: objectMgr(_objectMgr)
-		, parent(_parent)
 		, name(_name)
 	{
-		localTM.makeIdentity();
-		worldTM.makeIdentity();
+		rotation.makeIdentity();
+		position = I4VECTOR3_ZERO;
+		scale = I4VECTOR3_ONE;
 
-		if (parent != nullptr)
-		{
-			parent->attachChild(this);
-		}
+		worldTM.makeIdentity();
 	}
 
-	I4ObjectNode::~I4ObjectNode()
+	I4Object::~I4Object()
 	{
 		for (auto& itr : mapComponent)
 		{
@@ -30,119 +27,71 @@ namespace i4object {
 		mapComponent.clear();
 	}
 
-	void I4ObjectNode::updateWorldTM()
+	void I4Object::updateTransformMatrix()
 	{
-		calcWorldTM();
+		rotation.extractRotationMatrix(worldTM);
+		worldTM.setPosition(position);
+		if (scale != I4VECTOR3_ONE)
+		{
+			I4Matrix4x4 scaleTM;
+			scaleTM.makeScale(scale.x, scale.y, scale.z);
+
+			worldTM = scaleTM*worldTM;
+		}
+	}
+
+	void I4Object::destroyFromScene()
+	{
+		objectMgr->destroyObject(this);
+	}
+	
+	void I4Object::setLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
+	{
+		position = eye;
 		
-		// 자식들 업데이트
-		for (auto& itr : vecChild)
-		{
-			itr->updateWorldTM();
-		}
-	}
-	
-	void I4ObjectNode::calcWorldTM()
-	{
-		if (parent == nullptr)			// 부모가 없으면 월드변환행렬 --> 로컬
-		{
-			worldTM = localTM;
-		}
-		else						// 부모가 있으면 월드변환행렬 --> 로컬 x 부모의 월드변환행렬
-		{
-			worldTM = localTM*parent->getWorldTM();
-		}
-	}
-
-	I4ObjectNode* I4ObjectNode::createChild(const char* name)
-	{
-		return objectMgr->createObjectNode(this, name);
-	}
-
-	void I4ObjectNode::attachChild(I4ObjectNode* child)
-	{
-		child->detachFromParent();
-
-		child->parent = this;
-		child->updateWorldTM();
-
-		vecChild.push_back(child);
-	}
-
-
-	void I4ObjectNode::detachChild(I4ObjectNode* child)
-	{
-		for (auto itr = vecChild.begin(); itr != vecChild.end(); ++itr)
-		{
-			if (*itr == child)
-			{
-				(*itr)->parent = NULL;
-				vecChild.erase(itr);
-				return;
-			}
-		}
-	}
-	
-	void I4ObjectNode::detachFromParent()
-	{
-		if (parent != nullptr)
-		{
-			parent->detachChild(this);
-		}
-	}
-
-	void I4ObjectNode::destroyAllChild()
-	{
-		for (auto& itr : vecChild)
-		{
-			itr->destroyAllChild();
-			objectMgr->destroyObjectNode(itr);
-		}
-		vecChild.clear();
-	}
-
-	void I4ObjectNode::destroyFromScene()
-	{
-		detachFromParent();		
-		destroyAllChild();
-		objectMgr->destroyObjectNode(this);
-	}
-	
-	void I4ObjectNode::setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
-	{
 		I4Matrix4x4 m;
 		m.makeObjectLookAtLH(eye, at, up);
 
-		setLocalTM(m);
+		rotation.makeRotationMatrix(m);
+
+		updateTransformMatrix();
 	}
 
-	void I4ObjectNode::setLocalTM(const I4Matrix4x4& _localTM)
+	void I4Object::setRotationYawPitchRoll(float yaw, float pitch, float roll)
 	{
-		localTM = _localTM;
+		rotation.makeRotationYawPitchRoll(yaw, pitch, roll);
 
-		updateWorldTM();
+		updateTransformMatrix();
 	}
 
-	void I4ObjectNode::setLocalRotationYawPitchRoll(float yaw, float pitch, float roll)
+	void I4Object::setPosition(const I4Vector3& _position)
 	{
-		localTM.makeRotationYawPitchRoll(yaw, pitch, roll);
+		position = _position;
 
-		updateWorldTM();
+		updateTransformMatrix();
 	}
 
-	void I4ObjectNode::setLocalPosition(const I4Vector3& t)
+	void I4Object::setScale(const I4Vector3& _scale)
 	{
-		localTM.setTranslation(t);
+		scale = _scale;
 
-		updateWorldTM();
+		updateTransformMatrix();
 	}
 
-	void I4ObjectNode::setLocalScale(const I4Vector3& s)
+	void I4Object::setRotation(const I4Quaternion& _rotation)
 	{
-		I4Matrix4x4 m;
-		m.makeScale(s.x, s.y, s.z);
+		rotation = _rotation;
 
-		localTM = m*localTM;
-
-		updateWorldTM();
+		updateTransformMatrix();
 	}
+
+	void I4Object::setWorldTM(const I4Matrix4x4& _worldTM)
+	{
+		worldTM = _worldTM;
+
+		I4Matrix4x4 matRotation;
+		worldTM.decompose(&scale, &matRotation, &position);
+		rotation.makeRotationMatrix(matRotation);
+	}
+
 }

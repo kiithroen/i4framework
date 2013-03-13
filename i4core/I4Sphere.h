@@ -42,14 +42,6 @@ namespace i4core
 		{
 			return I4Sphere(mat.transformCoord(center), radius);
 		}
-
-		const I4Sphere transformInto(const I4Matrix4x4& mat) const
-		{
-			I4Matrix4x4 matInv;
-			mat.extractInversePrimitive(matInv);
-
-			return transform(matInv);
-		}
 				
 	public:
 		I4Vector3	center;

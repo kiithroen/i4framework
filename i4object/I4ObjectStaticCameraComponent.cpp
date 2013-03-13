@@ -44,7 +44,7 @@ namespace i4object
 		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
 
 		I4Matrix4x4 matCamView;
-		matTarget.extractInversePrimitive(matCamView);
+		matTarget.extractInverse(matCamView);
 
 		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matCamView);
 	}

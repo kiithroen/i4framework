@@ -53,21 +53,21 @@ bool I4MiniGameFrameCallback::onStart()
 	if (objectMgr->init(renderer, modelMgr, physXMgr) == false)
 		return false;
 
-	spectator =  objectMgr->createNode("spectator");
-	spectator->setLocalLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	spectator =  objectMgr->createObject("spectator");
+	spectator->setLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
 	I4ObjectFlyControllerComponent* spectatorController = spectator->addComponent<I4ObjectFlyControllerComponent>();
-	spectatorController->activate(false);
+	spectatorController->activate(true);
 	I4ObjectStaticCameraComponent* spectatorCamera = spectator->addComponent<I4ObjectStaticCameraComponent>();
-	spectatorCamera->setMainCamera(false);
+	spectatorCamera->setMainCamera(true);
 
-	player =  objectMgr->createNode("player");
-	player->setLocalLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-	player->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
+	player =  objectMgr->createObject("player");
+	player->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	player->setScale(I4Vector3(0.03f, 0.03f, 0.03f));
 
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
 	view->attachModel("player", "testmodel/elin", true, true, false);
-
+	
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
 	playerMovement->setGravity(I4Vector3(0, -9.8f, 0));
@@ -80,9 +80,8 @@ bool I4MiniGameFrameCallback::onStart()
 	I4ObjectTPSCameraComponent* playerCamera = player->addComponent<I4ObjectTPSCameraComponent>();
 	playerCamera->setMainCamera(true);
 
-	I4ObjectNode* nodeFloor = objectMgr->createNode("floor");
-	//nodeFloor->setLocalScale(I4Vector3(0.1f, 0.1f, 0.1f));
-	I4ObjectViewComponent* viewFloor = nodeFloor->addComponent<I4ObjectViewComponent>();
+	I4Object* objFloor = objectMgr->createObject("floor");
+	I4ObjectViewComponent* viewFloor = objFloor->addComponent<I4ObjectViewComponent>();
 	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 
 	physXMgr->createPlane();
@@ -103,7 +102,7 @@ bool I4MiniGameFrameCallback::onStart()
 		I4Vector3(0.7f, 0.9f, 0.75f),
 		I4Vector3(0.5f, 0.7f, 0.7f),
 	};
-
+	
 	for (int i = 0; i < 10; ++i)
 	{
 		for (int j = 0; j < 10; ++j)
@@ -112,15 +111,15 @@ bool I4MiniGameFrameCallback::onStart()
 
 			char charName[256] = {0, };
 			sprintf(charName, "char_%d", idx);
-			I4ObjectNode* nodeChar = objectMgr->createNode(charName);
-			nodeChar->setLocalPosition(I4Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
+			I4Object* objChar = objectMgr->createObject(charName);
+			objChar->setPosition(I4Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
 
-			I4ObjectViewComponent* view = nodeChar->addComponent<I4ObjectViewComponent>();
-			I4ObjectRigidBodyComponent* rigid = nodeChar->addComponent<I4ObjectRigidBodyComponent>();
+			I4ObjectViewComponent* view = objChar->addComponent<I4ObjectViewComponent>();
+			I4ObjectRigidBodyComponent* rigid = objChar->addComponent<I4ObjectRigidBodyComponent>();
 
 			if (i%3 == 0)
 			{
-				nodeChar->setLocalScale(I4Vector3(0.006f, 0.006f, 0.006f));
+				objChar->setScale(I4Vector3(0.006f, 0.006f, 0.006f));
 
 				view->attachModel(charName, "testmodel/cyberdemon", true, true, true);
 				view->attachAni("testmodel/cyberdemon.ani.xml", "idle");
@@ -133,7 +132,7 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 			else if (i%3 == 1)
 			{
-				nodeChar->setLocalScale(I4Vector3(0.01f, 0.01f, 0.01f));
+				objChar->setScale(I4Vector3(0.01f, 0.01f, 0.01f));
 
 				view->attachModel(charName, "testmodel/guard", true, true, true);
 				view->attachAni("testmodel/guard_idle.ani.xml", "idle");
@@ -146,21 +145,21 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 			else
 			{
-				nodeChar->setLocalScale(I4Vector3(0.03f, 0.03f, 0.03f));
+				objChar->setScale(I4Vector3(0.03f, 0.03f, 0.03f));
 
 				view->attachModel(charName, "testmodel/elin", true, true, false);
 				I4Matrix4x4 offset;
-				offset.makeTranslation(0, -0.55f, 0.1f);
+				offset.makeTranslation(0, -0.55f, 0);
 				rigid->setOffset(offset);
 				rigid->attachCapsule(0.2f, 0.7f, 1, false);
 			}
 
 			char lightName[256] = {0, };
 			sprintf(lightName, "light_%d", idx);
-			nodeLight[idx] = objectMgr->createNode(lightName);
-			nodeLight[idx]->setLocalPosition(I4Vector3(-20.0f + i*4.0f, 0.5f, -20.0f + j*4.0f));
+			objLight[idx] = objectMgr->createObject(lightName);
+			objLight[idx]->setPosition(I4Vector3(-20.0f + i*4.0f, 0.5f, -20.0f + j*4.0f));
 
-			I4ObjectPointLightComponent* lightPoint = nodeLight[idx]->addComponent<I4ObjectPointLightComponent>();
+			I4ObjectPointLightComponent* lightPoint = objLight[idx]->addComponent<I4ObjectPointLightComponent>();
 			lightPoint->setColor(lightPointColor[idx%13]);
 			if ((i == 3 && j == 3) || (i == 6 && j == 6))
 			{
@@ -173,7 +172,7 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 		}
 	}
-
+	
 	return true;
 }
 
@@ -227,7 +226,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onUpdateLogic"), updateArgs);
-
+	
 	static float degree = 0;
 	degree += 30*dt;
 	if (degree > 360.0f)
@@ -247,13 +246,11 @@ bool I4MiniGameFrameCallback::onUpdate()
 
 			int idx = i*10 + j;
 
-			nodeLight[idx]->setLocalPosition(I4Vector3(-18.0f + i*4.0f + sign*2.5f*cos(I4MathUtil::degreeToRadian(degree)),
+			objLight[idx]->setPosition(I4Vector3(-18.0f + i*4.0f + sign*2.5f*cos(I4MathUtil::degreeToRadian(degree)),
 				1.0f + sign*0.5f*cos(I4MathUtil::degreeToRadian(degree)),
 				-18.0f + j*4.0f + sign*2.5f*sin(I4MathUtil::degreeToRadian(degree))));
 		}
 	}
-
-
 
 	{
 		I4PROFILE_BLOCK("onAnimate");
@@ -321,8 +318,8 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 
 				isFree = !isFree;
 
-				I4ObjectCharacterMovementComponent* playerController = player->findComponent<I4ObjectCharacterMovementComponent>();
-
+				I4ObjectCharacterControllerComponent* playerController = player->findComponent<I4ObjectCharacterControllerComponent>();
+				playerController->activate(!isFree);
 				I4ObjectTPSCameraComponent* playerCam = player->findComponent<I4ObjectTPSCameraComponent>();
 				playerCam->setMainCamera(!isFree);
 
@@ -341,24 +338,24 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 			static int i = 0;
 			char name[256] = {0, };
 			sprintf(name, "physics_%d", i);
-			I4ObjectNode* nodePhysics = objectMgr->createNode(name);
-			nodePhysics->setLocalPosition(I4Vector3(0, 5, 2));
+			I4Object* objPhysics = objectMgr->createObject(name);
+			objPhysics->setPosition(I4Vector3(0, 5, 2));
 
 			if (i%3 == 0)
 			{
-				I4ObjectViewComponent* view = nodePhysics->addComponent<I4ObjectViewComponent>();
+				I4ObjectViewComponent* view = objPhysics->addComponent<I4ObjectViewComponent>();
 				view->attachModel(name, "testmodel/box", true, false, false);
-				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+				I4ObjectRigidBodyComponent* rigid = objPhysics->addComponent<I4ObjectRigidBodyComponent>();
 				rigid->attachBox(I4Vector3(0.1f, 0.1f, 0.1f), 1, false);
 			}
 			else if (i%3 == 1)
 			{
-				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+				I4ObjectRigidBodyComponent* rigid = objPhysics->addComponent<I4ObjectRigidBodyComponent>();
 				rigid->attachSphere(0.1f, 1, false);
 			}
 			else if (i%3 == 2)
 			{
-				I4ObjectRigidBodyComponent* rigid = nodePhysics->addComponent<I4ObjectRigidBodyComponent>();
+				I4ObjectRigidBodyComponent* rigid = objPhysics->addComponent<I4ObjectRigidBodyComponent>();
 				rigid->attachCapsule(0.3f, 1.0f, 1, false);
 			}
 

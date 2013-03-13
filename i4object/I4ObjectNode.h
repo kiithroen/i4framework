@@ -13,22 +13,14 @@ namespace i4object {
 
 	typedef I4Messenger<I4ObjectComponent>			I4ObjectComponentMessenger;
 
-	class I4ObjectNode
+	class I4Object
 	{
-		typedef vector<I4ObjectNode*>				I4ObjectNodeVector;
 		typedef map<string, I4ObjectComponent*>		I4ObjectComponentMap;
 	public:
-		I4ObjectNode(I4ObjectMgr* objectMgr, I4ObjectNode* parent, const char* name);
-		~I4ObjectNode();
-				
-		I4ObjectNode*			createChild(const char* name);
+		I4Object(I4ObjectMgr* objectMgr, const char* name);
+		~I4Object();
 
-		void					attachChild(I4ObjectNode* child);
-
-		void					detachChild(I4ObjectNode* child);
-		void					detachFromParent();
-
-		void					destroyFromScene();
+		void destroyFromScene();
 
 		template <typename T>
 		T* addComponent()
@@ -59,33 +51,35 @@ namespace i4object {
 			return static_cast<T*>(itr->second);
 		}
 
-		void 					setLocalLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up);
-		void 					setLocalTM(const I4Matrix4x4& localTM);
-		void 					setLocalRotationYawPitchRoll(float yaw, float pitch, float roll);
-		void 					setLocalPosition(const I4Vector3& t);
-		void 					setLocalScale(const I4Vector3& s);
+		void 					setLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up);
+		void 					setRotationYawPitchRoll(float yaw, float pitch, float roll);
+		void 					setPosition(const I4Vector3& position);
+		void 					setScale(const I4Vector3& scale);
+		void					setRotation(const I4Quaternion& rotation);
+		void					setWorldTM(const I4Matrix4x4& worldTM);
 
-		I4ObjectMgr*					getObjectMgr()				{ return objectMgr; }
-		I4ObjectComponentMessenger&		getMessenger()				{ return messenger; }
+		I4ObjectMgr*					getObjectMgr()	{ return objectMgr; }
+		I4ObjectComponentMessenger&		getMessenger()	{ return messenger; }
 
-		const string&			getName()							{ return name; }
-		
-		const I4Matrix4x4&		getLocalTM() const					{ return localTM; }
-		const I4Matrix4x4&		getWorldTM() const					{ return worldTM; }
+		const string&			getName()				{ return name; }
+
+		const I4Quaternion&		getRotation() const		{ return rotation; }
+		const I4Vector3&		getPosition() const		{ return position; }
+		const I4Vector3&		getScale() const		{ return scale; }
+
+		const I4Matrix4x4&		getWorldTM() const		{ return worldTM; }
 
 	private:
-		void					updateWorldTM();
-		void					calcWorldTM();
-
-		void					destroyAllChild();
+		void					updateTransformMatrix();
 
 	protected:
-		I4Matrix4x4						localTM;
+		I4Quaternion					rotation;
+		I4Vector3						scale;
+		I4Vector3						position;
 		I4Matrix4x4						worldTM;
 		string							name;
+
 		I4ObjectMgr*					objectMgr;
-		I4ObjectNode*					parent;
-		I4ObjectNodeVector				vecChild;
 		I4ObjectComponentMap			mapComponent;
 		I4ObjectComponentMessenger		messenger;
 	};

@@ -16,13 +16,13 @@ namespace i4object {
 		virtual void				onAdd()						{}
 		virtual void				onRemove()					{}
 
-		I4ObjectNode*				getOwner()						{ return owner; }
-		void						setOwner(I4ObjectNode* _owner)	{ owner = _owner; }
+		I4Object*				getOwner()						{ return owner; }
+		void						setOwner(I4Object* _owner)	{ owner = _owner; }
 
 		I4ObjectComponentMessenger&	getBroadcastMessenger()			{ return owner->getObjectMgr()->getMessenger(); }
 		I4ObjectComponentMessenger&	getDirectMessenger()			{ return owner->getMessenger(); }
 
 	private:
-		I4ObjectNode*		owner;
+		I4Object*		owner;
 	};
 }

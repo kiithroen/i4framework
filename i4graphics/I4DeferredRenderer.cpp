@@ -540,7 +540,7 @@ namespace i4graphics
 		tempSplitCamera.setViewMatrix(mainCamera.getViewMatrix());
 
 		I4Matrix4x4 matInvView;
-		tempSplitCamera.getViewMatrix().extractInverse(matInvView);
+		tempSplitCamera.getViewMatrix().extractInversePrimitive(matInvView);
 
 		I4Matrix4x4 matToLightView = matInvView*directionalLightPerspectiveCamera.getViewMatrix();
 
@@ -769,7 +769,7 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(2, rtShadow);
 
 		I4Matrix4x4 matInvView;
-		mainCamera.getViewMatrix().extractInverse(matInvView);
+		mainCamera.getViewMatrix().extractInversePrimitive(matInvView);
 		for (int i = 0; i < SHADOW_SPLIT_NUM; ++i)
 		{
 			cbOnResize_L_directional.getData()->viewInvLightViewProjection[i] = matInvView*directionalLightSplitOrthoCamera[i].getViewProjectionMatrix();
@@ -842,7 +842,7 @@ namespace i4graphics
 			const I4PointLight& light = itr;
 
 			matLight.makeScale(light.radius, light.radius, light.radius);
-			matLight.setTranslation(light.position);
+			matLight.setPosition(light.position);
 
 			
 			const I4Vector3 lightViewPos =  mainCamera.getViewMatrix().transformCoord(light.position);

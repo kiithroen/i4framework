@@ -101,7 +101,7 @@ namespace i4graphics
 	{
 		I4ModelElement::initialize();
 
-		elementInfo->worldTM.extractInversePrimitive(worldInverseTM);;
+		elementInfo->worldTM.extractInversePrimitive(worldInverseTM);
 
 		return true;
 	}

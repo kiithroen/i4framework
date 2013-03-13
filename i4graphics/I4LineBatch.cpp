@@ -32,8 +32,6 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 
-		I4Vertex_Pos_Col* vertices;
-
 		if (vecSceneVertex.size() > 0)
 		{
 			int totalCount = vecSceneVertex.size();

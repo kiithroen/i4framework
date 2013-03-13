@@ -28,13 +28,13 @@ namespace i4object
 		float rollRad;
 
 		I4Quaternion rot;
-		rot.makeRotationMatrix(getOwner()->getLocalTM());
+		rot.makeRotationMatrix(getOwner()->getWorldTM());
 		rot.extractYawPitchRoll(yawRad, pitchRad, rollRad);
 
 		yaw = I4MathUtil::radianToDegree(yawRad);
 		pitch = I4MathUtil::radianToDegree(pitchRad);
 
-		getOwner()->getLocalTM().extractAxisZ(originalEyeDir);
+		originalEyeDir = getOwner()->getWorldTM().getAxisZ();
 		originalEyeDir.normalize();
 
 		eyeDir = originalEyeDir;
@@ -76,9 +76,9 @@ namespace i4object
 				yaw -= 360;
 			}
 
-			if (pitch < 0)
+			if (pitch < -30)
 			{
-				pitch = 0;
+				pitch = -30;
 			}
 
 			if (pitch > 60)
@@ -96,23 +96,16 @@ namespace i4object
 		prevMouseY = curMouseY;
 
 		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
-
-		I4Vector3 forward;
-		matTarget.extractAxisZ(forward);
-		forward.normalize();
-
-		I4Vector3 up;
-		matTarget.extractAxisY(up);
+		
+		I4Vector3 up = matTarget.getAxisY();
 		up.normalize();
 
-		I4Vector3 right;
-		matTarget.extractAxisX(right);
+		I4Vector3 right = matTarget.getAxisX();
 		right.normalize();
 
-		I4Vector3 position;
-		matTarget.extractTranslation(position);
+		I4Vector3 position = matTarget.getPosition();
 
-		I4Vector3 eye = position - eyeDir*5.0f + right*0.2f + up*1.5f;
+		I4Vector3 eye = position - eyeDir*3.0f + right*0.0f + up*1.5f;
 		I4Matrix4x4 matCamView;
 		matCamView.makeCameraLookAtLH(eye, eye + eyeDir, I4VECTOR3_AXISY);
 

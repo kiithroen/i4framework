@@ -79,7 +79,7 @@ namespace i4core
 		viewMatrix = view;
 		viewMatrix.extractInversePrimitive(worldMatrix);
 
-		worldMatrix.extractTranslation(eye);
+		eye = worldMatrix.getPosition();
 
 		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
 

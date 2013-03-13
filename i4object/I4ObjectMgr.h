@@ -14,24 +14,21 @@ using namespace i4graphics;
 namespace i4object {
 
 	class I4PhysXMgr;
-	class I4ObjectNode;
+	class I4Object;
 
 	class I4ObjectMgr
 	{
-		typedef map<string, I4ObjectNode*>			I4ObjectNodeMap;
+		typedef map<string, I4Object*>			I4ObjectMap;
 	public:
 		I4ObjectMgr();
 		~I4ObjectMgr();
 
-		bool					init(I4Renderer* renderer, I4ModelMgr* modelMgr, I4PhysXMgr* physXMgr);
+		bool						init(I4Renderer* renderer, I4ModelMgr* modelMgr, I4PhysXMgr* physXMgr);
 
-		I4ObjectNode*			createNode(const char* name);
-		I4ObjectNode*			createObjectNode(I4ObjectNode* parent, const char* name);
-		void					destroyObjectNode(I4ObjectNode* node);
+		I4Object*					createObject(const char* name);
+		void						destroyObject(I4Object* obj);
 
-		I4ObjectNode*			findObjectNode(const char* name);
-
-		I4ObjectNode*			getRootNode()			{ return rootNode; }
+		I4Object*					findObject(const char* name);
 
 		I4ObjectComponentMessenger&	getMessenger()		{ return messenger; }
 		I4Renderer*					getRenderer()		{ return renderer; }
@@ -39,12 +36,11 @@ namespace i4object {
 		I4PhysXMgr*					getPhysXMgr()		{ return physXMgr; }
 
 	private:
-		I4ObjectNode*					rootNode;
-		I4ObjectNodeMap					mapObjectNode;
-		I4ObjectComponentMessenger		messenger;
-		I4Renderer*						renderer;
-		I4ModelMgr*						modelMgr;
-		I4PhysXMgr*						physXMgr;
+		I4ObjectMap					mapObject;
+		I4ObjectComponentMessenger	messenger;
+		I4Renderer*					renderer;
+		I4ModelMgr*					modelMgr;
+		I4PhysXMgr*					physXMgr;
 	};
 
 }

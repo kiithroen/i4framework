@@ -22,7 +22,7 @@ using namespace i4graphics;
 namespace i4object
 {
 	class I4ObjectMgr;
-	class I4ObjectNode;
+	class I4Object;
 	class I4PhysXMgr;
 }
 using namespace i4object;
@@ -46,10 +46,10 @@ public:
 private:
 	I4ObjectMgr*		objectMgr;
 	I4Renderer*			renderer;
-	I4ObjectNode*		player;
+	I4Object*		player;
 	I4ModelMgr*			modelMgr;
 	I4PhysXMgr*			physXMgr;
-	I4ObjectNode*		nodeLight[100];
+	I4Object*		objLight[100];
 
-	I4ObjectNode*		spectator;
+	I4Object*		spectator;
 };

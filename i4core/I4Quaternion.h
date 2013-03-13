@@ -188,42 +188,49 @@ namespace i4core
 
 		void makeRotationMatrix(const I4Matrix4x4& mat)
 		{
-			const int next[3] = { 1, 2, 0 };
+			const float diag = mat._11 + mat._22 + mat._33 + 1;
 
-			float trace = mat._11 + mat._22 + mat._33;
-			float root;
-
-			if (trace > 0.0f)
+			if( diag > 0.0f )
 			{
-				root = sqrtf(trace + 1.0f);
-				w = 0.5f*root;
-				root = 0.5f/root;
-				x = (mat._23 - mat._32)*root;
-				y = (mat._31 - mat._13)*root;
-				z = (mat._12 - mat._21)*root;
+				const float scale = sqrtf(diag) * 2.0f;
+
+				x = (mat._23 - mat._32) / scale;
+				y = (mat._31 - mat._13) / scale;
+				z = (mat._12 - mat._21) / scale;
+				w = 0.25f * scale;
 			}
 			else
 			{
-				int i = 0;
-				if (mat._22 > mat._11)
+				if (mat._11>mat._22 && mat._11>mat._33)
 				{
-					i = 1;
-				}
-				if (mat._33 > mat.m[i][i])
-				{
-					i = 2;
-				}
-				int j = next[i];
-				int k = next[j];
+					const float scale = sqrtf(1.0f + mat._11 - mat._22 - mat._33) * 2.0f;
 
-				root = sqrtf(mat.m[i][i] - mat.m[j][j] - mat.m[k][k] + 1.0f);
-				float* quat[3] = { &x, &y, &z };
-				*quat[i] = 0.5f*root;
-				root = 0.5f/root;
-				w = (mat.m[k][j] - mat.m[j][k])*root;
-				*quat[j] = (mat.m[j][i] + mat.m[i][j])*root;
-				*quat[k] = (mat.m[k][i] + mat.m[i][k])*root;
+					x = 0.25f * scale;
+					y = (mat._21 + mat._12) / scale;
+					z = (mat._13 + mat._31) / scale;
+					w = (mat._23 - mat._32) / scale;
+				}
+				else if (mat._22>mat._33)
+				{
+					const float scale = sqrtf(1.0f + mat._22 - mat._11 - mat._33) * 2.0f;
+
+					x = (mat._21 + mat._12) / scale;
+					y = 0.25f * scale;
+					z = (mat._32 + mat._23) / scale;
+					w = (mat._31 - mat._13) / scale;
+				}
+				else
+				{
+					const float scale = sqrtf(1.0f + mat._33 - mat._11 - mat._22) * 2.0f;
+
+					x = (mat._31 + mat._13) / scale;
+					y = (mat._32 + mat._23) / scale;
+					z = 0.25f * scale;
+					w = (mat._12 - mat._21) / scale;
+				}
 			}
+
+			return normalize();
 		}
 
 		void extractYawPitchRoll(float& yaw, float& pitch, float& roll) const
@@ -251,7 +258,7 @@ namespace i4core
 			pitch = atan2f(2.0f*x*w-2.0f*y*z , 1.0f - 2.0f*sqx - 2.0f*sqz);
 		}
 
-		void extractMatrix(I4Matrix4x4& mat) const
+		void extractRotationMatrix(I4Matrix4x4& mat) const
 		{
 			float x2 = x + x;
 			float y2 = y + y;

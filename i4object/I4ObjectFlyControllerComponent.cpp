@@ -26,7 +26,7 @@ namespace i4object
 		float rollRad;
 
 		I4Quaternion rot;
-		rot.makeRotationMatrix(getOwner()->getLocalTM());
+		rot.makeRotationMatrix(getOwner()->getWorldTM());
 		rot.extractYawPitchRoll(yawRad, pitchRad, rollRad);
 
 		yaw = I4MathUtil::radianToDegree(yawRad);
@@ -56,16 +56,17 @@ namespace i4object
 
 		float moveSpeed = 6.0f*dt;
 
-		I4Vector3			right;
-		I4Vector3			forward;
-		I4Vector3			position;
-
-		getOwner()->getLocalTM().extractAxisX(right);
-		getOwner()->getLocalTM().extractAxisZ(forward);
-		getOwner()->getLocalTM().extractTranslation(position);;
+		I4Vector3 right = getOwner()->getWorldTM().getAxisX();
+		I4Vector3 forward = getOwner()->getWorldTM().getAxisZ();
+		I4Vector3 position = getOwner()->getPosition();
 
 		right.normalize();
 		forward.normalize();
+
+		if (I4InputState::KeyPressed[VK_SHIFT])
+		{
+			moveSpeed *= 3;
+		}
 
 		if (I4InputState::KeyPressed['w'] || I4InputState::KeyPressed['W'])
 		{
@@ -117,9 +118,9 @@ namespace i4object
 
 		I4Matrix4x4 mat;
 		mat.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(yaw), I4MathUtil::degreeToRadian(pitch), 0);
-		mat.setTranslation(position);
+		mat.setPosition(position);
 
-		getOwner()->setLocalTM(mat);
+		getOwner()->setWorldTM(mat);
 
 		prevMouseX = curMouseX;
 		prevMouseY = curMouseY;

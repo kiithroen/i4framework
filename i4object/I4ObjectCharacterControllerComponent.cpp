@@ -47,32 +47,12 @@ namespace i4object
 
 		float dt = args[0].asFloat();
 
-		I4Vector3 scale;
-		I4Vector3 pos;
-		I4Matrix4x4 mat;
-		getOwner()->getLocalTM().decompose(&scale, &mat, &pos);
-
-		I4Vector3 dir;
-		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().extractAxisZ(dir);
-
-		dir.y = 0;
-		dir.normalize();
-
-		mat.makeObjectLookAtLH(pos, pos + dir, I4VECTOR3_AXISY);
-
-		I4Matrix4x4 matScale;
-		matScale.makeScale(scale.x, scale.y, scale.z);
-
-		getOwner()->setLocalTM(matScale*mat);
-
-		I4Vector3			right;
-		I4Vector3			forward;
-
-		getOwner()->getLocalTM().extractAxisX(right);
-		getOwner()->getLocalTM().extractAxisZ(forward);
-
-		right.normalize();
+		I4Vector3 forward = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisZ();
+		forward.y = 0;
 		forward.normalize();
+
+		I4Vector3 right = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
+		right.normalize();
 
 		bool isMove = false;
 		I4Vector3 direction = I4VECTOR3_ZERO;
@@ -102,7 +82,7 @@ namespace i4object
 
 		if (I4InputState::KeyPressed[VK_SPACE])
 		{
-  			character->setJumpSpeed(20);
+  			character->setJumpSpeed(60);
 		}
 		else
 		{
@@ -111,6 +91,24 @@ namespace i4object
 
 		if (isMove)
 		{
+			I4Vector3 scale = getOwner()->getScale();
+			I4Vector3 position = getOwner()->getPosition();
+
+			I4Matrix4x4 matScale;
+			matScale.makeScale(scale.x, scale.y, scale.z);
+
+			I4Matrix4x4 matRotPos;
+			matRotPos.makeObjectLookAtLH(position, position + forward, I4VECTOR3_AXISY);
+			//matRotPos.setPosition(position);
+
+			I4Quaternion qTarget;
+			qTarget.makeRotationMatrix(matRotPos);
+
+			I4Quaternion qOut;
+			I4Quaternion::slerp(qOut, getOwner()->getRotation(), qTarget, 10*dt);
+
+			getOwner()->setRotation(qOut);
+
 			direction.y = 0;
 			direction.normalize();
 			character->setDirection(direction);

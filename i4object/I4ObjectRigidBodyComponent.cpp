@@ -65,9 +65,9 @@ namespace i4object {
 	{
 		I4PROFILE_THISFUNC;
 
-		I4Matrix4x4 matWorldTM;
-		PxTransform2WorldTM(matWorldTM);
-		getOwner()->setLocalTM(matWorldTM);
+		I4Matrix4x4 worldTM;
+		PxTransform2WorldTM(worldTM);
+		getOwner()->setWorldTM(worldTM);
 	}
 
 	void I4ObjectRigidBodyComponent::attachBox(const I4Vector3& ext, float density, bool kinematic)
@@ -100,15 +100,15 @@ namespace i4object {
 	void I4ObjectRigidBodyComponent::WorldTM2PxTransform(PxTransform& transform)
 	{
 		I4Matrix4x4 invOffset;
-		matOffset.extractInversePrimitive(invOffset);
+		matOffset.extractInverse(invOffset);
 
-		I4Matrix4x4 matWorldTM;
+		I4Matrix4x4 objectTM;
 		I4Vector3 pos;
-		getOwner()->getWorldTM().decompose(nullptr, &matWorldTM, &pos);
-		matWorldTM.setTranslation(pos);
+		getOwner()->getWorldTM().decompose(nullptr, &objectTM, &pos);
+		objectTM.setPosition(pos);
 
 		PxMat44 matTransform;
-		convertToPxMat4x4(matTransform, invOffset*matWorldTM);
+		convertToPxMat4x4(matTransform, invOffset*objectTM);
 
 		transform = PxTransform(matTransform);
 	}

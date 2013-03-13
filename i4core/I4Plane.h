@@ -82,14 +82,6 @@ namespace i4core
 			return I4Plane(mat.transformVector(N), D);
 		}
 
-		const I4Plane transformInto(const I4Matrix4x4& mat) const
-		{
-			I4Matrix4x4 matInv;
-			mat.extractInversePrimitive(matInv);
-
-			return transform(matInv);
-		}
-
 		I4PlaneLoc testPoint(const I4Vector3& p) const
 		{
 			float dp = distanceFrom(p);

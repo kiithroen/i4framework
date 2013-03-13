@@ -33,8 +33,7 @@ namespace i4object {
 
 	void I4ObjectCharacterMovementComponent::attach(float radius, float height, float slopeLimit, float stepOffset)
 	{
-		I4Vector3 p;
-		getOwner()->getWorldTM().extractTranslation(p);
+		I4Vector3 p = getOwner()->getPosition();
 		controller = getOwner()->getObjectMgr()->getPhysXMgr()->createCapsuleController(p, radius, height, slopeLimit, stepOffset, nullptr, nullptr);
 	}
 
@@ -53,7 +52,7 @@ namespace i4object {
 		const PxU32 flag = controller->move(disp, 0.001f, dt, PxControllerFilters());
 
 		const PxExtendedVec3 p = controller->getFootPosition();
-		getOwner()->setLocalPosition(I4Vector3((float)p.x, (float)p.y, (float)p.z));
+		getOwner()->setPosition(I4Vector3((float)p.x, (float)p.y, (float)p.z));
 	}
 
 	void I4ObjectCharacterMovementComponent::setDirection(const I4Vector3& dir)

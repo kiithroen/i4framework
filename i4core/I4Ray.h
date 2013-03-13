@@ -34,14 +34,6 @@ namespace i4core
 			return I4Ray(mat.transformCoord(origin), mat.transformVector(direction));
 		}
 
-		const I4Ray transformInto(const I4Matrix4x4& mat) const
-		{
-			I4Matrix4x4 matInv;
-			mat.extractInversePrimitive(matInv);
-
-			return transform(matInv);
-		}
-
 		bool intersectTriangle(const I4Vector3& p0, const I4Vector3& p1, const I4Vector3& p2, bool isCull, float* dist)
 		{
 			I4Vector3 edge1 = p1 - p0;

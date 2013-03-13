@@ -69,7 +69,7 @@ namespace i4object {
 	{
 		if (isTurnOn)
 		{
-			getOwner()->getWorldTM().extractTranslation(light.position);
+			light.position = getOwner()->getPosition();
 			getOwner()->getObjectMgr()->getRenderer()->commit(&light);
 		}
 	}

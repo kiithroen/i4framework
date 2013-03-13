@@ -152,53 +152,45 @@ namespace i4core
 		}
 
 
-		void setTranslation(const I4Vector3& pos)
+		void setPosition(const I4Vector3& pos)
 		{
 			_41 = pos.x;
 			_42 = pos.y;
 			_43 = pos.z;
 		}
 
-		void addTranslation(const I4Vector3& pos)
+		void addPosition(const I4Vector3& pos)
 		{
 			_41 += pos.x;
 			_42 += pos.y;
 			_43 += pos.z;
 		}
 
-		void extractAxisX(I4Vector3& v) const
+		const I4Vector3 getAxisX() const
 		{
-			v.x = _11;
-			v.y = _12;
-			v.z = _13;
+			return I4Vector3(_11, _12, _13);
 		}
 
-		void extractAxisY(I4Vector3& v) const
+		const I4Vector3 getAxisY() const
 		{
-			v.x = _21;
-			v.y = _22;
-			v.z = _23;
+			return I4Vector3(_21, _22, _23);
 		}
 
-		void extractAxisZ(I4Vector3& v) const
+		const I4Vector3 getAxisZ() const
 		{
-			v.x = _31;
-			v.y = _32;
-			v.z = _33;
+			return I4Vector3(_31, _32, _33);
 		}
 
-		void extractTranslation(I4Vector3& v) const
+		const I4Vector3 getPosition() const
 		{
-			v.x = _41;
-			v.y = _42;
-			v.z = _43;
+			return I4Vector3(_41, _42, _43);
 		}
 
 		void extractAxis(I4Vector3& vx, I4Vector3& vy, I4Vector3& vz) const
 		{
-			extractAxisX(vx);
-			extractAxisY(vy);
-			extractAxisZ(vz);
+			vx = getAxisX();
+			vy = getAxisY();
+			vz = getAxisZ();
 		}
 
 		
@@ -237,7 +229,7 @@ namespace i4core
 						(_12*_24 - _14*_22)*(_31*_43 - _33*_41) +
 						(_13*_24 - _14*_23)*(_31*_42 - _32*_41);
 
-			if (I4MathUtil::isEpsilonZero(d))
+			if (d == 0)
 				return false;
 
 			float invD = 1.0f/d;
@@ -480,11 +472,11 @@ namespace i4core
 			_44 = 1.0f;
 		}
 
-		void decompose(I4Vector3* scale, I4Matrix4x4* rotation, I4Vector3* translation) const
+		void decompose(I4Vector3* scale, I4Matrix4x4* rotation, I4Vector3* position) const
 		{
-			if (translation != nullptr)
+			if (position != nullptr)
 			{
-				extractTranslation(*translation);
+				*position = getPosition();
 			}
 
 			if (scale != nullptr || rotation != nullptr)

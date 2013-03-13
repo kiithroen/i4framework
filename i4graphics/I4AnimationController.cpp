@@ -30,7 +30,7 @@ namespace i4graphics
 		I4Quaternion q;
 		if (curAnimationTrack->getKeyRotation(q) == true)
 		{
-			q.extractMatrix(animationTM);
+			q.extractRotationMatrix(animationTM);
 		}
 
 		I4Vector3 v;
