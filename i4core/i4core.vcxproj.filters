@@ -81,9 +81,6 @@
     <ClInclude Include="I4FrameTimer.h">
       <Filter>framework</Filter>
     </ClInclude>
-    <ClInclude Include="I4FrameTimerWin.h">
-      <Filter>framework</Filter>
-    </ClInclude>
     <ClInclude Include="I4Framework.h">
       <Filter>framework</Filter>
     </ClInclude>
@@ -121,9 +118,6 @@
     <ClCompile Include="i4core.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="I4FrameTimer.cpp">
-      <Filter>framework</Filter>
-    </ClCompile>
-    <ClCompile Include="I4FrameTimerWin.cpp">
       <Filter>framework</Filter>
     </ClCompile>
     <ClCompile Include="I4Framework.cpp">

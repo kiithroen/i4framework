@@ -59,8 +59,7 @@ namespace i4core
 	protected:	
 		virtual	bool		onCreate()								{ return true; }
 		virtual void		onDestroy()								{}
-		virtual bool		onMessagePump()									{ return true; }
-		virtual void		onYield()								{}
+		virtual bool		onMessagePump()							{ return true; }
 
 	private:
 		bool				mainLoop(float deltaMs);

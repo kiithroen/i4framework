@@ -15,7 +15,6 @@ namespace i4core
 		virtual bool		onCreate();
 		virtual void		onDestroy();
 		virtual bool		onMessagePump();
-		virtual void		onYield();
 
 	public:
 		LRESULT CALLBACK	wndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam);

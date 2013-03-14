@@ -36,7 +36,7 @@ public:
 	virtual	bool	onStart() override;
 	virtual void	onEnd() override;
 
-	virtual bool	onSimulate(float dt) override;
+	virtual bool	onTick(float dt) override;
 
 	virtual bool	onUpdate() override;
 	virtual bool	onRender() override;

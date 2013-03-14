@@ -70,9 +70,7 @@ bool I4MiniGameFrameCallback::onStart()
 	
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
-	playerMovement->setGravity(I4Vector3(0, -9.8f, 0));
-	playerMovement->setDirection(I4VECTOR3_AXISZ);
-	playerMovement->setMoveSpeed(0);
+	playerMovement->setGravity(-9.8f);
 
 	I4ObjectCharacterControllerComponent* playerController = player->addComponent<I4ObjectCharacterControllerComponent>();	
 	playerController->activate(true);
@@ -184,7 +182,7 @@ void I4MiniGameFrameCallback::onEnd()
 	delete objectMgr;
 }
 
-bool I4MiniGameFrameCallback::onSimulate(float dt)
+bool I4MiniGameFrameCallback::onTick(float dt)
 {
 	I4PROFILE_THISFUNC;
 	
@@ -221,7 +219,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 	if (I4InputState::KeyPressed[VK_ESCAPE])
 		return false;
 
-	float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
+	float dt = I4FrameTimer::getFrameTimer()->getFrameDelta();
 
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
@@ -251,14 +249,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 				-18.0f + j*4.0f + sign*2.5f*sin(I4MathUtil::degreeToRadian(degree))));
 		}
 	}
-
-	{
-		I4PROFILE_BLOCK("onAnimate");
-		I4MessageArgs aniArgs;
-		aniArgs.push_back(dt);
-		objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
-	}
-
+	
 	{
 		I4PROFILE_BLOCK("onLateUpdate");
 		I4MessageArgs readyToRenderArgs;
@@ -273,7 +264,14 @@ bool I4MiniGameFrameCallback::onRender()
 {
 	I4PROFILE_THISFUNC;
 
-	float dt = I4FrameTimer::getFrameTimer()->getDeltaSec();
+	float dt = I4FrameTimer::getFrameTimer()->getFrameDelta();
+	
+	{
+		I4PROFILE_BLOCK("onAnimate");
+		I4MessageArgs aniArgs;
+		aniArgs.push_back(dt);
+		objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
+	}
 
 	{
 		I4PROFILE_BLOCK("onCommitToRenderer");

@@ -22,7 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="I4Format.h" />
-    <ClInclude Include="i4graphics.h" />
     <ClInclude Include="..\dependency\DirectXTex\DDSTextureLoader.h">
       <Filter>DirectXTex</Filter>
     </ClInclude>
@@ -114,7 +113,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="i4graphics.cpp" />
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
       <Filter>DirectXTex</Filter>
     </ClCompile>

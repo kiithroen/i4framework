@@ -58,9 +58,16 @@ namespace i4core {
 		height	= _height;
 		title	= _title;
 
-		I4FrameTimer::createFrameTimer();
-		I4StopWatch::initialize();
+		// 디버그 모드인경우와 릴리즈 모드인경우 고정타이밍호출 빈도를 다르게 가져간다.
+		// 디버그인 경우 너무 느려서 높은 빈도로 돌리면 테스트에 악영향이 있다.
+#ifdef _DEBUG
+		const float TICK_INTERVAL = 1.0f/30.0f;
+#else
+		const float TICK_INTERVAL = 1.0f/60.0f;
+#endif
 
+		I4FrameTimer::createFrameTimer(TICK_INTERVAL);
+		
 		if (onCreate() == false)
 		{
 			destroy();
@@ -91,21 +98,55 @@ namespace i4core {
 			}			
 		}
 
-		I4FrameTimer::getFrameTimer()->update();
+		I4FrameTimer::getFrameTimer()->updateFrameDelta();
 
-		while (onMessagePump())
+		bool done = false;
+		while (!done)
 		{
-			float dt = I4FrameTimer::getFrameTimer()->update();
-			if (mainLoop(dt) == false)
-				break;
-
-			elapsedSec += dt;
-			frameCount += 1;
-			if (elapsedSec >= 1.0f)
+			if (onMessagePump() == false)
 			{
-				fps = (float)frameCount/elapsedSec;
+				done = true;
+			}
 
-				elapsedSec = 0;
+			float dt = I4FrameTimer::getFrameTimer()->updateFrameDelta();
+
+			elapsedSec += dt;		
+
+			while (elapsedSec >= I4FrameTimer::getFrameTimer()->getTickInterval())	// 고정타이밍으로 불려야하는 것들. ex) 물리..
+			{
+				elapsedSec -= I4FrameTimer::getFrameTimer()->getTickInterval();
+
+				if (frameCallback)
+				{
+					I4FrameTimer::getFrameTimer()->updateTickCount();
+					if (frameCallback->onTick(I4FrameTimer::getFrameTimer()->getTickInterval()) == false)
+					{
+						done = true;
+					}
+				}
+			}
+
+			if (frameCallback)
+			{
+				if (frameCallback->onUpdate() == false)
+				{
+					done = true;
+				}
+
+				if (frameCallback->onRender() == false)
+				{
+					done = true;
+				}
+			}
+
+			++frameCount;
+			static float elapsedLastDisplayFPS = 0;
+			elapsedLastDisplayFPS += dt;
+			if (elapsedLastDisplayFPS >= 1.0f)
+			{
+				fps = (float)frameCount/elapsedLastDisplayFPS;
+
+				elapsedLastDisplayFPS = 0;
 				frameCount = 0;
 
 				I4ProfileWriterLog	writer;
@@ -120,44 +161,7 @@ namespace i4core {
 			frameCallback->onEnd();
 		}
 	}
-
-	bool I4Framework::mainLoop(float dt)
-	{
-		static float elapsedSec = 0;
-		const float TIMING = 1.0f/60;
-
-		elapsedSec += dt;
-
-		if (elapsedSec >= TIMING)
-		{
-			while (elapsedSec >= TIMING)
-			{
-				elapsedSec -= TIMING;
-
-				if (frameCallback)
-				{
-					if (frameCallback->onSimulate(TIMING) == false)
-						return false;
-				}
-			}
-		}
-		else
-		{
-			onYield();
-		}	
-
-		if (frameCallback)
-		{
-			if (frameCallback->onUpdate() == false)
-				return false;
-
-			if (frameCallback->onRender() == false)
-				return false;
-		}
-
-		return true;
-	}
-
+	
 	void I4Framework::setFrameCallback(I4FrameCallback* callback)
 	{
 		frameCallback = callback;

@@ -7,18 +7,21 @@ namespace i4core
 	public:
 		I4StopWatch();
 
+		void QueryFrequency();
+
 		void reset();
-		float getElapsedTime();
+
+		void QueryCounter(LARGE_INTEGER* count);
+
+		float elapsed();
 		
-	private:
 #ifdef _WIN32
-		LARGE_INTEGER		startTime;
-		LARGE_INTEGER		endTime;
-#endif
-	public:		
-		static void initialize();
+	private:
+		static LARGE_INTEGER	frequency;
 
 	private:
-		static double	ticksPerSec;
+		LARGE_INTEGER	last;
+		LARGE_INTEGER	current;
+#endif
 	};
 }

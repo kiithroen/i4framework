@@ -447,10 +447,10 @@ namespace i4graphics
 
 				cbOnResize_G.getData()->projection = mainCamera.getProjectionMatrix(); 
 				cbOnResize_G.getData()->farDistance = mainCamera.getZFar();
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
+				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
 
 				cbEveryFrame_G.getData()->view = mainCamera.getViewMatrix();
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
+				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
 		
 			if (isChangedMesh)
@@ -498,12 +498,12 @@ namespace i4graphics
 			}				
 
 			cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
+			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
 
 			cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
 			cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->specularGlossiness;
 			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
+			shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
 			if (itr.boneCount != 0)
 			{
@@ -511,7 +511,7 @@ namespace i4graphics
 				{
 					cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
 				}
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
 			}
 
 			itr.mesh->draw();
@@ -718,14 +718,14 @@ namespace i4graphics
 			}
 	
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
+			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
 			if (itr.boneCount != 0)
 			{
 				for (unsigned int i = 0; i < itr.boneCount; ++i)
 				{
 					cbEachSkinedMesh_S_VS.getData()->matrixPalette[i] = itr.matrixPalette[i];
 				}
-				shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
+				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
 			}
 			itr.mesh->draw();
 
@@ -784,7 +784,7 @@ namespace i4graphics
 		cbOnResize_L_directional.getData()->lightViewDirection = lightViewDir;
 		cbOnResize_L_directional.getData()->lightColor = sunLight.color;
 
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
+		shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
 
 		screenQuadMesh->bind();
 		screenQuadMesh->draw();
@@ -825,13 +825,13 @@ namespace i4graphics
 		shaderMgr->setRenderTarget(1, rtDepth);
 		
 		cbOnResize_L_point_VS.getData()->projection = mainCamera.getProjectionMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbOnResize_L_point_VS.getBuffer(), cbOnResize_L_point_VS.getData());
+		shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbOnResize_L_point_VS.getBuffer(), cbOnResize_L_point_VS.getData());
 
 		cbOnResize_L_point_PS.getData()->farTopRight = mainCamera.getFarTopRight();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 1, cbOnResize_L_point_PS.getBuffer(), cbOnResize_L_point_PS.getData());
+		shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 1, cbOnResize_L_point_PS.getBuffer(), cbOnResize_L_point_PS.getData());
 
 		cbEveryFrame_L_point.getData()->view = mainCamera.getViewMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 2, cbEveryFrame_L_point.getBuffer(), cbEveryFrame_L_point.getData());
+		shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEveryFrame_L_point.getBuffer(), cbEveryFrame_L_point.getData());
 
 		pointLightMesh->bind();
 
@@ -862,13 +862,13 @@ namespace i4graphics
 			}
 
 			cbEachLight_L_point_VS.getData()->world = matLight;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 3, cbEachLight_L_point_VS.getBuffer(), cbEachLight_L_point_VS.getData());
+			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 3, cbEachLight_L_point_VS.getBuffer(), cbEachLight_L_point_VS.getData());
 
 
 			cbEachLight_L_point_PS.getData()->lightPosition = lightViewPos;
 			cbEachLight_L_point_PS.getData()->lightRadius = light.radius;
 			cbEachLight_L_point_PS.getData()->lightColor = light.color;
-			shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_PS, 4, cbEachLight_L_point_PS.getBuffer(), cbEachLight_L_point_PS.getData());
+			shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 4, cbEachLight_L_point_PS.getBuffer(), cbEachLight_L_point_PS.getData());
 
 			pointLightMesh->draw();
 		}
@@ -928,7 +928,7 @@ namespace i4graphics
 		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
 
 		cbEachFrame_Line.getData()->viewProjection = mainCamera.getViewProjectionMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_PROGRAM_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
+		shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
 
 		debugLineBatch->draw();
 

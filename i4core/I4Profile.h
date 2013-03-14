@@ -57,7 +57,7 @@ namespace i4core
 		{
 			if (--recursionCounter == 0)
 			{				
-				totalTime += stopWatch.getElapsedTime();
+				totalTime += stopWatch.elapsed();
 				return true;
 			}
 

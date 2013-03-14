@@ -9,23 +9,39 @@ namespace i4core
 	public:
 		virtual ~I4FrameTimer();
 
-		virtual float	update()		{ return dt; }
+		float			updateFrameDelta();		
 
-		float			getDeltaSec()	{ return dt; }
+		void			updateTickCount()				{ ++tickCount; elapsedAfterLastTick = 0;}
+		void			resetTickCount()				{ tickCount = 0; elapsedAfterLastTick = 0; }
 
+		float			getFrameDelta() const			{ return (float)frameDelta; }
+		unsigned int	getTickCount() const			{ return tickCount; }
+		float			getTickInterval() const			{ return (float)tickInterval; }
+
+		float			getElapsed() const				{ return (float)((double)tickCount*tickInterval + elapsedAfterLastTick); }
 	protected:
-		I4FrameTimer();
+		I4FrameTimer(float tickInterval);
 
 	public:
 		static I4FrameTimer*	getFrameTimer()	{ return timer; }
 
-		static void		createFrameTimer();
+		static void		createFrameTimer(float tickInterval);
 		static void		destroyFrameTimer();
 
 	private:
 		static I4FrameTimer*	timer;
 
 	protected:
-		float			dt;
+		double			frameDelta;
+		double			elapsedAfterLastTick;
+		double			tickInterval;
+		unsigned int	tickCount;
+
+#ifdef _WIN32
+	private:
+		LARGE_INTEGER	frequency;
+		LARGE_INTEGER	last;
+		LARGE_INTEGER	current;
+#endif
 	};
 }

@@ -112,7 +112,6 @@
     <ClInclude Include="i4core.h" />
     <ClInclude Include="I4FrameCallback.h" />
     <ClInclude Include="I4FrameTimer.h" />
-    <ClInclude Include="I4FrameTimerWin.h" />
     <ClInclude Include="I4Framework.h" />
     <ClInclude Include="I4FrameworkWin.h" />
     <ClInclude Include="I4Frustum.h" />
@@ -141,7 +140,6 @@
     <ClCompile Include="I4Camera.cpp" />
     <ClCompile Include="i4core.cpp" />
     <ClCompile Include="I4FrameTimer.cpp" />
-    <ClCompile Include="I4FrameTimerWin.cpp" />
     <ClCompile Include="I4Framework.cpp" />
     <ClCompile Include="I4FrameworkWin.cpp" />
     <ClCompile Include="I4Log.cpp" />

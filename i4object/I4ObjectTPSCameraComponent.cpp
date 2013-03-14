@@ -100,12 +100,12 @@ namespace i4object
 		I4Vector3 up = matTarget.getAxisY();
 		up.normalize();
 
-		I4Vector3 right = matTarget.getAxisX();
+		I4Vector3 right = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
 		right.normalize();
 
 		I4Vector3 position = matTarget.getPosition();
 
-		I4Vector3 eye = position - eyeDir*3.0f + right*0.0f + up*1.5f;
+		I4Vector3 eye = position - eyeDir*1.8f + right*0.25f + up*0.95f;
 		I4Matrix4x4 matCamView;
 		matCamView.makeCameraLookAtLH(eye, eye + eyeDir, I4VECTOR3_AXISY);
 

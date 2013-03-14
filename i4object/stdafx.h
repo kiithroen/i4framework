@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "i4object.h"
+#include "i4core.h"
 
 
 // TODO: reference additional headers your program requires here

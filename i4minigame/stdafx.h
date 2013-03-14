@@ -6,5 +6,5 @@
 #pragma once
 
 #include "targetver.h"
-#include "i4object.h"
+#include "i4core.h"
 #include <tchar.h>

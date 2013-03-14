@@ -124,12 +124,7 @@ namespace i4core {
 
 		return (msg.message != WM_QUIT);
 	}
-
-	void I4FrameworkWin::onYield()
-	{
-	//	Sleep(1);
-	}
-
+	
 	LRESULT CALLBACK I4FrameworkWin::wndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (iMsg)

@@ -45,48 +45,55 @@ namespace i4object
 		if (character == nullptr)
 			return;
 
+		if (character->isGrounded() == false)
+			return;
+
 		float dt = args[0].asFloat();
 
-		I4Vector3 forward = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisZ();
-		forward.y = 0;
-		forward.normalize();
+		I4Vector3 camForward = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisZ();
+		camForward.y = 0;
+		camForward.normalize();
 
-		I4Vector3 right = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
-		right.normalize();
+		I4Vector3 camRight = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
+		camRight.normalize();
 
+		I4Vector3 camPos = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
 		bool isMove = false;
-		I4Vector3 direction = I4VECTOR3_ZERO;
+
+		I4Vector3 moveDirection = I4VECTOR3_ZERO;
 		if (I4InputState::KeyPressed['w'] || I4InputState::KeyPressed['W'])
 		{
-			direction += forward;
+			moveDirection += camForward;
+
 			isMove = true;
 		}
 
 		if (I4InputState::KeyPressed['s'] || I4InputState::KeyPressed['S'])
 		{
-			direction -= forward;
+			moveDirection -= camForward;
+
 			isMove = true;
 		}
 
 		if (I4InputState::KeyPressed['a'] || I4InputState::KeyPressed['A'])
 		{
-			direction -= right;
+			moveDirection -= camForward*0.1f;
+			moveDirection -= camRight;
+
 			isMove = true;
 		}
 
 		if (I4InputState::KeyPressed['d'] || I4InputState::KeyPressed['D'])
 		{
-			direction += right;
+			moveDirection -= camForward*0.1f;
+			moveDirection += camRight;
+
 			isMove = true;
 		}
 
 		if (I4InputState::KeyPressed[VK_SPACE])
-		{
-  			character->setJumpSpeed(60);
-		}
-		else
-		{
-			character->setJumpSpeed(0);
+		{			
+  			character->jump(6);
 		}
 
 		if (isMove)
@@ -98,25 +105,31 @@ namespace i4object
 			matScale.makeScale(scale.x, scale.y, scale.z);
 
 			I4Matrix4x4 matRotPos;
-			matRotPos.makeObjectLookAtLH(position, position + forward, I4VECTOR3_AXISY);
+			matRotPos.makeObjectLookAtLH(position, position + moveDirection, I4VECTOR3_AXISY);
 			//matRotPos.setPosition(position);
 
 			I4Quaternion qTarget;
 			qTarget.makeRotationMatrix(matRotPos);
 
+			float t = 10*dt;
+			if (t > 1)
+			{
+				t = 1;
+			}
+
 			I4Quaternion qOut;
-			I4Quaternion::slerp(qOut, getOwner()->getRotation(), qTarget, 10*dt);
+			I4Quaternion::slerp(qOut, getOwner()->getRotation(), qTarget, t);
 
 			getOwner()->setRotation(qOut);
 
-			direction.y = 0;
-			direction.normalize();
-			character->setDirection(direction);
-			character->setMoveSpeed(10);
+			moveDirection.y = 0;
+			moveDirection.normalize();
+			character->setDirection(moveDirection);
+			character->move(6);
 		}
 		else
 		{
-			character->setMoveSpeed(0);
+			character->stop();
 		}
 	}
 }

@@ -3,34 +3,34 @@
 
 namespace i4core
 {
-
-	double I4StopWatch::ticksPerSec = 0;
+	LARGE_INTEGER I4StopWatch::frequency;
 
 	I4StopWatch::I4StopWatch()
 	{
-		static bool init = false;
-		if (init == false)
+		static bool initialize = false;
+		if (initialize == false)
 		{
-			initialize();
-			init = true;
+			QueryFrequency();
+			QueryCounter(&last);
+			initialize = true;
 		}
 	}
 
 	void I4StopWatch::reset()
 	{
 #ifdef _WIN32
-		QueryPerformanceCounter(&startTime);
+		QueryCounter(&last);
 #else
 		I4LOG_WARN << "not implement yet...";
 		assert(false);
 #endif
 	}
 
-	float I4StopWatch::getElapsedTime()
+	float I4StopWatch::elapsed()
 	{
 #ifdef _WIN32
-		QueryPerformanceCounter(&endTime);
-		return (float)((double)(endTime.QuadPart - startTime.QuadPart)/ticksPerSec);
+		QueryCounter(&current);
+		return (float)((double)(current.QuadPart - last.QuadPart)/(double)frequency.QuadPart);
 #else
 		I4LOG_WARN << "not implement yet...";
 		assert(false);
@@ -38,16 +38,17 @@ namespace i4core
 #endif
 	}
 
-	void I4StopWatch::initialize()
+	void I4StopWatch::QueryCounter(LARGE_INTEGER* count)
 	{
-#ifdef _WIN32
-		LARGE_INTEGER freq;
-		QueryPerformanceFrequency(&freq);
-		ticksPerSec = (double)freq.QuadPart;
-#else
-		I4LOG_WARN << "not implement yet...";
-		assert(false);
-#endif
+		// 멀티코어에서 코어마다 다른 시간값을 가져오는 문제가 있어서 실행시킬 코어를 고정시킴.
+		DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 0);
+		QueryPerformanceCounter(count);
+		SetThreadAffinityMask(::GetCurrentThread(), oldmask);
+	}
+
+	void I4StopWatch::QueryFrequency()
+	{
+		QueryPerformanceFrequency(&frequency);
 	}
 
 }

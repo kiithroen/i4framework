@@ -99,7 +99,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="i4object.h" />
     <ClInclude Include="I4ObjectCharacterControllerComponent.h" />
     <ClInclude Include="I4ObjectCharacterMovementComponent.h" />
     <ClInclude Include="I4ObjectComponent.h" />
@@ -116,7 +115,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="i4object.cpp" />
     <ClCompile Include="I4ObjectCharacterControllerComponent.cpp" />
     <ClCompile Include="I4ObjectCharacterMovementComponent.cpp" />
     <ClCompile Include="I4ObjectFlyControllerComponent.cpp" />

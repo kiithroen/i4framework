@@ -1,7 +1,5 @@
 #pragma once
 
-#include "i4graphics.h"
-
 namespace i4graphics
 {
 	enum I4FORMAT

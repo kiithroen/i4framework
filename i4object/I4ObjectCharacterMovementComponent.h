@@ -22,17 +22,25 @@ namespace i4object
 		void attach(float radius, float height, float slopeLimit, float stepOffset);
 
 		void	setDirection(const I4Vector3& dir);
-		void	setMoveSpeed(float speed);
-		void	setJumpSpeed(float speed);
-		void	setGravity(const I4Vector3& _gravity);
+		void	move(float speed);
+		void	jump(float speed);
+		void	stop();
+		void	setGravity(float gravity);
 
+		bool	isGrounded() const		{ return grounded; }
+		bool	isMoving() const		{ return moving; }
+		bool	isStopped() const		{ return stopped; }
 		void	onUpdateLogic(I4MessageArgs& args);
 
 	private:
 		PxController*	controller;
-		PxVec3			gravity;
 		PxVec3			direction;
 		float			moveSpeed;
+		float			stopAccel;
 		float			jumpSpeed;
+		float			gravity;
+		bool			grounded;
+		bool			moving;
+		bool			stopped;
 	};
 }

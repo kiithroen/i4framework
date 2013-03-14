@@ -100,15 +100,15 @@ namespace i4graphics
 		ID3D11Buffer* buffer = ((I4ConstantBufferD3D11*)constantBuffer)->getBuffer();
 		immediateContext->UpdateSubresource(buffer, 0, nullptr, data, 0, 0);
 
-		if (type == I4SHADER_PROGRAM_TYPE_VS)
+		if (type == I4SHADER_TYPE_VS)
 		{
 			immediateContext->VSSetConstantBuffers(slot, 1, &buffer);
 		}
-		else if (type == I4SHADER_PROGRAM_TYPE_PS)
+		else if (type == I4SHADER_TYPE_PS)
 		{
 			immediateContext->PSSetConstantBuffers(slot, 1, &buffer);
 		}
-		else if (type == I4SHADER_PROGRAM_TYPE_GS)
+		else if (type == I4SHADER_TYPE_GS)
 		{
 			immediateContext->GSSetConstantBuffers(slot, 1, &buffer);
 		}
