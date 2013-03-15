@@ -132,8 +132,8 @@ bool I4MiniGameFrameCallback::onStart()
 			{
 				objChar->setScale(I4Vector3(0.01f, 0.01f, 0.01f));
 
-				view->attachModel(charName, "testmodel/guard", true, true, true);
-				view->attachAni("testmodel/guard_idle.ani.xml", "idle");
+				view->attachModel(charName, "testmodel/altair", true, true, true);
+				view->attachAni("testmodel/altair.ani.xml", "idle");
 				view->playAnimation("idle");
 
 				I4Matrix4x4 offset;
