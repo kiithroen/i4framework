@@ -1,4 +1,5 @@
 DirectX 11 SDK : install Windows SDK or Visual Studio 2012
-bullet : http://bulletphysics.org/wordpress/
+physx : https://developer.nvidia.com/physx-sdk-v31
 DirectXTex : Copy from DirectX SDK Tutorial07 Sample.
 rapidxml : http://rapidxml.sourceforge.net/
+fbxsdk : http://usa.autodesk.com/adsk/servlet/pc/item?siteID=123112&id=10775847

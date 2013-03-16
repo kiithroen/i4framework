@@ -16,3 +16,4 @@ syntax: regexp
 \.exe$
 \.lib$
 dependency/PhysX/
+dependency/fbxsdk/
