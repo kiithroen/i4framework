@@ -9,7 +9,13 @@
 #include "stdafx.h"
 #include <fbxsdk.h>
 #include <vector>
+#include <string>
+#include <algorithm>
 using namespace std;
+
+FILE* fpMesh = nullptr;
+FILE* fpBone = nullptr;
+vector<string> vecBoneNameList;
 
 FbxVector2 FbxUVToI4(const FbxVector2& v)
 {
@@ -46,8 +52,10 @@ FbxMatrix GetWorldTransform(FbxNode *pNode)
 	return pNode->EvaluateGlobalTransform();
 }
 
-void WriteMesh(FbxNode* pNode, FILE* fp) 
+void WriteMesh(FbxNode* pNode, FILE* fpMesh) 
 {
+	printf("%s write mesh ...\n", pNode->GetName());
+
 	FbxMesh* pMesh = pNode->GetMesh();
 	if (pMesh == nullptr)
 		return;
@@ -123,64 +131,131 @@ void WriteMesh(FbxNode* pNode, FILE* fp)
 		}
 	}
 
-	fprintf(fp, "\t\t<vertex count=\"%d\">\n", lControlPointsCount);
+	fprintf(fpMesh, "\t\t<vertex count=\"%d\">\n", lControlPointsCount);
 	for (int i = 0; i < lControlPointsCount; ++i)
 	{
-		fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", vecVertex[i].mData[0], vecVertex[i].mData[1], vecVertex[i].mData[2]);
+		fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", vecVertex[i].mData[0], vecVertex[i].mData[1], vecVertex[i].mData[2]);
 	}
-	fprintf(fp, "\t\t</vertex>\n");
+	fprintf(fpMesh, "\t\t</vertex>\n");
 
 	if(pMesh->GetElementNormalCount())
 	{
-		fprintf(fp, "\t\t<normal count=\"%d\">\n", lControlPointsCount);
+		fprintf(fpMesh, "\t\t<normal count=\"%d\">\n", lControlPointsCount);
 		for (int i = 0; i < lControlPointsCount; ++i)
 		{
-			fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", vecNormal[i].mData[0], vecNormal[i].mData[1], vecNormal[i].mData[2]);
+			fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", vecNormal[i].mData[0], vecNormal[i].mData[1], vecNormal[i].mData[2]);
 		}
-		fprintf(fp, "\t\t</normal>\n");
+		fprintf(fpMesh, "\t\t</normal>\n");
 	}
 
-	fprintf(fp, "\t\t<index count=\"%d\">\n", pMesh->GetPolygonCount());
+	fprintf(fpMesh, "\t\t<index count=\"%d\">\n", pMesh->GetPolygonCount());
 	for (int i = 0; i < pMesh->GetPolygonCount()*3; i += 3)
 	{
-		fprintf(fp, "\t\t\t<a>%d %d %d</a>\n", vecIndex[i], vecIndex[i+1], vecIndex[i+2]);
+		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecIndex[i], vecIndex[i+1], vecIndex[i+2]);
 	}
-	fprintf(fp, "\t\t</index>\n");
+	fprintf(fpMesh, "\t\t</index>\n");
 
 	if (pMesh->GetElementUVCount())
 	{
-		fprintf(fp, "\t\t<texUV count=\"%d\">\n", vecTexUV.size());
+		fprintf(fpMesh, "\t\t<texUV count=\"%d\">\n", vecTexUV.size());
 		for (unsigned int i = 0; i < vecTexUV.size(); ++i)
 		{
-			fprintf(fp, "\t\t\t<a>%g %g</a>\n", vecTexUV[i].mData[0], vecTexUV[i].mData[1]);
+			fprintf(fpMesh, "\t\t\t<a>%g %g</a>\n", vecTexUV[i].mData[0], vecTexUV[i].mData[1]);
 		}
-		fprintf(fp, "\t\t</texUV>\n");
+		fprintf(fpMesh, "\t\t</texUV>\n");
 	}
 
-	fprintf(fp, "\t\t<texIndex count=\"%d\">\n", pMesh->GetPolygonCount());
+	fprintf(fpMesh, "\t\t<texIndex count=\"%d\">\n", pMesh->GetPolygonCount());
 	for (int i = 0; i < pMesh->GetPolygonCount()*3; i += 3)
 	{
-		fprintf(fp, "\t\t\t<a>%d %d %d</a>\n", vecTexIndex[i], vecTexIndex[i+1], vecTexIndex[i+2]);
+		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecTexIndex[i], vecTexIndex[i+1], vecTexIndex[i+2]);
 	}
-	fprintf(fp, "\t\t</texIndex>\n");
+	fprintf(fpMesh, "\t\t</texIndex>\n");
+
+	struct SkinInfo
+	{
+		int boneID;
+		float boneWeight;
+	};
+
+	struct SkinData
+	{
+		vector<SkinInfo>	data;
+	};
+
+	vector<SkinData>	vecSkinInfo;
+	vecSkinInfo.resize(pMesh->GetControlPointsCount());
+	int deformerCount = pMesh->GetDeformerCount();
+	for (int i = 0; i < deformerCount; ++i)
+	{
+		FbxDeformer* pDeformer = pMesh->GetDeformer(i);
+		if (pDeformer == nullptr)
+			continue;
+
+		if (pDeformer->GetDeformerType() != FbxDeformer::eSkin)
+			continue;
+
+		FbxSkin* pSkin = (FbxSkin*)pDeformer;
+
+		int clusterCount = pSkin->GetClusterCount();
+		for (int j = 0; j < clusterCount; ++j)
+		{
+			FbxCluster* pCluster = pSkin->GetCluster(j);
+			if (pCluster == nullptr)
+				continue;
+
+			FbxNode* pLinkNode = pCluster->GetLink();
+			if (pLinkNode == nullptr)
+				continue;
+
+			string name = pLinkNode->GetName();
+
+			int boneID = -1;
+			for (int idx = 0; idx < vecBoneNameList.size(); ++idx)
+			{
+				if (strcmp(vecBoneNameList[idx].c_str(), name.c_str()) == 0)
+				{
+					boneID = idx;
+					break;
+				}
+			}
+
+			int associateCtrlPointCount = pCluster->GetControlPointIndicesCount();
+			int* pCtrlPointIndices = pCluster->GetControlPointIndices();
+			double* pCtrlPointWeights = pCluster->GetControlPointWeights();
+
+			for (int k = 0; k < associateCtrlPointCount; ++k)
+			{
+				int nIdex = pCtrlPointIndices[k];
+				double weight = pCtrlPointWeights[k];
+				SkinInfo info;
+				info.boneID = boneID;
+				info.boneWeight = weight;
+				vecSkinInfo[nIdex].data.push_back(info);
+			}
+		}
+	}
+
+	if (vecSkinInfo.size() > 0)
+	{
+		fprintf(fpMesh, "\t\t<weight>\n");
+
+		for (unsigned int i = 0; i < vecSkinInfo.size(); ++i)
+		{
+			sort(vecSkinInfo[i].data.begin(), vecSkinInfo[i].data.end(), [](const SkinInfo& lhs, const SkinInfo& rhs) { return lhs.boneWeight > rhs.boneWeight; });
+			fprintf(fpMesh, "\t\t\t<v>\n");
+			for (int j = 0; j < vecSkinInfo[i].data.size(); ++j)
+			{
+				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", vecSkinInfo[i].data[j].boneID, vecSkinInfo[i].data[j].boneWeight);
+			}
+			fprintf(fpMesh, "\t\t\t</v>\n");
+		}
+		fprintf(fpMesh, "\t\t</weight>\n");
+	}
 }
 
-void WriteNode(FbxNode* pNode, FILE* fp)
+void WriteNodeStart(FILE* fp, const char* nodeName, const char* nodeParentName, FbxNode* pNode)
 {
-	const char* nodeName = pNode->GetName();
-	const char* nodeParentName = "undefined";
-
-	printf("%s coverting...\n", pNode->GetName());
-
-	if (pNode->GetParent() != nullptr && pNode->GetParent() != pNode->GetScene()->GetRootNode())
-	{
-		nodeParentName = pNode->GetParent()->GetName();
-	}
-
-	FbxDouble3 translation = pNode->LclTranslation.Get();
-	FbxDouble3 rotation = pNode->LclRotation.Get();
-	FbxDouble3 scaling = pNode->LclScaling.Get();
-	
 	fprintf(fp, "\t<node name=\"%s\" parent_name=\"%s\">\n", nodeName, nodeParentName);
 
 	FbxMatrix matLocal = FbxMatrixToI4(GetLocalTransform(pNode));
@@ -198,6 +273,22 @@ void WriteNode(FbxNode* pNode, FILE* fp)
 	fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[2][0], matWorld.mData[2][1], matWorld.mData[2][2]);
 	fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[3][0], matWorld.mData[3][1], matWorld.mData[3][2]);
 	fprintf(fp, "\t\t</worldTM>\n");
+}
+
+void WriteNodeEnd(FILE* fp)
+{
+	fprintf(fp, "\t</node>\n");
+}
+
+void WriteNode(FbxNode* pNode)
+{
+	const char* nodeName = pNode->GetName();
+	const char* nodeParentName = "undefined";
+
+	if (pNode->GetParent() != nullptr && pNode->GetParent() != pNode->GetScene()->GetRootNode())
+	{
+		nodeParentName = pNode->GetParent()->GetName();
+	}
 
 	// Á¤º¸ ´ýÇÁ
 	if (pNode->GetNodeAttribute())
@@ -205,17 +296,23 @@ void WriteNode(FbxNode* pNode, FILE* fp)
 		switch (pNode->GetNodeAttribute()->GetAttributeType())
 		{
 		case FbxNodeAttribute::eMesh:
-			WriteMesh(pNode, fp);
+			fprintf(fpMesh, "<mesh>\n");
+			fprintf(fpMesh, "\t<version>1.0.0</version>\n");
+
+			WriteNodeStart(fpMesh, nodeName, nodeParentName, pNode);
+			WriteMesh(pNode, fpMesh);
+			WriteNodeEnd(fpMesh);
+
+			fprintf(fpMesh, "</mesh>");
+
 			break;	
 		case FbxNodeAttribute::eSkeleton:
 			break;
 		}
 	}
 
-	fprintf(fp, "\t</node>\n");
-
 	for(int j = 0; j < pNode->GetChildCount(); j++)
-		WriteNode(pNode->GetChild(j), fp);
+		WriteNode(pNode->GetChild(j));
 }
 
 // Triangulate all NURBS, patch and mesh under this node recursively.
@@ -242,12 +339,35 @@ void TriangulateRecursive(FbxNode* pNode)
 	}
 }
 
+void BuildBoneNameList(FbxNode* pNode)
+{
+	FbxNodeAttribute* lNodeAttribute = pNode->GetNodeAttribute();
+
+	if (lNodeAttribute)
+	{
+		if (lNodeAttribute->GetAttributeType() == FbxNodeAttribute::eSkeleton)
+		{
+			vecBoneNameList.push_back(pNode->GetName());
+		}
+	}
+
+	const int lChildCount = pNode->GetChildCount();
+	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
+	{
+		BuildBoneNameList(pNode->GetChild(lChildIndex));
+	}
+}
+
 int main(int argc, char* argv[])
 {
-	const char* lFilename = "Elin.fbx";
+	const char* lFilename = "Raven.fbx";
 
-	FILE* fp = fopen("out.xml", "w");
-	if (fp == nullptr)
+	fpMesh = fopen("raven.mesh.xml", "w");
+	if (fpMesh == nullptr)
+		return 0;
+
+	fpBone = fopen("raven.bone.xml", "w");
+	if (fpBone == nullptr)
 		return 0;
 
 	FbxManager* lSdkManager = FbxManager::Create();
@@ -270,21 +390,18 @@ int main(int argc, char* argv[])
 	lImporter->Destroy();
 
 	TriangulateRecursive(lScene->GetRootNode());
-
-	fprintf(fp, "<mesh>\n");
-	fprintf(fp, "\t<version>1.0.0</version>\n");
-
+	BuildBoneNameList(lScene->GetRootNode());
+	
 	FbxNode* lRootNode = lScene->GetRootNode();
 	if(lRootNode) {
 		for(int i = 0; i < lRootNode->GetChildCount(); i++)
-			WriteNode(lRootNode->GetChild(i), fp);
+			WriteNode(lRootNode->GetChild(i));
 	}
-
-	fprintf(fp, "</mesh>");
 
 	lSdkManager->Destroy();
 
-	fclose(fp);
+	fclose(fpBone);
+	fclose(fpMesh);
 
 	return 0;
 }
