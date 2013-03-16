@@ -34,14 +34,11 @@ FbxMatrix FbxMatrixToI4(const FbxMatrix& m)
 
 FbxMatrix GetLocalTransform(FbxNode *pNode)
 {
-	FbxVector4 t = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
-	FbxVector4 s = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
-	FbxVector4 r = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
-	FbxMatrix offset (t,r,s);
-	FbxMatrix world = pNode->EvaluateGlobalTransform();
-	FbxMatrix transform = world * offset;
+	FbxVector4 t = pNode->LclTranslation;
+	FbxVector4 s = pNode->LclScaling;
+	FbxVector4 r = pNode->LclRotation;
 
-	return transform;
+	return FbxMatrix(t, r, s);
 }
 
 FbxMatrix GetWorldTransform(FbxNode *pNode)
