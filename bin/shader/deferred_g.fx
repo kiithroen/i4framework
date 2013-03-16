@@ -76,21 +76,14 @@ PS_INPUT VS( VS_INPUT	input	)
 
 
 #ifdef MASK_SKINNING
-	float4 position = mul(float4(input.position, 1), matrixPalette[input.boneID.x])*input.weight.x;
-	position += mul(float4(input.position, 1), matrixPalette[input.boneID.y])*input.weight.y;
-	position += mul(float4(input.position, 1), matrixPalette[input.boneID.z])*input.weight.z;
-	position += mul(float4(input.position, 1), matrixPalette[input.boneID.w])*input.weight.w;
+	matrix mat = matrixPalette[input.boneID.x]*input.weight.x;
+	mat += matrixPalette[input.boneID.x]*input.weight.y;
+	mat += matrixPalette[input.boneID.x]*input.weight.z;
+	mat += matrixPalette[input.boneID.x]*input.weight.w;
 
-	float3 normal = mul(input.normal, (float3x3)matrixPalette[input.boneID.x])*input.weight.x;
-	normal += mul(input.normal, (float3x3)matrixPalette[input.boneID.y])*input.weight.y;
-	normal += mul(input.normal, (float3x3)matrixPalette[input.boneID.z])*input.weight.z;
-	normal += mul(input.normal, (float3x3)matrixPalette[input.boneID.w])*input.weight.w;
-		
-	float3 tangent = mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.x])*input.weight.x;
-	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.y])*input.weight.y;
-	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.z])*input.weight.z;
-	tangent += mul(input.tangent.xyz, (float3x3)matrixPalette[input.boneID.w])*input.weight.w;
-
+	float4 position = mul(float4(input.position, 1), mat);
+	float3 normal = mul(input.normal, (float3x3)mat);
+	float3 tangent = mul(input.tangent.xyz, (float3x3)mat);	
 #else
 	float4 position = float4(input.position, 1);
 	float3 normal = input.normal;

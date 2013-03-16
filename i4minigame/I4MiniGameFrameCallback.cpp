@@ -63,10 +63,10 @@ bool I4MiniGameFrameCallback::onStart()
 
 	player =  objectMgr->createObject("player");
 	player->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-	player->setScale(I4Vector3(0.03f, 0.03f, 0.03f));
+	player->setScale(I4Vector3(0.02f, 0.02f, 0.02f));
 
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
-	view->attachModel("player", "testmodel/elin", true, true, false);
+	view->attachModel("player", "testmodel/raven", true, true, false);
 	
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
