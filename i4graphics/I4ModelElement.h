@@ -26,7 +26,7 @@ namespace i4graphics {
 
 		virtual bool			initialize();
 		virtual void			animate(float dt, const I4Matrix4x4& parentTM);
-		virtual void			commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)	{}
+		virtual void			commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM)	{}
 
 		const I4Matrix4x4& 		getResultTM() const			{ return resultTM;	}
 
@@ -72,39 +72,10 @@ namespace i4graphics {
 		virtual ~I4ModelMesh();
 	
 		void			setMaterial(I4Material*	mtrl)		{ material = mtrl;}
+		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
 
 	protected:
 		I4TriangleMesh*			mesh;
-		I4Material*		material;
+		I4Material*				material;
 	};
-
-
-	//------------------------- ModelRigidMesh -------------------------
-
-	class ModelRigidMesh : public I4ModelMesh
-	{
-	public:
-		ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
-		virtual ~ModelRigidMesh();
-
-		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
-	};
-
-	//------------------------- ModelSkinedMeshGPU -------------------------
-
-	class ModelSkinedMeshGPU : public I4ModelMesh
-	{
-	public:
-		ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
-		virtual ~ModelSkinedMeshGPU();
-
-		virtual bool	initialize() override;
-		virtual void	animate(float dt, const I4Matrix4x4& parentTM) override;
-
-		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
-
-	private:
-		vector<I4Matrix4x4>		matrixPalette;
-	};
-
 }

@@ -40,7 +40,8 @@ namespace i4graphics {
 		void					animate(float dt);	
 		void					commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM);
 
-		const I4Matrix4x4&		getSkinTM(unsigned int i) const		{ return vecSkinTM[i]; }
+		const I4Matrix4x4&		getSkinTMs(unsigned int i) const		{ return vecSkinTM[i]; }
+		I4Matrix4x4*			getSkinTMs()							{ return &vecSkinTM[0]; }
 
 		unsigned int			getBoneCount() const				{ return vecBone.size(); }
 		I4ModelBone*			getBone(unsigned int i)				{ return vecBone[i]; }

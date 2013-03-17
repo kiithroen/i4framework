@@ -17,7 +17,7 @@
 
 namespace i4graphics
 {
-	
+	// TODO : 그림자 그릴때와 일반일때 정렬알고리즘을 달리하자.
 	bool I4MeshRenderItem::operator < (const I4MeshRenderItem& other) const
 	{
 		if (shaderMask < other.shaderMask)									// 셰이더 우선으로 정렬하고
@@ -210,7 +210,7 @@ namespace i4graphics
 		if (cbEveryFrame_G.create() == false)
 			return false;
 
-		if (cbEachMeshInstance_G_VS.create() == false)
+		if (cbEachAllMesh_G_VS.create() == false)
 			return false;
 
 		if (cbEachMeshInstance_G_PS.create() == false)
@@ -461,6 +461,17 @@ namespace i4graphics
 				}
 					
 				itr.mesh->bind();
+				
+				cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
+				cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->specularGlossiness;
+				cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
+				shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
+
+				if (itr.mesh->skined)
+				{
+					buildMatrixPalette(cbEachSkinedMesh_G.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
+					shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+				}
 			}
 
 			if (isChangedTwoSide)
@@ -497,22 +508,9 @@ namespace i4graphics
 				shaderMgr->setTexture(2, texture);
 			}				
 
-			cbEachMeshInstance_G_VS.getData()->world = itr.worldTM;
-			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEachMeshInstance_G_VS.getBuffer(), cbEachMeshInstance_G_VS.getData());
-
-			cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
-			cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->specularGlossiness;
-			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
-			shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
-
-			if (itr.boneCount != 0)
-			{
-				for (unsigned int i = 0; i < itr.boneCount; ++i)
-				{
-					cbEachSkinedMesh_G.getData()->matrixPalette[i] = itr.matrixPalette[i];
-				}
-				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
-			}
+			cbEachAllMesh_G_VS.getData()->world = itr.worldTM;
+			cbEachAllMesh_G_VS.getData()->result = itr.resultTM;
+			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
 
 			itr.mesh->draw();
 
@@ -676,6 +674,7 @@ namespace i4graphics
 		{
 			bool isChangedShader = false;
 			bool isChangedMesh = false;
+			bool isChangedTwoSide = false;
 
 			if (prevItem == nullptr)
 			{
@@ -692,6 +691,11 @@ namespace i4graphics
 				if (prevItem->mesh != itr.mesh)
 				{
 					isChangedMesh = true;					
+				}
+
+				if (itr.material->twoSide != prevItem->material->twoSide)
+				{
+					isChangedTwoSide = true;
 				}
 			}
 
@@ -715,18 +719,33 @@ namespace i4graphics
 				}
 					
 				itr.mesh->bind();
+
+				if (itr.mesh->skined)
+				{
+					buildMatrixPalette(cbEachSkinedMesh_S_VS.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
+					shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
+				}
 			}
 	
+			if (isChangedTwoSide)
+			{
+				int mode = I4RASTERIZER_MODE_SOLID_FRONT;
+				if (itr.material->twoSide)
+				{
+					mode = I4RASTERIZER_MODE_SOLID_NONE;
+				}
+
+				if (wireMode)
+				{
+					mode += I4RASTERIZER_MODE_WIRE_NONE;
+				}
+
+				videoDriver->setRasterizerMode((I4RasterizerMode)mode);
+			}
+
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
 			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
-			if (itr.boneCount != 0)
-			{
-				for (unsigned int i = 0; i < itr.boneCount; ++i)
-				{
-					cbEachSkinedMesh_S_VS.getData()->matrixPalette[i] = itr.matrixPalette[i];
-				}
-				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
-			}
+			
 			itr.mesh->draw();
 
 			prevItem = &itr;
@@ -738,6 +757,19 @@ namespace i4graphics
 		}
 
 		shaderMgr->end();
+	}
+
+	void I4DeferredRenderer::buildMatrixPalette(I4Matrix4x4* matrixPalette, const I4Matrix4x4& resultTM, const I4Matrix4x4* skinTMs, unsigned int boneCount)
+	{
+		// 매트릭스 팔레트를 만들어서 넘겨준다.
+		// 또 모델이 바낄때마다 매트릭스 팔레트를 바꺼주고 resultTM을 셰이더에 넘겨주는것도 생각해봤는데 셰이더 연산량이 너무 많아서 안되겠다.
+		// TODO : 지금은 모델 참조하고 있는 전체 본을 넘겨주는데 메시가 참조하고 있는 본만 가져와서 인덱스를 재구성해서 넘겨주는 식으로 바꺼주자.
+		// 그럴려면 익스포터나 임포터 과정에서 전처리 해줘야할듯.
+		for (unsigned int i = 0; i < boneCount; ++i)
+		{
+			
+			matrixPalette[i] = resultTM*skinTMs[i];
+		}
 	}
 
 	void I4DeferredRenderer::renderStageLight()

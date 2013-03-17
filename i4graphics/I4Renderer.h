@@ -8,18 +8,20 @@ using namespace i4core;
 
 namespace i4graphics {
 
+	class I4Model;
 	class I4TriangleMesh;
 	struct I4Material;
 
 	struct I4MeshRenderItem
 	{
 		I4Matrix4x4			worldTM;
+		I4Matrix4x4			resultTM;
 		I4AABB				worldAABB;
 		unsigned int		shaderMask;
 		unsigned int		boneCount;
 		I4TriangleMesh*		mesh;
 		I4Material*			material;
-		I4Matrix4x4*		matrixPalette;
+		I4Matrix4x4*		skinTMs;
 		bool				shadowCaster;
 		bool				shadowReceiver;
 

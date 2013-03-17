@@ -125,93 +125,21 @@ namespace i4graphics
 	{
 	}
 
-	//------------------------- ModelRigidMesh -------------------------
 
-	ModelRigidMesh::ModelRigidMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
-	: I4ModelMesh(model, info, _mesh)
+	void I4ModelMesh::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM)
 	{
-	}
-
-	ModelRigidMesh::~ModelRigidMesh()
-	{
-		
-	}
-
-	void ModelRigidMesh::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
-	{
-		const I4Matrix4x4 matWorld = resultTM*parentTM;
 		I4MeshRenderItem item;
-		item.shaderMask = I4SHADER_MASK_NONE;
-		item.material = material;
 		item.mesh = mesh;
-		item.shadowCaster = model->isShadowCaster();
-		item.shadowReceiver = model->isShadowReceiver();
-
-		if (item.material->diffuseMap != I4INVALID_HASHCODE)
-		{
-			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
-		}
-
-		if (item.material->specularMap != I4INVALID_HASHCODE)
-		{
-			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
-		}
-
-		if (item.material->normalMap != I4INVALID_HASHCODE)
-		{
-			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
-		}
-
-		item.boneCount = 0;
-		item.worldAABB = mesh->localAABB.transform(matWorld);
-		item.worldTM = matWorld;
-		item.matrixPalette = nullptr;
-		renderer->commit(item);
-	}
-
-
-	//------------------------- ModelSkinedMeshGPU -------------------------
-
-	ModelSkinedMeshGPU::ModelSkinedMeshGPU(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
-	: I4ModelMesh(model, info, _mesh)
-	{
-	}
-
-	ModelSkinedMeshGPU::~ModelSkinedMeshGPU()
-	{
-
-	}
-
-	bool ModelSkinedMeshGPU::initialize()
-	{
-		I4ModelMesh::initialize();
-
-		matrixPalette.resize(model->getBoneCount());
-
-		return true;
-	}
-
-	void ModelSkinedMeshGPU::animate(float dt, const I4Matrix4x4& parentTM)
-	{
-		I4ModelMesh::animate(dt, parentTM);
-	}
-
-	void ModelSkinedMeshGPU::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
-	{
-		assert(model->getBoneCount() <= matrixPalette.size());
-		for (unsigned int i = 0; i < model->getBoneCount(); ++i)
-		{
-			matrixPalette[i] = resultTM*model->getSkinTM(i);
-		}
+		item.material = material;
 
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
-		I4MeshRenderItem item;
-		item.mesh = mesh;
-		item.material = material;
-		item.shaderMask = I4SHADER_MASK_SKINNING;
+		item.worldAABB = mesh->localAABB.transform(resultTM*worldTM);
+
 		item.shadowCaster = model->isShadowCaster();
 		item.shadowReceiver = model->isShadowReceiver();
+
+		item.shaderMask = I4SHADER_MASK_NONE;
 
 		if (item.material->diffuseMap != I4INVALID_HASHCODE)
 		{
@@ -228,11 +156,23 @@ namespace i4graphics
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}
 
-		item.boneCount = model->getBoneCount();
-		item.worldAABB = mesh->localAABB.transform(resultTM*parentTM);
-		item.worldTM = parentTM;
-		item.matrixPalette = &matrixPalette[0];
+		if (mesh->skined)
+		{
+			item.shaderMask |= I4SHADER_MASK_SKINNING;
+			item.worldTM = worldTM;
+			item.boneCount = model->getBoneCount();
+			item.resultTM = resultTM;
+			item.skinTMs = model->getSkinTMs();
+		}
+		else
+		{
+			item.worldTM = resultTM*worldTM;
+			// 아래 정보들은 사용안함
+			item.boneCount = 0;
+			item.skinTMs = nullptr;
+			item.resultTM = I4MATRIX4X4_IDENTITY; 
+		}		
+
 		renderer->commit(item);
 	}
-
 }

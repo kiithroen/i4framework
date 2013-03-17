@@ -46,15 +46,7 @@ namespace i4graphics
 			I4ModelElementInfo* meshInfo = meshResource->getMeshInfo(i);
 			I4TriangleMesh* mesh = meshResource->getMesh(i);
 
-			I4ModelMesh* modelMesh = nullptr;
-			if (mesh->skined)
-			{
-				modelMesh = new ModelSkinedMeshGPU(this, meshInfo, mesh);
-			}
-			else
-			{
-				modelMesh = new ModelRigidMesh(this, meshInfo, mesh);
-			}
+			I4ModelMesh* modelMesh = new I4ModelMesh(this, meshInfo, mesh);
 
 			vecMesh.push_back(modelMesh);
 			mapElement.insert(make_pair(meshInfo->name, modelMesh));
@@ -108,6 +100,9 @@ namespace i4graphics
 	{
 		for (auto& itr : mapElement)
 		{
+
+
+
 			delete itr.second;
 		}
 		mapElement.clear();

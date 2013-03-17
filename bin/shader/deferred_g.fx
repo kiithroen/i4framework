@@ -12,6 +12,7 @@ cbuffer	CBEveryFrame_G : register(b1)
 cbuffer	CBEachAllMesh_G_VS : register(b2)
 {
 	matrix world;
+	matrix result;
 }
 
 cbuffer	CBEachAllMesh_G_PS : register(b3)
@@ -77,9 +78,9 @@ PS_INPUT VS( VS_INPUT	input	)
 
 #ifdef MASK_SKINNING
 	matrix mat = matrixPalette[input.boneID.x]*input.weight.x;
-	mat += matrixPalette[input.boneID.x]*input.weight.y;
-	mat += matrixPalette[input.boneID.x]*input.weight.z;
-	mat += matrixPalette[input.boneID.x]*input.weight.w;
+	mat += matrixPalette[input.boneID.y]*input.weight.y;
+	mat += matrixPalette[input.boneID.z]*input.weight.z;
+	mat += matrixPalette[input.boneID.w]*input.weight.w;
 
 	float4 position = mul(float4(input.position, 1), mat);
 	float3 normal = mul(input.normal, (float3x3)mat);

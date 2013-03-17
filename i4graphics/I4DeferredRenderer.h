@@ -38,6 +38,7 @@ namespace i4graphics
 	struct CBEachAllMesh_G_VS
 	{
 		I4Matrix4x4 world;
+		I4Matrix4x4	result;
 	};
 
 	__declspec(align(16))
@@ -208,6 +209,8 @@ namespace i4graphics
 		void				cullAndSortMeshShadowRenderItem(const I4Camera& camera);
 		void				renderMeshShadowRenderItem(const I4Camera& camera);
 
+		void				buildMatrixPalette(I4Matrix4x4* matrixPalette, const I4Matrix4x4& resultTM, const I4Matrix4x4* skinTMs, unsigned int boneCount);
+
 		void				renderDirectionalLight();
 
 		void				cullAndSortPointLight();
@@ -237,7 +240,7 @@ namespace i4graphics
 
 		I4CBHolder<CBOnResize_G>				cbOnResize_G;
 		I4CBHolder<CBEveryFrame_G>				cbEveryFrame_G;
-		I4CBHolder<CBEachAllMesh_G_VS>			cbEachMeshInstance_G_VS;
+		I4CBHolder<CBEachAllMesh_G_VS>			cbEachAllMesh_G_VS;
 		I4CBHolder<CBEachAllMesh_G_PS>			cbEachMeshInstance_G_PS;
 		I4CBHolder<CBEachSkinedMesh_G>			cbEachSkinedMesh_G;
 
