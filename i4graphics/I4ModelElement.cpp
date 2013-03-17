@@ -128,13 +128,15 @@ namespace i4graphics
 
 	void I4ModelMesh::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM)
 	{
+		const I4Matrix4x4 finalTM = resultTM*worldTM;
+
 		I4MeshRenderItem item;
 		item.mesh = mesh;
 		item.material = material;
 
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
-		item.worldAABB = mesh->localAABB.transform(resultTM*worldTM);
+		item.worldAABB = mesh->localAABB.transform(finalTM);
 
 		item.shadowCaster = model->isShadowCaster();
 		item.shadowReceiver = model->isShadowReceiver();
@@ -166,11 +168,11 @@ namespace i4graphics
 		}
 		else
 		{
-			item.worldTM = resultTM*worldTM;
+			item.worldTM = finalTM;
 			// 아래 정보들은 사용안함
-			item.boneCount = 0;
-			item.skinTMs = nullptr;
-			item.resultTM = I4MATRIX4X4_IDENTITY; 
+			//item.boneCount = 0;
+			//item.skinTMs = nullptr;
+			//item.resultTM = I4MATRIX4X4_IDENTITY; 
 		}		
 
 		renderer->commit(item);
