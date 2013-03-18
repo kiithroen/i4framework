@@ -66,7 +66,7 @@ bool I4MiniGameFrameCallback::onStart()
 	player->setScale(I4Vector3(0.015f, 0.015f, 0.015f));
 
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
-	view->attachModel("player", "testmodel/raven", true, true, false);
+	view->attachModel("player", "testmodel/raven", true, true, true);
 	
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);

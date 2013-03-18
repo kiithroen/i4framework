@@ -296,17 +296,13 @@ void WriteNode(FbxNode* pNode)
 		switch (pNode->GetNodeAttribute()->GetAttributeType())
 		{
 		case FbxNodeAttribute::eMesh:
-			fprintf(fpMesh, "<mesh>\n");
-			fprintf(fpMesh, "\t<version>1.0.0</version>\n");
-
 			WriteNodeStart(fpMesh, nodeName, nodeParentName, pNode);
 			WriteMesh(pNode, fpMesh);
 			WriteNodeEnd(fpMesh);
-
-			fprintf(fpMesh, "</mesh>");
-
 			break;	
 		case FbxNodeAttribute::eSkeleton:
+			WriteNodeStart(fpBone, nodeName, nodeParentName, pNode);
+			WriteNodeEnd(fpBone);
 			break;
 		}
 	}
@@ -392,11 +388,21 @@ int main(int argc, char* argv[])
 	TriangulateRecursive(lScene->GetRootNode());
 	BuildBoneNameList(lScene->GetRootNode());
 	
+	fprintf(fpMesh, "<mesh>\n");
+	fprintf(fpMesh, "\t<version>1.0.0</version>\n");
+
+	fprintf(fpBone, "<bone>\n");
+	fprintf(fpBone, "\t<version>1.0.0</version>\n");
+
 	FbxNode* lRootNode = lScene->GetRootNode();
 	if(lRootNode) {
 		for(int i = 0; i < lRootNode->GetChildCount(); i++)
 			WriteNode(lRootNode->GetChild(i));
 	}
+
+	fprintf(fpMesh, "</mesh>");
+
+	fprintf(fpBone, "</mesh>");
 
 	lSdkManager->Destroy();
 
