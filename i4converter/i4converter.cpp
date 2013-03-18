@@ -13,8 +13,13 @@
 #include <algorithm>
 using namespace std;
 
+FbxScene* pScene = nullptr;
+
 FILE* fpMesh = nullptr;
+FILE* fpMtrl = nullptr;
 FILE* fpBone = nullptr;
+FILE* fpAni = nullptr;
+
 vector<string> vecBoneNameList;
 
 FbxVector2 FbxUVToI4(const FbxVector2& v)
@@ -38,13 +43,21 @@ FbxMatrix FbxMatrixToI4(const FbxMatrix& m)
 	return ret;
 }
 
+FbxQuaternion FbxQuatToI4(const FbxQuaternion& q)
+{
+	return FbxQuaternion(-q.mData[0], -q.mData[2], q.mData[1], -q.mData[3]);
+}
+
 FbxMatrix GetLocalTransform(FbxNode *pNode)
 {
+	/*
 	FbxVector4 t = pNode->LclTranslation;
 	FbxVector4 s = pNode->LclScaling;
 	FbxVector4 r = pNode->LclRotation;
 
 	return FbxMatrix(t, r, s);
+	*/
+	return pNode->EvaluateLocalTransform();
 }
 
 FbxMatrix GetWorldTransform(FbxNode *pNode)
@@ -238,7 +251,7 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 
 	if (vecSkinInfo.size() > 0)
 	{
-		fprintf(fpMesh, "\t\t<weight>\n");
+		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", vecSkinInfo.size());
 
 		for (unsigned int i = 0; i < vecSkinInfo.size(); ++i)
 		{
@@ -254,10 +267,8 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 	}
 }
 
-void WriteNodeStart(FILE* fp, const char* nodeName, const char* nodeParentName, FbxNode* pNode)
+void WriteNodeTransform(FbxNode* pNode, FILE* fp)
 {
-	fprintf(fp, "\t<node name=\"%s\" parent_name=\"%s\">\n", nodeName, nodeParentName);
-
 	FbxMatrix matLocal = FbxMatrixToI4(GetLocalTransform(pNode));
 	fprintf(fp, "\t\t<localTM>\n");
 	fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[0][0], matLocal.mData[0][1], matLocal.mData[0][2]);
@@ -273,6 +284,12 @@ void WriteNodeStart(FILE* fp, const char* nodeName, const char* nodeParentName, 
 	fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[2][0], matWorld.mData[2][1], matWorld.mData[2][2]);
 	fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[3][0], matWorld.mData[3][1], matWorld.mData[3][2]);
 	fprintf(fp, "\t\t</worldTM>\n");
+}
+
+
+void WriteNodeStart(FbxNode* pNode, const char* nodeName, const char* nodeParentName, FILE* fp)
+{
+	fprintf(fp, "\t<node name=\"%s\" parent_name=\"%s\">\n", nodeName, nodeParentName);
 }
 
 void WriteNodeEnd(FILE* fp)
@@ -293,22 +310,191 @@ void WriteNode(FbxNode* pNode)
 	// 정보 덤프
 	if (pNode->GetNodeAttribute())
 	{
-		switch (pNode->GetNodeAttribute()->GetAttributeType())
+		FbxNodeAttribute::EType type = pNode->GetNodeAttribute()->GetAttributeType();
+		switch (type)
 		{
 		case FbxNodeAttribute::eMesh:
-			WriteNodeStart(fpMesh, nodeName, nodeParentName, pNode);
+			WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
+			WriteNodeTransform(pNode, fpMesh);
 			WriteMesh(pNode, fpMesh);
 			WriteNodeEnd(fpMesh);
 			break;	
 		case FbxNodeAttribute::eSkeleton:
-			WriteNodeStart(fpBone, nodeName, nodeParentName, pNode);
+			WriteNodeStart(pNode, nodeName, nodeParentName, fpBone);
+			WriteNodeTransform(pNode, fpBone);
 			WriteNodeEnd(fpBone);
 			break;
 		}
+
+		if (type == FbxNodeAttribute::eSkeleton)
+		{
+			FbxAnimStack* animStack = pScene->GetSrcObject<FbxAnimStack>();
+			FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
+			FbxTime start = timeSpan.GetStart();
+			FbxTime stop = timeSpan.GetStop();
+			FbxTime duration = timeSpan.GetDuration();
+			FbxLongLong totalFrameCount = duration.GetFrameCount();
+
+			int samplingStepFrame = 2;
+			FbxTime step;
+			step.SetTime(0,0,0,samplingStepFrame);
+
+			bool isPosKey = false;
+			bool isRotKey = false;
+
+			FbxAMatrix startMat = pNode->EvaluateLocalTransform();
+			FbxVector4 startPos = startMat.GetT();
+			FbxQuaternion startRot = startMat.GetQ();
+
+			for (FbxTime t = start; t < stop + step; t += step)
+			{
+				FbxAMatrix mat = pNode->EvaluateLocalTransform(t);
+				FbxVector4 pos = mat.GetT();
+				FbxQuaternion rot = mat.GetQ();
+
+				if (!isPosKey)
+				{
+					if (pos != startPos)
+					{
+						isPosKey = true;
+					}
+				}
+
+				if (!isRotKey)
+				{
+					if (rot != startRot)
+					{
+						isRotKey = true;
+					}
+				}
+
+				if (isPosKey && isRotKey)
+					break;
+			}
+
+			if (isPosKey || isRotKey)
+			{
+				WriteNodeStart(pNode, nodeName, nodeParentName, fpAni);
+
+				if (isPosKey)
+				{
+					vector<int>			vecKeyFrame;
+					vector<FbxVector4>	vecKeyPos;
+
+					vecKeyFrame.reserve(totalFrameCount/samplingStepFrame);
+					vecKeyPos.reserve(totalFrameCount/samplingStepFrame);	
+
+					FbxVector4 prevPos = startPos;
+					bool prevEqual = false;
+					int frameCount = 0;
+					for (FbxTime t = start; t < stop + step; t += step, frameCount += samplingStepFrame)
+					{
+						FbxAMatrix mat = pNode->EvaluateLocalTransform(t);
+						FbxVector4 pos = mat.GetT();
+
+						if (vecKeyPos.size() != 0)
+						{
+							if (pos == prevPos)
+							{
+								prevEqual = true;
+								continue;
+							}
+
+							if (prevEqual)	// 이전 키값이 같은 상태가 유지되었으면
+							{
+								prevEqual = false;
+
+								// 이전 키값을 한번 더 넣어줘서 보간에 의한 의도되지 않은 에니메이션이 이루어지는 것을 막는다.
+								vecKeyFrame.push_back(frameCount - samplingStepFrame);
+								vecKeyPos.push_back(prevPos);
+							}
+						}
+
+						prevPos = pos;
+
+						vecKeyFrame.push_back(frameCount);
+						vecKeyPos.push_back(pos);
+					}
+
+					size_t numKeyPos = vecKeyPos.size();
+					fprintf(fpAni, "\t\t<posKey count=\"%d\">\n", numKeyPos);
+					for (size_t i = 0; i < numKeyPos; ++i)
+					{
+						FbxVector4 p = FbxVectorToI4(vecKeyPos[i]);
+						fprintf(fpAni, "\t\t\t<a frame=\"%d\">%g %g %g</a>\n", vecKeyFrame[i], p.mData[0], p.mData[1], p.mData[2]);
+					}
+					fprintf(fpAni, "\t\t</posKey>\n");
+				}
+				
+				if (isRotKey)
+				{
+					vector<int>				vecKeyFrame;
+					vector<FbxQuaternion>	vecKeyRot;				
+
+					vecKeyFrame.reserve(totalFrameCount/samplingStepFrame);
+					vecKeyRot.reserve(totalFrameCount/samplingStepFrame);				
+
+					FbxQuaternion prevRot = startRot;
+					FbxQuaternion accumRot;
+					int frameCount = 0;
+					bool prevIdentity = false;
+					FbxQuaternion qIndentity = FbxQuaternion(0, 0, 0, 1);
+					for (FbxTime t = start; t < stop + step; t += step, frameCount += samplingStepFrame)
+					{
+
+						FbxAMatrix mat = pNode->EvaluateLocalTransform(t);
+						FbxQuaternion quat = mat.GetQ();
+
+						FbxQuaternion invPrevRot = prevRot;
+						invPrevRot.Inverse();
+						FbxQuaternion deltaQuat = quat*invPrevRot;
+
+						if (vecKeyRot.size() != 0)
+						{
+							if (deltaQuat == qIndentity)
+							{
+								prevIdentity = true;
+								continue;
+							}
+
+							if (prevIdentity)	// 이전 키값이 같은 상태가 유지되었으면
+							{
+								prevIdentity = false;
+
+								// 이전 키값을 한번 더 넣어줘서 보간에 의한 의도되지 않은 에니메이션이 이루어지는 것을 막는다.
+								vecKeyFrame.push_back(frameCount - samplingStepFrame);
+								vecKeyRot.push_back(accumRot);
+							}
+						}
+						
+						accumRot = deltaQuat*accumRot;
+						prevRot = quat;
+
+						vecKeyFrame.push_back(frameCount);
+						vecKeyRot.push_back(accumRot);
+					}
+
+					size_t numKeyRot = vecKeyRot.size();
+					fprintf(fpAni, "\t\t<rotKey count=\"%d\">\n", numKeyRot);
+					for (size_t i = 0; i < numKeyRot; ++i)
+					{
+						FbxQuaternion q = FbxQuatToI4(vecKeyRot[i]);
+						fprintf(fpAni, "\t\t\t<a frame=\"%d\">%g %g %g %g</a>\n",  vecKeyFrame[i], q.mData[0], q.mData[1], q.mData[2], q.mData[3]);
+					}
+
+					fprintf(fpAni, "\t\t</rotKey>\n");
+				}
+				
+				WriteNodeEnd(fpAni);
+			}
+			
+		}
+
 	}
 
 	for(int j = 0; j < pNode->GetChildCount(); j++)
 		WriteNode(pNode->GetChild(j));
+
 }
 
 // Triangulate all NURBS, patch and mesh under this node recursively.
@@ -362,8 +548,16 @@ int main(int argc, char* argv[])
 	if (fpMesh == nullptr)
 		return 0;
 
+	fpMtrl = fopen("raven.mtrl.xml", "w");
+	if (fpMtrl == nullptr)
+		return 0;
+
 	fpBone = fopen("raven.bone.xml", "w");
 	if (fpBone == nullptr)
+		return 0;
+
+	fpAni = fopen("raven.ani.xml", "w");
+	if (fpAni == nullptr)
 		return 0;
 
 	FbxManager* lSdkManager = FbxManager::Create();
@@ -379,22 +573,45 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 
-	FbxScene* lScene = FbxScene::Create(lSdkManager,"myScene");
+	pScene = FbxScene::Create(lSdkManager,"myScene");
 
-	lImporter->Import(lScene);
+	lImporter->Import(pScene);
 
 	lImporter->Destroy();
 
-	TriangulateRecursive(lScene->GetRootNode());
-	BuildBoneNameList(lScene->GetRootNode());
+	TriangulateRecursive(pScene->GetRootNode());
+	BuildBoneNameList(pScene->GetRootNode());
 	
 	fprintf(fpMesh, "<mesh>\n");
 	fprintf(fpMesh, "\t<version>1.0.0</version>\n");
 
+	fprintf(fpMtrl, "<material>\n");
+	fprintf(fpMtrl, "\t<version>1.0.0</version>\n");
+
 	fprintf(fpBone, "<bone>\n");
 	fprintf(fpBone, "\t<version>1.0.0</version>\n");
 
-	FbxNode* lRootNode = lScene->GetRootNode();
+	fprintf(fpAni, "<ani>\n");
+	fprintf(fpAni, "\t<version>1.0.0</version>\n");
+
+	int animStackCount = pScene->GetSrcObjectCount<FbxAnimStack>();
+	if (animStackCount > 1)
+	{
+		printf("only 1 animation stack supported.");
+		return 0;
+	}
+
+	FbxAnimStack* animStack = pScene->GetSrcObject<FbxAnimStack>();
+	FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
+	FbxTime start = timeSpan.GetStart();
+	FbxTime stop = timeSpan.GetStop();
+	FbxTime duration = timeSpan.GetDuration();
+	FbxLongLong frame = duration.GetFrameCount();
+
+	fprintf(fpAni, "\t<startFrame>%d</startFrame>\n", 0);
+	fprintf(fpAni, "\t<endFrame>%d</endFrame>\n", frame);
+
+	FbxNode* lRootNode = pScene->GetRootNode();
 	if(lRootNode) {
 		for(int i = 0; i < lRootNode->GetChildCount(); i++)
 			WriteNode(lRootNode->GetChild(i));
@@ -402,7 +619,11 @@ int main(int argc, char* argv[])
 
 	fprintf(fpMesh, "</mesh>");
 
-	fprintf(fpBone, "</mesh>");
+	fprintf(fpMtrl, "</mtrl>");
+
+	fprintf(fpBone, "</bone>");
+
+	fprintf(fpAni, "</ani>");
 
 	lSdkManager->Destroy();
 
