@@ -140,6 +140,12 @@ namespace i4graphics
 	{
 		I4PROFILE_THISFUNC;
 
+		unsigned int boneSize = vecBone.size();
+		for (unsigned int i = 0; i < boneSize; ++i)
+		{
+			vecBone[i]->commitToRenderer(renderer, worldTM);
+		}
+
 		unsigned int meshSize = vecMesh.size();
 		for (unsigned int i = 0; i < meshSize; ++i)
 		{

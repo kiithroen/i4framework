@@ -467,7 +467,7 @@ namespace i4graphics
 				cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
 				shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
-				if (itr.mesh->skined)
+				if (itr.shaderMask & I4SHADER_MASK_SKINNING)
 				{
 					buildMatrixPalette(cbEachSkinedMesh_G.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
 					shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
@@ -720,7 +720,7 @@ namespace i4graphics
 					
 				itr.mesh->bind();
 
-				if (itr.mesh->skined)
+				if (itr.shaderMask & I4SHADER_MASK_SKINNING)
 				{
 					buildMatrixPalette(cbEachSkinedMesh_S_VS.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
 					shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());

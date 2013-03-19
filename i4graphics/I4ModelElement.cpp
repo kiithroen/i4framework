@@ -108,6 +108,65 @@ namespace i4graphics
 
 	void I4ModelBone::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
 	{
+		I4AABB aa(I4Vector3(-1, -1, -1), I4Vector3(1, 1, 1));
+
+		I4Vector3 edges[8];
+		aa.extractEdges(edges);
+
+		I4Matrix4x4 mm;
+
+		worldInverseTM.extractInverse(mm);
+
+		I4Matrix4x4 m = mm*parentTM;
+		I4DebugLine l;
+		l.color = I4Vector4(1, 0, 0, 1);
+		l.p0 = m.transformCoord(edges[0]);
+		l.p1 = m.transformCoord(edges[1]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[1]);
+		l.p1 = m.transformCoord(edges[2]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[2]);
+		l.p1 = m.transformCoord(edges[3]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[0]);
+		l.p1 = m.transformCoord(edges[3]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[4]);
+		l.p1 = m.transformCoord(edges[5]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[5]);
+		l.p1 = m.transformCoord(edges[6]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[6]);
+		l.p1 = m.transformCoord(edges[7]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[4]);
+		l.p1 = m.transformCoord(edges[7]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[0]);
+		l.p1 = m.transformCoord(edges[4]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[1]);
+		l.p1 = m.transformCoord(edges[5]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[2]);
+		l.p1 = m.transformCoord(edges[6]);
+		renderer->commit(l);
+
+		l.p0 = m.transformCoord(edges[3]);
+		l.p1 = m.transformCoord(edges[7]);
+		renderer->commit(l);
 	}
 
 	//------------------------- I4ModelMesh -------------------------
@@ -158,7 +217,7 @@ namespace i4graphics
 			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
 		}
 
-		if (mesh->skined)
+		if (mesh->skined && model->getBoneCount() > 0)
 		{
 			item.shaderMask |= I4SHADER_MASK_SKINNING;
 			item.worldTM = worldTM;
@@ -170,9 +229,9 @@ namespace i4graphics
 		{
 			item.worldTM = finalTM;
 			// 아래 정보들은 사용안함
-			//item.boneCount = 0;
-			//item.skinTMs = nullptr;
-			//item.resultTM = I4MATRIX4X4_IDENTITY; 
+			item.boneCount = 0;
+			item.skinTMs = nullptr;
+			item.resultTM = I4MATRIX4X4_IDENTITY; 
 		}		
 
 		renderer->commit(item);
