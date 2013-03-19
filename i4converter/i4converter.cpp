@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include <fbxsdk.h>
 #include <vector>
+#include <map>
 #include <string>
 #include <algorithm>
 using namespace std;
@@ -22,6 +23,7 @@ FILE* fpBone = nullptr;
 FILE* fpAni = nullptr;
 
 vector<string> vecBoneNameList;
+map<string, FbxAMatrix> mapBoneBindPose;
 
 FbxVector2 FbxUVToI4(const FbxVector2& v)
 {
@@ -234,6 +236,11 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 				}
 			}
 
+			FbxAMatrix m;
+			pCluster->GetTransformLinkMatrix(m);
+
+			mapBoneBindPose[name] = m;
+
 			int associateCtrlPointCount = pCluster->GetControlPointIndicesCount();
 			int* pCtrlPointIndices = pCluster->GetControlPointIndices();
 			double* pCtrlPointWeights = pCluster->GetControlPointWeights();
@@ -322,7 +329,39 @@ void WriteNode(FbxNode* pNode)
 			break;	
 		case FbxNodeAttribute::eSkeleton:
 			WriteNodeStart(pNode, nodeName, nodeParentName, fpBone);
-			WriteNodeTransform(pNode, fpBone);
+			//WriteNodeTransform(pNode, fpBone);
+
+			FbxTime time;
+			time.SetSecondDouble(1);
+
+			FbxMatrix matLocal;
+			
+			if (pNode->GetParent())
+			{
+				FbxMatrix matParent = mapBoneBindPose[nodeParentName];
+				FbxMatrix matParentInv = matParent.Inverse();
+				matLocal = matParentInv*mapBoneBindPose[nodeName];
+			}
+
+			matLocal = FbxMatrixToI4(matLocal);
+			fprintf(fpBone, "\t\t<localTM>\n");
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[0][0], matLocal.mData[0][1], matLocal.mData[0][2]);
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[1][0], matLocal.mData[1][1], matLocal.mData[1][2]);
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[2][0], matLocal.mData[2][1], matLocal.mData[2][2]);
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[3][0], matLocal.mData[3][1], matLocal.mData[3][2]);
+			fprintf(fpBone, "\t\t</localTM>\n");
+
+			
+			FbxMatrix matWorld = mapBoneBindPose[nodeName]; //FbxMatrixToI4(pNode->EvaluateGlobalTransform(time));
+
+			matWorld = FbxMatrixToI4(matWorld);
+			fprintf(fpBone, "\t\t<worldTM>\n");
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[0][0], matWorld.mData[0][1], matWorld.mData[0][2]);
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[1][0], matWorld.mData[1][1], matWorld.mData[1][2]);
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[2][0], matWorld.mData[2][1], matWorld.mData[2][2]);
+			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[3][0], matWorld.mData[3][1], matWorld.mData[3][2]);
+			fprintf(fpBone, "\t\t</worldTM>\n");
+
 			WriteNodeEnd(fpBone);
 			break;
 		}
@@ -343,7 +382,7 @@ void WriteNode(FbxNode* pNode)
 			bool isPosKey = false;
 			bool isRotKey = false;
 
-			FbxAMatrix startMat = pNode->EvaluateLocalTransform();
+			FbxAMatrix startMat = /*mapBoneBindPose[pNode->GetName()];*/pNode->EvaluateLocalTransform();
 			FbxVector4 startPos = startMat.GetT();
 			FbxQuaternion startRot = startMat.GetQ();
 

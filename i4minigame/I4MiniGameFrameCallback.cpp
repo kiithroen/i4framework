@@ -66,7 +66,9 @@ bool I4MiniGameFrameCallback::onStart()
 	player->setScale(I4Vector3(0.035f, 0.035f, 0.035f));
 
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
-	view->attachModel("player", "testmodel/elin", true, true, false);
+	view->attachModel("player", "testmodel/raven", true, false, true);
+	view->attachAni("testmodel/raven.ani.xml", "idle");
+	view->playAnimation("idle");
 	
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
@@ -83,7 +85,7 @@ bool I4MiniGameFrameCallback::onStart()
 	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 
 	physXMgr->createPlane();
-	
+	/*
 	I4Vector3 lightPointColor[] =
 	{
 		I4Vector3(1.0f, 0.125f, 0.93f),
@@ -170,6 +172,7 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 		}
 	}
+	*/
 	
 	return true;
 }
@@ -224,7 +227,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onUpdateLogic"), updateArgs);
-	
+	/*
 	static float degree = 0;
 	degree += 30*dt;
 	if (degree > 360.0f)
@@ -249,7 +252,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 				-18.0f + j*4.0f + sign*2.5f*sin(I4MathUtil::degreeToRadian(degree))));
 		}
 	}
-	
+	*/
 	{
 		I4PROFILE_BLOCK("onLateUpdate");
 		I4MessageArgs readyToRenderArgs;

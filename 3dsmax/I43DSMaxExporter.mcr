@@ -159,6 +159,8 @@ macroScript I43DSMaxExporter category:"I4Framework"
 			ExportRecursive f child depth
 		)
 	)
+
+	print "start"
 	
 	local exportName = "girl"
 	local exportType = "mesh"

@@ -953,7 +953,7 @@ namespace i4graphics
 
 		videoDriver->resetBackBufferRenderTarget(true);
 
-//		videoDriver->setDepthStencilMode(I4DEPTH_OFF_STENCIL_OFF);
+		videoDriver->setDepthStencilMode(I4DEPTH_OFF_STENCIL_OFF);
 
 
 		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
@@ -966,7 +966,7 @@ namespace i4graphics
 
 		shaderMgr->end();
 
-//		videoDriver->setDepthStencilMode(I4DEPTH_LESS_STENCIL_OFF);
+		videoDriver->setDepthStencilMode(I4DEPTH_LESS_STENCIL_OFF);
 	}
 
 }

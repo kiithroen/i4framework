@@ -113,11 +113,7 @@ namespace i4graphics
 		I4Vector3 edges[8];
 		aa.extractEdges(edges);
 
-		I4Matrix4x4 mm;
-
-		worldInverseTM.extractInverse(mm);
-
-		I4Matrix4x4 m = mm*parentTM;
+		I4Matrix4x4 m = resultTM*parentTM;
 		I4DebugLine l;
 		l.color = I4Vector4(1, 0, 0, 1);
 		l.p0 = m.transformCoord(edges[0]);
