@@ -64,24 +64,7 @@ namespace i4graphics
 		else
 		{
 			aniController->animate(dt);
-			const I4Matrix4x4& animationTM = aniController->getAnimationTM();
-
-			resultTM = elementInfo->localTM*animationTM;
-
-			// 만약 위치키값이 없으면 로컬위치로
-			if (animationTM._41 == 0.0f && animationTM._42 == 0.0f && animationTM._43 == 0.0f)
-			{
-				resultTM._41 = elementInfo->localTM._41;
-				resultTM._42 = elementInfo->localTM._42;
-				resultTM._43 = elementInfo->localTM._43;
-			}
-			else	// 있으면 위치키값으로 대입(대입하지않으면 위치값이 두번 적용된다)
-			{
-				resultTM._41 = animationTM._41;
-				resultTM._42 = animationTM._42;
-				resultTM._43 = animationTM._43;
-			}
-
+			resultTM = aniController->getAnimationTM();
 			resultTM *= parentTM;
 		}
 	}

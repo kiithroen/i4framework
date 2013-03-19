@@ -42,7 +42,7 @@ bool I4MiniGameFrameCallback::onStart()
 	if (renderer->initialize(framework->getWindowID(), framework->getWidth(), framework->getHeight()) == false)
 		return false;
 
-	renderer->getMainCamera().setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 50.0f);
+	renderer->getMainCamera().setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 100.0f);
 
 	modelMgr = new I4ModelMgr;
 	physXMgr = new I4PhysXMgr;
@@ -63,7 +63,7 @@ bool I4MiniGameFrameCallback::onStart()
 
 	player =  objectMgr->createObject("player");
 	player->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-	player->setScale(I4Vector3(0.035f, 0.035f, 0.035f));
+	player->setScale(I4Vector3(0.025f, 0.025f, 0.025f));
 
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
 	view->attachModel("player", "testmodel/raven", true, false, true);

@@ -23,7 +23,8 @@ FILE* fpBone = nullptr;
 FILE* fpAni = nullptr;
 
 vector<string> vecBoneNameList;
-map<string, FbxAMatrix> mapBoneBindPose;
+map<string, FbxAMatrix> mapBoneBindPoseWorld;
+map<string, FbxAMatrix> mapBoneBindPoseLocal;
 
 FbxVector2 FbxUVToI4(const FbxVector2& v)
 {
@@ -35,9 +36,9 @@ FbxVector4 FbxVectorToI4(const FbxVector4& v)
 	return FbxVector4(v.mData[0], v.mData[2], -v.mData[1]);
 }
 
-FbxMatrix FbxMatrixToI4(const FbxMatrix& m)
+FbxAMatrix FbxMatrixToI4(const FbxAMatrix& m)
 {
-	FbxMatrix ret;
+	FbxAMatrix ret;
 	ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
 	ret.SetRow(1, FbxVectorToI4(m.GetRow(2)));
 	ret.SetRow(2, -FbxVectorToI4(m.GetRow(1)));
@@ -51,19 +52,12 @@ FbxQuaternion FbxQuatToI4(const FbxQuaternion& q)
 	return FbxQuaternion(-q.mData[0], -q.mData[2], q.mData[1], -q.mData[3]);
 }
 
-FbxMatrix GetLocalTransform(FbxNode *pNode)
+FbxAMatrix GetLocalTransform(FbxNode *pNode)
 {
-	/*
-	FbxVector4 t = pNode->LclTranslation;
-	FbxVector4 s = pNode->LclScaling;
-	FbxVector4 r = pNode->LclRotation;
-
-	return FbxMatrix(t, r, s);
-	*/
 	return pNode->EvaluateLocalTransform();
 }
 
-FbxMatrix GetWorldTransform(FbxNode *pNode)
+FbxAMatrix GetWorldTransform(FbxNode *pNode)
 {
 	return pNode->EvaluateGlobalTransform();
 }
@@ -239,7 +233,7 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 			FbxAMatrix m;
 			pCluster->GetTransformLinkMatrix(m);
 
-			mapBoneBindPose[name] = m;
+			mapBoneBindPoseWorld[name] = m;
 
 			int associateCtrlPointCount = pCluster->GetControlPointIndicesCount();
 			int* pCtrlPointIndices = pCluster->GetControlPointIndices();
@@ -334,14 +328,16 @@ void WriteNode(FbxNode* pNode)
 			FbxTime time;
 			time.SetSecondDouble(1);
 
-			FbxMatrix matLocal;
+			FbxAMatrix matLocal;
 			
 			if (pNode->GetParent())
 			{
-				FbxMatrix matParent = mapBoneBindPose[nodeParentName];
-				FbxMatrix matParentInv = matParent.Inverse();
-				matLocal = matParentInv*mapBoneBindPose[nodeName];
+				FbxAMatrix matParent = mapBoneBindPoseWorld[nodeParentName];
+				FbxAMatrix matParentInv = matParent.Inverse();
+				matLocal = matParentInv*mapBoneBindPoseWorld[nodeName];
 			}
+
+			mapBoneBindPoseLocal[nodeName] = matLocal;
 
 			matLocal = FbxMatrixToI4(matLocal);
 			fprintf(fpBone, "\t\t<localTM>\n");
@@ -352,7 +348,7 @@ void WriteNode(FbxNode* pNode)
 			fprintf(fpBone, "\t\t</localTM>\n");
 
 			
-			FbxMatrix matWorld = mapBoneBindPose[nodeName]; //FbxMatrixToI4(pNode->EvaluateGlobalTransform(time));
+			FbxAMatrix matWorld = mapBoneBindPoseWorld[nodeName]; //FbxMatrixToI4(pNode->EvaluateGlobalTransform(time));
 
 			matWorld = FbxMatrixToI4(matWorld);
 			fprintf(fpBone, "\t\t<worldTM>\n");
@@ -382,9 +378,9 @@ void WriteNode(FbxNode* pNode)
 			bool isPosKey = false;
 			bool isRotKey = false;
 
-			FbxAMatrix startMat = /*mapBoneBindPose[pNode->GetName()];*/pNode->EvaluateLocalTransform();
-			FbxVector4 startPos = startMat.GetT();
-			FbxQuaternion startRot = startMat.GetQ();
+			FbxAMatrix startRotMat = mapBoneBindPoseLocal[pNode->GetName()];   //pNode->EvaluateLocalTransform();
+			FbxVector4 startPos = startRotMat.GetT();
+			FbxQuaternion startRot = startRotMat.GetQ();
 
 			for (FbxTime t = start; t < stop + step; t += step)
 			{
@@ -434,7 +430,7 @@ void WriteNode(FbxNode* pNode)
 
 						if (vecKeyPos.size() != 0)
 						{
-							if (pos == prevPos)
+							if (pos.Compare(prevPos, 0.001f) == 0)
 							{
 								prevEqual = true;
 								continue;
@@ -475,23 +471,16 @@ void WriteNode(FbxNode* pNode)
 					vecKeyRot.reserve(totalFrameCount/samplingStepFrame);				
 
 					FbxQuaternion prevRot = startRot;
-					FbxQuaternion accumRot;
 					int frameCount = 0;
 					bool prevIdentity = false;
-					FbxQuaternion qIndentity = FbxQuaternion(0, 0, 0, 1);
 					for (FbxTime t = start; t < stop + step; t += step, frameCount += samplingStepFrame)
 					{
-
 						FbxAMatrix mat = pNode->EvaluateLocalTransform(t);
-						FbxQuaternion quat = mat.GetQ();
-
-						FbxQuaternion invPrevRot = prevRot;
-						invPrevRot.Inverse();
-						FbxQuaternion deltaQuat = quat*invPrevRot;
+						FbxQuaternion rot = mat.GetQ();
 
 						if (vecKeyRot.size() != 0)
 						{
-							if (deltaQuat == qIndentity)
+							if (rot.Compare(prevRot, 0.0001f) == 0)
 							{
 								prevIdentity = true;
 								continue;
@@ -503,15 +492,14 @@ void WriteNode(FbxNode* pNode)
 
 								// 이전 키값을 한번 더 넣어줘서 보간에 의한 의도되지 않은 에니메이션이 이루어지는 것을 막는다.
 								vecKeyFrame.push_back(frameCount - samplingStepFrame);
-								vecKeyRot.push_back(accumRot);
+								vecKeyRot.push_back(rot);
 							}
 						}
-						
-						accumRot = deltaQuat*accumRot;
-						prevRot = quat;
+
+						prevRot = rot;
 
 						vecKeyFrame.push_back(frameCount);
-						vecKeyRot.push_back(accumRot);
+						vecKeyRot.push_back(rot);
 					}
 
 					size_t numKeyRot = vecKeyRot.size();
