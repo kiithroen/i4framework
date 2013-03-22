@@ -15,6 +15,14 @@
 #include <algorithm>
 using namespace std;
 
+enum ExportType
+{
+	EXPORT_MESH = 0,
+	EXPORT_MTRL,
+	EXPORT_BONE,
+	EXPORT_ANI,
+};
+
 FbxScene* pScene = nullptr;
 
 FILE* fpMesh = nullptr;
@@ -22,7 +30,7 @@ FILE* fpMtrl = nullptr;
 FILE* fpBone = nullptr;
 FILE* fpAni = nullptr;
 
-vector<string> vecBoneNameList;
+map<string, int> mapBoneNameList;
 map<string, FbxAMatrix> mapBoneBindPoseWorld;
 map<string, FbxAMatrix> mapBoneBindPoseLocal;
 
@@ -182,6 +190,9 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 	}
 	fprintf(fpMesh, "\t\t</texIndex>\n");
 
+
+	//-----------------------------
+
 	struct SkinInfo
 	{
 		int boneID;
@@ -193,66 +204,54 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 		vector<SkinInfo>	data;
 	};
 
-	vector<SkinData>	vecSkinInfo;
-	vecSkinInfo.resize(pMesh->GetControlPointsCount());
 	int deformerCount = pMesh->GetDeformerCount();
-	for (int i = 0; i < deformerCount; ++i)
+	if (deformerCount > 0)
 	{
-		FbxDeformer* pDeformer = pMesh->GetDeformer(i);
-		if (pDeformer == nullptr)
-			continue;
-
-		if (pDeformer->GetDeformerType() != FbxDeformer::eSkin)
-			continue;
-
-		FbxSkin* pSkin = (FbxSkin*)pDeformer;
-
-		int clusterCount = pSkin->GetClusterCount();
-		for (int j = 0; j < clusterCount; ++j)
+		vector<SkinData>	vecSkinInfo;
+		vecSkinInfo.resize(pMesh->GetControlPointsCount());
+		for (int i = 0; i < deformerCount; ++i)
 		{
-			FbxCluster* pCluster = pSkin->GetCluster(j);
-			if (pCluster == nullptr)
+			FbxDeformer* pDeformer = pMesh->GetDeformer(i);
+			if (pDeformer == nullptr)
 				continue;
 
-			FbxNode* pLinkNode = pCluster->GetLink();
-			if (pLinkNode == nullptr)
+			if (pDeformer->GetDeformerType() != FbxDeformer::eSkin)
 				continue;
 
-			string name = pLinkNode->GetName();
+			FbxSkin* pSkin = (FbxSkin*)pDeformer;
 
-			int boneID = -1;
-			for (int idx = 0; idx < vecBoneNameList.size(); ++idx)
+			int clusterCount = pSkin->GetClusterCount();
+			for (int j = 0; j < clusterCount; ++j)
 			{
-				if (strcmp(vecBoneNameList[idx].c_str(), name.c_str()) == 0)
+				FbxCluster* pCluster = pSkin->GetCluster(j);
+				if (pCluster == nullptr)
+					continue;
+
+				FbxNode* pLinkNode = pCluster->GetLink();
+				if (pLinkNode == nullptr)
+					continue;
+
+				string name = pLinkNode->GetName();
+
+				int boneID = mapBoneNameList[name];
+
+				int associateCtrlPointCount = pCluster->GetControlPointIndicesCount();
+				int* pCtrlPointIndices = pCluster->GetControlPointIndices();
+				double* pCtrlPointWeights = pCluster->GetControlPointWeights();
+
+				for (int k = 0; k < associateCtrlPointCount; ++k)
 				{
-					boneID = idx;
-					break;
+					int nIdex = pCtrlPointIndices[k];
+					double weight = pCtrlPointWeights[k];
+					SkinInfo info;
+					info.boneID = boneID;
+					info.boneWeight = weight;
+					vecSkinInfo[nIdex].data.push_back(info);
 				}
 			}
-
-			FbxAMatrix m;
-			pCluster->GetTransformLinkMatrix(m);
-
-			mapBoneBindPoseWorld[name] = m;
-
-			int associateCtrlPointCount = pCluster->GetControlPointIndicesCount();
-			int* pCtrlPointIndices = pCluster->GetControlPointIndices();
-			double* pCtrlPointWeights = pCluster->GetControlPointWeights();
-
-			for (int k = 0; k < associateCtrlPointCount; ++k)
-			{
-				int nIdex = pCtrlPointIndices[k];
-				double weight = pCtrlPointWeights[k];
-				SkinInfo info;
-				info.boneID = boneID;
-				info.boneWeight = weight;
-				vecSkinInfo[nIdex].data.push_back(info);
-			}
 		}
-	}
 
-	if (vecSkinInfo.size() > 0)
-	{
+		
 		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", vecSkinInfo.size());
 
 		for (unsigned int i = 0; i < vecSkinInfo.size(); ++i)
@@ -265,8 +264,8 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 			}
 			fprintf(fpMesh, "\t\t\t</v>\n");
 		}
-		fprintf(fpMesh, "\t\t</weight>\n");
-	}
+		fprintf(fpMesh, "\t\t</weight>\n");		
+	}	
 }
 
 void WriteNodeTransform(FbxNode* pNode, FILE* fp)
@@ -299,7 +298,7 @@ void WriteNodeEnd(FILE* fp)
 	fprintf(fp, "\t</node>\n");
 }
 
-void WriteNode(FbxNode* pNode)
+void WriteNode(FbxNode* pNode, ExportType exportType)
 {
 	const char* nodeName = pNode->GetName();
 	const char* nodeParentName = "undefined";
@@ -316,53 +315,53 @@ void WriteNode(FbxNode* pNode)
 		switch (type)
 		{
 		case FbxNodeAttribute::eMesh:
-			WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
-			WriteNodeTransform(pNode, fpMesh);
-			WriteMesh(pNode, fpMesh);
-			WriteNodeEnd(fpMesh);
+			if (exportType == EXPORT_MESH)
+			{
+				WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
+				WriteNodeTransform(pNode, fpMesh);
+				WriteMesh(pNode, fpMesh);
+				WriteNodeEnd(fpMesh);
+			}
 			break;	
 		case FbxNodeAttribute::eSkeleton:
-			WriteNodeStart(pNode, nodeName, nodeParentName, fpBone);
-			//WriteNodeTransform(pNode, fpBone);
-
-			FbxTime time;
-			time.SetSecondDouble(1);
-
-			FbxAMatrix matLocal;
-			
-			if (pNode->GetParent())
+			if (exportType == EXPORT_BONE)
 			{
-				FbxAMatrix matParent = mapBoneBindPoseWorld[nodeParentName];
-				FbxAMatrix matParentInv = matParent.Inverse();
-				matLocal = matParentInv*mapBoneBindPoseWorld[nodeName];
-			}
+				fprintf(fpBone, "\t<node name=\"%s\" parent_name=\"%s\" id=\"%d\">\n", nodeName, nodeParentName, mapBoneNameList[nodeName]);
 
-			mapBoneBindPoseLocal[nodeName] = matLocal;
+				FbxAMatrix matLocal;			
+				if (pNode->GetParent())
+				{
+					FbxAMatrix matParent = mapBoneBindPoseWorld[nodeParentName];
+					FbxAMatrix matParentInv = matParent.Inverse();
+					matLocal = matParentInv*mapBoneBindPoseWorld[nodeName];
+				}
+				mapBoneBindPoseLocal[nodeName] = matLocal;
 
-			matLocal = FbxMatrixToI4(matLocal);
-			fprintf(fpBone, "\t\t<localTM>\n");
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[0][0], matLocal.mData[0][1], matLocal.mData[0][2]);
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[1][0], matLocal.mData[1][1], matLocal.mData[1][2]);
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[2][0], matLocal.mData[2][1], matLocal.mData[2][2]);
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[3][0], matLocal.mData[3][1], matLocal.mData[3][2]);
-			fprintf(fpBone, "\t\t</localTM>\n");
+				matLocal = FbxMatrixToI4(matLocal);
+				fprintf(fpBone, "\t\t<localTM>\n");
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[0][0], matLocal.mData[0][1], matLocal.mData[0][2]);
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[1][0], matLocal.mData[1][1], matLocal.mData[1][2]);
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[2][0], matLocal.mData[2][1], matLocal.mData[2][2]);
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matLocal.mData[3][0], matLocal.mData[3][1], matLocal.mData[3][2]);
+				fprintf(fpBone, "\t\t</localTM>\n");
 
 			
-			FbxAMatrix matWorld = mapBoneBindPoseWorld[nodeName]; //FbxMatrixToI4(pNode->EvaluateGlobalTransform(time));
+				FbxAMatrix matWorld = mapBoneBindPoseWorld[nodeName]; //FbxMatrixToI4(pNode->EvaluateGlobalTransform(time));
 
-			matWorld = FbxMatrixToI4(matWorld);
-			fprintf(fpBone, "\t\t<worldTM>\n");
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[0][0], matWorld.mData[0][1], matWorld.mData[0][2]);
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[1][0], matWorld.mData[1][1], matWorld.mData[1][2]);
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[2][0], matWorld.mData[2][1], matWorld.mData[2][2]);
-			fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[3][0], matWorld.mData[3][1], matWorld.mData[3][2]);
-			fprintf(fpBone, "\t\t</worldTM>\n");
+				matWorld = FbxMatrixToI4(matWorld);
+				fprintf(fpBone, "\t\t<worldTM>\n");
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[0][0], matWorld.mData[0][1], matWorld.mData[0][2]);
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[1][0], matWorld.mData[1][1], matWorld.mData[1][2]);
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[2][0], matWorld.mData[2][1], matWorld.mData[2][2]);
+				fprintf(fpBone, "\t\t\t<a>%g %g %g</a>\n", matWorld.mData[3][0], matWorld.mData[3][1], matWorld.mData[3][2]);
+				fprintf(fpBone, "\t\t</worldTM>\n");
 
-			WriteNodeEnd(fpBone);
+				fprintf(fpBone, "\t</node>\n");
+			}
 			break;
 		}
 
-		if (type == FbxNodeAttribute::eSkeleton)
+		if (exportType == EXPORT_ANI)
 		{
 			FbxAnimStack* animStack = pScene->GetSrcObject<FbxAnimStack>();
 			FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
@@ -514,14 +513,13 @@ void WriteNode(FbxNode* pNode)
 				}
 				
 				WriteNodeEnd(fpAni);
-			}
-			
+			}			
 		}
 
 	}
 
 	for(int j = 0; j < pNode->GetChildCount(); j++)
-		WriteNode(pNode->GetChild(j));
+		WriteNode(pNode->GetChild(j), exportType);
 
 }
 
@@ -557,7 +555,45 @@ void BuildBoneNameList(FbxNode* pNode)
 	{
 		if (lNodeAttribute->GetAttributeType() == FbxNodeAttribute::eSkeleton)
 		{
-			vecBoneNameList.push_back(pNode->GetName());
+			mapBoneNameList.insert(make_pair(pNode->GetName(), mapBoneNameList.size()));
+		}
+		else if (lNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh)
+		{
+			FbxMesh* pMesh = pNode->GetMesh();
+			if (pMesh == nullptr)
+				return;
+
+			int deformerCount = pMesh->GetDeformerCount();
+			for (int i = 0; i < deformerCount; ++i)
+			{
+				FbxDeformer* pDeformer = pMesh->GetDeformer(i);
+				if (pDeformer == nullptr)
+					continue;
+
+				if (pDeformer->GetDeformerType() != FbxDeformer::eSkin)
+					continue;
+
+				FbxSkin* pSkin = (FbxSkin*)pDeformer;
+
+				int clusterCount = pSkin->GetClusterCount();
+				for (int j = 0; j < clusterCount; ++j)
+				{
+					FbxCluster* pCluster = pSkin->GetCluster(j);
+					if (pCluster == nullptr)
+						continue;
+
+					FbxNode* pLinkNode = pCluster->GetLink();
+					if (pLinkNode == nullptr)
+						continue;
+
+					string name = pLinkNode->GetName();
+
+					FbxAMatrix m;
+					pCluster->GetTransformLinkMatrix(m);
+
+					mapBoneBindPoseWorld[name] = m;
+				}
+			}
 		}
 	}
 
@@ -570,23 +606,7 @@ void BuildBoneNameList(FbxNode* pNode)
 
 int main(int argc, char* argv[])
 {
-	const char* lFilename = "Raven.fbx";
-
-	fpMesh = fopen("raven.mesh.xml", "w");
-	if (fpMesh == nullptr)
-		return 0;
-
-	fpMtrl = fopen("raven.mtrl.xml", "w");
-	if (fpMtrl == nullptr)
-		return 0;
-
-	fpBone = fopen("raven.bone.xml", "w");
-	if (fpBone == nullptr)
-		return 0;
-
-	fpAni = fopen("raven.ani.xml", "w");
-	if (fpAni == nullptr)
-		return 0;
+	const char* lFilename = "Player.fbx";	
 
 	FbxManager* lSdkManager = FbxManager::Create();
 
@@ -610,53 +630,92 @@ int main(int argc, char* argv[])
 	TriangulateRecursive(pScene->GetRootNode());
 	BuildBoneNameList(pScene->GetRootNode());
 	
-	fprintf(fpMesh, "<mesh>\n");
-	fprintf(fpMesh, "\t<version>1.0.0</version>\n");
-
-	fprintf(fpMtrl, "<material>\n");
-	fprintf(fpMtrl, "\t<version>1.0.0</version>\n");
-
-	fprintf(fpBone, "<bone>\n");
-	fprintf(fpBone, "\t<version>1.0.0</version>\n");
-
-	fprintf(fpAni, "<ani>\n");
-	fprintf(fpAni, "\t<version>1.0.0</version>\n");
-
-	int animStackCount = pScene->GetSrcObjectCount<FbxAnimStack>();
-	if (animStackCount > 1)
+	//--------------------------------------------------------------------------
+	fpMesh = fopen("raven.mesh.xml", "w");
+	if (fpMesh != nullptr)
 	{
-		printf("only 1 animation stack supported.");
-		return 0;
+		fprintf(fpMesh, "<mesh>\n");
+	
+		fprintf(fpMesh, "\t<version>1.0.0</version>\n");
+		FbxNode* lRootNode = pScene->GetRootNode();
+		if(lRootNode) {
+			for(int i = 0; i < lRootNode->GetChildCount(); i++)
+				WriteNode(lRootNode->GetChild(i), EXPORT_MESH);
+		}
+
+		fprintf(fpMesh, "</mesh>");
+		fclose(fpMesh);
 	}
 
-	FbxAnimStack* animStack = pScene->GetSrcObject<FbxAnimStack>();
-	FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
-	FbxTime start = timeSpan.GetStart();
-	FbxTime stop = timeSpan.GetStop();
-	FbxTime duration = timeSpan.GetDuration();
-	FbxLongLong frame = duration.GetFrameCount();
+	//--------------------------------------------------------------------------
 
-	fprintf(fpAni, "\t<startFrame>%d</startFrame>\n", 0);
-	fprintf(fpAni, "\t<endFrame>%d</endFrame>\n", frame);
+	fpMtrl = fopen("raven.mtrl.xml", "w");
+	if (fpMtrl != nullptr)
+	{
+		fprintf(fpMtrl, "<material>\n");
+		fprintf(fpMtrl, "\t<version>1.0.0</version>\n");
+	
+		FbxNode* lRootNode = pScene->GetRootNode();
+		if(lRootNode) {
+			for(int i = 0; i < lRootNode->GetChildCount(); i++)
+				WriteNode(lRootNode->GetChild(i), EXPORT_MTRL);
+		}
 
-	FbxNode* lRootNode = pScene->GetRootNode();
-	if(lRootNode) {
-		for(int i = 0; i < lRootNode->GetChildCount(); i++)
-			WriteNode(lRootNode->GetChild(i));
+		fprintf(fpMtrl, "</mtrl>");
+		fclose(fpMtrl);
 	}
 
-	fprintf(fpMesh, "</mesh>");
+	//--------------------------------------------------------------------------
 
-	fprintf(fpMtrl, "</mtrl>");
+	fpBone = fopen("raven.bone.xml", "w");
+	if (fpBone != nullptr)
+	{
+		fprintf(fpBone, "<bone>\n");
+		fprintf(fpMesh, "\t<version>1.0.0</version>\n");
+		FbxNode* lRootNode = pScene->GetRootNode();
+		if(lRootNode) {
+			for(int i = 0; i < lRootNode->GetChildCount(); i++)
+				WriteNode(lRootNode->GetChild(i), EXPORT_BONE);
+		}
+		fprintf(fpBone, "</bone>");
+		fclose(fpBone);
+	}
 
-	fprintf(fpBone, "</bone>");
+	//--------------------------------------------------------------------------
 
-	fprintf(fpAni, "</ani>");
+	fpAni = fopen("raven.ani.xml", "w");
+	if (fpAni != nullptr)
+	{
+		fprintf(fpAni, "<ani>\n");
+		fprintf(fpAni, "\t<version>1.0.0</version>\n");
+
+		int animStackCount = pScene->GetSrcObjectCount<FbxAnimStack>();
+		if (animStackCount > 1)
+		{
+			printf("only 1 animation stack supported.");
+		}
+
+		FbxAnimStack* animStack = pScene->GetSrcObject<FbxAnimStack>(0);
+		FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
+		FbxTime start = timeSpan.GetStart();
+		FbxTime stop = timeSpan.GetStop();
+		FbxTime duration = timeSpan.GetDuration();
+		FbxLongLong frame = duration.GetFrameCount();
+
+		fprintf(fpAni, "\t<startFrame>%d</startFrame>\n", 0);
+		fprintf(fpAni, "\t<endFrame>%d</endFrame>\n", frame);
+
+		FbxNode* lRootNode = pScene->GetRootNode();
+		if(lRootNode) {
+			for(int i = 0; i < lRootNode->GetChildCount(); i++)
+				WriteNode(lRootNode->GetChild(i), EXPORT_ANI);
+		}
+
+		fprintf(fpAni, "</ani>");
+		fclose(fpAni);
+	}
 
 	lSdkManager->Destroy();
-
-	fclose(fpBone);
-	fclose(fpMesh);
 
 	return 0;
 }

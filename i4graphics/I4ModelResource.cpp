@@ -934,5 +934,36 @@ namespace i4graphics
 
 			xml.selectParentNode();
 		}
+
+		if (xml.selectFirstChildNode("scaleKey"))
+		{
+			int size = 0;
+			xml.getAttrValue(size, "count");
+			out.vecKeyScale.resize(size);
+
+			if (xml.selectFirstChildNode("a"))
+			{
+				int i = 0;
+				do
+				{
+					xml.getAttrValue(out.vecKeyScale[i].frame,"frame");
+
+					const char* val = nullptr;
+					xml.getNodeValue(val);
+
+					sscanf_s(val, "%f %f %f",
+						&out.vecKeyScale[i].scale.x,
+						&out.vecKeyScale[i].scale.y,
+						&out.vecKeyScale[i].scale.z);
+
+					++i;
+
+				} while (xml.selectNextSiblingNode("a"));
+
+				xml.selectParentNode();
+			}
+
+			xml.selectParentNode();
+		}
 	}
 }
