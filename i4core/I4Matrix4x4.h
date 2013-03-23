@@ -404,11 +404,33 @@ namespace i4core
 			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _34 = _41 = _42 = 0.0f;
 		}
 
+		void makeOrthoRH(float width, float height, float zNear, float zFar)
+		{
+			_11 = 2.0f/width;
+			_22 = 2.0f/height;
+			_33 = 1.0f/(zNear - zFar);
+			_43 = zNear/(zNear - zFar);
+			_44 = 1.0f;
+			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _34 = _41 = _42 = 0.0f;
+		}
+
 		void makeOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
 		{
 			_11 = 2.0f/(right - left);
 			_22 = 2.0f/(top - bottom);
 			_33 = 1.0f/(zfarPlane - znearPlane);
+			_41 = (left + right)/(left - right);
+			_42 = (top + bottom)/(bottom - top);
+			_43 = znearPlane/(znearPlane - zfarPlane);
+			_44 = 1.0f;
+			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _34 = 0.0f;
+		}
+
+		void makeOrthoOffCenterRH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
+		{
+			_11 = 2.0f/(right - left);
+			_22 = 2.0f/(top - bottom);
+			_33 = 1.0f/(znearPlane - zfarPlane);
 			_41 = (left + right)/(left - right);
 			_42 = (top + bottom)/(bottom - top);
 			_43 = znearPlane/(znearPlane - zfarPlane);
@@ -426,6 +448,19 @@ namespace i4core
 			_33 = zFar/(zFar - zNear);
 			_34 = 1.0f;
 			_43 = -zNear*zFar/(zFar - zNear);
+			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _41 = _42 = _44 = 0.0f;
+		}
+
+		void makePerspectiveFovRH(float fovY, float aspect, float zNear, float zFar)
+		{
+			float yScale = 1.0f/tan(fovY*0.5f);
+			float xScale = yScale/aspect;
+
+			_11 = xScale;
+			_22 = yScale;
+			_33 = zFar/(zNear - zFar);
+			_34 = -1.0f;
+			_43 = zNear*zFar/(zNear -  zFar);
 			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _41 = _42 = _44 = 0.0f;
 		}
 
@@ -449,9 +484,52 @@ namespace i4core
 			_44 = 1.0f;
 		}
 
+		void makeObjectLookAtRH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
+		{
+			I4Vector3 zAxis = eye - lookAt;
+			zAxis.normalize();
+
+			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
+			xAxis.normalize();
+
+			I4Vector3 yAxis = I4Vector3::crossProduct(zAxis, xAxis);
+			yAxis.normalize();
+			
+			_11 = xAxis.x;	_12 = xAxis.y;	_13 = xAxis.z;
+			_21 = yAxis.x;	_22 = yAxis.y;	_23 = yAxis.z;
+			_31 = zAxis.x;	_32 = zAxis.y;	_33 = zAxis.z;
+			_41 = eye.x;	_42 = eye.y;	_43 = eye.z;
+			
+			_14 = _24 = _34 = 0.0f;
+			_44 = 1.0f;
+		}
+
 		void makeCameraLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
 		{
 			I4Vector3 zAxis = lookAt - eye;
+			zAxis.normalize();
+
+			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
+			xAxis.normalize();
+
+			I4Vector3 yAxis = I4Vector3::crossProduct(zAxis, xAxis);
+			yAxis.normalize();
+			
+			_11 = xAxis.x; _12 = yAxis.x; _13 = zAxis.x;
+			_21 = xAxis.y; _22 = yAxis.y; _23 = zAxis.y;
+			_31 = xAxis.z; _32 = yAxis.z; _33 = zAxis.z;
+
+			_41 = -I4Vector3::dotProduct(xAxis, eye);
+			_42 = -I4Vector3::dotProduct(yAxis, eye);
+			_43 = -I4Vector3::dotProduct(zAxis, eye);
+
+			_14 = _24 = _34 = 0.0f;
+			_44 = 1.0f;
+		}
+
+		void makeCameraLookAtRH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
+		{
+			I4Vector3 zAxis = eye - lookAt;
 			zAxis.normalize();
 
 			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
