@@ -25,6 +25,16 @@ enum ExportType
 
 FbxScene* pScene = nullptr;
 
+// eMayaZUp,			/*!< UpVector = ZAxis, FrontVector = -ParityOdd, CoordSystem = RightHanded */
+// eMayaYUp,			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = RightHanded */
+// eMax,				/*!< UpVector = ZAxis, FrontVector = -ParityOdd, CoordSystem = RightHanded */
+// eMotionBuilder,		/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = RightHanded */
+// eOpenGL,			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = RightHanded */
+// eDirectX,			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = LeftHanded */
+// eLightwave			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = LeftHanded */
+
+FbxAxisSystem SceneAxisSystem;
+
 FILE* fpMesh = nullptr;
 FILE* fpMtrl = nullptr;
 FILE* fpBone = nullptr;
@@ -34,6 +44,34 @@ map<string, int> mapBoneNameList;
 map<string, FbxAMatrix> mapBoneBindPoseWorld;
 map<string, FbxAMatrix> mapBoneBindPoseLocal;
 
+struct TriIndex
+{
+	TriIndex() {}
+	TriIndex(int _i0, int _i1, int _i2)
+		: i0(_i0), i1(_i1), i2(_i2)
+	{
+	}
+
+	int i0;
+	int i1;
+	int i2;
+};
+
+bool IsZUpRightHanded()
+{
+	return (SceneAxisSystem == FbxAxisSystem::eMax || SceneAxisSystem == FbxAxisSystem::eMayaZUp);
+}
+
+bool IsYUpRightHanded()
+{
+	return (SceneAxisSystem == FbxAxisSystem::eMayaYUp || SceneAxisSystem == FbxAxisSystem::eMotionBuilder || SceneAxisSystem == FbxAxisSystem::eOpenGL);
+}
+
+bool IsYUpLeftHanded()
+{
+	return (SceneAxisSystem == FbxAxisSystem::eDirectX || SceneAxisSystem == FbxAxisSystem::eLightwave);
+}
+
 FbxVector2 FbxUVToI4(const FbxVector2& v)
 {
 	return FbxVector2(v.mData[0], 1.0f - v.mData[1]);
@@ -41,23 +79,92 @@ FbxVector2 FbxUVToI4(const FbxVector2& v)
 
 FbxVector4 FbxVectorToI4(const FbxVector4& v)
 {
-	return FbxVector4(v.mData[0], v.mData[2], -v.mData[1]);
+	if (IsZUpRightHanded())
+	{
+		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
+	}
+	else if (IsYUpRightHanded())
+	{
+		return FbxVector4(v.mData[0], v.mData[1], -v.mData[2]);
+	}
+	else
+	{
+		return FbxVector4(v.mData[0], v.mData[1], v.mData[2]);
+	}
+}
+
+FbxVector4 FbxNormalToI4(const FbxVector4& v)
+{
+	if (IsZUpRightHanded() || IsYUpRightHanded())
+	{
+		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
+	}
+	else
+	{
+		return FbxVector4(v.mData[0], v.mData[1], v.mData[2]);
+	}
+}
+
+TriIndex TriIndexToI4(const TriIndex& i)
+{
+	if (IsZUpRightHanded() || IsYUpRightHanded())
+	{
+		return TriIndex(i.i0, i.i2, i.i1);
+	}
+	else
+	{
+		return TriIndex(i.i0, i.i1, i.i2);
+	}
 }
 
 FbxAMatrix FbxMatrixToI4(const FbxAMatrix& m)
 {
-	FbxAMatrix ret;
-	ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
-	ret.SetRow(1, FbxVectorToI4(m.GetRow(2)));
-	ret.SetRow(2, -FbxVectorToI4(m.GetRow(1)));
-	ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
+	if (IsZUpRightHanded())
+	{
+		FbxAMatrix ret;
+		ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
+		ret.SetRow(1, FbxVectorToI4(m.GetRow(2)));
+		ret.SetRow(2, FbxVectorToI4(m.GetRow(1)));
+		ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
 
-	return ret;
+		return ret;
+	}
+	else if (IsYUpRightHanded())
+	{
+		FbxAMatrix ret;
+		ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
+		ret.SetRow(1, FbxVectorToI4(m.GetRow(1)));
+		ret.SetRow(2, -FbxVectorToI4(m.GetRow(2)));
+		ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
+
+		return ret;
+	}
+	else
+	{
+		FbxAMatrix ret;
+		ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
+		ret.SetRow(1, FbxVectorToI4(m.GetRow(1)));
+		ret.SetRow(2, FbxVectorToI4(m.GetRow(2)));
+		ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
+
+		return ret;
+	}
 }
 
 FbxQuaternion FbxQuatToI4(const FbxQuaternion& q)
 {
-	return FbxQuaternion(-q.mData[0], -q.mData[2], q.mData[1], -q.mData[3]);
+	if (IsZUpRightHanded())
+	{
+		return FbxQuaternion(-q.mData[0], -q.mData[2], -q.mData[1], q.mData[3]);
+	}
+	else if (IsYUpRightHanded())
+	{
+		return FbxQuaternion(-q.mData[0], -q.mData[1], q.mData[2], q.mData[3]);
+	}
+	else
+	{
+		return FbxQuaternion(q.mData[0], q.mData[1], q.mData[2], q.mData[3]);
+	}
 }
 
 FbxAMatrix GetLocalTransform(FbxNode *pNode)
@@ -78,19 +185,18 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 	if (pMesh == nullptr)
 		return;
 
-	vector<FbxVector4> vecVertex;
-	vector<FbxVector4> vecNormal;
-	vector<int> vecTexIndex;
-
 	int lControlPointsCount = pMesh->GetControlPointsCount();
 	FbxVector4* lControlPoints = pMesh->GetControlPoints();
 
 	// 참조하고 있는 모든 정점
+	vector<FbxVector4> vecVertex;
+	vecVertex.resize(lControlPointsCount);
 	for (int i = 0; i < lControlPointsCount; i++)
 	{
-		vecVertex.push_back(FbxVectorToI4(lControlPoints[i]));
+		vecVertex[i] = FbxVectorToI4(lControlPoints[i]);
 	}
 
+	vector<FbxVector4> vecNormal;
 	if (pMesh->GetElementNormalCount())                        
 	{
 		// 정점이 참조하고 있는 노말
@@ -105,35 +211,37 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 				int idx = pMesh->GetPolygonVertex(i, j);
 
 				// 그리고 정점인덱스에 해당하는 노말값을 가져와서 집어넣는다.
-				vecNormal[idx] = FbxVectorToI4(leNormals->GetDirectArray().GetAt(i*3 + j));
+				vecNormal[idx] = FbxNormalToI4(leNormals->GetDirectArray().GetAt(i*3 + j));
 			}
 		}
 	}
 
 	// 정점 인덱스
-	vector<int> vecIndex;
+	vector<TriIndex> vecIndex;
+	vecIndex.resize(pMesh->GetPolygonCount());
 	for(int i = 0; i < pMesh->GetPolygonCount(); i++)
 	{
-		for(int j = 0; j < 3; j++) 
-		{
-			int idx = pMesh->GetPolygonVertex(i, j);
-
-			vecIndex.push_back(idx);
-		}
+		TriIndex tri;
+		tri.i0 = pMesh->GetPolygonVertex(i, 0);
+		tri.i1 = pMesh->GetPolygonVertex(i, 1);
+		tri.i2 = pMesh->GetPolygonVertex(i, 2);
+		vecIndex[i] = TriIndexToI4(tri);
 	}
 
 	// UV 좌표에 대한 인덱스
+	vector<TriIndex> vecTexIndex;
 	if(pMesh->GetElementUVCount())                        
 	{
+		vecTexIndex.resize(pMesh->GetPolygonCount());
 		for (int i = 0; i < pMesh->GetPolygonCount(); i++)
 		{		
 			FbxGeometryElementUV *puv = pMesh->GetElementUV(0);
 
-			for (int j = 0; j < 3; ++j)
-			{
-				int index = puv->GetIndexArray().GetAt(i*3 + j);
-				vecTexIndex.push_back(index);
-			}
+			TriIndex tri;
+			tri.i0 = puv->GetIndexArray().GetAt(i*3 + 0);
+			tri.i1 = puv->GetIndexArray().GetAt(i*3 + 1);
+			tri.i2 = puv->GetIndexArray().GetAt(i*3 + 2);
+			vecTexIndex[i] = TriIndexToI4(tri);
 		}
 	}
 
@@ -167,9 +275,9 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 	}
 
 	fprintf(fpMesh, "\t\t<index count=\"%d\">\n", pMesh->GetPolygonCount());
-	for (int i = 0; i < pMesh->GetPolygonCount()*3; i += 3)
+	for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
 	{
-		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecIndex[i], vecIndex[i+1], vecIndex[i+2]);
+		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecIndex[i].i0, vecIndex[i].i1, vecIndex[i].i2);			
 	}
 	fprintf(fpMesh, "\t\t</index>\n");
 
@@ -184,9 +292,9 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 	}
 
 	fprintf(fpMesh, "\t\t<texIndex count=\"%d\">\n", pMesh->GetPolygonCount());
-	for (int i = 0; i < pMesh->GetPolygonCount()*3; i += 3)
+	for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
 	{
-		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecTexIndex[i], vecTexIndex[i+1], vecTexIndex[i+2]);
+		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecTexIndex[i].i0, vecTexIndex[i].i1, vecTexIndex[i].i2);
 	}
 	fprintf(fpMesh, "\t\t</texIndex>\n");
 
@@ -590,7 +698,7 @@ void BuildBoneNameList(FbxNode* pNode)
 
 					FbxAMatrix m;
 					pCluster->GetTransformLinkMatrix(m);
-
+					// 지오메트리 트랜스폼을 곱해야함.
 					mapBoneBindPoseWorld[name] = m;
 				}
 			}
@@ -624,6 +732,9 @@ int main(int argc, char* argv[])
 	pScene = FbxScene::Create(lSdkManager,"myScene");
 
 	lImporter->Import(pScene);
+
+	 // Convert Axis System to what is used in this example, if needed
+    SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
 
 	lImporter->Destroy();
 

@@ -63,13 +63,17 @@ bool I4MiniGameFrameCallback::onStart()
 
 	player =  objectMgr->createObject("player");
 	player->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-	player->setScale(I4Vector3(0.025f, 0.025f, 0.025f));
+	player->setScale(I4Vector3(0.01f, 0.01f, 0.01f));
 
 	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
 	view->attachModel("player", "testmodel/raven", true, false, true);
 	view->attachAni("testmodel/raven.ani.xml", "idle");
 	view->playAnimation("idle");
 	
+	I4Matrix4x4 m;
+	m.makeRotationY(I4MathUtil::degreeToRadian(180));
+	view->setOffset(m);
+
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
 	playerMovement->setGravity(-9.8f);

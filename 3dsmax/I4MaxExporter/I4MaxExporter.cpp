@@ -113,35 +113,21 @@ int GetBoneIndex(INode *pRoot, INode *pNode)
 	return RecursiveGetBoneIndex(pRoot, pNode, boneCount);
 }
 
-Face MaxToI4(const Face& f)
+Point3 MaxToDX(const Point3& p)
 {
-	return f;
+	return Point3(p.x, p.z, p.y);
 }
 
-TVFace MaxToI4(const TVFace& f)
+Matrix3 MaxToDX(const Matrix3& m)
 {
-	return f;
-}
+	Matrix3 mat;
 
-Point3 MaxToI4(const Point3& p)
-{
-	return Point3(p.x, p.z, -p.y);
-}
+	mat.SetRow(0, MaxToDX(m.GetRow(0)));
+	mat.SetRow(1, MaxToDX(m.GetRow(2)));
+	mat.SetRow(2, MaxToDX(m.GetRow(1)));
+	mat.SetRow(3, MaxToDX(m.GetRow(3)));
 
-Matrix3 MaxToI4(const Matrix3& m)
-{
-	Matrix3 ret;
-	ret.SetRow(0, MaxToI4(m.GetRow(0)));
-	ret.SetRow(1, MaxToI4(m.GetRow(2)));
-	ret.SetRow(2,-MaxToI4(m.GetRow(1)));
-	ret.SetRow(3, MaxToI4(m.GetRow(3)));
-
-	return ret;
-}
-
-Quat MaxToI4(const Quat& q)
-{
-	return Quat(q.x, q.z, -q.y, -q.w);
+	return mat;
 }
 
 Modifier* FindPhysiqueModifier(INode *pNode)
@@ -795,7 +781,7 @@ void I4MaxExporter::ExportRecursive(INode* node)
 					fprintf(aniFile, "\t\t<posKey count=\"%d\">\n", numKeyPos);
 					for (size_t i = 0; i < numKeyPos; ++i)
 					{
-						Point3 p = MaxToI4(vecKeyPos[i]);
+						Point3 p = MaxToDX(vecKeyPos[i]);
 						fprintf(aniFile, "\t\t\t<a frame=\"%d\">%g %g %g</a>\n", vecKeyFrame[i], p.x, p.y, p.z);
 					}
 
@@ -832,11 +818,9 @@ void I4MaxExporter::ExportRecursive(INode* node)
 
 						Quat quat(tm);
 
-						Quat deltaQuat = quat/prevRot;
-
 						if (vecKeyRot.size() != 0)
 						{
-							if (deltaQuat.IsIdentity())
+							if (quat.Equals(initRot, ROT_KEY_EPSILON))
 							{
 								prevIdentity = true;
 								continue;
@@ -852,19 +836,17 @@ void I4MaxExporter::ExportRecursive(INode* node)
 							}
 						}
 
-						accumRot = accumRot*deltaQuat;
 						prevRot = quat;
 
 						vecKeyFrame.push_back(frame);
-						vecKeyRot.push_back(accumRot);
+						vecKeyRot.push_back(quat);
 					}
 
 					size_t numKeyRot = vecKeyRot.size();
 					fprintf(aniFile, "\t\t<rotKey count=\"%d\">\n", numKeyRot);
 					for (size_t i = 0; i < numKeyRot; ++i)
 					{
-						Quat q = MaxToI4( vecKeyRot[i]);
-						fprintf(aniFile, "\t\t\t<a frame=\"%d\">%g %g %g %g</a>\n",  vecKeyFrame[i], q.x, q.y, q.z, q.w);
+						fprintf(aniFile, "\t\t\t<a frame=\"%d\">%g %g %g %g</a>\n",  vecKeyFrame[i], vecKeyRot[i].x, vecKeyRot[i].z, vecKeyRot[i].y, vecKeyRot[i].w);
 					}
 
 					fprintf(aniFile, "\t\t</rotKey>\n");
@@ -907,7 +889,7 @@ void I4MaxExporter::WriteNodeInfo(FILE* fp, INode* node, const Matrix3& localTM,
 {	
 	// node info - localTM
 	Point3 p;
-	Matrix3 localTM_DX = MaxToI4(localTM);
+	Matrix3 localTM_DX = MaxToDX(localTM);
 	fprintf(fp, "\t\t<localTM>\n");
 	for (int i = 0; i < 4; ++i)
 	{
@@ -917,7 +899,7 @@ void I4MaxExporter::WriteNodeInfo(FILE* fp, INode* node, const Matrix3& localTM,
 	fprintf(fp, "\t\t</localTM>\n");
 
 	// node info - worldTM
-	Matrix3 worldTM_DX = MaxToI4(worldTM);
+	Matrix3 worldTM_DX = MaxToDX(worldTM);
 	fprintf(fp, "\t\t<worldTM>\n");
 	for (int i = 0; i < 4; ++i)
 	{
@@ -1045,7 +1027,7 @@ void I4MaxExporter::WriteMeshVertex(FILE* fp, Mesh& mesh, const Matrix3& objectT
 		// 맥스에서 피봇은 로컬좌표계의 원점이 아니라 회전의 중심축일 뿐이다.
 		// 그래서 로컬 버텍스를 직접 구하면 피봇을 무시한 잘못된 로컬 버텍스를 구하게 된다.
 		// 따라서 world vertex를 구해서 inverse tm을 곱하는 방법을 사용해야한다.
-		Point3 p = MaxToI4(mesh.getVert(i)*objectTM*worldInvTM);
+		Point3 p = MaxToDX(mesh.getVert(i)*objectTM*worldInvTM);
 		fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", p.x, p.y, p.z);
 	}
 	fprintf(fp, "\t\t</vertex>\n");
@@ -1060,7 +1042,7 @@ void I4MaxExporter::WriteMeshNormal(FILE* fp, Mesh& mesh)
 	fprintf(fp, "\t\t<normal count=\"%d\">\n", numNorms);
 	for (int i = 0; i < numNorms; ++i)
 	{ 
-		n = MaxToI4(Normalize(mesh.getNormal(i)));
+		n = MaxToDX(Normalize(mesh.getNormal(i)));
 		fprintf(fp, "\t\t\t<a>%g %g %g</a>\n", n.x, n.y, n.z);
 	}
 	fprintf(fp, "\t\t</normal>\n");
@@ -1073,8 +1055,7 @@ void I4MaxExporter::WriteMeshIndex(FILE* fp, Mesh& mesh)
 	fprintf(fp, "\t\t<index count=\"%d\">\n", numIndex);
 	for (int i = 0; i < numIndex; ++i)
 	{
-		Face f = MaxToI4(mesh.faces[i]);
-		fprintf(fp, "\t\t\t<a>%d %d %d</a>\n", f.v[0],  f.v[1], f.v[2]);
+		fprintf(fp, "\t\t\t<a>%d %d %d</a>\n", mesh.faces[i].v[0],  mesh.faces[i].v[2], mesh.faces[i].v[1]);
 	}
 	fprintf(fp, "\t\t</index>\n");
 }
@@ -1097,8 +1078,7 @@ void I4MaxExporter::WriteMeshTexUVIndex(FILE* fp, Mesh& mesh)
 		fprintf(fp, "\t\t<texIndex count=\"%d\">\n", numTIndex);
 		for (int i = 0; i < numTIndex; ++i)
 		{
-			TVFace f = MaxToI4(mesh.tvFace[i]);
-			fprintf(fp, "\t\t\t<a>%d %d %d</a>\n", f.t[0], f.t[1], f.t[2]);
+			fprintf(fp, "\t\t\t<a>%d %d %d</a>\n", mesh.tvFace[i].t[0],  mesh.tvFace[i].t[2], mesh.tvFace[i].t[1]);
 		}
 		fprintf(fp, "\t\t</texIndex>\n");
 	}
