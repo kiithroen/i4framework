@@ -97,6 +97,9 @@ namespace i4graphics
 		aa.extractEdges(edges);
 
 		I4Matrix4x4 m = resultTM*parentTM;
+		worldInverseTM.extractInverse(m);
+		m = m*parentTM;
+
 		I4DebugLine l;
 		l.color = I4Vector4(1, 0, 0, 1);
 		l.p0 = m.transformCoord(edges[0]);

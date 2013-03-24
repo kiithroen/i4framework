@@ -46,11 +46,6 @@ namespace i4graphics
 			I4Matrix4x4 m;
 			m.makeScale(v.x, v.y, v.z);
 			animationTM = m*animationTM;
-			/*
-			animationTM._11 *= v.x;
-			animationTM._22 *= v.y;
-			animationTM._33 *= v.z;
-			*/
 		}
 	}
 

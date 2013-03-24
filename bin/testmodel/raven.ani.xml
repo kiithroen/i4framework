@@ -478,7 +478,7 @@
 			<a frame="0">8.21456e-009 -1.86265e-009 1 7.65331e-017</a>
 		</rotKey>
 		<scaleKey count="1">
-			<a frame="0">-1 -1 1</a>
+			<a frame="0">-1 -1 -1</a>
 		</scaleKey>
 	</node>
 	<node name="Bip001 R Thigh" parent_name="Bip001">
@@ -1842,7 +1842,7 @@
 			<a frame="0">-2.98023e-008 -4.16334e-017 1 -6.12323e-017</a>
 		</rotKey>
 		<scaleKey count="1">
-			<a frame="0">-1 -1 1</a>
+			<a frame="0">-1 -1 -1</a>
 		</scaleKey>
 	</node>
 	<node name="Bip001 R Finger1" parent_name="Bip001 R Hand">
@@ -1869,7 +1869,7 @@
 			<a frame="0">1.86264e-009 7.45058e-009 1 -7.51101e-017</a>
 		</rotKey>
 		<scaleKey count="1">
-			<a frame="0">-1 -1 1</a>
+			<a frame="0">-1 -1 -1</a>
 		</scaleKey>
 	</node>
 	<node name="Bip001 R Finger2" parent_name="Bip001 R Hand">
@@ -1896,7 +1896,7 @@
 			<a frame="0">-1.49012e-008 -4.47035e-008 1 -7.27366e-016</a>
 		</rotKey>
 		<scaleKey count="1">
-			<a frame="0">-1 -1 1</a>
+			<a frame="0">-1 -1 -1</a>
 		</scaleKey>
 	</node>
 	<node name="main_weapon001" parent_name="Bip001 R Hand">
@@ -1907,7 +1907,7 @@
 			<a frame="0">-0.147039 0.02194 -0.744177 0.651229</a>
 		</rotKey>
 		<scaleKey count="1">
-			<a frame="0">0.475815 0.475815 -0.475815</a>
+			<a frame="0">0.475815 0.475815 0.475815</a>
 		</scaleKey>
 	</node>
 	<node name="main_player_lorez" parent_name="undefined">

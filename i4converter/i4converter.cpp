@@ -105,6 +105,19 @@ FbxVector4 FbxNormalToI4(const FbxVector4& v)
 	}
 }
 
+FbxVector4 FbxScaleToI4(const FbxVector4& v)
+{
+	if (IsZUpRightHanded() || IsYUpRightHanded())
+	{
+		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
+	}
+	else
+	{
+		return FbxVector4(v.mData[0], v.mData[1], v.mData[2]);
+	}
+}
+
+
 TriIndex TriIndexToI4(const TriIndex& i)
 {
 	if (IsZUpRightHanded() || IsYUpRightHanded())
@@ -172,10 +185,6 @@ FbxAMatrix GetGeometricTransform(FbxNode *pNode)
 	FbxVector4 t = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
 	FbxVector4 r = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
 	FbxVector4 s = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
-	if (s.mData[0] > 1 || s.mData[1] >1 || s.mData[2] > 1)
-	{
-		printf("what the!");
-	}
 
 	return FbxAMatrix(t, r, s);
 }
@@ -687,7 +696,7 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 					fprintf(fpAni, "\t\t<scaleKey count=\"%d\">\n", numKeyScale);
 					for (size_t i = 0; i < numKeyScale; ++i)
 					{
-						FbxVector4 p = FbxVectorToI4(vecKeyScale[i]);
+						FbxVector4 p = FbxScaleToI4(vecKeyScale[i]);
 						fprintf(fpAni, "\t\t\t<a frame=\"%d\">%g %g %g</a>\n", vecKeyFrame[i], p.mData[0], p.mData[1], p.mData[2]);
 					}
 					fprintf(fpAni, "\t\t</scaleKey>\n");
