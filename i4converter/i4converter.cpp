@@ -167,14 +167,27 @@ FbxQuaternion FbxQuatToI4(const FbxQuaternion& q)
 	}
 }
 
+FbxAMatrix GetGeometricTransform(FbxNode *pNode)
+{
+	FbxVector4 t = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	FbxVector4 r = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	FbxVector4 s = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
+	if (s.mData[0] > 1 || s.mData[1] >1 || s.mData[2] > 1)
+	{
+		printf("what the!");
+	}
+
+	return FbxAMatrix(t, r, s);
+}
+
 FbxAMatrix GetLocalTransform(FbxNode *pNode)
 {
-	return pNode->EvaluateLocalTransform();
+	return pNode->EvaluateLocalTransform()*GetGeometricTransform(pNode);
 }
 
 FbxAMatrix GetWorldTransform(FbxNode *pNode)
 {
-	return pNode->EvaluateGlobalTransform();
+	return pNode->EvaluateGlobalTransform()*GetGeometricTransform(pNode);
 }
 
 void WriteMesh(FbxNode* pNode, FILE* fpMesh) 
@@ -482,22 +495,24 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 			FbxTime step;
 			step.SetTime(0,0,0,samplingStepFrame);
 
+			FbxVector4 startPos = FbxVector4(0, 0, 0, 0);
+			FbxQuaternion startRot = FbxQuaternion(0, 0, 0, 1);
+			FbxVector4 startScale = FbxVector4(1, 1, 1, 0);
+	
 			bool isPosKey = false;
 			bool isRotKey = false;
-
-			FbxAMatrix startRotMat = mapBoneBindPoseLocal[pNode->GetName()];   //pNode->EvaluateLocalTransform();
-			FbxVector4 startPos = startRotMat.GetT();
-			FbxQuaternion startRot = startRotMat.GetQ();
+			bool isScaleKey = false;
 
 			for (FbxTime t = start; t < stop + step; t += step)
 			{
 				FbxAMatrix mat = pNode->EvaluateLocalTransform(t);
 				FbxVector4 pos = mat.GetT();
 				FbxQuaternion rot = mat.GetQ();
+				FbxVector4 scale = mat.GetS();
 
 				if (!isPosKey)
 				{
-					if (pos != startPos)
+					if (pos.Compare(startPos, 0.001f) != 0)
 					{
 						isPosKey = true;
 					}
@@ -505,17 +520,25 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 
 				if (!isRotKey)
 				{
-					if (rot != startRot)
+					if (rot.Compare(startRot, 0.000001f) != 0)
 					{
 						isRotKey = true;
 					}
 				}
 
-				if (isPosKey && isRotKey)
+				if (!isScaleKey)
+				{
+					if (scale.Compare(startScale, 0.001f) != 0)
+					{
+						isScaleKey = true;
+					}
+				}
+
+				if (isPosKey && isRotKey && isScaleKey)
 					break;
 			}
 
-			if (isPosKey || isRotKey)
+			if (isPosKey || isRotKey || isScaleKey)
 			{
 				WriteNodeStart(pNode, nodeName, nodeParentName, fpAni);
 
@@ -527,7 +550,7 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 					vecKeyFrame.reserve(totalFrameCount/samplingStepFrame);
 					vecKeyPos.reserve(totalFrameCount/samplingStepFrame);	
 
-					FbxVector4 prevPos = startPos;
+					FbxVector4 prevPos;
 					bool prevEqual = false;
 					int frameCount = 0;
 					for (FbxTime t = start; t < stop + step; t += step, frameCount += samplingStepFrame)
@@ -577,7 +600,7 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 					vecKeyFrame.reserve(totalFrameCount/samplingStepFrame);
 					vecKeyRot.reserve(totalFrameCount/samplingStepFrame);				
 
-					FbxQuaternion prevRot = startRot;
+					FbxQuaternion prevRot;
 					int frameCount = 0;
 					bool prevIdentity = false;
 					for (FbxTime t = start; t < stop + step; t += step, frameCount += samplingStepFrame)
@@ -620,6 +643,56 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 					fprintf(fpAni, "\t\t</rotKey>\n");
 				}
 				
+				if (isScaleKey)
+				{
+					vector<int>			vecKeyFrame;
+					vector<FbxVector4>	vecKeyScale;
+
+					vecKeyFrame.reserve(totalFrameCount/samplingStepFrame);
+					vecKeyScale.reserve(totalFrameCount/samplingStepFrame);	
+
+					FbxVector4 prevScale;
+					bool prevEqual = false;
+					int frameCount = 0;
+					for (FbxTime t = start; t < stop + step; t += step, frameCount += samplingStepFrame)
+					{
+						FbxAMatrix mat = pNode->EvaluateLocalTransform(t);
+						FbxVector4 scale = mat.GetS();
+
+						if (vecKeyScale.size() != 0)
+						{
+							if (scale.Compare(prevScale, 0.001f) == 0)
+							{
+								prevEqual = true;
+								continue;
+							}
+
+							if (prevEqual)	// 이전 키값이 같은 상태가 유지되었으면
+							{
+								prevEqual = false;
+
+								// 이전 키값을 한번 더 넣어줘서 보간에 의한 의도되지 않은 에니메이션이 이루어지는 것을 막는다.
+								vecKeyFrame.push_back(frameCount - samplingStepFrame);
+								vecKeyScale.push_back(prevScale);
+							}
+						}
+
+						prevScale = scale;
+
+						vecKeyFrame.push_back(frameCount);
+						vecKeyScale.push_back(scale);
+					}
+
+					size_t numKeyScale = vecKeyScale.size();
+					fprintf(fpAni, "\t\t<scaleKey count=\"%d\">\n", numKeyScale);
+					for (size_t i = 0; i < numKeyScale; ++i)
+					{
+						FbxVector4 p = FbxVectorToI4(vecKeyScale[i]);
+						fprintf(fpAni, "\t\t\t<a frame=\"%d\">%g %g %g</a>\n", vecKeyFrame[i], p.mData[0], p.mData[1], p.mData[2]);
+					}
+					fprintf(fpAni, "\t\t</scaleKey>\n");
+				}
+
 				WriteNodeEnd(fpAni);
 			}			
 		}
@@ -699,7 +772,7 @@ void BuildBoneNameList(FbxNode* pNode)
 					FbxAMatrix m;
 					pCluster->GetTransformLinkMatrix(m);
 					// 지오메트리 트랜스폼을 곱해야함.
-					mapBoneBindPoseWorld[name] = m;
+					mapBoneBindPoseWorld[name] = m*GetGeometricTransform(pLinkNode);
 				}
 			}
 		}
