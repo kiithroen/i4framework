@@ -48,13 +48,56 @@ struct TriIndex
 {
 	TriIndex() {}
 	TriIndex(int _i0, int _i1, int _i2)
-		: i0(_i0), i1(_i1), i2(_i2)
+	{
+		i[0] = _i0;
+		i[1] = _i1;
+		i[2] = _i2;
+	}
+
+	int i[3];
+};
+
+#define TEX_UV_NA 9999.0f
+	
+struct TextureUV
+{
+	TextureUV()
+		: u(TEX_UV_NA)
+		, v(TEX_UV_NA)
 	{
 	}
 
-	int i0;
-	int i1;
-	int i2;
+	TextureUV(float _u, float _v)
+		: u(_u)
+		, v(_v)
+	{
+	}
+
+	float u, v;
+};
+
+struct SkinInfo
+{
+	int boneID;
+	float boneWeight;
+};
+
+struct SkinData
+{
+	vector<SkinInfo>	data;
+};
+
+struct MeshData
+{
+	bool					skined;
+	vector<FbxVector4>		vecPosition;
+	vector<FbxVector4>		vecNormal;
+	vector<FbxVector4>		vecTangent;
+	vector<TextureUV>		vecUV;
+	vector<TriIndex>		vecIndex;
+	vector<TextureUV>		vecTexUV;
+	vector<TriIndex>		vecTexIndex;
+	vector<SkinData>		vecSkinInfo;
 };
 
 bool IsZUpRightHanded()
@@ -72,9 +115,9 @@ bool IsYUpLeftHanded()
 	return (SceneAxisSystem == FbxAxisSystem::eDirectX || SceneAxisSystem == FbxAxisSystem::eLightwave);
 }
 
-FbxVector2 FbxUVToI4(const FbxVector2& v)
+TextureUV FbxUVToI4(const TextureUV& v)
 {
-	return FbxVector2(v.mData[0], 1.0f - v.mData[1]);
+	return TextureUV(v.u, 1.0f - v.v);
 }
 
 FbxVector4 FbxVectorToI4(const FbxVector4& v)
@@ -122,11 +165,11 @@ TriIndex TriIndexToI4(const TriIndex& i)
 {
 	if (IsZUpRightHanded() || IsYUpRightHanded())
 	{
-		return TriIndex(i.i0, i.i2, i.i1);
+		return TriIndex(i.i[0], i.i[2], i.i[1]);
 	}
 	else
 	{
-		return TriIndex(i.i0, i.i1, i.i2);
+		return TriIndex(i.i[0], i.i[1], i.i[2]);
 	}
 }
 
@@ -199,30 +242,88 @@ FbxAMatrix GetWorldTransform(FbxNode *pNode)
 	return pNode->EvaluateGlobalTransform()*GetGeometricTransform(pNode);
 }
 
-void WriteMesh(FbxNode* pNode, FILE* fpMesh) 
+void mergeMeshTextureUV(MeshData& out)
 {
-	printf("%s write mesh ...\n", pNode->GetName());
+	// UV가 있으면
+	if (out.vecTexUV.size() != 0 && out.vecTexIndex.size() != 0)
+	{
+		// 만약 정점을 늘여야한다면 넣을 위치의 시작
+		unsigned int verticeCount = out.vecPosition.size();
 
-	FbxMesh* pMesh = pNode->GetMesh();
-	if (pMesh == nullptr)
-		return;
+		// 가능한 최대사이즈로 늘인다
+		unsigned int maxSize = out.vecPosition.size() + out.vecIndex.size()*3;
+		out.vecPosition.resize(maxSize);
+		out.vecNormal.resize(maxSize);
+		out.vecUV.resize(maxSize);
+		if (out.skined)
+		{
+			out.vecSkinInfo.resize(maxSize);
+		}
+		unsigned int indexSize = out.vecIndex.size();
+		for (unsigned int i = 0; i < indexSize; ++i)
+		{
+			for (unsigned int j = 0; j < 3 ; ++j)
+			{
+				int vtxIdx = out.vecIndex[i].i[j];			// 정점의 인덱스
+				int texUVIdx = out.vecTexIndex[i].i[j];	// 텍스처의 인덱스
+
+				// 아직 텍스처 UV 복사가 이루어지지 않았으면 텍스처 UV 복사
+				if (out.vecUV[vtxIdx].u == TEX_UV_NA ||
+					out.vecUV[vtxIdx].v == TEX_UV_NA)
+				{
+					out.vecUV[vtxIdx] = out.vecTexUV[texUVIdx];
+				}
+				else
+				{
+					// 이미 텍스처 UV 복사가 이루어진 정점인데 텍스처 UV가 다른 경우 새로운 정점 생성
+					if (out.vecUV[vtxIdx].u != out.vecTexUV[texUVIdx].u ||
+						out.vecUV[vtxIdx].v != out.vecTexUV[texUVIdx].v)
+					{							
+						out.vecIndex[i].i[j] = (unsigned short)verticeCount;	// 인덱스 재지정
+
+						out.vecUV[verticeCount] = out.vecTexUV[texUVIdx];
+						out.vecPosition[verticeCount] = out.vecPosition[vtxIdx];
+						out.vecNormal[verticeCount] = out.vecNormal[vtxIdx];
+						if (out.skined)
+						{
+							out.vecSkinInfo[verticeCount] = out.vecSkinInfo[vtxIdx];
+						}
+
+						verticeCount++;
+					}
+				}
+			}
+		}
+
+		// 낭비된 공간을 줄이기
+		out.vecPosition.resize(verticeCount);
+		out.vecNormal.resize(verticeCount);
+		out.vecUV.resize(verticeCount);
+		if (out.skined)
+		{
+			out.vecSkinInfo.resize(verticeCount);
+		}
+	}
+}
+
+void WriteMesh(FbxMesh* pMesh, FILE* fpMesh) 
+{
+	MeshData data;
 
 	int lControlPointsCount = pMesh->GetControlPointsCount();
 	FbxVector4* lControlPoints = pMesh->GetControlPoints();
 
 	// 참조하고 있는 모든 정점
-	vector<FbxVector4> vecVertex;
-	vecVertex.resize(lControlPointsCount);
+	data.vecPosition.resize(lControlPointsCount);
 	for (int i = 0; i < lControlPointsCount; i++)
 	{
-		vecVertex[i] = FbxVectorToI4(lControlPoints[i]);
+		data.vecPosition[i] = FbxVectorToI4(lControlPoints[i]);
 	}
 
-	vector<FbxVector4> vecNormal;
 	if (pMesh->GetElementNormalCount())                        
 	{
 		// 정점이 참조하고 있는 노말
-		vecNormal.resize(lControlPointsCount);
+		data.vecNormal.resize(lControlPointsCount);
 		for(int i = 0; i < pMesh->GetPolygonCount(); i++)
 		{
 			for(int j = 0; j < 3; j++) 
@@ -233,112 +334,56 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 				int idx = pMesh->GetPolygonVertex(i, j);
 
 				// 그리고 정점인덱스에 해당하는 노말값을 가져와서 집어넣는다.
-				vecNormal[idx] = FbxNormalToI4(leNormals->GetDirectArray().GetAt(i*3 + j));
+				data.vecNormal[idx] = FbxNormalToI4(leNormals->GetDirectArray().GetAt(i*3 + j));
 			}
 		}
 	}
 
 	// 정점 인덱스
-	vector<TriIndex> vecIndex;
-	vecIndex.resize(pMesh->GetPolygonCount());
+	data.vecIndex.resize(pMesh->GetPolygonCount());
 	for(int i = 0; i < pMesh->GetPolygonCount(); i++)
 	{
 		TriIndex tri;
-		tri.i0 = pMesh->GetPolygonVertex(i, 0);
-		tri.i1 = pMesh->GetPolygonVertex(i, 1);
-		tri.i2 = pMesh->GetPolygonVertex(i, 2);
-		vecIndex[i] = TriIndexToI4(tri);
+		tri.i[0] = pMesh->GetPolygonVertex(i, 0);
+		tri.i[1] = pMesh->GetPolygonVertex(i, 1);
+		tri.i[2] = pMesh->GetPolygonVertex(i, 2);
+		data.vecIndex[i] = TriIndexToI4(tri);
 	}
 
 	// UV 좌표에 대한 인덱스
-	vector<TriIndex> vecTexIndex;
 	if(pMesh->GetElementUVCount())                        
 	{
-		vecTexIndex.resize(pMesh->GetPolygonCount());
+		data.vecTexIndex.resize(pMesh->GetPolygonCount());
 		for (int i = 0; i < pMesh->GetPolygonCount(); i++)
 		{		
 			FbxGeometryElementUV *puv = pMesh->GetElementUV(0);
 
 			TriIndex tri;
-			tri.i0 = puv->GetIndexArray().GetAt(i*3 + 0);
-			tri.i1 = puv->GetIndexArray().GetAt(i*3 + 1);
-			tri.i2 = puv->GetIndexArray().GetAt(i*3 + 2);
-			vecTexIndex[i] = TriIndexToI4(tri);
+			tri.i[0] = puv->GetIndexArray().GetAt(i*3 + 0);
+			tri.i[1] = puv->GetIndexArray().GetAt(i*3 + 1);
+			tri.i[2] = puv->GetIndexArray().GetAt(i*3 + 2);
+			data.vecTexIndex[i] = TriIndexToI4(tri);
 		}
 	}
 
 	// UV 인덱스에 해당하는 UV 좌표
-	vector<FbxVector2> vecTexUV;
 	if(pMesh->GetElementUVCount())                        
 	{
 		FbxGeometryElementUV *puv = pMesh->GetElementUV(0);
-
+		data.vecTexUV.resize(puv->GetDirectArray().GetCount());
 		for (int i = 0; i < puv->GetDirectArray().GetCount(); ++i)
 		{
-			vecTexUV.push_back(FbxUVToI4(puv->GetDirectArray().GetAt(i)));
+			FbxVector2 uv = puv->GetDirectArray().GetAt(i);
+			data.vecTexUV[i] = FbxUVToI4(TextureUV(uv.mData[0], uv.mData[1]));
 		}
 	}
 
-	fprintf(fpMesh, "\t\t<vertex count=\"%d\">\n", lControlPointsCount);
-	for (int i = 0; i < lControlPointsCount; ++i)
-	{
-		fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", vecVertex[i].mData[0], vecVertex[i].mData[1], vecVertex[i].mData[2]);
-	}
-	fprintf(fpMesh, "\t\t</vertex>\n");
-
-	if(pMesh->GetElementNormalCount())
-	{
-		fprintf(fpMesh, "\t\t<normal count=\"%d\">\n", lControlPointsCount);
-		for (int i = 0; i < lControlPointsCount; ++i)
-		{
-			fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", vecNormal[i].mData[0], vecNormal[i].mData[1], vecNormal[i].mData[2]);
-		}
-		fprintf(fpMesh, "\t\t</normal>\n");
-	}
-
-	fprintf(fpMesh, "\t\t<index count=\"%d\">\n", pMesh->GetPolygonCount());
-	for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
-	{
-		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecIndex[i].i0, vecIndex[i].i1, vecIndex[i].i2);			
-	}
-	fprintf(fpMesh, "\t\t</index>\n");
-
-	if (pMesh->GetElementUVCount())
-	{
-		fprintf(fpMesh, "\t\t<texUV count=\"%d\">\n", vecTexUV.size());
-		for (unsigned int i = 0; i < vecTexUV.size(); ++i)
-		{
-			fprintf(fpMesh, "\t\t\t<a>%g %g</a>\n", vecTexUV[i].mData[0], vecTexUV[i].mData[1]);
-		}
-		fprintf(fpMesh, "\t\t</texUV>\n");
-	}
-
-	fprintf(fpMesh, "\t\t<texIndex count=\"%d\">\n", pMesh->GetPolygonCount());
-	for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
-	{
-		fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecTexIndex[i].i0, vecTexIndex[i].i1, vecTexIndex[i].i2);
-	}
-	fprintf(fpMesh, "\t\t</texIndex>\n");
-
-
-	//-----------------------------
-
-	struct SkinInfo
-	{
-		int boneID;
-		float boneWeight;
-	};
-
-	struct SkinData
-	{
-		vector<SkinInfo>	data;
-	};
-
+	// 각각 버텍스에 본 가중치들을 추가한다.
 	int deformerCount = pMesh->GetDeformerCount();
 	if (deformerCount > 0)
 	{
-		vector<SkinData>	vecSkinInfo;
-		vecSkinInfo.resize(pMesh->GetControlPointsCount());
+		
+		data.vecSkinInfo.resize(pMesh->GetControlPointsCount());
 		for (int i = 0; i < deformerCount; ++i)
 		{
 			FbxDeformer* pDeformer = pMesh->GetDeformer(i);
@@ -376,25 +421,68 @@ void WriteMesh(FbxNode* pNode, FILE* fpMesh)
 					SkinInfo info;
 					info.boneID = boneID;
 					info.boneWeight = weight;
-					vecSkinInfo[nIdex].data.push_back(info);
+					data.vecSkinInfo[nIdex].data.push_back(info);
 				}
 			}
 		}
 
-		
-		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", vecSkinInfo.size());
-
-		for (unsigned int i = 0; i < vecSkinInfo.size(); ++i)
+		// 얻어온 본 가중치들을 가중치순으로 정렬해준다.
+		for (unsigned int i = 0; i < data.vecSkinInfo.size(); ++i)
 		{
-			sort(vecSkinInfo[i].data.begin(), vecSkinInfo[i].data.end(), [](const SkinInfo& lhs, const SkinInfo& rhs) { return lhs.boneWeight > rhs.boneWeight; });
-			fprintf(fpMesh, "\t\t\t<v>\n");
-			for (int j = 0; j < vecSkinInfo[i].data.size(); ++j)
+			sort(data.vecSkinInfo[i].data.begin(), data.vecSkinInfo[i].data.end(), [](const SkinInfo& lhs, const SkinInfo& rhs) { return lhs.boneWeight > rhs.boneWeight; });
+		}
+
+		mergeMeshTextureUV(data);
+
+		//-------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		fprintf(fpMesh, "\t\t<position count=\"%d\">\n", data.vecPosition.size());
+		for (int i = 0; i < data.vecPosition.size(); ++i)
+		{
+			fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", data.vecPosition[i].mData[0], data.vecPosition[i].mData[1], data.vecPosition[i].mData[2]);
+		}
+		fprintf(fpMesh, "\t\t</position>\n");
+
+		if(data.vecNormal.size() > 0)
+		{
+			fprintf(fpMesh, "\t\t<normal count=\"%d\">\n", data.vecNormal.size());
+			for (int i = 0; i < data.vecNormal.size(); ++i)
 			{
-				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", vecSkinInfo[i].data[j].boneID, vecSkinInfo[i].data[j].boneWeight);
+				fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", data.vecNormal[i].mData[0], data.vecNormal[i].mData[1], data.vecNormal[i].mData[2]);
+			}
+			fprintf(fpMesh, "\t\t</normal>\n");
+		}
+
+		
+		if (data.vecUV.size() > 0)
+		{
+			fprintf(fpMesh, "\t\t<UV count=\"%d\">\n", data.vecUV.size());
+			for (unsigned int i = 0; i < data.vecUV.size(); ++i)
+			{
+				fprintf(fpMesh, "\t\t\t<a>%g %g</a>\n", data.vecUV[i].u, data.vecUV[i].v);
+			}
+			fprintf(fpMesh, "\t\t</UV>\n");
+		}
+
+		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", data.vecSkinInfo.size());
+
+		for (unsigned int i = 0; i < data.vecSkinInfo.size(); ++i)
+		{
+			fprintf(fpMesh, "\t\t\t<v>\n");
+			for (int j = 0; j < data.vecSkinInfo[i].data.size(); ++j)
+			{
+				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", data.vecSkinInfo[i].data[j].boneID, data.vecSkinInfo[i].data[j].boneWeight);
 			}
 			fprintf(fpMesh, "\t\t\t</v>\n");
 		}
 		fprintf(fpMesh, "\t\t</weight>\n");		
+
+		fprintf(fpMesh, "\t\t<index count=\"%d\">\n", data.vecIndex.size());
+		for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
+		{
+			fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", data.vecIndex[i].i[0], data.vecIndex[i].i[1], data.vecIndex[i].i[2]);			
+		}
+		fprintf(fpMesh, "\t\t</index>\n");
 	}	
 }
 
@@ -447,15 +535,40 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 		case FbxNodeAttribute::eMesh:
 			if (exportType == EXPORT_MESH)
 			{
-				WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
-				WriteNodeTransform(pNode, fpMesh);
-				WriteMesh(pNode, fpMesh);
-				WriteNodeEnd(fpMesh);
+				int count = pNode->GetNodeAttributeCount();
+				printf("count : %d, %d", count, pNode->GetMaterialCount());
+				if (pNode->GetNodeAttributeCount() > 1)
+				{
+					for (int i = 1; i < 2; ++i)//pNode->GetNodeAttributeCount(); ++i)
+					{
+						FbxMesh* pMesh = (FbxMesh*)pNode->GetNodeAttributeByIndex(i);
+						printf("sub mesh node : %s\n", nodeName);
+						WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
+						WriteNodeTransform(pNode, fpMesh);
+						WriteMesh(pMesh, fpMesh);
+						WriteNodeEnd(fpMesh);
+					}
+				}
+				else
+				{
+					FbxMesh* pMesh = pNode->GetMesh();
+					printf("mesh node : %s\n", nodeName);
+					WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
+					WriteNodeTransform(pNode, fpMesh);
+					WriteMesh(pMesh, fpMesh);
+					WriteNodeEnd(fpMesh);
+				}
+
+				
+				printf("material count %d\n", pNode->GetMaterialCount());
 			}
+
 			break;	
 		case FbxNodeAttribute::eSkeleton:
 			if (exportType == EXPORT_BONE)
 			{
+				printf("skeleton node : %s\n", nodeName);
+
 				fprintf(fpBone, "\t<node name=\"%s\" parent_name=\"%s\" id=\"%d\">\n", nodeName, nodeParentName, mapBoneNameList[nodeName]);
 
 				FbxAMatrix matLocal;			
@@ -493,6 +606,8 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 
 		if (exportType == EXPORT_ANI)
 		{
+			printf("animation node : %s\n", nodeName);
+
 			FbxAnimStack* animStack = pScene->GetSrcObject<FbxAnimStack>();
 			FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
 			FbxTime start = timeSpan.GetStart();
@@ -711,6 +826,7 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 	for(int j = 0; j < pNode->GetChildCount(); j++)
 		WriteNode(pNode->GetChild(j), exportType);
 
+
 }
 
 // Triangulate all NURBS, patch and mesh under this node recursively.
@@ -780,7 +896,6 @@ void BuildBoneNameList(FbxNode* pNode)
 
 					FbxAMatrix m;
 					pCluster->GetTransformLinkMatrix(m);
-					// 지오메트리 트랜스폼을 곱해야함.
 					mapBoneBindPoseWorld[name] = m*GetGeometricTransform(pLinkNode);
 				}
 			}
@@ -796,7 +911,7 @@ void BuildBoneNameList(FbxNode* pNode)
 
 int main(int argc, char* argv[])
 {
-	const char* lFilename = "Player.fbx";	
+	const char* lFilename = "Raven.fbx";	
 
 	FbxManager* lSdkManager = FbxManager::Create();
 
@@ -815,11 +930,10 @@ int main(int argc, char* argv[])
 
 	lImporter->Import(pScene);
 
-	 // Convert Axis System to what is used in this example, if needed
     SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
 
 	lImporter->Destroy();
-
+	
 	TriangulateRecursive(pScene->GetRootNode());
 	BuildBoneNameList(pScene->GetRootNode());
 	

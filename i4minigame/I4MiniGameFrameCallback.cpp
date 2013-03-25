@@ -84,12 +84,13 @@ bool I4MiniGameFrameCallback::onStart()
 	I4ObjectTPSCameraComponent* playerCamera = player->addComponent<I4ObjectTPSCameraComponent>();
 	playerCamera->setMainCamera(true);
 
+	physXMgr->createPlane();
+
+	/*
 	I4Object* objFloor = objectMgr->createObject("floor");
 	I4ObjectViewComponent* viewFloor = objFloor->addComponent<I4ObjectViewComponent>();
 	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 
-	physXMgr->createPlane();
-	/*
 	I4Vector3 lightPointColor[] =
 	{
 		I4Vector3(1.0f, 0.125f, 0.93f),

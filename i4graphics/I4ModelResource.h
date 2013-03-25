@@ -24,8 +24,6 @@ namespace i4graphics {
 		vector<I4Vector4>		vecTangent;
 		vector<I4TextureUV>		vecUV;
 		vector<I4Index16>		vecIndex;
-		vector<I4TextureUV>		vecTexUV;
-		vector<I4Index16>		vecTexIndex;
 		vector<I4BoneID>		vecBoneID;
 		vector<I4Weight>		vecWeight;
 	};
@@ -83,15 +81,13 @@ namespace i4graphics {
 		void					parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml);
 		void					parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml);
 
-		void					parseMeshVertex(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml);		
-		void					parseMeshTexUV(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshTexIndex(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshPosition(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml);	
+		void					parseMeshUV(I4ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshWeight(I4ParsedMeshData& out,I4XmlData& xml);
-		void					mergeMeshTextureUV(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml);
 
-		I4TriangleMesh*					buildMesh(I4ParsedMeshData &I4ParsedMeshData);
+		I4TriangleMesh*			buildMesh(I4ParsedMeshData &I4ParsedMeshData);
 
 		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
 			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);

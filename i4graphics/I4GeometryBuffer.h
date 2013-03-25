@@ -74,13 +74,6 @@ namespace i4graphics
 		unsigned short i[3];
 	};
 	
-	struct I4SkinInfo
-	{
-
-		float	boneID[4];
-		float	weight[4];
-	};
-
 	struct I4BoneID
 	{
 		unsigned int boneID[4];

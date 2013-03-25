@@ -168,13 +168,11 @@ namespace i4graphics
 			parseNodeInfo(*nodeInfo, xml);	 
 
 			I4ParsedMeshData data;
-			parseMeshVertex(data, xml);
+			parseMeshPosition(data, xml);
 			parseMeshNormal(data, xml);
-			parseMeshIndex(data, xml);
-			parseMeshTexUV(data, xml);
-			parseMeshTexIndex(data, xml);
+			parseMeshUV(data, xml);
 			parseMeshWeight(data, xml);
-			mergeMeshTextureUV(data, xml);
+			parseMeshIndex(data, xml);
 
 			I4TriangleMesh* mesh = buildMesh(data);
 			vecMesh.push_back(mesh);
@@ -247,9 +245,9 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshVertex(I4ParsedMeshData& out, I4XmlData& xml)
+	void I4ModelMeshResource::parseMeshPosition(I4ParsedMeshData& out, I4XmlData& xml)
 	{
-		if (xml.selectFirstChildNode("vertex"))
+		if (xml.selectFirstChildNode("position"))
 		{
 			int size;
 			xml.getAttrValue(size, "count");
@@ -341,13 +339,13 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshTexUV(I4ParsedMeshData& out,I4XmlData& xml)
+	void I4ModelMeshResource::parseMeshUV(I4ParsedMeshData& out,I4XmlData& xml)
 	{
-		if (xml.selectFirstChildNode("texUV"))
+		if (xml.selectFirstChildNode("UV"))
 		{
 			int size;
 			xml.getAttrValue(size, "count");
-			out.vecTexUV.resize(size);
+			out.vecUV.resize(size);
 
 			if (xml.selectFirstChildNode("a"))
 			{
@@ -357,7 +355,7 @@ namespace i4graphics
 					const char* val = nullptr;
 					xml.getNodeValue(val);
 
-					sscanf_s(val, "%f %f", &out.vecTexUV[i].u, &out.vecTexUV[i].v);
+					sscanf_s(val, "%f %f", &out.vecUV[i].u, &out.vecUV[i].v);
 
 					++i;
 
@@ -366,40 +364,6 @@ namespace i4graphics
 				xml.selectParentNode();
 			}
 
-
-			xml.selectParentNode();
-		}
-	}
-
-	void I4ModelMeshResource::parseMeshTexIndex(I4ParsedMeshData& out,I4XmlData& xml)
-	{
-		if (xml.selectFirstChildNode("texIndex"))
-		{
-			int size;
-			xml.getAttrValue(size, "count");
-			out.vecTexIndex.resize(size);
-
-			if (xml.selectFirstChildNode("a"))
-			{
-				int i = 0;
-				do
-				{
-					const char* val = nullptr;
-					xml.getNodeValue(val);
-
-					int i0, i1, i2;
-					sscanf_s(val, "%d %d %d", &i0, &i1, &i2);
-
-					out.vecTexIndex[i].i[0] = (unsigned short)i0;
-					out.vecTexIndex[i].i[1] = (unsigned short)i1;
-					out.vecTexIndex[i].i[2] = (unsigned short)i2;
-
-					++i;
-
-				} while (xml.selectNextSiblingNode("a"));
-
-				xml.selectParentNode();
-			}
 
 			xml.selectParentNode();
 		}
@@ -467,80 +431,12 @@ namespace i4graphics
 		}
 	}
 
-
-	void I4ModelMeshResource::mergeMeshTextureUV(I4ParsedMeshData& out, I4XmlData& xml)
-	{
-		// UV가 있으면
-		if (out.vecTexUV.size() != 0 && out.vecTexIndex.size() != 0)
-		{
-			// 만약 정점을 늘여야한다면 넣을 위치의 시작
-			unsigned int verticeCount = out.vecPosition.size();
-
-			// 가능한 최대사이즈로 늘인다
-			unsigned int maxSize = out.vecPosition.size() + out.vecIndex.size()*3;
-			out.vecPosition.resize(maxSize);
-			out.vecNormal.resize(maxSize);
-			out.vecUV.resize(maxSize);
-			if (out.skined)
-			{
-				out.vecBoneID.resize(maxSize);
-				out.vecWeight.resize(maxSize);
-			}
-			unsigned int indexSize = out.vecIndex.size();
-			for (unsigned int i = 0; i < indexSize; ++i)
-			{
-				for (unsigned int j = 0; j < 3 ; ++j)
-				{
-					int vtxIdx = out.vecIndex[i].i[j];			// 정점의 인덱스
-					int texUVIdx = out.vecTexIndex[i].i[j];	// 텍스처의 인덱스
-
-					// 아직 텍스처 UV 복사가 이루어지지 않았으면 텍스처 UV 복사
-					if (out.vecUV[vtxIdx].u == I4TEX_UV_NA ||
-						out.vecUV[vtxIdx].v == I4TEX_UV_NA)
-					{
-						out.vecUV[vtxIdx] = out.vecTexUV[texUVIdx];
-					}
-					else
-					{
-						// 이미 텍스처 UV 복사가 이루어진 정점인데 텍스처 UV가 다른 경우 새로운 정점 생성
-						if (out.vecUV[vtxIdx].u != out.vecTexUV[texUVIdx].u ||
-							out.vecUV[vtxIdx].v != out.vecTexUV[texUVIdx].v)
-						{							
-							out.vecIndex[i].i[j] = (unsigned short)verticeCount;	// 인덱스 재지정
-
-							out.vecUV[verticeCount] = out.vecTexUV[texUVIdx];
-							out.vecPosition[verticeCount] = out.vecPosition[vtxIdx];
-							out.vecNormal[verticeCount] = out.vecNormal[vtxIdx];
-							if (out.skined)
-							{
-								out.vecBoneID[verticeCount] = out.vecBoneID[vtxIdx];
-								out.vecWeight[verticeCount] = out.vecWeight[vtxIdx];
-							}
-
-							verticeCount++;
-						}
-					}
-				}
-			}
-
-			// 낭비된 공간을 줄이기
-			out.vecPosition.resize(verticeCount);
-			out.vecNormal.resize(verticeCount);
-			out.vecUV.resize(verticeCount);
-			if (out.skined)
-			{
-				out.vecBoneID.resize(verticeCount);
-				out.vecWeight.resize(verticeCount);
-			}
-		}
-
-		out.vecTangent.resize(out.vecPosition.size());
-		CalculateTangentArray(out.vecPosition.size(), out.vecPosition, out.vecNormal,
-			out.vecUV, out.vecIndex.size(), out.vecIndex, out.vecTangent);
-	}
-
 	I4TriangleMesh* I4ModelMeshResource::buildMesh(I4ParsedMeshData &data)
 	{
+		data.vecTangent.resize(data.vecPosition.size());
+		CalculateTangentArray(data.vecPosition.size(), data.vecPosition, data.vecNormal,
+			data.vecUV, data.vecIndex.size(), data.vecIndex, data.vecTangent);
+
 		I4TriangleMesh* mesh = new I4TriangleMesh();
 
 		mesh->skined = data.skined;
