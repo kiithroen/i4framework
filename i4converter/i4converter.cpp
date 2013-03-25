@@ -89,15 +89,14 @@ struct SkinData
 
 struct MeshData
 {
-	bool					skined;
 	vector<FbxVector4>		vecPosition;
 	vector<FbxVector4>		vecNormal;
-	vector<FbxVector4>		vecTangent;
 	vector<TextureUV>		vecUV;
 	vector<TriIndex>		vecIndex;
 	vector<TextureUV>		vecTexUV;
 	vector<TriIndex>		vecTexIndex;
 	vector<SkinData>		vecSkinInfo;
+	vector<int>				vecMtrlID;
 };
 
 bool IsZUpRightHanded()
@@ -113,6 +112,11 @@ bool IsYUpRightHanded()
 bool IsYUpLeftHanded()
 {
 	return (SceneAxisSystem == FbxAxisSystem::eDirectX || SceneAxisSystem == FbxAxisSystem::eLightwave);
+}
+
+float ConvertToGrayscale(const FbxDouble3& col)
+{
+	return col.mData[0]*0.3f + col.mData[1]*0.59f + col.mData[2]*0.11f;
 }
 
 TextureUV FbxUVToI4(const TextureUV& v)
@@ -255,7 +259,7 @@ void mergeMeshTextureUV(MeshData& out)
 		out.vecPosition.resize(maxSize);
 		out.vecNormal.resize(maxSize);
 		out.vecUV.resize(maxSize);
-		if (out.skined)
+		if (out.vecSkinInfo.size() > 0)
 		{
 			out.vecSkinInfo.resize(maxSize);
 		}
@@ -275,7 +279,7 @@ void mergeMeshTextureUV(MeshData& out)
 				}
 				else
 				{
-					// 이미 텍스처 UV 복사가 이루어진 정점인데 텍스처 UV가 다른 경우 새로운 정점 생성
+					// 이미 텍스처 UV 복사가 이루어진 정점인데 텍스처 UV가 다른 경우 새로운 정점을 생성하고 UV를 제외한 정점정보를 복사해온다.
 					if (out.vecUV[vtxIdx].u != out.vecTexUV[texUVIdx].u ||
 						out.vecUV[vtxIdx].v != out.vecTexUV[texUVIdx].v)
 					{							
@@ -284,7 +288,7 @@ void mergeMeshTextureUV(MeshData& out)
 						out.vecUV[verticeCount] = out.vecTexUV[texUVIdx];
 						out.vecPosition[verticeCount] = out.vecPosition[vtxIdx];
 						out.vecNormal[verticeCount] = out.vecNormal[vtxIdx];
-						if (out.skined)
+						if (out.vecSkinInfo.size() > 0)
 						{
 							out.vecSkinInfo[verticeCount] = out.vecSkinInfo[vtxIdx];
 						}
@@ -299,7 +303,7 @@ void mergeMeshTextureUV(MeshData& out)
 		out.vecPosition.resize(verticeCount);
 		out.vecNormal.resize(verticeCount);
 		out.vecUV.resize(verticeCount);
-		if (out.skined)
+		if (out.vecSkinInfo.size() > 0)
 		{
 			out.vecSkinInfo.resize(verticeCount);
 		}
@@ -339,6 +343,29 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		}
 	}
 
+	// 각 폴리곤 인덱스마다 마테리얼아이디값을 저장해둔다.
+	FbxGeometryElementMaterial* pMaterial = pMesh->GetElementMaterial();
+	data.vecMtrlID.resize(pMesh->GetPolygonCount());
+	for (int i = 0; i < pMesh->GetPolygonCount(); i++)
+	{
+		pMaterial->GetIndexArray().GetAt(i);
+
+		switch( pMaterial->GetMappingMode())
+		{
+		case FbxLayerElement::eAllSame:
+			data.vecMtrlID[i] = pMaterial->GetIndexArray().GetAt(0);
+			break;
+		case FbxLayerElement::eByPolygon:
+			data.vecMtrlID[i] = pMaterial->GetIndexArray().GetAt(i);
+			break;
+		default:
+			data.vecMtrlID[i] = 0;
+			printf("missing material information\n");
+		break;
+		}
+	}
+
+
 	// 정점 인덱스
 	data.vecIndex.resize(pMesh->GetPolygonCount());
 	for(int i = 0; i < pMesh->GetPolygonCount(); i++)
@@ -348,6 +375,8 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		tri.i[1] = pMesh->GetPolygonVertex(i, 1);
 		tri.i[2] = pMesh->GetPolygonVertex(i, 2);
 		data.vecIndex[i] = TriIndexToI4(tri);
+
+		
 	}
 
 	// UV 좌표에 대한 인덱스
@@ -431,39 +460,42 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		{
 			sort(data.vecSkinInfo[i].data.begin(), data.vecSkinInfo[i].data.end(), [](const SkinInfo& lhs, const SkinInfo& rhs) { return lhs.boneWeight > rhs.boneWeight; });
 		}
+	}
 
-		mergeMeshTextureUV(data);
+	mergeMeshTextureUV(data);
 
-		//-------------------------------------------------------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		fprintf(fpMesh, "\t\t<position count=\"%d\">\n", data.vecPosition.size());
-		for (int i = 0; i < data.vecPosition.size(); ++i)
-		{
-			fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", data.vecPosition[i].mData[0], data.vecPosition[i].mData[1], data.vecPosition[i].mData[2]);
-		}
-		fprintf(fpMesh, "\t\t</position>\n");
+	fprintf(fpMesh, "\t\t<position count=\"%d\">\n", data.vecPosition.size());
+	for (int i = 0; i < data.vecPosition.size(); ++i)
+	{
+		fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", data.vecPosition[i].mData[0], data.vecPosition[i].mData[1], data.vecPosition[i].mData[2]);
+	}
+	fprintf(fpMesh, "\t\t</position>\n");
 
-		if(data.vecNormal.size() > 0)
+	if(data.vecNormal.size() > 0)
+	{
+		fprintf(fpMesh, "\t\t<normal count=\"%d\">\n", data.vecNormal.size());
+		for (int i = 0; i < data.vecNormal.size(); ++i)
 		{
-			fprintf(fpMesh, "\t\t<normal count=\"%d\">\n", data.vecNormal.size());
-			for (int i = 0; i < data.vecNormal.size(); ++i)
-			{
-				fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", data.vecNormal[i].mData[0], data.vecNormal[i].mData[1], data.vecNormal[i].mData[2]);
-			}
-			fprintf(fpMesh, "\t\t</normal>\n");
+			fprintf(fpMesh, "\t\t\t<a>%g %g %g</a>\n", data.vecNormal[i].mData[0], data.vecNormal[i].mData[1], data.vecNormal[i].mData[2]);
 		}
+		fprintf(fpMesh, "\t\t</normal>\n");
+	}
 
 		
-		if (data.vecUV.size() > 0)
+	if (data.vecUV.size() > 0)
+	{
+		fprintf(fpMesh, "\t\t<uv count=\"%d\">\n", data.vecUV.size());
+		for (unsigned int i = 0; i < data.vecUV.size(); ++i)
 		{
-			fprintf(fpMesh, "\t\t<UV count=\"%d\">\n", data.vecUV.size());
-			for (unsigned int i = 0; i < data.vecUV.size(); ++i)
-			{
-				fprintf(fpMesh, "\t\t\t<a>%g %g</a>\n", data.vecUV[i].u, data.vecUV[i].v);
-			}
-			fprintf(fpMesh, "\t\t</UV>\n");
+			fprintf(fpMesh, "\t\t\t<a>%g %g</a>\n", data.vecUV[i].u, data.vecUV[i].v);
 		}
+		fprintf(fpMesh, "\t\t</uv>\n");
+	}
 
+	if (data.vecSkinInfo.size() > 0)
+	{
 		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", data.vecSkinInfo.size());
 
 		for (unsigned int i = 0; i < data.vecSkinInfo.size(); ++i)
@@ -476,14 +508,37 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 			fprintf(fpMesh, "\t\t\t</v>\n");
 		}
 		fprintf(fpMesh, "\t\t</weight>\n");		
+	}
 
-		fprintf(fpMesh, "\t\t<index count=\"%d\">\n", data.vecIndex.size());
-		for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
+	map<int, vector<TriIndex>> mapSubMesh;
+	for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
+	{
+		mapSubMesh[data.vecMtrlID[i]].push_back(data.vecIndex[i]);
+	}
+
+	int start = 0;
+	fprintf(fpMesh, "\t\t<sub count=\"%d\">\n", mapSubMesh.size());
+	for (auto& itr : mapSubMesh)
+	{			
+		fprintf(fpMesh, "\t\t\t<a id=\"%d\" start=\"%d\" count=\"%d\"/>\n", itr.first, start, itr.second.size());
+		start += itr.second.size();
+	}
+
+	fprintf(fpMesh, "\t\t</sub>\n");
+
+	fprintf(fpMesh, "\t\t<index count=\"%d\">\n",  pMesh->GetPolygonCount());
+
+	for (auto& itr : mapSubMesh)
+	{
+		const vector<TriIndex>& vecIndex = itr.second;
+
+		for (int i = 0; i < vecIndex.size(); ++i)
 		{
-			fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", data.vecIndex[i].i[0], data.vecIndex[i].i[1], data.vecIndex[i].i[2]);			
+			fprintf(fpMesh, "\t\t\t<a>%d %d %d</a>\n", vecIndex[i].i[0], vecIndex[i].i[1], vecIndex[i].i[2]);			
 		}
-		fprintf(fpMesh, "\t\t</index>\n");
-	}	
+	}
+
+	fprintf(fpMesh, "\t\t</index>\n");
 }
 
 void WriteNodeTransform(FbxNode* pNode, FILE* fp)
@@ -535,32 +590,82 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 		case FbxNodeAttribute::eMesh:
 			if (exportType == EXPORT_MESH)
 			{
-				int count = pNode->GetNodeAttributeCount();
-				printf("count : %d, %d", count, pNode->GetMaterialCount());
-				if (pNode->GetNodeAttributeCount() > 1)
-				{
-					for (int i = 1; i < 2; ++i)//pNode->GetNodeAttributeCount(); ++i)
-					{
-						FbxMesh* pMesh = (FbxMesh*)pNode->GetNodeAttributeByIndex(i);
-						printf("sub mesh node : %s\n", nodeName);
-						WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
-						WriteNodeTransform(pNode, fpMesh);
-						WriteMesh(pMesh, fpMesh);
-						WriteNodeEnd(fpMesh);
-					}
-				}
-				else
-				{
-					FbxMesh* pMesh = pNode->GetMesh();
-					printf("mesh node : %s\n", nodeName);
-					WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
-					WriteNodeTransform(pNode, fpMesh);
-					WriteMesh(pMesh, fpMesh);
-					WriteNodeEnd(fpMesh);
-				}
-
+				FbxMesh* pMesh = pNode->GetMesh();
+				printf("mesh node : %s\n", nodeName);
+				WriteNodeStart(pNode, nodeName, nodeParentName, fpMesh);
+				WriteNodeTransform(pNode, fpMesh);
+				WriteMesh(pMesh, fpMesh);
+				WriteNodeEnd(fpMesh);
 				
+				
+			}
+
+			if (exportType == EXPORT_MTRL)
+			{
 				printf("material count %d\n", pNode->GetMaterialCount());
+
+				WriteNodeStart(pNode, nodeName, nodeParentName, fpMtrl);
+				for (int i = 0; i < pNode->GetMaterialCount(); ++i)
+				{
+					FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
+
+					fprintf(fpMtrl, "\t\t<sub id=\"%d\">\n", i);
+					const FbxProperty propAmbient = pMaterial->FindProperty(FbxSurfaceMaterial::sAmbient);
+					if (propAmbient.IsValid())
+					{
+						fprintf(fpMtrl, "\t\t\t<ambient>%g</ambient>\n", ConvertToGrayscale(propAmbient.Get<FbxDouble3>()));
+					}
+
+					const FbxProperty propSpecularFactor = pMaterial->FindProperty(FbxSurfaceMaterial::sSpecularFactor);
+					if (propSpecularFactor.IsValid())
+					{						
+						fprintf(fpMtrl, "\t\t\t<specularLevel>%g</specularLevel>\n", propSpecularFactor.Get<FbxDouble>());
+					}
+					
+					const FbxProperty propShininess = pMaterial->FindProperty(FbxSurfaceMaterial::sShininess);
+					if (propShininess.IsValid())
+					{
+						fprintf(fpMtrl, "\t\t\t<specularPower>%g</specularPower>\n", propShininess.Get<FbxDouble>());
+
+					}
+
+					FbxProperty propDiffuseMap = pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+					if (propDiffuseMap.IsValid())
+					{
+						int count = propDiffuseMap.GetSrcObjectCount<FbxTexture>();
+
+						FbxTexture* lTexture = propDiffuseMap.GetSrcObject<FbxTexture>();
+						if (lTexture != NULL)
+						{
+							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
+							fprintf(fpMtrl, "\t\t\t<diffuseMap>%s</diffuseMap>\n", pTex->GetFileName());
+						}
+					}
+
+					FbxProperty propSpecularMap = pMaterial->FindProperty(FbxSurfaceMaterial::sSpecular);
+					if (propSpecularMap.IsValid())
+					{						                        
+                        FbxTexture* lTexture = propSpecularMap.GetSrcObject<FbxTexture>(0);
+                        if (lTexture != NULL)
+						{
+							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
+							fprintf(fpMtrl, "\t\t\t<specularMap>%s</specularMap>\n", pTex->GetFileName());
+                        }
+					}
+
+					FbxProperty propNormalMap = pMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
+					if (propNormalMap.IsValid())
+					{						                        
+                        FbxTexture* lTexture = propNormalMap.GetSrcObject<FbxTexture>(0);
+                        if (lTexture != NULL)
+						{
+							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
+							fprintf(fpMtrl, "\t\t\t<normalMap>%s</normalMap>\n", pTex->GetFileName());
+                        }
+					}
+					fprintf(fpMtrl, "\t\t</sub>\n");
+				}
+				WriteNodeEnd(fpMtrl);
 			}
 
 			break;	

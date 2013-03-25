@@ -33,4 +33,9 @@ namespace i4graphics
 	{
 		indexBuffer->draw(I4PT_TRIANGLELIST);
 	}
+
+	void I4TriangleMesh::drawSub(unsigned int i)
+	{
+		indexBuffer->draw(I4PT_TRIANGLELIST, vecSubMesh[i].count*3, vecSubMesh[i].start*3, 0);
+	}
 }

@@ -4,9 +4,28 @@
 #include "I4VideoDriver.h"
 #include "I4TextureMgr.h"
 #include "I4Log.h"
+#include "I4Material.h"
+#include "I4TriangleMesh.h"
+#include "I4ModelElementInfo.h"
+#include "I4XmlData.h"
+#include "I4AABB.h"
+#include "I4Hash.h"
 
 namespace i4graphics
 {
+	struct I4ParsedMeshData
+	{
+		bool					skined;
+		I4AABB					localAABB;
+		vector<I4Vector3>		vecPosition;
+		vector<I4Vector3>		vecNormal;
+		vector<I4Vector4>		vecTangent;
+		vector<I4TextureUV>		vecUV;
+		vector<I4Index16>		vecIndex;
+		vector<I4BoneID>		vecBoneID;
+		vector<I4Weight>		vecWeight;
+		vector<I4SubMesh>		vecSubMesh;
+	};
 
 	I4ModelBoneResource::I4ModelBoneResource()
 	{
@@ -173,6 +192,7 @@ namespace i4graphics
 			parseMeshUV(data, xml);
 			parseMeshWeight(data, xml);
 			parseMeshIndex(data, xml);
+			parseMeshSub(data, xml);
 
 			I4TriangleMesh* mesh = buildMesh(data);
 			vecMesh.push_back(mesh);
@@ -304,44 +324,9 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml)
-	{
-		if (xml.selectFirstChildNode("index"))
-		{
-
-			int size;
-			xml.getAttrValue(size, "count");
-			out.vecIndex.resize(size);
-
-			if (xml.selectFirstChildNode("a"))
-			{
-				int i = 0;
-				do
-				{
-					const char* val = nullptr;
-					xml.getNodeValue(val);
-
-					int i0, i1, i2;
-					sscanf_s(val, "%d %d %d", &i0, &i1, &i2);
-
-					out.vecIndex[i].i[0] = (unsigned short)i0;
-					out.vecIndex[i].i[1] = (unsigned short)i1;
-					out.vecIndex[i].i[2] = (unsigned short)i2;
-
-					++i;
-
-				} while (xml.selectNextSiblingNode("a"));
-
-				xml.selectParentNode();
-			}
-
-			xml.selectParentNode();
-		}
-	}
-
 	void I4ModelMeshResource::parseMeshUV(I4ParsedMeshData& out,I4XmlData& xml)
 	{
-		if (xml.selectFirstChildNode("UV"))
+		if (xml.selectFirstChildNode("uv"))
 		{
 			int size;
 			xml.getAttrValue(size, "count");
@@ -430,6 +415,68 @@ namespace i4graphics
 			out.skined = false;
 		}
 	}
+	
+	void I4ModelMeshResource::parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml)
+	{
+		if (xml.selectFirstChildNode("index"))
+		{
+
+			int size;
+			xml.getAttrValue(size, "count");
+			out.vecIndex.resize(size);
+
+			if (xml.selectFirstChildNode("a"))
+			{
+				int i = 0;
+				do
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
+
+					int i0, i1, i2;
+					sscanf_s(val, "%d %d %d", &i0, &i1, &i2);
+
+					out.vecIndex[i].i[0] = (unsigned short)i0;
+					out.vecIndex[i].i[1] = (unsigned short)i1;
+					out.vecIndex[i].i[2] = (unsigned short)i2;
+
+					++i;
+
+				} while (xml.selectNextSiblingNode("a"));
+
+				xml.selectParentNode();
+			}
+
+			xml.selectParentNode();
+		}
+	}
+	void I4ModelMeshResource::parseMeshSub(I4ParsedMeshData& out,I4XmlData& xml)
+	{
+		if (xml.selectFirstChildNode("sub"))
+		{
+
+			int size;
+			xml.getAttrValue(size, "count");
+			out.vecSubMesh.resize(size);
+
+			if (xml.selectFirstChildNode("a"))
+			{
+				int i = 0;
+				do
+				{
+					xml.getAttrValue(out.vecSubMesh[i].id, "id");
+					xml.getAttrValue(out.vecSubMesh[i].start, "start");
+					xml.getAttrValue(out.vecSubMesh[i].count, "count");
+					++i;
+
+				} while (xml.selectNextSiblingNode("a"));
+
+				xml.selectParentNode();
+			}
+
+			xml.selectParentNode();
+		}
+	}
 
 	I4TriangleMesh* I4ModelMeshResource::buildMesh(I4ParsedMeshData &data)
 	{
@@ -441,6 +488,7 @@ namespace i4graphics
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
+		mesh->vecSubMesh = data.vecSubMesh;
 
 		if (data.skined)	
 		{

@@ -1,32 +1,22 @@
 #pragma once
 
-#include "I4Material.h"
-#include "I4TriangleMesh.h"
-#include "I4ModelElementInfo.h"
-#include "I4XmlData.h"
 #include "I4GeometryBuffer.h"
-#include "I4AABB.h"
-#include "I4Hash.h"
+
+namespace i4core
+{
+	class I4XmlData;
+}
 
 using namespace i4core;
 
 namespace i4graphics {
 	
 	class I4Texture;
+	class I4TriangleMesh;
+	struct I4ModelElementInfo;
+	struct I4Material;
 	struct I4KeyFrameSet;
-
-	struct I4ParsedMeshData
-	{
-		bool					skined;
-		I4AABB					localAABB;
-		vector<I4Vector3>		vecPosition;
-		vector<I4Vector3>		vecNormal;
-		vector<I4Vector4>		vecTangent;
-		vector<I4TextureUV>		vecUV;
-		vector<I4Index16>		vecIndex;
-		vector<I4BoneID>		vecBoneID;
-		vector<I4Weight>		vecWeight;
-	};
+	struct I4ParsedMeshData;
 
 	//-------------------- I4ModelBoneResource -----------------------
 
@@ -72,7 +62,7 @@ namespace i4graphics {
 
 		unsigned int			getMeshCount() const				{ return vecMeshInfo.size(); }
 		I4ModelElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
-		I4TriangleMesh*					getMesh(unsigned int i) const		{ return vecMesh[i]; }
+		I4TriangleMesh*			getMesh(unsigned int i) const		{ return vecMesh[i]; }
 
 	private:
 		void					parseMesh(I4XmlData& xml);
@@ -86,6 +76,7 @@ namespace i4graphics {
 		void					parseMeshUV(I4ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshWeight(I4ParsedMeshData& out,I4XmlData& xml);
 		void					parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshSub(I4ParsedMeshData& out,I4XmlData& xml);
 
 		I4TriangleMesh*			buildMesh(I4ParsedMeshData &I4ParsedMeshData);
 

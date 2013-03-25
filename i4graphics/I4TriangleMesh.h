@@ -5,6 +5,13 @@ using namespace i4core;
 
 namespace i4graphics
 {
+	struct I4SubMesh
+	{
+		int id;
+		int start;
+		int count;
+	};
+
 	class I4VertexBuffer;
 	class I4IndexBuffer;
 	class I4Texture;
@@ -19,12 +26,14 @@ namespace i4graphics
 		void			unbind();
 
 		void 			draw();
+		void			drawSub(unsigned int i);
 
 		//-------------------------------
 		
 		I4AABB				localAABB;
 		I4VertexBuffer*		vertexBuffer;
 		I4IndexBuffer*		indexBuffer;
+		vector<I4SubMesh>	vecSubMesh;
 		bool				skined;
 	};
 	
