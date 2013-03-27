@@ -70,7 +70,7 @@ bool I4MiniGameFrameCallback::onStart()
 	playerView->attachModel("player", "testmodel/soldier", true, true, true);
 	playerView->attachAni("testmodel/soldier_idle.ani.xml", "idle");
 	playerView->playAnimation("idle");
-	
+
 	I4Matrix4x4 m;
 	m.makeRotationY(I4MathUtil::degreeToRadian(180));
 	playerView->setOffset(m);

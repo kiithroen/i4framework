@@ -480,9 +480,12 @@ namespace i4graphics
 
 	I4TriangleMesh* I4ModelMeshResource::buildMesh(I4ParsedMeshData &data)
 	{
-		data.vecTangent.resize(data.vecPosition.size());
-		CalculateTangentArray(data.vecPosition.size(), data.vecPosition, data.vecNormal,
-			data.vecUV, data.vecIndex.size(), data.vecIndex, data.vecTangent);
+		if (data.vecUV.size() > 0)
+		{
+			data.vecTangent.resize(data.vecPosition.size());
+			CalculateTangentArray(data.vecPosition.size(), data.vecPosition, data.vecNormal,
+				data.vecUV, data.vecIndex.size(), data.vecIndex, data.vecTangent);
+		}
 
 		I4TriangleMesh* mesh = new I4TriangleMesh();
 
@@ -513,19 +516,36 @@ namespace i4graphics
 		}
 		else
 		{
-			vector<I4Vertex_Pos_Normal_Tex_Tan> vertices;
-			vertices.resize(data.vecPosition.size());
-
-			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
+			if (data.vecUV.size() > 0)
 			{
-				vertices[i].position = data.vecPosition[i];
-				vertices[i].normal = data.vecNormal[i];
-				vertices[i].tangent = data.vecTangent[i];
-				vertices[i].uv = data.vecUV[i];
-			}
+				vector<I4Vertex_Pos_Normal_Tex_Tan> vertices;
+				vertices.resize(data.vecPosition.size());
 
-			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan), &vertices[0]);
+				for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
+				{
+					vertices[i].position = data.vecPosition[i];
+					vertices[i].normal = data.vecNormal[i];
+					vertices[i].tangent = data.vecTangent[i];
+					vertices[i].uv = data.vecUV[i];
+				}
+
+				mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+				mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan), &vertices[0]);
+			}
+			else
+			{
+				vector<I4Vertex_Pos_Normal> vertices;
+				vertices.resize(data.vecPosition.size());
+
+				for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
+				{
+					vertices[i].position = data.vecPosition[i];
+					vertices[i].normal = data.vecNormal[i];
+				}
+
+				mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
+				mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal), &vertices[0]);
+			}
 		}
 
 		mesh->indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();

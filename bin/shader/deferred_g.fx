@@ -49,9 +49,15 @@ struct VS_INPUT
 {
 	float3 position		:	POSITION;
 	float3 normal		:	NORMAL;
+
+#if (defined(MASK_TEX_DIFFUSE) || defined(MASK_TEX_SPECULAR) || defined(MASK_TEX_NORMAL))
 	float2 uv			:	TEXCOORD;
+#endif
+
+#ifdef MASK_TEX_NORMAL
 	float4 tangent		:	TANGENT;
-	
+#endif
+
 #ifdef MASK_SKINNING
 	uint4 boneID		:	BONEID;
 	float4 weight		:	WEIGHT;
@@ -61,7 +67,11 @@ struct VS_INPUT
 struct PS_INPUT
 {
 	float4 position	 	:	SV_POSITION;
+
+#if (defined(MASK_TEX_DIFFUSE) || defined(MASK_TEX_SPECULAR) || defined(MASK_TEX_NORMAL))
 	float2 uv			:	TEXCOORD0;
+#endif
+
 	float depth			:	TEXCOORD1;
 
 #ifdef MASK_TEX_NORMAL
@@ -84,11 +94,19 @@ PS_INPUT VS( VS_INPUT	input	)
 
 	float4 position = mul(float4(input.position, 1), mat);
 	float3 normal = mul(input.normal, (float3x3)mat);
+
+#ifdef MASK_TEX_NORMAL
 	float3 tangent = mul(input.tangent.xyz, (float3x3)mat);	
+#endif
+
 #else
 	float4 position = float4(input.position, 1);
 	float3 normal = input.normal;
+
+#ifdef MASK_TEX_NORMAL
 	float3 tangent = input.tangent.xyz;
+#endif
+
 #endif
 
 	output.position = mul(position, world);
@@ -98,7 +116,9 @@ PS_INPUT VS( VS_INPUT	input	)
 
 	output.position = mul(output.position, projection);
 
+#if (defined(MASK_TEX_DIFFUSE) || defined(MASK_TEX_SPECULAR) || defined(MASK_TEX_NORMAL))
 	output.uv = input.uv;
+#endif
 
 #ifdef MASK_TEX_NORMAL
 	float3 N = mul(input.normal, (float3x3)world);

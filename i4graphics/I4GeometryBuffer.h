@@ -119,6 +119,18 @@ namespace i4graphics
 		{ "TEXCOORD", 0, I4FORMAT_R32G32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
 	};
 
+	struct I4Vertex_Pos_Normal
+	{
+		I4Vector3	position;
+		I4Vector3	normal;
+	};
+
+	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL[] = 
+	{
+		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
+	};
+
 	struct I4Vertex_Pos_Normal_Tex
 	{
 		I4Vector3	position;

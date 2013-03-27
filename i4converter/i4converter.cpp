@@ -25,20 +25,17 @@ enum ExportType
 
 FbxScene* pScene = nullptr;
 
-// eMayaZUp,			/*!< UpVector = ZAxis, FrontVector = -ParityOdd, CoordSystem = RightHanded */
-// eMayaYUp,			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = RightHanded */
-// eMax,				/*!< UpVector = ZAxis, FrontVector = -ParityOdd, CoordSystem = RightHanded */
-// eMotionBuilder,		/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = RightHanded */
-// eOpenGL,			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = RightHanded */
-// eDirectX,			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = LeftHanded */
-// eLightwave			/*!< UpVector = YAxis, FrontVector =  ParityOdd, CoordSystem = LeftHanded */
-
 FbxAxisSystem SceneAxisSystem;
+
+// 도저히 이유는 모르겠고... 유니티에서 사용되고 있는 FBX들은 Max, Blender에서 뽑은 데이타랑 다르게 노말이 뒤집혀있다. 
+// 뭔가 정보가 있을듯 한데 도저히 못찾겠네..
+bool isFlipNormalZ = false;	
 
 FILE* fpMesh = nullptr;
 FILE* fpMtrl = nullptr;
 FILE* fpBone = nullptr;
 FILE* fpAni = nullptr;
+
 
 map<string, int> mapBoneNameList;
 map<string, FbxAMatrix> mapBoneBindPoseWorld;
@@ -126,109 +123,45 @@ TextureUV FbxUVToI4(const TextureUV& v)
 
 FbxVector4 FbxVectorToI4(const FbxVector4& v)
 {
-	if (IsZUpRightHanded())
-	{
-		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
-	}
-	else if (IsYUpRightHanded())
-	{
-		return FbxVector4(v.mData[0], v.mData[1], -v.mData[2]);
-	}
-	else
-	{
-		return FbxVector4(v.mData[0], v.mData[1], v.mData[2]);
-	}
+	return FbxVector4(v.mData[0], v.mData[1], -v.mData[2]);
 }
 
 FbxVector4 FbxNormalToI4(const FbxVector4& v)
 {
-	if (IsZUpRightHanded())
+	if (isFlipNormalZ)
 	{
 		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
 	}
-	else if (IsYUpRightHanded())
-	{
-		return FbxVector4(v.mData[0], v.mData[1], -v.mData[2]);
-	}
 	else
 	{
-		return FbxVector4(v.mData[0], v.mData[1], v.mData[2]);
+		return FbxVector4(v.mData[0], v.mData[1], -v.mData[2]);
 	}
 }
 
 FbxVector4 FbxScaleToI4(const FbxVector4& v)
 {
-	if (IsZUpRightHanded() || IsYUpRightHanded())
-	{
-		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
-	}
-	else
-	{
-		return FbxVector4(v.mData[0], v.mData[1], v.mData[2]);
-	}
+	return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
 }
 
 
 TriIndex TriIndexToI4(const TriIndex& i)
 {
-	if (IsZUpRightHanded() || IsYUpRightHanded())
-	{
-		return TriIndex(i.i[0], i.i[2], i.i[1]);
-	}
-	else
-	{
-		return TriIndex(i.i[0], i.i[1], i.i[2]);
-	}
+	return TriIndex(i.i[0], i.i[2], i.i[1]);
 }
 
 FbxAMatrix FbxMatrixToI4(const FbxAMatrix& m)
 {
-	if (IsZUpRightHanded())
-	{
-		FbxAMatrix ret;
-		ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
-		ret.SetRow(1, FbxVectorToI4(m.GetRow(2)));
-		ret.SetRow(2, FbxVectorToI4(m.GetRow(1)));
-		ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
-
-		return ret;
-	}
-	else if (IsYUpRightHanded())
-	{
-		FbxAMatrix ret;
-		ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
-		ret.SetRow(1, FbxVectorToI4(m.GetRow(1)));
-		ret.SetRow(2, -FbxVectorToI4(m.GetRow(2)));
-		ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
-
-		return ret;
-	}
-	else
-	{
-		FbxAMatrix ret;
-		ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
-		ret.SetRow(1, FbxVectorToI4(m.GetRow(1)));
-		ret.SetRow(2, FbxVectorToI4(m.GetRow(2)));
-		ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
-
-		return ret;
-	}
+	FbxAMatrix ret;
+	ret.SetRow(0, FbxVectorToI4(m.GetRow(0)));
+	ret.SetRow(1, FbxVectorToI4(m.GetRow(1)));
+	ret.SetRow(2, -FbxVectorToI4(m.GetRow(2)));
+	ret.SetRow(3, FbxVectorToI4(m.GetRow(3)));
+	return ret;
 }
 
 FbxQuaternion FbxQuatToI4(const FbxQuaternion& q)
 {
-	if (IsZUpRightHanded())
-	{
-		return FbxQuaternion(-q.mData[0], -q.mData[2], -q.mData[1], q.mData[3]);
-	}
-	else if (IsYUpRightHanded())
-	{
-		return FbxQuaternion(-q.mData[0], -q.mData[1], q.mData[2], q.mData[3]);
-	}
-	else
-	{
-		return FbxQuaternion(q.mData[0], q.mData[1], q.mData[2], q.mData[3]);
-	}
+	return FbxQuaternion(-q.mData[0], -q.mData[1], q.mData[2], q.mData[3]);
 }
 
 FbxAMatrix GetGeometricTransform(FbxNode *pNode)
@@ -250,7 +183,7 @@ FbxAMatrix GetWorldTransform(FbxNode *pNode)
 	return pNode->EvaluateGlobalTransform()*GetGeometricTransform(pNode);
 }
 
-void mergeMeshTextureUV(MeshData& out)
+void splitVertexDifferentTextureUV(MeshData& out)
 {
 	// UV가 있으면
 	if (out.vecTexUV.size() != 0 && out.vecTexIndex.size() != 0)
@@ -331,19 +264,76 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 	if (pMesh->GetElementNormalCount())                        
 	{
 		// 정점이 참조하고 있는 노말
+		FbxGeometryElementNormal* leNormals = pMesh->GetElementNormal(0);
 		data.vecNormal.resize(lControlPointsCount);
-		for(int i = 0; i < pMesh->GetPolygonCount(); i++)
+		
+		switch(leNormals->GetMappingMode())
+        {
+		case FbxGeometryElement::eByControlPoint:
 		{
-			for(int j = 0; j < 3; j++) 
+			switch(leNormals->GetReferenceMode())
 			{
-				FbxGeometryElementNormal* leNormals = pMesh->GetElementNormal(0);
-
-				// 버텍스 인덱스로부터 정점 인덱스를 가져온다.
-				int idx = pMesh->GetPolygonVertex(i, j);
-
-				// 그리고 정점인덱스에 해당하는 노말값을 가져와서 집어넣는다.
-				data.vecNormal[idx] = FbxNormalToI4(leNormals->GetDirectArray().GetAt(i*3 + j));
+			case FbxGeometryElement::eDirect:
+			{
+				for(int i = 0; i < lControlPointsCount; i++)
+				{
+					data.vecNormal[i] =  FbxNormalToI4(leNormals->GetDirectArray().GetAt(i));
+				}
 			}
+			break;
+
+			case FbxGeometryElement::eIndexToDirect:
+			{
+				for(int i = 0; i < lControlPointsCount; i++)
+				{
+					int id = leNormals->GetIndexArray().GetAt(i);
+					data.vecNormal[i] = FbxNormalToI4( leNormals->GetDirectArray().GetAt(id) );
+				}
+			}
+			break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
+		case FbxGeometryElement::eByPolygonVertex:
+		{
+			switch(leNormals->GetReferenceMode())
+			{
+			case FbxGeometryElement::eDirect:
+			{
+				for(int i = 0; i < pMesh->GetPolygonCount(); i++)
+				{
+					for(int j = 0; j < 3; j++) 
+					{
+						int idx = pMesh->GetPolygonVertex(i, j);
+						data.vecNormal[idx] = FbxNormalToI4(leNormals->GetDirectArray().GetAt(i*3 + j));
+					}
+				}               
+			}
+			break;
+
+			case FbxGeometryElement::eIndexToDirect:
+			{
+				for(int i = 0; i < pMesh->GetPolygonCount(); i++)
+				{
+					for(int j = 0; j < 3; j++) 
+					{
+						int idx = pMesh->GetPolygonVertex(i, j);
+						int id = leNormals->GetIndexArray().GetAt(i*3 + j);
+						data.vecNormal[idx] = FbxNormalToI4(leNormals->GetDirectArray().GetAt(id));
+					}
+				}
+			}
+			break;
+
+			default:
+				break;
+			}
+		}
+		break;
 		}
 	}
 
@@ -392,15 +382,22 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 	if(pMesh->GetElementUVCount())                        
 	{
 		data.vecTexIndex.resize(pMesh->GetPolygonCount());
-		for (int i = 0; i < pMesh->GetPolygonCount(); i++)
-		{		
-			FbxGeometryElementUV *puv = pMesh->GetElementUV(0);
-
-			TriIndex tri;
-			tri.i[0] = puv->GetIndexArray().GetAt(i*3 + 0);
-			tri.i[1] = puv->GetIndexArray().GetAt(i*3 + 1);
-			tri.i[2] = puv->GetIndexArray().GetAt(i*3 + 2);
-			data.vecTexIndex[i] = TriIndexToI4(tri);
+		FbxGeometryElementUV *puv = pMesh->GetElementUV(0);
+		if  (puv->GetMappingMode() == FbxLayerElement::eByPolygonVertex)
+		{
+			for (int i = 0; i < pMesh->GetPolygonCount(); i++)
+			{
+				TriIndex tri;
+				tri.i[0] = puv->GetIndexArray().GetAt(i*3 + 0);
+				tri.i[1] = puv->GetIndexArray().GetAt(i*3 + 1);
+				tri.i[2] = puv->GetIndexArray().GetAt(i*3 + 2);
+				data.vecTexIndex[i] = TriIndexToI4(tri);
+			}
+		}
+		else if (puv->GetMappingMode() == FbxLayerElement::eByControlPoint)
+		{
+			// 버텍스별로 다 쪼개놨기 때문에 uv 인덱스랑 정점 인덱스랑 같다.
+			data.vecTexIndex = data.vecIndex;
 		}
 	}
 
@@ -471,7 +468,7 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		}
 	}
 
-	mergeMeshTextureUV(data);
+	splitVertexDifferentTextureUV(data);
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------------
 		
@@ -1028,7 +1025,9 @@ void BuildBoneNameList(FbxNode* pNode)
 
 int main(int argc, char* argv[])
 {
-	const char* lFilename = "Floor.fbx";	
+	const char* srcFileName = "Soldier.fbx";	
+	const char* destName = "soldier";
+	isFlipNormalZ = true;
 
 	printf("start...\n");
 	FbxManager* lSdkManager = FbxManager::Create();
@@ -1037,9 +1036,10 @@ int main(int argc, char* argv[])
 	lSdkManager->SetIOSettings(ios);
 
 	FbxImporter* lImporter = FbxImporter::Create(lSdkManager,"");
+	
 
 	printf("initialize...\n");
-	if(!lImporter->Initialize(lFilename, -1, lSdkManager->GetIOSettings())) {
+	if(!lImporter->Initialize(srcFileName, -1, lSdkManager->GetIOSettings())) {
 		printf("Call to FbxImporter::Initialize() failed.\n");
 		printf("Error returned: %s\n\n", lImporter->GetStatus().GetErrorString());
 		exit(-1);
@@ -1051,17 +1051,37 @@ int main(int argc, char* argv[])
 	printf("import...\n");
 	lImporter->Import(pScene);	
 	lImporter->Destroy();
-
+	
     SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
 
+	int upSign;
+	FbxAxisSystem::EUpVector upAxis = SceneAxisSystem.GetUpVector(upSign);
+
+	int frontSign;
+	FbxAxisSystem::EFrontVector frontParity = SceneAxisSystem.GetFrontVector(frontSign);
+
+	FbxAxisSystem::ECoordSystem coord = SceneAxisSystem.GetCoorSystem();
+
+	int originUp = pScene->GetGlobalSettings().GetOriginalUpAxis();
+	printf("upAxis : %d, upSign : %d, frontParity : %d, frontSign : %d, coord : %d, originUp : %d \n", upAxis, upSign, frontParity, frontSign, coord, originUp);
+
+	FbxAxisSystem OurAxisSystem = FbxAxisSystem(FbxAxisSystem::eOpenGL);
+	if (OurAxisSystem != SceneAxisSystem)
+	{
+		OurAxisSystem.ConvertScene(pScene);
+	}
 	printf("triangulate...\n");
 	TriangulateRecursive(pScene->GetRootNode());
 
 	printf("build bone info...\n");
 	BuildBoneNameList(pScene->GetRootNode());
 	
-	//--------------------------------------------------------------------------
-	fpMesh = fopen("soldier.mesh.xml", "w");
+	//-------------------------------------------------------------------------
+
+	char meshFileName[256] = {0 };
+	sprintf(meshFileName, "%s.mesh.xml", FbxPathUtils::GetFileName(destName, false).Buffer());
+	fpMtrl = fopen(meshFileName, "w");
+	fpMesh = fopen(meshFileName, "w");
 	if (fpMesh != nullptr)
 	{
 		fprintf(fpMesh, "<mesh>\n");
@@ -1079,7 +1099,9 @@ int main(int argc, char* argv[])
 
 	//--------------------------------------------------------------------------
 
-	fpMtrl = fopen("soldier.mtrl.xml", "w");
+	char mtrlFileName[256] = {0 };
+	sprintf(mtrlFileName, "%s.mtrl.xml", FbxPathUtils::GetFileName(destName, false).Buffer());
+	fpMtrl = fopen(mtrlFileName, "w");
 	if (fpMtrl != nullptr)
 	{
 		fprintf(fpMtrl, "<material>\n");
@@ -1097,7 +1119,9 @@ int main(int argc, char* argv[])
 
 	//--------------------------------------------------------------------------
 
-	fpBone = fopen("soldier.bone.xml", "w");
+	char boneFileName[256] = {0 };
+	sprintf(boneFileName, "%s.bone.xml", FbxPathUtils::GetFileName(destName, false).Buffer());
+	fpBone = fopen(boneFileName, "w");
 	if (fpBone != nullptr)
 	{
 		fprintf(fpBone, "<bone>\n");
@@ -1113,7 +1137,9 @@ int main(int argc, char* argv[])
 
 	//--------------------------------------------------------------------------
 
-	fpAni = fopen("soldier.ani.xml", "w");
+	char aniFileName[256] = {0 };
+	sprintf(aniFileName, "%s.ani.xml", FbxPathUtils::GetFileName(destName, false).Buffer());
+	fpAni = fopen(aniFileName, "w");
 	if (fpAni != nullptr)
 	{
 		fprintf(fpAni, "<ani>\n");
