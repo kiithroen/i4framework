@@ -33,7 +33,7 @@ namespace i4graphics
 		I4AABB				localAABB;
 		I4VertexBuffer*		vertexBuffer;
 		I4IndexBuffer*		indexBuffer;
-		vector<I4SubMesh>	vecSubMesh;
+		vector<I4SubMesh>	subMeshes;
 		bool				skined;
 	};
 	

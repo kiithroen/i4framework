@@ -67,15 +67,18 @@ namespace i4graphics {
 
 	class I4ModelMesh : public I4ModelElement
 	{
+		typedef vector<I4Material*>		I4MaterialVector;
 	public:
 		I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* mesh);
 		virtual ~I4ModelMesh();
 	
-		void			setMaterial(I4Material*	mtrl)		{ material = mtrl;}
+		void			setMaterial(unsigned int i, I4Material*	mtrl)		{ vecMaterial[i] = mtrl;}
 		virtual void	commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM) override;
+
+		I4TriangleMesh*	getMesh()			{ return mesh; }
 
 	protected:
 		I4TriangleMesh*			mesh;
-		I4Material*				material;
+		I4MaterialVector		vecMaterial;
 	};
 }

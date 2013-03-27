@@ -158,8 +158,12 @@ namespace i4graphics
 	I4ModelMesh::I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
 	: I4ModelElement(model, info)
 	, mesh(_mesh)
-	, material(&defaultMaterial)
 	{
+		vecMaterial.resize(mesh->subMeshes.size());
+		for (unsigned int i = 0; i < vecMaterial.size(); ++i)
+		{
+			vecMaterial[i] = &defaultMaterial;
+		}
 	}
 
 	I4ModelMesh::~I4ModelMesh()
@@ -173,8 +177,8 @@ namespace i4graphics
 
 		I4MeshRenderItem item;
 		item.mesh = mesh;
-		item.material = material;
 
+		
 		// 스킨드메쉬는 정확한 바운드를 GPU에서 에니메이션 하기전에 알수 없으므로 문제가 생길수 있다.
 		// 툴에서 수동으로 또는 미리 계산해서 지정하도록 바꾸자.
 		item.worldAABB = mesh->localAABB.transform(finalTM);
@@ -184,38 +188,44 @@ namespace i4graphics
 
 		item.shaderMask = I4SHADER_MASK_NONE;
 
-		if (item.material->diffuseMap != I4INVALID_HASHCODE)
+		for (unsigned int i = 0; i < mesh->subMeshes.size(); ++i)
 		{
-			item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
-		}
+			item.subMeshID = i;
+			item.material = vecMaterial[i];
 
-		if (item.material->specularMap != I4INVALID_HASHCODE)
-		{
-			item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
-		}
+			if (item.material->diffuseMap != I4INVALID_HASHCODE)
+			{
+				item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
+			}
 
-		if (item.material->normalMap != I4INVALID_HASHCODE)
-		{
-			item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
-		}
+			if (item.material->specularMap != I4INVALID_HASHCODE)
+			{
+				item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
+			}
 
-		if (mesh->skined && model->getBoneCount() > 0)
-		{
-			item.shaderMask |= I4SHADER_MASK_SKINNING;
-			item.worldTM = worldTM;
-			item.boneCount = model->getBoneCount();
-			item.resultTM = resultTM;
-			item.skinTMs = model->getSkinTMs();
-		}
-		else
-		{
-			item.worldTM = finalTM;
-			// 아래 정보들은 사용안함
-			item.boneCount = 0;
-			item.skinTMs = nullptr;
-			item.resultTM = I4MATRIX4X4_IDENTITY; 
-		}		
+			if (item.material->normalMap != I4INVALID_HASHCODE)
+			{
+				item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
+			}
 
-		renderer->commit(item);
+			if (mesh->skined && model->getBoneCount() > 0)
+			{
+				item.shaderMask |= I4SHADER_MASK_SKINNING;
+				item.worldTM = worldTM;
+				item.boneCount = model->getBoneCount();
+				item.resultTM = resultTM;
+				item.skinTMs = model->getSkinTMs();
+			}
+			else
+			{
+				item.worldTM = finalTM;
+				// 아래 정보들은 사용안함
+				item.boneCount = 0;
+				item.skinTMs = nullptr;
+				item.resultTM = I4MATRIX4X4_IDENTITY; 
+			}		
+
+			renderer->commit(item);
+		}
 	}
 }

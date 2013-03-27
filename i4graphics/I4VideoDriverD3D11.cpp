@@ -608,7 +608,7 @@ namespace i4graphics
 
 	I4Texture* I4VideoDriverD3D11::createTexture()
 	{
-		return new I4TextureD3D11(d3dDevice);
+		return new I4TextureD3D11(d3dDevice, immediateContext);
 	}
 
 	I4RenderTarget* I4VideoDriverD3D11::createRenderTarget()

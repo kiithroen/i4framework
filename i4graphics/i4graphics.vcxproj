@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependency\DirectXTex\DDSTextureLoader.h" />
+    <ClInclude Include="..\dependency\DirectXTex\WICTextureLoader.h" />
     <ClInclude Include="I4AnimationController.h" />
     <ClInclude Include="I4AnimationTrack.h" />
     <ClInclude Include="I4DeferredRenderer.h" />
@@ -139,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp" />
+    <ClCompile Include="..\dependency\DirectXTex\WICTextureLoader.cpp" />
     <ClCompile Include="I4AnimationController.cpp" />
     <ClCompile Include="I4AnimationTrack.cpp" />
     <ClCompile Include="I4DeferredRenderer.cpp" />

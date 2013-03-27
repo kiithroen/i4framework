@@ -24,7 +24,7 @@ namespace i4graphics
 		vector<I4Index16>		vecIndex;
 		vector<I4BoneID>		vecBoneID;
 		vector<I4Weight>		vecWeight;
-		vector<I4SubMesh>		vecSubMesh;
+		vector<I4SubMesh>		subMeshes;
 	};
 
 	I4ModelBoneResource::I4ModelBoneResource()
@@ -457,16 +457,16 @@ namespace i4graphics
 
 			int size;
 			xml.getAttrValue(size, "count");
-			out.vecSubMesh.resize(size);
+			out.subMeshes.resize(size);
 
 			if (xml.selectFirstChildNode("a"))
 			{
 				int i = 0;
 				do
 				{
-					xml.getAttrValue(out.vecSubMesh[i].id, "id");
-					xml.getAttrValue(out.vecSubMesh[i].start, "start");
-					xml.getAttrValue(out.vecSubMesh[i].count, "count");
+					xml.getAttrValue(out.subMeshes[i].id, "id");
+					xml.getAttrValue(out.subMeshes[i].start, "start");
+					xml.getAttrValue(out.subMeshes[i].count, "count");
 					++i;
 
 				} while (xml.selectNextSiblingNode("a"));
@@ -488,7 +488,7 @@ namespace i4graphics
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
-		mesh->vecSubMesh = data.vecSubMesh;
+		mesh->subMeshes = data.subMeshes;
 
 		if (data.skined)	
 		{
@@ -639,107 +639,130 @@ namespace i4graphics
 
 	void I4ModelMaterialResource::destroy()
 	{
-		for (auto &itr : vecMaterial)
+		for (auto &itr : materialContainer)
 		{
-			I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itr->diffuseMap);
-			I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itr->specularMap);
-			I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itr->normalMap);
-			delete itr;
+			for (auto& itrSub : itr)
+			{
+				I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->diffuseMap);
+				I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->specularMap);
+				I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->normalMap);
+				delete itrSub;
+			}
 		}
-		vecMaterial.clear();
+		materialContainer.clear();
 	}
 
 	
 	void I4ModelMaterialResource::parseMaterials(I4XmlData& xml)
-	{
-		I4Material* material = new I4Material;
-		if (xml.selectFirstChildNode("ambient"))
+	{		
+		I4MaterialVector vecMaterial;
+
+		if (xml.selectFirstChildNode("sub"))
 		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+			do
+			{
+				I4Material* material = new I4Material;
 
-			sscanf_s(val, "%f", &material->ambient);
+				if (xml.selectFirstChildNode("ambient"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			xml.selectParentNode();
-		}
+					sscanf_s(val, "%f", &material->ambient);
 
-		if (xml.selectFirstChildNode("specularGlossiness"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+					xml.selectParentNode();
+				}
 
-			material->specularGlossiness = (float)atof(val);
+				if (xml.selectFirstChildNode("specularLevel"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			xml.selectParentNode();
-		}
+					material->specularLevel = (float)atof(val);
 
-		if (xml.selectFirstChildNode("specularPower"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+					xml.selectParentNode();
+				}
 
-			material->specularPower = (float)atof(val);
+				if (xml.selectFirstChildNode("specularPower"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			xml.selectParentNode();
-		}
+					material->specularPower = (float)atof(val);
 
-		if (xml.selectFirstChildNode("diffuseMap"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+					xml.selectParentNode();
+				}
 
-			char texturePath[256] = "texture/";
-			strcat_s(texturePath, val);
+				if (xml.selectFirstChildNode("diffuseMap"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			material->diffuseMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+					char texturePath[256] = "texture/";
+					strcat_s(texturePath, val);
 
-			xml.selectParentNode();
-		}
+					material->diffuseMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
 
-		if (xml.selectFirstChildNode("specularMap"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+					xml.selectParentNode();
+				}
 
-			char texturePath[256] = "texture/";
-			strcat_s(texturePath, val);
+				if (xml.selectFirstChildNode("specularMap"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			material->specularMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+					char texturePath[256] = "texture/";
+					strcat_s(texturePath, val);
 
-			xml.selectParentNode();
-		}
+					material->specularMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
 
-		if (xml.selectFirstChildNode("normalMap"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+					xml.selectParentNode();
+				}
 
-			char texturePath[256] = "texture/";
-			strcat_s(texturePath, val);
+				if (xml.selectFirstChildNode("normalMap"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			material->normalMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+					char texturePath[256] = "texture/";
+					strcat_s(texturePath, val);
 
-			xml.selectParentNode();
-		}
+					material->normalMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+
+					xml.selectParentNode();
+				}
 		
-		if (xml.selectFirstChildNode("twoSide"))
-		{
-			const char* val = nullptr;
-			xml.getNodeValue(val);
+				if (xml.selectFirstChildNode("twoSide"))
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
 
-			if (strcmp(val, "true") == 0)
-			{
-				material->twoSide = true;
-			}
-			else
-			{
-				material->twoSide = false;
-			}
+					if (strcmp(val, "true") == 0)
+					{
+						material->twoSide = true;
+					}
+					else
+					{
+						material->twoSide = false;
+					}
+
+					xml.selectParentNode();
+				}
+
+				vecMaterial.push_back(material);
+
+			} while (xml.selectNextSiblingNode("sub"));
 
 			xml.selectParentNode();
 		}
 
-		vecMaterial.push_back(material);
+		
+		if (vecMaterial.empty())
+		{
+			// 없으면 기본 마테리얼로 최소 1개는 넣어준다.
+			vecMaterial.push_back(new I4Material);
+		}		
+		materialContainer.push_back(vecMaterial);
 	}
 
 	//-------------------- I4ModelAniResource -----------------------

@@ -45,7 +45,7 @@ namespace i4graphics
 	struct CBEachAllMesh_G_PS
 	{
 		float ambient;
-		float specularGlossiness;
+		float specularLevel;
 		float specularPower;
 
 	};

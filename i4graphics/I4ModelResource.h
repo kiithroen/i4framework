@@ -92,6 +92,7 @@ namespace i4graphics {
 	class I4ModelMaterialResource
 	{
 		typedef vector<I4Material*>			I4MaterialVector;
+		typedef vector<I4MaterialVector>	I4MaterialContainer;
 
 	public:
 		I4ModelMaterialResource();
@@ -101,14 +102,14 @@ namespace i4graphics {
 
 		void					destroy();
 
-		unsigned int			getMaterialCount() const			{ return vecMaterial.size(); }
-		I4Material*				getMaterial(unsigned int i) const	{ return vecMaterial[i]; }
+		unsigned int			getMaterialCount() const								{ return materialContainer.size(); }
+		I4Material*				getMaterial(unsigned int i, unsigned int subID) const	{ return materialContainer[i][subID]; }
 
 	private:
 		void					parseMaterials(I4XmlData& xml);
 
 	private:
-		I4MaterialVector		vecMaterial;
+		I4MaterialContainer		materialContainer;
 	};
 
 	//-------------------- I4ModelAniResource -----------------------

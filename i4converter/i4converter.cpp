@@ -142,9 +142,13 @@ FbxVector4 FbxVectorToI4(const FbxVector4& v)
 
 FbxVector4 FbxNormalToI4(const FbxVector4& v)
 {
-	if (IsZUpRightHanded() || IsYUpRightHanded())
+	if (IsZUpRightHanded())
 	{
 		return FbxVector4(v.mData[0], v.mData[2], v.mData[1]);
+	}
+	else if (IsYUpRightHanded())
+	{
+		return FbxVector4(v.mData[0], v.mData[1], -v.mData[2]);
 	}
 	else
 	{
@@ -348,20 +352,25 @@ void WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 	data.vecMtrlID.resize(pMesh->GetPolygonCount());
 	for (int i = 0; i < pMesh->GetPolygonCount(); i++)
 	{
-		pMaterial->GetIndexArray().GetAt(i);
-
-		switch( pMaterial->GetMappingMode())
+		if (pMaterial)
 		{
-		case FbxLayerElement::eAllSame:
-			data.vecMtrlID[i] = pMaterial->GetIndexArray().GetAt(0);
+			switch( pMaterial->GetMappingMode())
+			{
+			case FbxLayerElement::eAllSame:
+				data.vecMtrlID[i] = pMaterial->GetIndexArray().GetAt(0);
+				break;
+			case FbxLayerElement::eByPolygon:
+				data.vecMtrlID[i] = pMaterial->GetIndexArray().GetAt(i);
+				break;
+			default:
+				data.vecMtrlID[i] = 0;
+				printf("missing material information\n");
 			break;
-		case FbxLayerElement::eByPolygon:
-			data.vecMtrlID[i] = pMaterial->GetIndexArray().GetAt(i);
-			break;
-		default:
+			}
+		}
+		else
+		{
 			data.vecMtrlID[i] = 0;
-			printf("missing material information\n");
-		break;
 		}
 	}
 
@@ -638,7 +647,8 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
 						if (lTexture != NULL)
 						{
 							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
-							fprintf(fpMtrl, "\t\t\t<diffuseMap>%s</diffuseMap>\n", pTex->GetFileName());
+							FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
+							fprintf(fpMtrl, "\t\t\t<diffuseMap>%s</diffuseMap>\n", fname.Buffer());
 						}
 					}
 
@@ -649,7 +659,8 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
                         if (lTexture != NULL)
 						{
 							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
-							fprintf(fpMtrl, "\t\t\t<specularMap>%s</specularMap>\n", pTex->GetFileName());
+							FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
+							fprintf(fpMtrl, "\t\t\t<specularMap>%s</specularMap>\n", fname.Buffer());
                         }
 					}
 
@@ -660,7 +671,8 @@ void WriteNode(FbxNode* pNode, ExportType exportType)
                         if (lTexture != NULL)
 						{
 							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
-							fprintf(fpMtrl, "\t\t\t<normalMap>%s</normalMap>\n", pTex->GetFileName());
+							FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
+							fprintf(fpMtrl, "\t\t\t<normalMap>%s</normalMap>\n", fname.Buffer());
                         }
 					}
 					fprintf(fpMtrl, "\t\t</sub>\n");
@@ -1016,8 +1028,9 @@ void BuildBoneNameList(FbxNode* pNode)
 
 int main(int argc, char* argv[])
 {
-	const char* lFilename = "Raven.fbx";	
+	const char* lFilename = "Floor.fbx";	
 
+	printf("start...\n");
 	FbxManager* lSdkManager = FbxManager::Create();
 
 	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
@@ -1025,25 +1038,30 @@ int main(int argc, char* argv[])
 
 	FbxImporter* lImporter = FbxImporter::Create(lSdkManager,"");
 
+	printf("initialize...\n");
 	if(!lImporter->Initialize(lFilename, -1, lSdkManager->GetIOSettings())) {
 		printf("Call to FbxImporter::Initialize() failed.\n");
 		printf("Error returned: %s\n\n", lImporter->GetStatus().GetErrorString());
 		exit(-1);
 	}
 
+	printf("create...\n");
 	pScene = FbxScene::Create(lSdkManager,"myScene");
 
-	lImporter->Import(pScene);
+	printf("import...\n");
+	lImporter->Import(pScene);	
+	lImporter->Destroy();
 
     SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
 
-	lImporter->Destroy();
-	
+	printf("triangulate...\n");
 	TriangulateRecursive(pScene->GetRootNode());
+
+	printf("build bone info...\n");
 	BuildBoneNameList(pScene->GetRootNode());
 	
 	//--------------------------------------------------------------------------
-	fpMesh = fopen("raven.mesh.xml", "w");
+	fpMesh = fopen("soldier.mesh.xml", "w");
 	if (fpMesh != nullptr)
 	{
 		fprintf(fpMesh, "<mesh>\n");
@@ -1061,7 +1079,7 @@ int main(int argc, char* argv[])
 
 	//--------------------------------------------------------------------------
 
-	fpMtrl = fopen("raven.mtrl.xml", "w");
+	fpMtrl = fopen("soldier.mtrl.xml", "w");
 	if (fpMtrl != nullptr)
 	{
 		fprintf(fpMtrl, "<material>\n");
@@ -1079,7 +1097,7 @@ int main(int argc, char* argv[])
 
 	//--------------------------------------------------------------------------
 
-	fpBone = fopen("raven.bone.xml", "w");
+	fpBone = fopen("soldier.bone.xml", "w");
 	if (fpBone != nullptr)
 	{
 		fprintf(fpBone, "<bone>\n");
@@ -1095,7 +1113,7 @@ int main(int argc, char* argv[])
 
 	//--------------------------------------------------------------------------
 
-	fpAni = fopen("raven.ani.xml", "w");
+	fpAni = fopen("soldier.ani.xml", "w");
 	if (fpAni != nullptr)
 	{
 		fprintf(fpAni, "<ani>\n");

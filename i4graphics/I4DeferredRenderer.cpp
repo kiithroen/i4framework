@@ -59,7 +59,7 @@ namespace i4graphics
 		, shadowSplitSize(1024)
 	{
 		static const float defaultShadowSplitZ[] = { 3.5f, 7.0f, 20.0f, 50.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
-		static const float defaultShadowBias[] = { 0.05f, 0.001f, 0.002f, 0.003f };
+		static const float defaultShadowBias[] = { 0.001f, 0.001f, 0.002f, 0.003f };
 		for (int  i = 0; i < 4; ++i)
 		{
 			shadowSplitZ[i] = defaultShadowSplitZ[i];
@@ -416,7 +416,7 @@ namespace i4graphics
 					isChangedSpecularMap = true;
 				}
 
-				if (itr.material->specularMap != prevItem->material->specularMap)
+				if (itr.material->normalMap != prevItem->material->normalMap)
 				{
 					isChangedNormalMap = true;
 				}
@@ -463,7 +463,7 @@ namespace i4graphics
 				itr.mesh->bind();
 				
 				cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
-				cbEachMeshInstance_G_PS.getData()->specularGlossiness = itr.material->specularGlossiness;
+				cbEachMeshInstance_G_PS.getData()->specularLevel = itr.material->specularLevel;
 				cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
 				shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
@@ -512,7 +512,7 @@ namespace i4graphics
 			cbEachAllMesh_G_VS.getData()->result = itr.resultTM;
 			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
 
-			itr.mesh->draw();
+			itr.mesh->drawSub(itr.subMeshID);
 
 			prevItem = &itr;
 		}
@@ -746,7 +746,7 @@ namespace i4graphics
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
 			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
 			
-			itr.mesh->draw();
+			itr.mesh->drawSub(itr.subMeshID);
 
 			prevItem = &itr;
 		}

@@ -31,6 +31,7 @@ namespace i4object
 		void onCommitToRenderer(I4MessageArgs& args);
 
 		void setOffset(const I4Matrix4x4& _offset)		{ offset = _offset; }
+		I4Model* getModel()								{ return model; }
 
 		void setShadowCaster(bool enable);
 		void setShadowReceiver(bool enable);

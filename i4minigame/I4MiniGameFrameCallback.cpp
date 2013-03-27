@@ -20,6 +20,7 @@
 #include "I4ObjectCharacterControllerComponent.h"
 #include "I4ObjectTPSCameraComponent.h"
 #include "I4FrameTimer.h"
+#include "I4ModelElement.h"
 
 using namespace i4core;
 
@@ -57,23 +58,23 @@ bool I4MiniGameFrameCallback::onStart()
 	spectator->setLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
 	I4ObjectFlyControllerComponent* spectatorController = spectator->addComponent<I4ObjectFlyControllerComponent>();
-	spectatorController->activate(true);
+	spectatorController->activate(false);
 	I4ObjectStaticCameraComponent* spectatorCamera = spectator->addComponent<I4ObjectStaticCameraComponent>();
-	spectatorCamera->setMainCamera(true);
+	spectatorCamera->setMainCamera(false);
 
 	player =  objectMgr->createObject("player");
-	player->setLookAt(I4Vector3(0.0f, 3.0f, -1.8f), I4Vector3(0.0f, 3.0f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
-	player->setScale(I4Vector3(0.01f, 0.01f, 0.01f));
+	player->setPosition(I4Vector3(0.0f, 1.5f, -1.8f));
+	player->setScale(I4Vector3(0.007f, 0.007f, 0.007f));
 
-	I4ObjectViewComponent* view = player->addComponent<I4ObjectViewComponent>();
-	view->attachModel("player", "testmodel/raven", true, false, true);
-	view->attachAni("testmodel/raven.ani.xml", "idle");
-	view->playAnimation("idle");
+	I4ObjectViewComponent* playerView = player->addComponent<I4ObjectViewComponent>();
+	playerView->attachModel("player", "testmodel/soldier", true, true, true);
+	playerView->attachAni("testmodel/soldier_idle.ani.xml", "idle");
+	playerView->playAnimation("idle");
 	
 	I4Matrix4x4 m;
 	m.makeRotationY(I4MathUtil::degreeToRadian(180));
-	view->setOffset(m);
-
+	playerView->setOffset(m);
+	
 	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
 	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
 	playerMovement->setGravity(-9.8f);
@@ -86,7 +87,6 @@ bool I4MiniGameFrameCallback::onStart()
 
 	physXMgr->createPlane();
 
-	/*
 	I4Object* objFloor = objectMgr->createObject("floor");
 	I4ObjectViewComponent* viewFloor = objFloor->addComponent<I4ObjectViewComponent>();
 	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
@@ -122,35 +122,8 @@ bool I4MiniGameFrameCallback::onStart()
 			I4ObjectViewComponent* view = objChar->addComponent<I4ObjectViewComponent>();
 			I4ObjectRigidBodyComponent* rigid = objChar->addComponent<I4ObjectRigidBodyComponent>();
 
-			if (i%3 == 0)
 			{
-				objChar->setScale(I4Vector3(0.006f, 0.006f, 0.006f));
-
-				view->attachModel(charName, "testmodel/cyberdemon", true, true, true);
-				view->attachAni("testmodel/cyberdemon.ani.xml", "idle");
-				view->playAnimation("idle");	
-
-				I4Matrix4x4 offset;
-				offset.makeTranslation(0, -0.85f, 0);
-				rigid->setOffset(offset);
-				rigid->attachCapsule(0.4f, 0.9f, 1, false);
-			}
-			else if (i%3 == 1)
-			{
-				objChar->setScale(I4Vector3(0.01f, 0.01f, 0.01f));
-
-				view->attachModel(charName, "testmodel/guard", true, true, true);
-				view->attachAni("testmodel/guard_idle.ani.xml", "idle");
-				view->playAnimation("idle");
-
-				I4Matrix4x4 offset;
-				offset.makeTranslation(0, -0.65f, 0);
-				rigid->setOffset(offset);
-				rigid->attachCapsule(0.3f, 0.7f, 1, false);
-			}
-			else
-			{
-				objChar->setScale(I4Vector3(0.03f, 0.03f, 0.03f));
+				objChar->setScale(I4Vector3(0.035f, 0.035f, 0.035f));
 
 				view->attachModel(charName, "testmodel/elin", true, true, false);
 				I4Matrix4x4 offset;
@@ -177,7 +150,6 @@ bool I4MiniGameFrameCallback::onStart()
 			}
 		}
 	}
-	*/
 	
 	return true;
 }
@@ -232,14 +204,14 @@ bool I4MiniGameFrameCallback::onUpdate()
 	I4MessageArgs updateArgs;
 	updateArgs.push_back(dt);
 	objectMgr->getMessenger().send(I4Hash("onUpdateLogic"), updateArgs);
-	/*
+	
 	static float degree = 0;
 	degree += 30*dt;
 	if (degree > 360.0f)
 	{
 		degree -= 360.0f;
 	}
-
+	
 	for (int i = 0; i < 10; ++i)
 	{
 		for (int j = 0; j < 10; ++j)
@@ -257,7 +229,7 @@ bool I4MiniGameFrameCallback::onUpdate()
 				-18.0f + j*4.0f + sign*2.5f*sin(I4MathUtil::degreeToRadian(degree))));
 		}
 	}
-	*/
+	
 	{
 		I4PROFILE_BLOCK("onLateUpdate");
 		I4MessageArgs readyToRenderArgs;

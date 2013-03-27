@@ -10,14 +10,14 @@ namespace i4graphics {
 	{
 		I4Material()
 		: ambient(0.58823f)
-		, specularGlossiness(1.0f)
+		, specularLevel(1.0f)
 		, specularPower(32.0f)
 		, twoSide(false)
 		{
 		}
 
 		float			ambient;
-		float			specularGlossiness;
+		float			specularLevel;
 		float	  		specularPower;
 		I4Hash			diffuseMap;
 		I4Hash			specularMap;

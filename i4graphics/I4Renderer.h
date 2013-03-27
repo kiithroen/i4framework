@@ -19,6 +19,7 @@ namespace i4graphics {
 		I4AABB				worldAABB;
 		unsigned int		shaderMask;
 		unsigned int		boneCount;
+		unsigned int		subMeshID;
 		I4TriangleMesh*		mesh;
 		I4Material*			material;
 		I4Matrix4x4*		skinTMs;

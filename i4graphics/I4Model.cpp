@@ -60,8 +60,12 @@ namespace i4graphics
 		unsigned int mtrlCount = mtrlResource->getMaterialCount();
 		for (unsigned int i = 0; i < mtrlCount; ++i)
 		{
-			I4Material* material = mtrlResource->getMaterial(i);
-			vecMesh[i]->setMaterial(material);
+			unsigned int subMeshCount = vecMesh[i]->getMesh()->subMeshes.size();
+			for (unsigned int j = 0; j < subMeshCount; ++j)
+			{
+				I4Material* material = mtrlResource->getMaterial(i, j);
+				vecMesh[i]->setMaterial(j, material);
+			}
 		} 
 
 		return true;

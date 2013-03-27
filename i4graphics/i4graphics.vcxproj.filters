@@ -111,6 +111,9 @@
     <ClInclude Include="I4LineBatch.h">
       <Filter>renderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\dependency\DirectXTex\WICTextureLoader.h">
+      <Filter>DirectXTex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
@@ -179,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="I4LineBatch.cpp">
       <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependency\DirectXTex\WICTextureLoader.cpp">
+      <Filter>DirectXTex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

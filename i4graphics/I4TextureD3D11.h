@@ -19,10 +19,11 @@ namespace i4graphics
 		void						unload();
 
 	private:
-		I4TextureD3D11(ID3D11Device* d3dDevice);
+		I4TextureD3D11(ID3D11Device* d3dDevice, ID3D11DeviceContext* _d3dContext);
 
 	private:
 		ID3D11Device*				d3dDevice;
+		ID3D11DeviceContext*		d3dContext;
 		ID3D11ShaderResourceView*	shaderResourceView;	
 	};
 

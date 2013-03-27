@@ -1,10 +1,17 @@
 //--------------------------------------------------------------------------------------
-// File: DDSTextureLoader.h
+// File: WICTextureLoader.h
 //
-// Function for loading a DDS texture and creating a Direct3D 11 runtime resource for it
+// Function for loading a WIC image and creating a Direct3D 11 runtime texture for it
+// (auto-generating mipmaps if possible)
 //
-// Note these functions are useful as a light-weight runtime loader for DDS files. For
-// a full-featured DDS file reader, writer, and texture processing pipeline see
+// Note: Assumes application has already called CoInitializeEx
+//
+// Warning: CreateWICTexture* functions are not thread-safe if given a d3dContext instance for
+//          auto-gen mipmap support.
+//
+// Note these functions are useful for images created as simple 2D textures. For
+// more complex resources, DDSTextureLoader is an excellent light-weight runtime loader.
+// For a full-featured DDS file reader, writer, and texture processing pipeline see
 // the 'Texconv' sample and the 'DirectXTex' library.
 //
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
@@ -20,6 +27,10 @@
 
 #ifdef _MSC_VER
 #pragma once
+#endif
+
+#if defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+#error WIC is not supported on Windows Phone
 #endif
 
 #include <d3d11.h>
@@ -41,34 +52,27 @@
 
 namespace DirectX
 {
-    enum DDS_ALPHA_MODE
-    {
-        DDS_ALPHA_MODE_STRAIGHT      = 0,
-        DDS_ALPHA_MODE_PREMULTIPLIED = 1,
-        DDS_ALPHA_MODE_4TH_CHANNEL   = 2,
-        DDS_ALPHA_MODE_OPAQUE        = 3,
-    };
-
-    HRESULT CreateDDSTextureFromMemory( _In_ ID3D11Device* d3dDevice,
-                                        _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-                                        _In_ size_t ddsDataSize,
+    HRESULT CreateWICTextureFromMemory( _In_ ID3D11Device* d3dDevice,
+                                        _In_opt_ ID3D11DeviceContext* d3dContext,
+                                        _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
+                                        _In_ size_t wicDataSize,
                                         _Out_opt_ ID3D11Resource** texture,
                                         _Out_opt_ ID3D11ShaderResourceView** textureView,
-                                        _In_ size_t maxsize = 0,
-                                        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
+                                        _In_ size_t maxsize = 0
                                       );
 
-    HRESULT CreateDDSTextureFromFile( _In_ ID3D11Device* d3dDevice,
+    HRESULT CreateWICTextureFromFile( _In_ ID3D11Device* d3dDevice,
+                                      _In_opt_ ID3D11DeviceContext* d3dContext,
                                       _In_z_ const wchar_t* szFileName,
                                       _Out_opt_ ID3D11Resource** texture,
                                       _Out_opt_ ID3D11ShaderResourceView** textureView,
-                                      _In_ size_t maxsize = 0,
-                                      _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
+                                      _In_ size_t maxsize = 0
                                     );
 
-    HRESULT CreateDDSTextureFromMemoryEx( _In_ ID3D11Device* d3dDevice,
-                                          _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-                                          _In_ size_t ddsDataSize,
+    HRESULT CreateWICTextureFromMemoryEx( _In_ ID3D11Device* d3dDevice,
+                                          _In_opt_ ID3D11DeviceContext* d3dContext,
+                                          _In_reads_bytes_(wicDataSize) const uint8_t* wicData,
+                                          _In_ size_t wicDataSize,
                                           _In_ size_t maxsize,
                                           _In_ D3D11_USAGE usage,
                                           _In_ unsigned int bindFlags,
@@ -76,11 +80,11 @@ namespace DirectX
                                           _In_ unsigned int miscFlags,
                                           _In_ bool forceSRGB,
                                           _Out_opt_ ID3D11Resource** texture,
-                                          _Out_opt_ ID3D11ShaderResourceView** textureView,
-                                          _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
+                                          _Out_opt_ ID3D11ShaderResourceView** textureView
                                       );
 
-    HRESULT CreateDDSTextureFromFileEx( _In_ ID3D11Device* d3dDevice,
+    HRESULT CreateWICTextureFromFileEx( _In_ ID3D11Device* d3dDevice,
+                                        _In_opt_ ID3D11DeviceContext* d3dContext,
                                         _In_z_ const wchar_t* szFileName,
                                         _In_ size_t maxsize,
                                         _In_ D3D11_USAGE usage,
@@ -89,7 +93,6 @@ namespace DirectX
                                         _In_ unsigned int miscFlags,
                                         _In_ bool forceSRGB,
                                         _Out_opt_ ID3D11Resource** texture,
-                                        _Out_opt_ ID3D11ShaderResourceView** textureView,
-                                        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
+                                        _Out_opt_ ID3D11ShaderResourceView** textureView
                                     );
 }

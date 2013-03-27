@@ -18,7 +18,7 @@ cbuffer	CBEachAllMesh_G_VS : register(b2)
 cbuffer	CBEachAllMesh_G_PS : register(b3)
 {
 	float ambient;
-	float specularGlossiness;
+	float specularLevel;
 	float specularPower;
 };
 
@@ -141,9 +141,9 @@ PS_OUTPUT PS( PS_INPUT	input	)
 	output.diffuse.a = ambient;
 
 #ifdef MASK_TEX_SPECULAR
-	output.specular.rgb = texSpecularMap.Sample(samLinear, input.uv).rgb*specularGlossiness;
+	output.specular.rgb = texSpecularMap.Sample(samLinear, input.uv).rgb*specularLevel;
 #else
-	output.specular.rgb = float3(specularGlossiness, specularGlossiness, specularGlossiness);
+	output.specular.rgb = float3(specularLevel, specularLevel, specularLevel);
 #endif
 	output.specular.a = 1;
 
