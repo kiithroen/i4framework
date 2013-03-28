@@ -45,7 +45,7 @@ namespace i4object {
 		objectMgr->destroyObject(this);
 	}
 	
-	void I4Object::setLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
+	void I4Object::setLookAtLH(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up)
 	{
 		position = eye;
 		

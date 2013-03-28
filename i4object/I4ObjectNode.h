@@ -51,7 +51,7 @@ namespace i4object {
 			return static_cast<T*>(itr->second);
 		}
 
-		void 					setLookAt(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up);
+		void 					setLookAtLH(const I4Vector3& eye, const I4Vector3& at, const I4Vector3& up);
 		void 					setRotationYawPitchRoll(float yaw, float pitch, float roll);
 		void 					setPosition(const I4Vector3& position);
 		void 					setScale(const I4Vector3& scale);

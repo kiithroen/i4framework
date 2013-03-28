@@ -43,7 +43,7 @@ bool I4MiniGameFrameCallback::onStart()
 	if (renderer->initialize(framework->getWindowID(), framework->getWidth(), framework->getHeight()) == false)
 		return false;
 
-	renderer->getMainCamera().setPerspectiveFov(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 100.0f);
+	renderer->getMainCamera().setPerspectiveFovLH(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 100.0f);
 
 	modelMgr = new I4ModelMgr;
 	physXMgr = new I4PhysXMgr;
@@ -55,7 +55,7 @@ bool I4MiniGameFrameCallback::onStart()
 		return false;
 
 	spectator =  objectMgr->createObject("spectator");
-	spectator->setLookAt(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	spectator->setLookAtLH(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
 
 	I4ObjectFlyControllerComponent* spectatorController = spectator->addComponent<I4ObjectFlyControllerComponent>();
 	spectatorController->activate(false);

@@ -276,8 +276,8 @@ namespace i4graphics
 	{
 		sunLight = *light;
 
-		directionalLightPerspectiveCamera.setLookAt(sunLight.direction*-100.0f, sunLight.direction, I4VECTOR3_AXISY);
-		directionalLightPerspectiveCamera.setPerspectiveFov(I4PI/4, 1.0f, 0.1f, 100.0f);
+		directionalLightPerspectiveCamera.setLookAtLH(sunLight.direction*-100.0f, sunLight.direction, I4VECTOR3_AXISY);
+		directionalLightPerspectiveCamera.setPerspectiveFovLH(I4PI/4, 1.0f, 0.1f, 100.0f);
 	}
 
 	void I4DeferredRenderer::commit(I4PointLight* light)
@@ -560,7 +560,7 @@ namespace i4graphics
 			{
 				farZ = shadowSplitZ[i];
 			}
-			tempSplitCamera.setPerspectiveFov(mainCamera.getFovY(), mainCamera.getAspect(), nearZ, farZ);
+			tempSplitCamera.setPerspectiveFovLH(mainCamera.getFovY(), mainCamera.getAspect(), nearZ, farZ);
 																											
 			I4Vector3 corners[8];
 			tempSplitCamera.extractCorners(corners);
@@ -582,7 +582,7 @@ namespace i4graphics
 			float maxy = aabbInLightSpace.maxEdge.y;
 			float minz = 0;
 			float maxz = aabbInLightSpace.maxEdge.z;
-			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(minx, maxx, miny, maxy, minz, maxz);
+			directionalLightSplitOrthoCamera[i].setOrthoOffCenterLH(minx, maxx, miny, maxy, minz, maxz);
 			
 			float finalMinX = FLT_MAX;
 			float finalMaxX = -FLT_MAX;
@@ -637,7 +637,7 @@ namespace i4graphics
 			maxy = min(maxy, finalMaxY);
 			minz = max(minz, finalMinZ);
 			maxz = min(maxz, finalMaxZ);
-			directionalLightSplitOrthoCamera[i].setOrthoOffCenter(minx, maxx, miny, maxy, minz, maxz);
+			directionalLightSplitOrthoCamera[i].setOrthoOffCenterLH(minx, maxx, miny, maxy, minz, maxz);
 			
 			cullAndSortMeshShadowRenderItem(directionalLightSplitOrthoCamera[i]);
 			renderMeshShadowRenderItem(directionalLightSplitOrthoCamera[i]);		

@@ -13,10 +13,10 @@ namespace i4core
 		I4Camera();
 		~I4Camera();
 		
-		void				setPerspectiveFov(float fovY, float aspect, float zn, float zf);
-		void				setOrthoOffCenter(float left, float right, float bottom, float top, float znearPlane, float zfarPlane);
+		void				setPerspectiveFovLH(float fovY, float aspect, float zn, float zf);
+		void				setOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane);
 
-		void				setLookAt(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up);
+		void				setLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up);
 		void				setViewMatrix(const I4Matrix4x4& view);
 
 		bool				isVisiblePoint(const I4Vector3& p) const			{ return frustum.isInPoint(p); }

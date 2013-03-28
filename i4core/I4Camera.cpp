@@ -11,7 +11,7 @@ namespace i4core
 	{
 	}
 
-	void I4Camera::setPerspectiveFov(float _fovY, float _aspect, float _zNear, float _zFar)
+	void I4Camera::setPerspectiveFovLH(float _fovY, float _aspect, float _zNear, float _zFar)
 	{
 		fovY = _fovY;
 		aspect = _aspect;
@@ -45,7 +45,7 @@ namespace i4core
 		frustum.make(viewProjectionMatrix);
 	}
 	
-	void I4Camera::setOrthoOffCenter(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
+	void I4Camera::setOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
 	{
 		zNear = znearPlane;
 		zFar = zfarPlane;
@@ -67,7 +67,7 @@ namespace i4core
 		frustum.make(viewProjectionMatrix);
 	}
 
-	void I4Camera::setLookAt(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
+	void I4Camera::setLookAtLH(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
 	{
 		viewMatrix.makeCameraLookAtLH(_eye, _lookAt, _up);
 

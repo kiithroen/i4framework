@@ -106,7 +106,6 @@ namespace i4object
 
 			I4Matrix4x4 matRotPos;
 			matRotPos.makeObjectLookAtLH(position, position + moveDirection, I4VECTOR3_AXISY);
-			//matRotPos.setPosition(position);
 
 			I4Quaternion qTarget;
 			qTarget.makeRotationMatrix(matRotPos);
