@@ -237,46 +237,15 @@ void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))
     thread->Run();
 }
 
-void I4ConverterFrame::BeginFbx(const wxString& srcFile)
+void I4ConverterFrame::ConvertFbx(const wxString& srcFile)
 {
-	wxCriticalSectionLocker lock(m_csFbxConverter);
 	wxString filePath;
 	wxString fileName;
 	wxString fileExt;
 	wxFileName::SplitPath(srcFile, &filePath, &fileName, &fileExt);
 		
 	wxFileName destFileName(savePath, fileName);
-	fbxConverter->Begin(srcFile.c_str(), destFileName.GetFullPath().c_str());
-}
-
-void I4ConverterFrame::WriteFbxMeshes()
-{
-	wxCriticalSectionLocker lock(m_csFbxConverter);
-	fbxConverter->WriteMeshes();
-}
-
-void I4ConverterFrame::WriteFbxMaterials()
-{
-	wxCriticalSectionLocker lock(m_csFbxConverter);
-	fbxConverter->WriteMaterials();
-}
-
-void I4ConverterFrame::WriteFbxBones()
-{
-	wxCriticalSectionLocker lock(m_csFbxConverter);
-	fbxConverter->WriteBones();
-}
-
-void I4ConverterFrame::WriteFbxAnimations()
-{
-	wxCriticalSectionLocker lock(m_csFbxConverter);
-	fbxConverter->WriteAnimations();
-}
-
-void I4ConverterFrame::EndFbx()
-{
-	wxCriticalSectionLocker lock(m_csFbxConverter);
-	fbxConverter->End();
+	fbxConverter->Convert(srcFile.c_str(), destFileName.GetFullPath().c_str());
 }
 
 void I4ConverterFrame::OnUpdateWorker(wxUpdateUIEvent& e)
@@ -286,6 +255,8 @@ void I4ConverterFrame::OnUpdateWorker(wxUpdateUIEvent& e)
 
 void I4ConverterFrame::OnWorkerEvent(wxThreadEvent& e)
 {
+	wxCriticalSectionLocker lock(m_csDlgProgress);
+
     int n = e.GetInt();
     if ( n == -1 )
     {
@@ -299,7 +270,7 @@ void I4ConverterFrame::OnWorkerEvent(wxThreadEvent& e)
     }
     else
     {
-        if ( !m_dlgProgress->Update(n) )
+        if ( m_dlgProgress != NULL && !m_dlgProgress->Update(n) )
         {
             wxCriticalSectionLocker lock(m_csCancelled);
 
@@ -333,47 +304,15 @@ wxThread::ExitCode MyWorkerThread::Entry()
 	totalStep = fileNames.size()*6;
 	curStep = 0;
 
-	for (unsigned int i = 0; i < fileNames.size(); ++i)
+	for (unsigned int i = 0; (!m_frame->Cancelled() && i < fileNames.size()); ++i)
     {
         // check if we were asked to exit
         if ( TestDestroy() )
             break;
 
-		m_frame->BeginFbx(fileNames[i]);
+		m_frame->ConvertFbx(fileNames[i]);
 		UpdateProgress();
-		if (m_frame->Cancelled())
-			break;
-
-		m_frame->WriteFbxMeshes();
-		UpdateProgress();
-		if (m_frame->Cancelled())
-			break;
-
-		m_frame->WriteFbxMaterials();
-		UpdateProgress();
-		if (m_frame->Cancelled())
-			break;
-
-		m_frame->WriteFbxBones();
-		UpdateProgress();
-		if (m_frame->Cancelled())
-			break;
-
-		m_frame->WriteFbxAnimations();
-		UpdateProgress();
-		if (m_frame->Cancelled())
-			break;
-
-		m_frame->EndFbx();
-		UpdateProgress();		
-		if (m_frame->Cancelled())
-			break;
     }
-
-	if (m_frame->Cancelled())
-	{
-		m_frame->EndFbx();
-	}
 
     wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
     event.SetInt(-1); // that's all

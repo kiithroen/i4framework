@@ -80,14 +80,16 @@ public:
 	void Initialize();
 	void Finalize();
 
-	void Begin(const char* srcFileName, const char* destName);
-	void WriteMeshes();
-	void WriteMaterials();
-	void WriteBones();
-	void WriteAnimations();
+	void Convert(const char* srcFileName, const char* destName);
+
+private:
+	void Begin(const char* srcFileName);
+	void WriteMeshes(const char* destName);
+	void WriteMaterials(const char* destName);
+	void WriteBones(const char* destName);
+	void WriteAnimations(const char* destName);
 	void End();
 
-private:	
 	bool IsZUpRightHanded()
 	{
 		return (SceneAxisSystem == FbxAxisSystem::eMax || SceneAxisSystem == FbxAxisSystem::eMayaZUp);
@@ -198,8 +200,6 @@ private:
 	FILE* fpMtrl;
 	FILE* fpBone;
 	FILE* fpAni;
-
-	string destBaseName;
 
 	map<string, int> mapBoneNameList;
 	map<string, FbxAMatrix> mapBoneBindPoseWorld;

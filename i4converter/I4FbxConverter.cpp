@@ -32,14 +32,24 @@ void I4FbxConverter::Finalize()
 	lSdkManager = nullptr;
 }
 
-void I4FbxConverter::Begin(const char* srcFileName, const char* destName)
+
+void I4FbxConverter::Convert(const char* srcFileName, const char* destName)
 {
-	destBaseName = destName;
 	isFlipNormalZ = false;
 	mapBoneNameList.clear();
 	mapBoneBindPoseWorld.clear();
 	mapBoneBindPoseLocal.clear();
 
+	Begin(srcFileName);
+	WriteMeshes(destName);
+	WriteMaterials(destName);
+	WriteBones(destName);
+	WriteAnimations(destName);
+	End();
+}
+
+void I4FbxConverter::Begin(const char* srcFileName)
+{
 	FbxImporter* lImporter = FbxImporter::Create(lSdkManager,"");
 	wxLogMessage(wxT("begin : %s"), srcFileName);
 	if(!lImporter->Initialize(srcFileName, -1, lSdkManager->GetIOSettings())) {
@@ -50,6 +60,7 @@ void I4FbxConverter::Begin(const char* srcFileName, const char* destName)
 
 	pScene = FbxScene::Create(lSdkManager,"myScene");
 
+	wxLogMessage(wxT("import"));
 	lImporter->Import(pScene);	
 	lImporter->Destroy();
 	
@@ -78,13 +89,13 @@ void I4FbxConverter::Begin(const char* srcFileName, const char* destName)
 	BuildBoneNameList(pScene->GetRootNode());
 }
 
-void I4FbxConverter::WriteMeshes()
+void I4FbxConverter::WriteMeshes(const char* destName)
 {
 	//-------------------------------------------------------------------------
 
 	wxLogMessage(wxT("write meshes"));
 	char meshFileName[256] = {0 };
-	sprintf(meshFileName, "%s.mesh.xml", destBaseName.c_str());
+	sprintf(meshFileName, "%s.mesh.xml", destName);
 	fpMesh = fopen(meshFileName, "w");
 	if (fpMesh != nullptr)
 	{
@@ -103,11 +114,11 @@ void I4FbxConverter::WriteMeshes()
 	}
 }
 
-void I4FbxConverter::WriteMaterials()
+void I4FbxConverter::WriteMaterials(const char* destName)
 {
 	wxLogMessage(wxT("write materials"));
 	char mtrlFileName[256] = {0 };
-	sprintf(mtrlFileName, "%s.mtrl.xml", destBaseName.c_str());
+	sprintf(mtrlFileName, "%s.mtrl.xml", destName);
 	fpMtrl = fopen(mtrlFileName, "w");
 	if (fpMtrl != nullptr)
 	{
@@ -126,11 +137,11 @@ void I4FbxConverter::WriteMaterials()
 	}
 }
 
-void I4FbxConverter::WriteBones()
+void I4FbxConverter::WriteBones(const char* destName)
 {
 	wxLogMessage(wxT("write bones"));
 	char boneFileName[256] = {0 };
-	sprintf(boneFileName, "%s.bone.xml", destBaseName.c_str());
+	sprintf(boneFileName, "%s.bone.xml", destName);
 	fpBone = fopen(boneFileName, "w");
 	if (fpBone != nullptr)
 	{
@@ -147,11 +158,11 @@ void I4FbxConverter::WriteBones()
 	}
 }
 
-void I4FbxConverter::WriteAnimations()
+void I4FbxConverter::WriteAnimations(const char* destName)
 {
 	wxLogMessage(wxT("write animations"));
 	char aniFileName[256] = {0 };
-	sprintf(aniFileName, "%s.ani.xml", destBaseName.c_str());
+	sprintf(aniFileName, "%s.ani.xml", destName);
 	fpAni = fopen(aniFileName, "w");
 	if (fpAni != nullptr)
 	{
