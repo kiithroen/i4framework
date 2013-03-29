@@ -132,6 +132,12 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
 	Connect(ID_CONVERT_BUTTON, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(I4ConverterFrame::OnBtnConvertClicked));
 	panel->SetSizer(vbox);
 
+	//------------- PROGRESS -----------------
+	m_dlgProgress = NULL;
+
+	Connect(WORKER_EVENT, wxEVT_THREAD, wxThreadEventHandler(I4ConverterFrame::OnWorkerEvent));
+
+	//------------- STATUS BAR -----------------
     CreateStatusBar();
     
 	//----------- CONVERTER ------------------
@@ -183,27 +189,207 @@ void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))
 	if (listCtrl->GetItemCount() <= 0)
 		return;
 
-	wxString savePath;
 	wxDirDialog dlg(this);
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 
 	savePath = dlg.GetPath();
 
-	wxListItem info;
-    info.m_itemId = 0;
-    info.m_col = 0;
-    info.m_mask = wxLIST_MASK_TEXT;
-    if (listCtrl->GetItem(info))
-	{
-		wxString originFile = info.m_text;
 
-		wxString filePath;
-		wxString fileName;
-		wxString fileExt;
-		wxFileName::SplitPath(info.m_text, &filePath, &fileName, &fileExt);
-		
-		wxFileName destFileName(savePath, fileName);
-		fbxConverter->Convert(originFile.c_str(), destFileName.GetFullPath().c_str());
+	wxArrayString fileNames;
+
+	for (int i = 0; i < listCtrl->GetItemCount(); ++i)
+	{		
+		wxListItem info;
+		info.m_itemId = i;
+		info.m_col = 0;
+		info.m_mask = wxLIST_MASK_TEXT;
+		if (listCtrl->GetItem(info))
+		{
+			fileNames.push_back(info.m_text);		
+		}
 	}
+
+	MyWorkerThread *thread = new MyWorkerThread(this, fileNames);
+
+    if ( thread->Create() != wxTHREAD_NO_ERROR )
+    {
+        wxLogError(wxT("Can't create thread!"));
+        return;
+    }
+
+    m_dlgProgress = new wxProgressDialog
+                        (
+                         wxT("Progress dialog"),
+                         wxT("Wait until the thread terminates or press [Cancel]"),
+                         100,
+                         this,
+                         wxPD_CAN_ABORT |
+                         wxPD_APP_MODAL |
+                         wxPD_ELAPSED_TIME |
+                         wxPD_ESTIMATED_TIME |
+                         wxPD_REMAINING_TIME
+                        );
+
+    // thread is not running yet, no need for crit sect
+    m_cancelled = false;
+
+    thread->Run();
+}
+
+void I4ConverterFrame::BeginFbx(const wxString& srcFile)
+{
+	wxCriticalSectionLocker lock(m_csFbxConverter);
+	wxString filePath;
+	wxString fileName;
+	wxString fileExt;
+	wxFileName::SplitPath(srcFile, &filePath, &fileName, &fileExt);
+		
+	wxFileName destFileName(savePath, fileName);
+	fbxConverter->Begin(srcFile.c_str(), destFileName.GetFullPath().c_str());
+}
+
+void I4ConverterFrame::WriteFbxMeshes()
+{
+	wxCriticalSectionLocker lock(m_csFbxConverter);
+	fbxConverter->WriteMeshes();
+}
+
+void I4ConverterFrame::WriteFbxMaterials()
+{
+	wxCriticalSectionLocker lock(m_csFbxConverter);
+	fbxConverter->WriteMaterials();
+}
+
+void I4ConverterFrame::WriteFbxBones()
+{
+	wxCriticalSectionLocker lock(m_csFbxConverter);
+	fbxConverter->WriteBones();
+}
+
+void I4ConverterFrame::WriteFbxAnimations()
+{
+	wxCriticalSectionLocker lock(m_csFbxConverter);
+	fbxConverter->WriteAnimations();
+}
+
+void I4ConverterFrame::EndFbx()
+{
+	wxCriticalSectionLocker lock(m_csFbxConverter);
+	fbxConverter->End();
+}
+
+void I4ConverterFrame::OnUpdateWorker(wxUpdateUIEvent& e)
+{
+    e.Enable( m_dlgProgress == NULL );
+}
+
+void I4ConverterFrame::OnWorkerEvent(wxThreadEvent& e)
+{
+    int n = e.GetInt();
+    if ( n == -1 )
+    {
+        m_dlgProgress->Destroy();
+        m_dlgProgress = (wxProgressDialog *)NULL;
+
+        // the dialog is aborted because the event came from another thread, so
+        // we may need to wake up the main event loop for the dialog to be
+        // really closed
+        wxWakeUpIdle();
+    }
+    else
+    {
+        if ( !m_dlgProgress->Update(n) )
+        {
+            wxCriticalSectionLocker lock(m_csCancelled);
+
+            m_cancelled = true;
+        }
+    }
+}
+
+bool I4ConverterFrame::Cancelled()
+{
+    wxCriticalSectionLocker lock(m_csCancelled);
+
+    return m_cancelled;
+}
+
+MyWorkerThread::MyWorkerThread(I4ConverterFrame *frame, const wxArrayString& _fileNames)
+        : wxThread()
+		, m_frame(frame)
+		, fileNames(_fileNames)
+		, totalStep(0)
+		, curStep(0)
+{
+}
+
+void MyWorkerThread::OnExit()
+{
+}
+
+wxThread::ExitCode MyWorkerThread::Entry()
+{
+	totalStep = fileNames.size()*6;
+	curStep = 0;
+
+	for (unsigned int i = 0; i < fileNames.size(); ++i)
+    {
+        // check if we were asked to exit
+        if ( TestDestroy() )
+            break;
+
+		m_frame->BeginFbx(fileNames[i]);
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxMeshes();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxMaterials();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxBones();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxAnimations();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->EndFbx();
+		UpdateProgress();		
+		if (m_frame->Cancelled())
+			break;
+    }
+
+	if (m_frame->Cancelled())
+	{
+		m_frame->EndFbx();
+	}
+
+    wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
+    event.SetInt(-1); // that's all
+    wxQueueEvent( m_frame, event.Clone() );
+
+    return NULL;
+}
+
+void MyWorkerThread::UpdateProgress()
+{
+	++curStep;
+    wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
+	
+	int percent = (int)((float)curStep/(float)totalStep*100.0f);
+    event.SetInt(percent);
+	
+	// send in a thread-safe way
+    wxQueueEvent( m_frame, event.Clone() );
 }

@@ -80,18 +80,14 @@ public:
 	void Initialize();
 	void Finalize();
 
-	void Convert(const char* srcFileName, const char* destName);
+	void Begin(const char* srcFileName, const char* destName);
+	void WriteMeshes();
+	void WriteMaterials();
+	void WriteBones();
+	void WriteAnimations();
+	void End();
 
-	void splitVertexDifferentTextureUV(MeshData& out);
-	void WriteMesh(FbxMesh* pMesh, FILE* fpMesh);
-	void WriteNodeTransform(FbxNode* pNode, FILE* fp);
-	void WriteNodeStart(FbxNode* pNode, const char* nodeName, const char* nodeParentName, FILE* fp);
-	void WriteNodeEnd(FILE* fp);
-	void WriteNode(FbxNode* pNode, ExportType exportType);
-	void TriangulateRecursive(FbxNode* pNode);
-	void BuildBoneNameList(FbxNode* pNode);
-	
-	
+private:	
 	bool IsZUpRightHanded()
 	{
 		return (SceneAxisSystem == FbxAxisSystem::eMax || SceneAxisSystem == FbxAxisSystem::eMayaZUp);
@@ -109,7 +105,7 @@ public:
 
 	float ConvertToGrayscale(const FbxDouble3& col)
 	{
-		return col.mData[0]*0.3f + col.mData[1]*0.59f + col.mData[2]*0.11f;
+		return (float)(col.mData[0]*0.3f + col.mData[1]*0.59f + col.mData[2]*0.11f);
 	}
 
 	TextureUV FbxUVToI4(const TextureUV& v)
@@ -178,7 +174,15 @@ public:
 	{
 		return pNode->EvaluateGlobalTransform()*GetGeometricTransform(pNode);
 	}
-
+		
+	void splitVertexDifferentTextureUV(MeshData& out);
+	void WriteMesh(FbxMesh* pMesh, FILE* fpMesh);
+	void WriteNodeTransform(FbxNode* pNode, FILE* fp);
+	void WriteNodeStart(FbxNode* pNode, const char* nodeName, const char* nodeParentName, FILE* fp);
+	void WriteNodeEnd(FILE* fp);
+	void WriteNode(FbxNode* pNode, ExportType exportType);
+	void TriangulateRecursive(FbxNode* pNode);
+	void BuildBoneNameList(FbxNode* pNode);
 
 private:
 	FbxManager* lSdkManager;
@@ -195,6 +199,7 @@ private:
 	FILE* fpBone;
 	FILE* fpAni;
 
+	string destBaseName;
 
 	map<string, int> mapBoneNameList;
 	map<string, FbxAMatrix> mapBoneBindPoseWorld;

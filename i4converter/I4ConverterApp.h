@@ -7,6 +7,7 @@
 #include <wx/dnd.h>
 #include <wx/dir.h>
 #include <wx/button.h>
+#include <wx/progdlg.h>
 
 class I4FbxConverter;
 
@@ -32,6 +33,11 @@ enum
 	ID_CONVERT_BUTTON,
 };
 
+enum
+{
+	WORKER_EVENT = wxID_HIGHEST+1,
+};
+
 class I4ConverterFrame : public wxFrame
 {
 public:
@@ -44,10 +50,53 @@ public:
 	void OnSelected(wxListEvent& e);
 
 	void OnBtnConvertClicked(wxCommandEvent& e);
+	void OnUpdateWorker(wxUpdateUIEvent& e);
+	void OnWorkerEvent(wxThreadEvent& e);
+	bool Cancelled();
+
+	void BeginFbx(const wxString& srcFile);
+	void WriteFbxMeshes();
+	void WriteFbxMaterials();
+	void WriteFbxBones();
+	void WriteFbxAnimations();
+	void EndFbx();
+
 private:
 	wxListCtrl*				listCtrl;
 	wxPropertyGrid*			propGrid;
 	wxTextCtrl*				logWindow;
 	wxLog*					logOld;
 	I4FbxConverter*			fbxConverter;
+	wxCriticalSection		m_csFbxConverter;        // protects m_cancelled.
+
+	// the progress dialog which we show while worker thread is running
+    wxProgressDialog *m_dlgProgress;
+
+    // was the worker thread cancelled by user?
+    bool m_cancelled;
+    wxCriticalSection m_csCancelled;        // protects m_cancelled
+
+	wxString savePath;
+};
+
+class MyWorkerThread : public wxThread
+{
+public:
+    MyWorkerThread(I4ConverterFrame *frame, const wxArrayString& fileNames);
+
+    // thread execution starts here
+    virtual void *Entry();
+
+    // called when the thread exits - whether it terminates normally or is
+    // stopped with Delete() (but not when it is Kill()ed!)
+    virtual void OnExit();
+
+private:
+	void UpdateProgress();
+
+public:
+    I4ConverterFrame*	m_frame;
+	wxArrayString		fileNames;
+	int					totalStep;
+	int					curStep;
 };
