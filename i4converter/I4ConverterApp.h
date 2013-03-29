@@ -54,7 +54,12 @@ public:
 	void OnWorkerEvent(wxThreadEvent& e);
 	bool Cancelled();
 
-	void ConvertFbx(const wxString& srcFile);
+	void BeginFbx(const wxString& srcFile);
+	void WriteFbxMeshes();
+	void WriteFbxMaterials();
+	void WriteFbxBones();
+	void WriteFbxAnimations();
+	void EndFbx();
 
 private:
 	wxListCtrl*				listCtrl;
@@ -62,7 +67,6 @@ private:
 	wxTextCtrl*				logWindow;
 	wxLog*					logOld;
 	I4FbxConverter*			fbxConverter;
-	wxCriticalSection		m_csFbxConverter;
 
 	// the progress dialog which we show while worker thread is running
     wxProgressDialog *m_dlgProgress;
@@ -71,7 +75,6 @@ private:
     bool m_cancelled;
     wxCriticalSection m_csCancelled;        // protects m_cancelled
 
-	wxCriticalSection		m_csDlgProgress;
 	wxString savePath;
 };
 

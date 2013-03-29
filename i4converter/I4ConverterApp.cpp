@@ -222,7 +222,7 @@ void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))
                         (
                          wxT("Progress dialog"),
                          wxT("Wait until the thread terminates or press [Cancel]"),
-                         100,
+						 fileNames.size()*6 + 1,
                          this,
                          wxPD_CAN_ABORT |
                          wxPD_APP_MODAL |
@@ -237,7 +237,7 @@ void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))
     thread->Run();
 }
 
-void I4ConverterFrame::ConvertFbx(const wxString& srcFile)
+void I4ConverterFrame::BeginFbx(const wxString& srcFile)
 {
 	wxString filePath;
 	wxString fileName;
@@ -245,7 +245,32 @@ void I4ConverterFrame::ConvertFbx(const wxString& srcFile)
 	wxFileName::SplitPath(srcFile, &filePath, &fileName, &fileExt);
 		
 	wxFileName destFileName(savePath, fileName);
-	fbxConverter->Convert(srcFile.c_str(), destFileName.GetFullPath().c_str());
+	fbxConverter->Begin(srcFile.c_str(), destFileName.GetFullPath().c_str());
+}
+
+void I4ConverterFrame::WriteFbxMeshes()
+{
+	fbxConverter->WriteMeshes();
+}
+
+void I4ConverterFrame::WriteFbxMaterials()
+{
+	fbxConverter->WriteMaterials();
+}
+
+void I4ConverterFrame::WriteFbxBones()
+{
+	fbxConverter->WriteBones();
+}
+
+void I4ConverterFrame::WriteFbxAnimations()
+{
+	fbxConverter->WriteAnimations();
+}
+
+void I4ConverterFrame::EndFbx()
+{
+	fbxConverter->End();
 }
 
 void I4ConverterFrame::OnUpdateWorker(wxUpdateUIEvent& e)
@@ -255,8 +280,6 @@ void I4ConverterFrame::OnUpdateWorker(wxUpdateUIEvent& e)
 
 void I4ConverterFrame::OnWorkerEvent(wxThreadEvent& e)
 {
-	wxCriticalSectionLocker lock(m_csDlgProgress);
-
     int n = e.GetInt();
     if ( n == -1 )
     {
@@ -304,15 +327,47 @@ wxThread::ExitCode MyWorkerThread::Entry()
 	totalStep = fileNames.size()*6;
 	curStep = 0;
 
-	for (unsigned int i = 0; (!m_frame->Cancelled() && i < fileNames.size()); ++i)
+	for (unsigned int i = 0; i < fileNames.size(); ++i)
     {
         // check if we were asked to exit
         if ( TestDestroy() )
             break;
 
-		m_frame->ConvertFbx(fileNames[i]);
+		m_frame->BeginFbx(fileNames[i]);
 		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxMeshes();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxMaterials();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxBones();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->WriteFbxAnimations();
+		UpdateProgress();
+		if (m_frame->Cancelled())
+			break;
+
+		m_frame->EndFbx();
+		UpdateProgress();		
+		if (m_frame->Cancelled())
+			break;
     }
+
+	if (m_frame->Cancelled())
+	{
+		m_frame->EndFbx();
+	}
 
     wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
     event.SetInt(-1); // that's all
@@ -326,8 +381,7 @@ void MyWorkerThread::UpdateProgress()
 	++curStep;
     wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
 	
-	int percent = (int)((float)curStep/(float)totalStep*100.0f);
-    event.SetInt(percent);
+    event.SetInt(curStep);
 	
 	// send in a thread-safe way
     wxQueueEvent( m_frame, event.Clone() );
