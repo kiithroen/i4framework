@@ -36,7 +36,13 @@ bool DnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
 
 		for ( size_t n = 0; n < files.size(); n++ )
 		{
-			listCtrl->InsertItem(listCtrl->GetItemCount(), files[n]);
+			wxString ext;
+			wxFileName::SplitPath(files[n], nullptr, nullptr, &ext);
+			ext.LowerCase();
+			if (ext == "fbx" && listCtrl->FindItem(-1, files[n]) == -1)
+			{
+				listCtrl->InsertItem(listCtrl->GetItemCount(), files[n]);
+			}
 		}
     }
 
