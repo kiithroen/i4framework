@@ -656,7 +656,10 @@ namespace i4graphics
 		{
 			if (itr.shadowCaster == true && camera.isVisibleAABB(itr.worldAABB) == true)
 			{
-				vecCulledMeshRenderItem.push_back(itr);
+				if (itr.subMeshID == 0)	// 그림자는 재질이 필요없으니 서브메쉬별로 구분할필요없고 한방에 그리면 된다.
+				{
+					vecCulledMeshRenderItem.push_back(itr);
+				}
 			}
 		}
 
@@ -746,7 +749,7 @@ namespace i4graphics
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
 			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
 			
-			itr.mesh->drawSub(itr.subMeshID);
+			itr.mesh->drawAll();
 
 			prevItem = &itr;
 		}

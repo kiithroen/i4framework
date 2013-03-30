@@ -29,7 +29,7 @@ namespace i4graphics
 		vertexBuffer->unbind();
 	}
 
-	void I4TriangleMesh::draw()
+	void I4TriangleMesh::drawAll()
 	{
 		indexBuffer->draw(I4PT_TRIANGLELIST);
 	}

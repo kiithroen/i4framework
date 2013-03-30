@@ -25,7 +25,7 @@ namespace i4graphics
 		void			bind();
 		void			unbind();
 
-		void 			draw();
+		void 			drawAll();
 		void			drawSub(unsigned int i);
 
 		//-------------------------------
