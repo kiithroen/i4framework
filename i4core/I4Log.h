@@ -49,7 +49,7 @@ namespace i4core
 	private:
 		static int				reportFlag;
 		static Level			reportLevel;
-		static ofstream	ofs;
+		static wofstream		ofs;
 	};
 
 #define I4LOG(level, file, func, line) \

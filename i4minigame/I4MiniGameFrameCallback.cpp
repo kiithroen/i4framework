@@ -44,6 +44,7 @@ bool I4MiniGameFrameCallback::onStart()
 		return false;
 
 	renderer->getMainCamera().setPerspectiveFovLH(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 100.0f);
+	renderer->getMainCamera().setLookAtLH(I4Vector3(0, 0, 0), I4Vector3(0, 1, 0), I4Vector3(0, 0, 1));
 
 	modelMgr = new I4ModelMgr;
 	physXMgr = new I4PhysXMgr;

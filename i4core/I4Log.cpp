@@ -6,7 +6,7 @@ namespace i4core
 
 	int I4Log::reportFlag = I4Log::FLAG_CONSOLE|I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE;
 	I4Log::Level I4Log::reportLevel = I4Log::LEVEL_DEBUG;
-	ofstream I4Log::ofs;
+	wofstream I4Log::ofs;
 
 	I4Log::I4Log(void)
 	{
