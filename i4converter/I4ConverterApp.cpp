@@ -110,6 +110,7 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
     listCtrl->InsertColumn(0, itemCol);
 
 	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(I4ConverterFrame::OnSelected));
+	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler(I4ConverterFrame::OnChar));
 
 	hbox->Add(listCtrl, 1, wxEXPAND|wxALL, 5);
 
@@ -188,6 +189,22 @@ void I4ConverterFrame::OnSelected(wxListEvent& e)
     {
         wxFAIL_MSG(wxT("wxListCtrl::GetItem() failed"));
     }
+}
+
+void I4ConverterFrame::OnChar(wxListEvent& e)
+{
+	if (e.GetKeyCode() == WXK_DELETE)
+	{
+		int item = listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        while ( item != -1 )
+        {
+            listCtrl->DeleteItem(item);
+
+            // -1 because the indices were shifted by DeleteItem()
+            item = listCtrl->GetNextItem(item - 1,
+                                wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+        }
+	}
 }
 
 void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))

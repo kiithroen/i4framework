@@ -48,6 +48,7 @@ public:
 	void OnAbout(wxCommandEvent& e);
 
 	void OnSelected(wxListEvent& e);
+	void OnChar(wxListEvent& e);
 
 	void OnBtnConvertClicked(wxCommandEvent& e);
 	void OnUpdateWorker(wxUpdateUIEvent& e);
