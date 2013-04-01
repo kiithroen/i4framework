@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "I4ConverterApp.h"
 #include "I4FbxConverter.h"
-
-class DnDFile : public wxFileDropTarget
+class I4DnDFileToListCtrl : public wxFileDropTarget
 {
 public:
-	DnDFile(wxListCtrl *pOwner) { listCtrl = pOwner; }
+	I4DnDFileToListCtrl(wxListCtrl *pOwner) { listCtrl = pOwner; }
 
     virtual bool OnDropFiles(wxCoord x, wxCoord y,
                              const wxArrayString& filenames);
@@ -14,35 +13,51 @@ private:
 	wxListCtrl*		listCtrl;
 };
 
-bool DnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
+bool I4DnDFileToListCtrl::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
 {
     size_t nFiles = filenames.GetCount();
 
     if (listCtrl != NULL)
     {
-		wxArrayString files;
+		vector<I4ExportInfo*> vecExportInfo;
 
         for ( size_t n = 0; n < nFiles; n++ )
 		{
 			if (wxFileExists(filenames[n]))
 			{
-				files.push_back(filenames[n]);
+				vecExportInfo.push_back(new I4ExportInfo(filenames[n]));
 			}
             else if (wxDirExists(filenames[n]))
 			{
+				wxArrayString files;
                 wxDir::GetAllFiles(filenames[n], &files);
+				
+				for (unsigned int i = 0; i < files.GetCount(); ++i)
+				{
+					vecExportInfo.push_back(new I4ExportInfo(files[i]));
+				}
 			}
 		}
 
-		for ( size_t n = 0; n < files.size(); n++ )
+		for ( size_t n = 0; n < vecExportInfo.size(); n++ )
 		{
 			wxString ext;
-			wxFileName::SplitPath(files[n], nullptr, nullptr, &ext);
+			wxFileName::SplitPath(vecExportInfo[n]->fileName, nullptr, nullptr, &ext);
 			ext.LowerCase();
-			if (ext == "fbx" && listCtrl->FindItem(-1, files[n]) == -1)
+			if (ext == "fbx" && listCtrl->FindItem(-1, vecExportInfo[n]->fileName) == -1)
 			{
-				listCtrl->InsertItem(listCtrl->GetItemCount(), files[n]);
+				int id = listCtrl->InsertItem(listCtrl->GetItemCount(), vecExportInfo[n]->fileName);
+				listCtrl->SetItemPtrData(id, (wxUIntPtr)vecExportInfo[n]);
 			}
+			else
+			{
+				delete vecExportInfo[n];
+			}
+		}
+
+		if (listCtrl->GetItemCount() == 1)
+		{
+			listCtrl->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 		}
     }
 
@@ -101,7 +116,7 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
                                     wxDefaultPosition, wxSize(400, 400),
                                     wxLC_REPORT | wxBORDER_THEME);
 
-	listCtrl->SetDropTarget(new DnDFile(listCtrl));
+	listCtrl->SetDropTarget(new I4DnDFileToListCtrl(listCtrl));
 
 	wxListItem itemCol;
     itemCol.SetText(wxT("FileName"));
@@ -109,8 +124,10 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
 	itemCol.SetWidth(400);
     listCtrl->InsertColumn(0, itemCol);
 
-	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(I4ConverterFrame::OnSelected));
-	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler(I4ConverterFrame::OnChar));
+	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(I4ConverterFrame::OnListSelected));
+	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_INSERT_ITEM, wxListEventHandler(I4ConverterFrame::OnListInsert));
+	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_DELETE_ITEM, wxListEventHandler(I4ConverterFrame::OnListDelete));
+	Connect(ID_LIST_CTRL, wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler(I4ConverterFrame::OnListKey));
 
 	hbox->Add(listCtrl, 1, wxEXPAND|wxALL, 5);
 
@@ -118,6 +135,8 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
 	propGrid = new wxPropertyGrid(topPanel, ID_PROPERTY_GRID,wxDefaultPosition, wxSize(400, 400),
                         wxPG_SPLITTER_AUTO_CENTER |
                         wxPG_BOLD_MODIFIED );
+
+	Connect(ID_PROPERTY_GRID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(I4ConverterFrame::OnPropertyChanged));
 
 	hbox->Add(propGrid, 1, wxEXPAND|wxALL, 5);
 	
@@ -133,7 +152,9 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
 	vbox->Add(logWindow, 0, wxEXPAND|wxALL, 10);
 
 	//------------- BUTTON -----------------
-	wxButton* btnConvert = new wxButton(panel, ID_CONVERT_BUTTON, wxT("Convert!"), wxDefaultPosition, wxSize(400, 50));
+	btnConvert = new wxButton(panel, ID_CONVERT_BUTTON, wxT("Convert!"), wxDefaultPosition, wxSize(400, 50));
+	btnConvert->Disable();
+
 	vbox->Add(btnConvert, 0, wxEXPAND|wxALL, 10);
 
 	Connect(ID_CONVERT_BUTTON, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(I4ConverterFrame::OnBtnConvertClicked));
@@ -151,11 +172,20 @@ I4ConverterFrame::I4ConverterFrame(const wxString& title, const wxPoint& pos, co
 	fbxConverter = new I4FbxConverter;
 	fbxConverter->Initialize();
 
-    SetStatusText( _("Ready!") );
+    SetStatusText( _("Ready! Drag and Drop Files or Directory.") );
 }
 
 I4ConverterFrame::~I4ConverterFrame()
 {
+	for (int i = 0; i < listCtrl->GetItemCount(); ++i)
+    {
+		I4ExportInfo* info = (I4ExportInfo*)listCtrl->GetItemData(i);
+		if (info)
+		{
+			delete info;
+		}
+    }
+
 	delete wxLog::SetActiveTarget(logOld);
 
 	fbxConverter->Finalize();
@@ -174,30 +204,50 @@ void I4ConverterFrame::OnAbout(wxCommandEvent& WXUNUSED(e))
                   wxOK|wxICON_INFORMATION, this );
 }
 
-void I4ConverterFrame::OnSelected(wxListEvent& e)
+void I4ConverterFrame::OnListSelected(wxListEvent& e)
 {
-	wxListItem info;
-    info.m_itemId = e.m_itemIndex;
-    info.m_col = 0;
-    info.m_mask = wxLIST_MASK_TEXT;
-    if ( listCtrl->GetItem(info) )
-    {
-        wxLogMessage(wxT("Value of the 2nd field of the selected item: %s"),
-                        info.m_text.c_str());
-    }
-    else
-    {
-        wxFAIL_MSG(wxT("wxListCtrl::GetItem() failed"));
-    }
+	I4ExportInfo* info = (I4ExportInfo*)listCtrl->GetItemData(e.m_itemIndex);
+	if (info)
+	{
+		propGrid->Clear();
+		wxBitmap bmp = wxArtProvider::GetBitmap(wxART_REPORT_VIEW);
+		wxPGProperty* pid = propGrid->Append( new wxPropertyCategory( wxT("wxWidgets Library Configuration") ) );
+
+		propGrid->Append(new wxBoolProperty("Mesh", wxPG_LABEL,info->isMesh));
+		propGrid->Append(new wxBoolProperty("Material", wxPG_LABEL, info->isMaterial));
+		propGrid->Append(new wxBoolProperty("Bone", wxPG_LABEL, info->isBone));
+		propGrid->Append(new wxBoolProperty("Animation", wxPG_LABEL,info->isAnimation));
+		propGrid->SetPropertyAttribute(pid,wxPG_BOOL_USE_CHECKBOX,true,wxPG_RECURSE);
+	}
 }
 
-void I4ConverterFrame::OnChar(wxListEvent& e)
+void I4ConverterFrame::OnListInsert(wxListEvent& e)
+{
+	btnConvert->Enable();
+}
+
+void I4ConverterFrame::OnListDelete(wxListEvent& e)
+{
+	if (listCtrl->GetItemCount() == 1)
+	{
+		propGrid->Clear();
+		btnConvert->Disable();
+	}
+}
+
+
+void I4ConverterFrame::OnListKey(wxListEvent& e)
 {
 	if (e.GetKeyCode() == WXK_DELETE)
 	{
 		int item = listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
         while ( item != -1 )
         {
+			I4ExportInfo* info = (I4ExportInfo*)listCtrl->GetItemData(item);
+			if (info)
+			{
+				delete info;
+			}
             listCtrl->DeleteItem(item);
 
             // -1 because the indices were shifted by DeleteItem()
@@ -207,10 +257,49 @@ void I4ConverterFrame::OnChar(wxListEvent& e)
 	}
 }
 
+void I4ConverterFrame::OnPropertyChanged(wxPropertyGridEvent& e)
+{
+	 wxPGProperty *property = e.GetProperty();
+    if ( !property )
+        return;
+
+	int item = listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    while ( item != -1 )
+    {
+		I4ExportInfo* info = (I4ExportInfo*)listCtrl->GetItemData(item);
+		if (info)
+		{
+			wxVariant value = property->GetValue();
+			const wxString& name = property->GetName();
+			if (name == "Mesh")
+			{
+				info->isMesh = value.GetBool();
+			}
+			else if (name == "Material")
+			{
+				info->isMaterial = value.GetBool();
+			}
+			else if (name == "Bone")
+			{
+				info->isBone = value.GetBool();
+			}
+			else if (name == "Animation")
+			{
+				info->isAnimation = value.GetBool();
+			}
+		}
+
+        item = listCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    }
+}
+
 void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))
 {
 	if (listCtrl->GetItemCount() <= 0)
+	{
+		wxMessageBox("No item");
 		return;
+	}
 
 	wxDirDialog dlg(this);
 	if (dlg.ShowModal() != wxID_OK)
@@ -219,33 +308,31 @@ void I4ConverterFrame::OnBtnConvertClicked(wxCommandEvent& WXUNUSED(e))
 	savePath = dlg.GetPath();
 
 
-	wxArrayString fileNames;
+	vector<I4ExportInfo*> vecExportInfo;
 
 	for (int i = 0; i < listCtrl->GetItemCount(); ++i)
-	{		
-		wxListItem info;
-		info.m_itemId = i;
-		info.m_col = 0;
-		info.m_mask = wxLIST_MASK_TEXT;
-		if (listCtrl->GetItem(info))
+	{
+		I4ExportInfo* info = (I4ExportInfo*)listCtrl->GetItemData(i);
+		if (info)
 		{
-			fileNames.push_back(info.m_text);		
+			vecExportInfo.push_back(info);		
 		}
 	}
 
-	MyWorkerThread *thread = new MyWorkerThread(this, fileNames);
-
+	I4ExportWorkerThread *thread = new I4ExportWorkerThread(this);
     if ( thread->Create() != wxTHREAD_NO_ERROR )
     {
         wxLogError(wxT("Can't create thread!"));
         return;
     }
 
+	thread->setExportInfo(vecExportInfo);
+
     m_dlgProgress = new wxProgressDialog
                         (
                          wxT("Progress dialog"),
                          wxT("Wait until the thread terminates or press [Cancel]"),
-						 fileNames.size()*6 + 1,
+						 vecExportInfo.size()*6 + 1,
                          this,
                          wxPD_CAN_ABORT |
                          wxPD_APP_MODAL |
@@ -332,74 +419,86 @@ bool I4ConverterFrame::Cancelled()
     return m_cancelled;
 }
 
-MyWorkerThread::MyWorkerThread(I4ConverterFrame *frame, const wxArrayString& _fileNames)
+I4ExportWorkerThread::I4ExportWorkerThread(I4ConverterFrame *frame)
         : wxThread()
-		, m_frame(frame)
-		, fileNames(_fileNames)
+		, frame(frame)
 		, totalStep(0)
 		, curStep(0)
 {
 }
 
-void MyWorkerThread::OnExit()
+void I4ExportWorkerThread::OnExit()
 {
 }
 
-wxThread::ExitCode MyWorkerThread::Entry()
+wxThread::ExitCode I4ExportWorkerThread::Entry()
 {
-	totalStep = fileNames.size()*6;
+	totalStep = vecExportInfo.size()*6;
 	curStep = 0;
 
-	for (unsigned int i = 0; i < fileNames.size(); ++i)
+	for (unsigned int i = 0; i < vecExportInfo.size(); ++i)
     {
         // check if we were asked to exit
         if ( TestDestroy() )
             break;
 
-		m_frame->BeginFbx(fileNames[i]);
+		I4ExportInfo* info = vecExportInfo[i];
+		frame->BeginFbx(info->fileName);
 		UpdateProgress();
-		if (m_frame->Cancelled())
+		if (frame->Cancelled())
 			break;
 
-		m_frame->WriteFbxMeshes();
+		if (info->isMesh)
+		{
+			frame->WriteFbxMeshes();
+		}
 		UpdateProgress();
-		if (m_frame->Cancelled())
+		if (frame->Cancelled())
 			break;
 
-		m_frame->WriteFbxMaterials();
+		if (info->isMaterial)
+		{
+			frame->WriteFbxMaterials();
+		}
 		UpdateProgress();
-		if (m_frame->Cancelled())
+		if (frame->Cancelled())
 			break;
 
-		m_frame->WriteFbxBones();
+		if (info->isBone)
+		{
+			frame->WriteFbxBones();
+		}
 		UpdateProgress();
-		if (m_frame->Cancelled())
+		if (frame->Cancelled())
 			break;
 
-		m_frame->WriteFbxAnimations();
+		if (info->isAnimation)
+		{
+			frame->WriteFbxAnimations();
+		}
 		UpdateProgress();
-		if (m_frame->Cancelled())
+		if (frame->Cancelled())
 			break;
 
-		m_frame->EndFbx();
+		frame->EndFbx();
 		UpdateProgress();		
-		if (m_frame->Cancelled())
+		if (frame->Cancelled())
 			break;
     }
 
-	if (m_frame->Cancelled())
+	if (frame->Cancelled())
 	{
-		m_frame->EndFbx();
+		frame->EndFbx();
 	}
 
     wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
     event.SetInt(-1); // that's all
-    wxQueueEvent( m_frame, event.Clone() );
+    wxQueueEvent( frame, event.Clone() );
 
     return NULL;
 }
 
-void MyWorkerThread::UpdateProgress()
+void I4ExportWorkerThread::UpdateProgress()
 {
 	++curStep;
     wxThreadEvent event( wxEVT_THREAD, WORKER_EVENT );
@@ -407,5 +506,5 @@ void MyWorkerThread::UpdateProgress()
     event.SetInt(curStep);
 	
 	// send in a thread-safe way
-    wxQueueEvent( m_frame, event.Clone() );
+    wxQueueEvent( frame, event.Clone() );
 }
