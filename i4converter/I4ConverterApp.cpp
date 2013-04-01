@@ -48,16 +48,12 @@ bool I4DnDFileToListCtrl::OnDropFiles(wxCoord, wxCoord, const wxArrayString& fil
 			{
 				int id = listCtrl->InsertItem(listCtrl->GetItemCount(), vecExportInfo[n]->fileName);
 				listCtrl->SetItemPtrData(id, (wxUIntPtr)vecExportInfo[n]);
+				listCtrl->SetItemState(id, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			}
 			else
 			{
 				delete vecExportInfo[n];
 			}
-		}
-
-		if (listCtrl->GetItemCount() == 1)
-		{
-			listCtrl->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 		}
     }
 

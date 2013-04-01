@@ -95,7 +95,7 @@ void I4FbxConverter::WriteMeshes()
 		FbxNode* lRootNode = pScene->GetRootNode();
 		if(lRootNode) {
 			for(int i = 0; i < lRootNode->GetChildCount(); i++)
-				WriteNode(lRootNode->GetChild(i), EXPORT_MESH);
+				WriteNode(lRootNode->GetChild(i), I4EXPORT_MESH);
 		}
 
 		fprintf(fpMesh, "</mesh>");
@@ -118,7 +118,7 @@ void I4FbxConverter::WriteMaterials()
 		FbxNode* lRootNode = pScene->GetRootNode();
 		if(lRootNode) {
 			for(int i = 0; i < lRootNode->GetChildCount(); i++)
-				WriteNode(lRootNode->GetChild(i), EXPORT_MTRL);
+				WriteNode(lRootNode->GetChild(i), I4EXPORT_MTRL);
 		}
 
 		fprintf(fpMtrl, "</mtrl>");
@@ -140,7 +140,7 @@ void I4FbxConverter::WriteBones()
 		FbxNode* lRootNode = pScene->GetRootNode();
 		if(lRootNode) {
 			for(int i = 0; i < lRootNode->GetChildCount(); i++)
-				WriteNode(lRootNode->GetChild(i), EXPORT_BONE);
+				WriteNode(lRootNode->GetChild(i), I4EXPORT_BONE);
 		}
 		fprintf(fpBone, "</bone>");
 		fclose(fpBone);
@@ -178,7 +178,7 @@ void I4FbxConverter::WriteAnimations()
 		FbxNode* lRootNode = pScene->GetRootNode();
 		if(lRootNode) {
 			for(int i = 0; i < lRootNode->GetChildCount(); i++)
-				WriteNode(lRootNode->GetChild(i), EXPORT_ANI);
+				WriteNode(lRootNode->GetChild(i), I4EXPORT_ANI);
 		}
 
 		fprintf(fpAni, "</ani>");
@@ -199,7 +199,7 @@ void I4FbxConverter::End()
 	wxLogMessage(wxT("-------------------------------------------------"));
 }
 
-void I4FbxConverter::splitVertexDifferentTextureUV(MeshData& out)
+void I4FbxConverter::splitVertexDifferentI4TextureUV(I4MeshData& out)
 {
 	// UV가 있으면
 	if (out.vecTexUV.size() != 0 && out.vecTexIndex.size() != 0)
@@ -212,9 +212,9 @@ void I4FbxConverter::splitVertexDifferentTextureUV(MeshData& out)
 		out.vecPosition.resize(maxSize);
 		out.vecNormal.resize(maxSize);
 		out.vecUV.resize(maxSize);
-		if (out.vecSkinInfo.size() > 0)
+		if (out.vecI4SkinInfo.size() > 0)
 		{
-			out.vecSkinInfo.resize(maxSize);
+			out.vecI4SkinInfo.resize(maxSize);
 		}
 		unsigned int indexSize = out.vecIndex.size();
 		for (unsigned int i = 0; i < indexSize; ++i)
@@ -241,9 +241,9 @@ void I4FbxConverter::splitVertexDifferentTextureUV(MeshData& out)
 						out.vecUV[verticeCount] = out.vecTexUV[texUVIdx];
 						out.vecPosition[verticeCount] = out.vecPosition[vtxIdx];
 						out.vecNormal[verticeCount] = out.vecNormal[vtxIdx];
-						if (out.vecSkinInfo.size() > 0)
+						if (out.vecI4SkinInfo.size() > 0)
 						{
-							out.vecSkinInfo[verticeCount] = out.vecSkinInfo[vtxIdx];
+							out.vecI4SkinInfo[verticeCount] = out.vecI4SkinInfo[vtxIdx];
 						}
 
 						verticeCount++;
@@ -256,16 +256,16 @@ void I4FbxConverter::splitVertexDifferentTextureUV(MeshData& out)
 		out.vecPosition.resize(verticeCount);
 		out.vecNormal.resize(verticeCount);
 		out.vecUV.resize(verticeCount);
-		if (out.vecSkinInfo.size() > 0)
+		if (out.vecI4SkinInfo.size() > 0)
 		{
-			out.vecSkinInfo.resize(verticeCount);
+			out.vecI4SkinInfo.resize(verticeCount);
 		}
 	}
 }
 
 void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh) 
 {
-	MeshData data;
+	I4MeshData data;
 
 	int lControlPointsCount = pMesh->GetControlPointsCount();
 	FbxVector4* lControlPoints = pMesh->GetControlPoints();
@@ -385,11 +385,11 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 	data.vecIndex.resize(pMesh->GetPolygonCount());
 	for(int i = 0; i < pMesh->GetPolygonCount(); i++)
 	{
-		TriIndex tri;
+		I4TriIndex tri;
 		tri.i[0] = pMesh->GetPolygonVertex(i, 0);
 		tri.i[1] = pMesh->GetPolygonVertex(i, 1);
 		tri.i[2] = pMesh->GetPolygonVertex(i, 2);
-		data.vecIndex[i] = TriIndexToI4(tri);
+		data.vecIndex[i] = I4TriIndexToI4(tri);
 
 		
 	}
@@ -403,11 +403,11 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		{
 			for (int i = 0; i < pMesh->GetPolygonCount(); i++)
 			{
-				TriIndex tri;
+				I4TriIndex tri;
 				tri.i[0] = puv->GetIndexArray().GetAt(i*3 + 0);
 				tri.i[1] = puv->GetIndexArray().GetAt(i*3 + 1);
 				tri.i[2] = puv->GetIndexArray().GetAt(i*3 + 2);
-				data.vecTexIndex[i] = TriIndexToI4(tri);
+				data.vecTexIndex[i] = I4TriIndexToI4(tri);
 			}
 		}
 		else if (puv->GetMappingMode() == FbxLayerElement::eByControlPoint)
@@ -425,7 +425,7 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		for (int i = 0; i < puv->GetDirectArray().GetCount(); ++i)
 		{
 			FbxVector2 uv = puv->GetDirectArray().GetAt(i);
-			data.vecTexUV[i] = FbxUVToI4(TextureUV(uv.mData[0], uv.mData[1]));
+			data.vecTexUV[i] = FbxUVToI4(I4TextureUV(uv.mData[0], uv.mData[1]));
 		}
 	}
 
@@ -434,7 +434,7 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 	if (deformerCount > 0)
 	{
 		
-		data.vecSkinInfo.resize(pMesh->GetControlPointsCount());
+		data.vecI4SkinInfo.resize(pMesh->GetControlPointsCount());
 		for (int i = 0; i < deformerCount; ++i)
 		{
 			FbxDeformer* pDeformer = pMesh->GetDeformer(i);
@@ -469,22 +469,22 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 				{
 					int nIdex = pCtrlPointIndices[k];
 					double weight = pCtrlPointWeights[k];
-					SkinInfo info;
+					I4SkinInfo info;
 					info.boneID = boneID;
 					info.boneWeight = weight;
-					data.vecSkinInfo[nIdex].data.push_back(info);
+					data.vecI4SkinInfo[nIdex].data.push_back(info);
 				}
 			}
 		}
 
 		// 얻어온 본 가중치들을 가중치순으로 정렬해준다.
-		for (unsigned int i = 0; i < data.vecSkinInfo.size(); ++i)
+		for (unsigned int i = 0; i < data.vecI4SkinInfo.size(); ++i)
 		{
-			sort(data.vecSkinInfo[i].data.begin(), data.vecSkinInfo[i].data.end(), [](const SkinInfo& lhs, const SkinInfo& rhs) { return lhs.boneWeight > rhs.boneWeight; });
+			sort(data.vecI4SkinInfo[i].data.begin(), data.vecI4SkinInfo[i].data.end(), [](const I4SkinInfo& lhs, const I4SkinInfo& rhs) { return lhs.boneWeight > rhs.boneWeight; });
 		}
 	}
 
-	splitVertexDifferentTextureUV(data);
+	splitVertexDifferentI4TextureUV(data);
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------------
 		
@@ -516,23 +516,23 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		fprintf(fpMesh, "\t\t</uv>\n");
 	}
 
-	if (data.vecSkinInfo.size() > 0)
+	if (data.vecI4SkinInfo.size() > 0)
 	{
-		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", data.vecSkinInfo.size());
+		fprintf(fpMesh, "\t\t<weight count=\"%d\">\n", data.vecI4SkinInfo.size());
 
-		for (unsigned int i = 0; i < data.vecSkinInfo.size(); ++i)
+		for (unsigned int i = 0; i < data.vecI4SkinInfo.size(); ++i)
 		{
 			fprintf(fpMesh, "\t\t\t<v>\n");
-			for (unsigned int j = 0; j < data.vecSkinInfo[i].data.size(); ++j)
+			for (unsigned int j = 0; j < data.vecI4SkinInfo[i].data.size(); ++j)
 			{
-				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", data.vecSkinInfo[i].data[j].boneID, data.vecSkinInfo[i].data[j].boneWeight);
+				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", data.vecI4SkinInfo[i].data[j].boneID, data.vecI4SkinInfo[i].data[j].boneWeight);
 			}
 			fprintf(fpMesh, "\t\t\t</v>\n");
 		}
 		fprintf(fpMesh, "\t\t</weight>\n");		
 	}
 
-	map<int, vector<TriIndex>> mapSubMesh;
+	map<int, vector<I4TriIndex>> mapSubMesh;
 	for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
 	{
 		mapSubMesh[data.vecMtrlID[i]].push_back(data.vecIndex[i]);
@@ -552,7 +552,7 @@ void I4FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 
 	for (auto& itr : mapSubMesh)
 	{
-		const vector<TriIndex>& vecIndex = itr.second;
+		const vector<I4TriIndex>& vecIndex = itr.second;
 
 		for (unsigned int i = 0; i < vecIndex.size(); ++i)
 		{
@@ -593,7 +593,7 @@ void I4FbxConverter::WriteNodeEnd(FILE* fp)
 	fprintf(fp, "\t</node>\n");
 }
 
-void I4FbxConverter::WriteNode(FbxNode* pNode, ExportType exportType)
+void I4FbxConverter::WriteNode(FbxNode* pNode, I4ExportType I4ExportType)
 {
 	const char* nodeName = pNode->GetName();
 	const char* nodeParentName = "undefined";
@@ -610,7 +610,7 @@ void I4FbxConverter::WriteNode(FbxNode* pNode, ExportType exportType)
 		switch (type)
 		{
 		case FbxNodeAttribute::eMesh:
-			if (exportType == EXPORT_MESH)
+			if (I4ExportType == I4EXPORT_MESH)
 			{
 				FbxMesh* pMesh = pNode->GetMesh();
 				wxLogMessage(wxT("write mesh node : %s"), nodeName);
@@ -620,7 +620,7 @@ void I4FbxConverter::WriteNode(FbxNode* pNode, ExportType exportType)
 				WriteNodeEnd(fpMesh);
 			}
 
-			if (exportType == EXPORT_MTRL)
+			if (I4ExportType == I4EXPORT_MTRL)
 			{
 				wxLogMessage(wxT("write material node : %s (sub %d)"), nodeName, pNode->GetMaterialCount());
 
@@ -693,7 +693,7 @@ void I4FbxConverter::WriteNode(FbxNode* pNode, ExportType exportType)
 
 			break;	
 		case FbxNodeAttribute::eSkeleton:
-			if (exportType == EXPORT_BONE)
+			if (I4ExportType == I4EXPORT_BONE)
 			{
 				wxLogMessage(wxT("skeleton node : %s"), nodeName);
 
@@ -732,7 +732,7 @@ void I4FbxConverter::WriteNode(FbxNode* pNode, ExportType exportType)
 			break;
 		}
 
-		if (exportType == EXPORT_ANI)
+		if (I4ExportType == I4EXPORT_ANI)
 		{
 			wxLogMessage(wxT("write animation node : %s"), nodeName);
 
@@ -952,7 +952,7 @@ void I4FbxConverter::WriteNode(FbxNode* pNode, ExportType exportType)
 	}
 
 	for(int j = 0; j < pNode->GetChildCount(); j++)
-		WriteNode(pNode->GetChild(j), exportType);
+		WriteNode(pNode->GetChild(j), I4ExportType);
 
 
 }
