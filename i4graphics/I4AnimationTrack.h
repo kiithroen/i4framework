@@ -4,21 +4,21 @@
 
 namespace i4graphics {
 
-	class I4AnimationTrack
+	class AnimationTrack
 	{
 	public:
-		I4AnimationTrack(I4KeyFrameSet* keyFrameSet);
-		~I4AnimationTrack();
+		AnimationTrack(KeyFrameSet* keyFrameSet);
+		~AnimationTrack();
 
 		void 				advanceFrame(float dt);
 		void				resetStartFrame();
 
-		bool 				getKeyRotation(I4Quaternion& out) const;	
-		bool 				getKeyPosition(I4Vector3& out) const;
-		bool 				getKeyScale(I4Vector3& out) const;
+		bool 				getKeyRotation(Quaternion& out) const;	
+		bool 				getKeyPosition(Vector3& out) const;
+		bool 				getKeyScale(Vector3& out) const;
 
 	private:
-		I4KeyFrameSet*		keyFrameSet;
+		KeyFrameSet*		keyFrameSet;
 		float				currentFrame;
 
 		static const float	ANIMATION_FRAME_RATE;

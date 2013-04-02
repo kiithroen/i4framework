@@ -6,9 +6,9 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct I4Material
+	struct Material
 	{
-		I4Material()
+		Material()
 		: ambient(0.58823f)
 		, specularLevel(1.0f)
 		, specularPower(32.0f)
@@ -19,9 +19,9 @@ namespace i4graphics {
 		float			ambient;
 		float			specularLevel;
 		float	  		specularPower;
-		I4Hash			diffuseMap;
-		I4Hash			specularMap;
-		I4Hash			normalMap;
+		Hash			diffuseMap;
+		Hash			specularMap;
+		Hash			normalMap;
 		bool			twoSide;
 	};
 }

@@ -4,72 +4,72 @@
 
 namespace i4graphics
 {
-	class I4Shader;
-	class I4VertexBuffer;
-	class I4IndexBuffer;
-	class I4ConstantBuffer;
-	class I4Texture;
-	class I4RenderTarget;
-	class I4TextureMgr;
+	class Shader;
+	class VertexBuffer;
+	class IndexBuffer;
+	class ConstantBuffer;
+	class Texture;
+	class RenderTarget;
+	class TextureMgr;
 
-	enum I4VideoDriverMode
+	enum VideoDriverMode
 	{
-		I4VIDEO_DRIVER_MODE_NULL	= 0,
-		I4VIDEO_DRIVER_MODE_D3D11,
+		VIDEO_DRIVER_MODE_NULL	= 0,
+		VIDEO_DRIVER_MODE_D3D11,
 	};
 
-	enum I4RasterizerMode
+	enum RasterizerMode
 	{		
-		I4RASTERIZER_MODE_INVALID		= -1,
-		I4RASTERIZER_MODE_SOLID_NONE	= 0,
-		I4RASTERIZER_MODE_SOLID_FRONT,
-		I4RASTERIZER_MODE_SOLID_BACK,
-		I4RASTERIZER_MODE_WIRE_NONE,
-		I4RASTERIZER_MODE_WIRE_FRONT,
-		I4RASTERIZER_MODE_WIRE_BACK,
-		I4RASTERIZER_MODE_NUM,
+		RASTERIZER_MODE_INVALID		= -1,
+		RASTERIZER_MODE_SOLID_NONE	= 0,
+		RASTERIZER_MODE_SOLID_FRONT,
+		RASTERIZER_MODE_SOLID_BACK,
+		RASTERIZER_MODE_WIRE_NONE,
+		RASTERIZER_MODE_WIRE_FRONT,
+		RASTERIZER_MODE_WIRE_BACK,
+		RASTERIZER_MODE_NUM,
 	};
 
-	enum I4DepthStencilMode
+	enum DepthStencilMode
 	{
-		I4DEPTHSTENCIL_MODE_INVAILD = -1,
-		I4DEPTH_OFF_STENCIL_OFF = 0,
-		I4DEPTH_LESS_STENCIL_OFF,
-		I4DEPTH_GREATER_STENCIL_OFF,
-		I4DEPTH_OFF_STENCIL_INC_ON_FAIL,
-		I4DEPTH_LESS_STENCIL_INC_ON_FAIL,
-		I4DEPTH_GREATER_STENCIL_INC_ON_FAIL,
-		I4DEPTH_OFF_STENCIL_INC_ON_PASS,
-		I4DEPTH_LESS_STENCIL_INC_ON_PASS,
-		I4DEPTH_GREATER_STENCIL_INC_ON_PASS,
-		I4DEPTHSTENCIL_MODE_NUM,
+		DEPTHSTENCIL_MODE_INVAILD = -1,
+		DEPTH_OFF_STENCIL_OFF = 0,
+		DEPTH_LESS_STENCIL_OFF,
+		DEPTH_GREATER_STENCIL_OFF,
+		DEPTH_OFF_STENCIL_INC_ON_FAIL,
+		DEPTH_LESS_STENCIL_INC_ON_FAIL,
+		DEPTH_GREATER_STENCIL_INC_ON_FAIL,
+		DEPTH_OFF_STENCIL_INC_ON_PASS,
+		DEPTH_LESS_STENCIL_INC_ON_PASS,
+		DEPTH_GREATER_STENCIL_INC_ON_PASS,
+		DEPTHSTENCIL_MODE_NUM,
 	};
 
-	enum I4BlendMode
+	enum BlendMode
 	{		
-		I4BLEND_MODE_INVALID		= -1,
-		I4BLEND_MODE_NONE			= 0,
-		I4BLEND_MODE_ALPHA,
-		I4BLEND_MODE_ADD,
-		I4BLEND_MODE_NUM,
+		BLEND_MODE_INVALID		= -1,
+		BLEND_MODE_NONE			= 0,
+		BLEND_MODE_ALPHA,
+		BLEND_MODE_ADD,
+		BLEND_MODE_NUM,
 	};
 
 
-	enum I4SamplerState
+	enum SamplerState
 	{		
-		I4SAMPLER_STATE_INVALID		= -1,
-		I4SAMPLER_STATE_POINT		= 0,
-		I4SAMPLER_STATE_LINEAR,
-		I4SAMPLER_STATE_SHADOW,
-		I4SAMPLER_STATE_NUM,
+		SAMPLER_STATE_INVALID		= -1,
+		SAMPLER_STATE_POINT		= 0,
+		SAMPLER_STATE_LINEAR,
+		SAMPLER_STATE_SHADOW,
+		SAMPLER_STATE_NUM,
 	};
 
-	class I4VideoDriver
+	class VideoDriver
 	{
 	public:
-		virtual ~I4VideoDriver();
+		virtual ~VideoDriver();
 
-		virtual I4VideoDriverMode	getVideoDriverMode() const	{ return I4VIDEO_DRIVER_MODE_NULL; }
+		virtual VideoDriverMode	getVideoDriverMode() const	{ return VIDEO_DRIVER_MODE_NULL; }
 
 		virtual bool				initialize(void* windowID, unsigned int width, unsigned int height);
 		virtual void				finalize();
@@ -80,55 +80,55 @@ namespace i4graphics
 		virtual void				endScene();
 
 		virtual void				clearBackBuffer(unsigned char r, unsigned char g, unsigned char b);
-		virtual void				clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a);		
-		virtual void				clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil);
+		virtual void				clearRenderTarget(RenderTarget* renderTarget, float r, float g, float b, float a);		
+		virtual void				clearDepthStencil(RenderTarget* renderTarget, float depth, unsigned char stencil);
 
 		virtual void				setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 		virtual void				resetViewport();
 
-		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget);
-		virtual void				setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil);
-		virtual void				setRenderTargetDepthStencil(I4RenderTarget* depthStencil);
+		virtual void				setRenderTarget(unsigned int num, RenderTarget** arrRenderTarget);
+		virtual void				setRenderTarget(unsigned int num, RenderTarget** arrRenderTarget, RenderTarget* depthStencil);
+		virtual void				setRenderTargetDepthStencil(RenderTarget* depthStencil);
 		virtual void				resetBackBufferRenderTarget(bool enableDepthStencil);
 
-		virtual void				setRasterizerMode(I4RasterizerMode mode);
-		virtual void				setDepthStencilMode(I4DepthStencilMode mode);
-		virtual void				setBlendMode(I4BlendMode mode);
+		virtual void				setRasterizerMode(RasterizerMode mode);
+		virtual void				setDepthStencilMode(DepthStencilMode mode);
+		virtual void				setBlendMode(BlendMode mode);
 
-		virtual I4Shader*	createShader();
+		virtual Shader*	createShader();
 
-		virtual I4VertexBuffer*		createVertexBuffer();
-		virtual I4IndexBuffer*		createIndexBuffer();
-		virtual I4ConstantBuffer*	createConstantBuffer();
+		virtual VertexBuffer*		createVertexBuffer();
+		virtual IndexBuffer*		createIndexBuffer();
+		virtual ConstantBuffer*	createConstantBuffer();
 
-		virtual I4Texture*			createTexture();
+		virtual Texture*			createTexture();
 
-		virtual I4RenderTarget*		createRenderTarget();
+		virtual RenderTarget*		createRenderTarget();
 
 		unsigned int				getWidth() const		{ return width; }
 		unsigned int				getHeight() const		{ return height; }
 		
-		I4TextureMgr*				getTextureMgr()			{ return textureMgr; }
+		TextureMgr*				getTextureMgr()			{ return textureMgr; }
 	public:
-		static I4VideoDriver*		getVideoDriver()		{ return videoDriver; }
+		static VideoDriver*		getVideoDriver()		{ return videoDriver; }
 
-		static void					createVideoDriver(I4VideoDriverMode mode);
+		static void					createVideoDriver(VideoDriverMode mode);
 		static void					destroyVideoDriver();
 
 	protected:		
-		I4VideoDriver();
+		VideoDriver();
 
 	protected:
 		void*						windowID;
 		unsigned int				width;
 		unsigned int				height;		
-		I4RasterizerMode			curRasterizerMode;
-		I4DepthStencilMode			curDepthStencilMode;
-		I4BlendMode					curBlendMode;
-		I4TextureMgr*				textureMgr;
+		RasterizerMode			curRasterizerMode;
+		DepthStencilMode			curDepthStencilMode;
+		BlendMode					curBlendMode;
+		TextureMgr*				textureMgr;
 
 	private:
-		static I4VideoDriver*		videoDriver;
+		static VideoDriver*		videoDriver;
 	};
 
 }

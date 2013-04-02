@@ -2,10 +2,10 @@
 
 namespace i4core
 {
-	class I4StopWatch
+	class StopWatch
 	{
 	public:
-		I4StopWatch();
+		StopWatch();
 
 		void QueryFrequency();
 

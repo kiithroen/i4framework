@@ -3,15 +3,15 @@
 
 namespace i4core
 {
-	I4Camera::I4Camera()
+	Camera::Camera()
 	{
 	}
 
-	I4Camera::~I4Camera()
+	Camera::~Camera()
 	{
 	}
 
-	void I4Camera::setPerspectiveFovLH(float _fovY, float _aspect, float _zNear, float _zFar)
+	void Camera::setPerspectiveFovLH(float _fovY, float _aspect, float _zNear, float _zFar)
 	{
 		fovY = _fovY;
 		aspect = _aspect;
@@ -23,70 +23,70 @@ namespace i4core
 		float hNear = 2*tan(fovY/2)*zNear;
 		float wNear = hNear * aspect;
 
-		I4Vector3 nearCenter = I4VECTOR3_AXISZ * zNear;
+		Vector3 nearCenter = VECTOR3_AXISZ * zNear;
 
-		nearTopLeft = nearCenter + (I4VECTOR3_AXISY * hNear/2) - (I4VECTOR3_AXISX * wNear/2);
-		nearTopRight = nearCenter + (I4VECTOR3_AXISY * hNear/2) + (I4VECTOR3_AXISX * wNear/2);
-		nearDownLeft = nearCenter - (I4VECTOR3_AXISY * hNear/2) - (I4VECTOR3_AXISX * wNear/2);
-		nearDownRight = nearCenter - (I4VECTOR3_AXISY * hNear/2) + (I4VECTOR3_AXISX * wNear/2);
+		nearTopLeft = nearCenter + (VECTOR3_AXISY * hNear/2) - (VECTOR3_AXISX * wNear/2);
+		nearTopRight = nearCenter + (VECTOR3_AXISY * hNear/2) + (VECTOR3_AXISX * wNear/2);
+		nearDownLeft = nearCenter - (VECTOR3_AXISY * hNear/2) - (VECTOR3_AXISX * wNear/2);
+		nearDownRight = nearCenter - (VECTOR3_AXISY * hNear/2) + (VECTOR3_AXISX * wNear/2);
 
 		float hFar = 2*tan(fovY/2)*zFar;
 		float wFar = hFar * aspect;
 
-		I4Vector3 farCenter = I4VECTOR3_AXISZ * zFar;
+		Vector3 farCenter = VECTOR3_AXISZ * zFar;
 
-		farTopLeft = farCenter + (I4VECTOR3_AXISY * hFar/2) - (I4VECTOR3_AXISX * wFar/2);
-		farTopRight = farCenter + (I4VECTOR3_AXISY * hFar/2) + (I4VECTOR3_AXISX * wFar/2);
-		farDownLeft = farCenter - (I4VECTOR3_AXISY * hFar/2) - (I4VECTOR3_AXISX * wFar/2);
-		farDownRight = farCenter - (I4VECTOR3_AXISY * hFar/2) + (I4VECTOR3_AXISX * wFar/2);
+		farTopLeft = farCenter + (VECTOR3_AXISY * hFar/2) - (VECTOR3_AXISX * wFar/2);
+		farTopRight = farCenter + (VECTOR3_AXISY * hFar/2) + (VECTOR3_AXISX * wFar/2);
+		farDownLeft = farCenter - (VECTOR3_AXISY * hFar/2) - (VECTOR3_AXISX * wFar/2);
+		farDownRight = farCenter - (VECTOR3_AXISY * hFar/2) + (VECTOR3_AXISX * wFar/2);
 
 		viewProjectionMatrix = viewMatrix*projectionMatrix;
 
 		frustum.make(viewProjectionMatrix);
 	}
 	
-	void I4Camera::setOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
+	void Camera::setOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane)
 	{
 		zNear = znearPlane;
 		zFar = zfarPlane;
 
 		projectionMatrix.makeOrthoOffCenterLH(left, right, bottom, top, znearPlane, zfarPlane);
 		
-		nearTopLeft = I4Vector3(left, top, znearPlane); 
-		nearTopRight = I4Vector3(right, top, znearPlane);
-		nearDownLeft = I4Vector3(left, bottom, znearPlane);
-		nearDownRight = I4Vector3(right, bottom, znearPlane);
+		nearTopLeft = Vector3(left, top, znearPlane); 
+		nearTopRight = Vector3(right, top, znearPlane);
+		nearDownLeft = Vector3(left, bottom, znearPlane);
+		nearDownRight = Vector3(right, bottom, znearPlane);
 		
-		farTopLeft = I4Vector3(left, top, zfarPlane);
-		farTopRight = I4Vector3(right, top, zfarPlane);
-		farDownLeft = I4Vector3(left, bottom, zfarPlane);
-		farDownRight = I4Vector3(right, bottom, zfarPlane);
+		farTopLeft = Vector3(left, top, zfarPlane);
+		farTopRight = Vector3(right, top, zfarPlane);
+		farDownLeft = Vector3(left, bottom, zfarPlane);
+		farDownRight = Vector3(right, bottom, zfarPlane);
 
 		viewProjectionMatrix = viewMatrix*projectionMatrix;
 
 		frustum.make(viewProjectionMatrix);
 	}
 
-	void I4Camera::setLookAtLH(const I4Vector3& _eye, const I4Vector3& _lookAt, const I4Vector3& _up)
+	void Camera::setLookAtLH(const Vector3& _eye, const Vector3& _lookAt, const Vector3& _up)
 	{
 		viewMatrix.makeCameraLookAtLH(_eye, _lookAt, _up);
 
 		setViewMatrix(viewMatrix);
 	}
 
-	void I4Camera::setViewMatrix(const I4Matrix4x4& view)
+	void Camera::setViewMatrix(const Matrix4x4& view)
 	{
 		viewMatrix = view;
 		viewMatrix.extractInversePrimitive(worldMatrix);
 
 		eye = worldMatrix.getPosition();
 
-		I4Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
+		Matrix4x4::multiply(viewProjectionMatrix, viewMatrix, projectionMatrix);
 
 		frustum.make(viewProjectionMatrix);
 	}
 
-	void I4Camera::extractCorners(I4Vector3* corners) const
+	void Camera::extractCorners(Vector3* corners) const
 	{
 		corners[0] = nearTopLeft;
 		corners[1] = nearTopRight;

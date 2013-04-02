@@ -4,34 +4,34 @@
 
 namespace i4graphics
 {
-	I4LineMesh::I4LineMesh()
+	LineMesh::LineMesh()
 		: vertexBuffer(nullptr)
 	{
 		
 	}
 
-	I4LineMesh::~I4LineMesh()
+	LineMesh::~LineMesh()
 	{
 		delete vertexBuffer;
 	}
 
-	void I4LineMesh::bind()
+	void LineMesh::bind()
 	{
 		vertexBuffer->bind();
 	}
 
-	void I4LineMesh::unbind()
+	void LineMesh::unbind()
 	{
 		vertexBuffer->unbind();
 	}
 
-	void I4LineMesh::draw()
+	void LineMesh::draw()
 	{
-		vertexBuffer->draw(I4PT_LINELIST);
+		vertexBuffer->draw(PT_LINELIST);
 	}
 
-	void I4LineMesh::draw(unsigned int count, unsigned int start)
+	void LineMesh::draw(unsigned int count, unsigned int start)
 	{
-		vertexBuffer->draw(I4PT_LINELIST, count, start);
+		vertexBuffer->draw(PT_LINELIST, count, start);
 	}
 }

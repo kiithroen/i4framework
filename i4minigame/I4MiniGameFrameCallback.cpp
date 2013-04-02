@@ -23,90 +23,90 @@
 #include "I4ModelElement.h"
 
 using namespace i4core;
-
-I4MiniGameFrameCallback::I4MiniGameFrameCallback()
+
+MiniGameFrameCallback::MiniGameFrameCallback()
 : objectMgr(nullptr)
 , renderer(nullptr)
 , physXMgr(nullptr)
 , player(nullptr)
 {
 }
-
-I4MiniGameFrameCallback::~I4MiniGameFrameCallback()
+
+MiniGameFrameCallback::~MiniGameFrameCallback()
 {
 }
 
-bool I4MiniGameFrameCallback::onStart()
+bool MiniGameFrameCallback::onStart()
 {
-	I4Framework* framework = I4Framework::getFramework();
-	renderer = new I4DeferredRenderer;
+	Framework* framework = Framework::getFramework();
+	renderer = new DeferredRenderer;
 	if (renderer->initialize(framework->getWindowID(), framework->getWidth(), framework->getHeight()) == false)
 		return false;
 
-	renderer->getMainCamera().setPerspectiveFovLH(I4PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 100.0f);
-	renderer->getMainCamera().setLookAtLH(I4Vector3(0, 0, 0), I4Vector3(0, 1, 0), I4Vector3(0, 0, 1));
+	renderer->getMainCamera().setPerspectiveFovLH(PI/4.0f, (float)framework->getWidth()/(float)framework->getHeight(), 0.1f, 100.0f);
+	renderer->getMainCamera().setLookAtLH(Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1));
 
-	modelMgr = new I4ModelMgr;
-	physXMgr = new I4PhysXMgr;
+	modelMgr = new ModelMgr;
+	physXMgr = new PhysXMgr;
 	if (physXMgr->init() == false)
 		return false;
 
-	objectMgr = new I4ObjectMgr;
+	objectMgr = new ObjectMgr;
 	if (objectMgr->init(renderer, modelMgr, physXMgr) == false)
 		return false;
 
 	spectator =  objectMgr->createObject("spectator");
-	spectator->setLookAtLH(I4Vector3(0.0f, 10.0f, -6.0f), I4Vector3(0.0f, 2.8f, 0.0f), I4Vector3(0.0f, 1.0f, 0.0f));
+	spectator->setLookAtLH(Vector3(0.0f, 10.0f, -6.0f), Vector3(0.0f, 2.8f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 
-	I4ObjectFlyControllerComponent* spectatorController = spectator->addComponent<I4ObjectFlyControllerComponent>();
+	ObjectFlyControllerComponent* spectatorController = spectator->addComponent<ObjectFlyControllerComponent>();
 	spectatorController->activate(false);
-	I4ObjectStaticCameraComponent* spectatorCamera = spectator->addComponent<I4ObjectStaticCameraComponent>();
+	ObjectStaticCameraComponent* spectatorCamera = spectator->addComponent<ObjectStaticCameraComponent>();
 	spectatorCamera->setMainCamera(false);
 
 	player =  objectMgr->createObject("player");
-	player->setPosition(I4Vector3(0.0f, 1.5f, -1.8f));
-	player->setScale(I4Vector3(0.007f, 0.007f, 0.007f));
+	player->setPosition(Vector3(0.0f, 1.5f, -1.8f));
+	player->setScale(Vector3(0.007f, 0.007f, 0.007f));
 
-	I4ObjectViewComponent* playerView = player->addComponent<I4ObjectViewComponent>();
+	ObjectViewComponent* playerView = player->addComponent<ObjectViewComponent>();
 	playerView->attachModel("player", "testmodel/soldier", true, true, true);
 	playerView->attachAni("testmodel/soldier_idle.ani.xml", "idle");
 	playerView->playAnimation("idle");
 
-	I4Matrix4x4 m;
-	m.makeRotationY(I4MathUtil::degreeToRadian(180));
+	Matrix4x4 m;
+	m.makeRotationY(MathUtil::degreeToRadian(180));
 	playerView->setOffset(m);
 	
-	I4ObjectCharacterMovementComponent* playerMovement = player->addComponent<I4ObjectCharacterMovementComponent>();
-	playerMovement->attach(0.2f, 0.7f, cos(I4MathUtil::degreeToRadian(70)), 0.1f);
+	ObjectCharacterMovementComponent* playerMovement = player->addComponent<ObjectCharacterMovementComponent>();
+	playerMovement->attach(0.2f, 0.7f, cos(MathUtil::degreeToRadian(70)), 0.1f);
 	playerMovement->setGravity(-9.8f);
 
-	I4ObjectCharacterControllerComponent* playerController = player->addComponent<I4ObjectCharacterControllerComponent>();	
+	ObjectCharacterControllerComponent* playerController = player->addComponent<ObjectCharacterControllerComponent>();	
 	playerController->activate(true);
 
-	I4ObjectTPSCameraComponent* playerCamera = player->addComponent<I4ObjectTPSCameraComponent>();
+	ObjectTPSCameraComponent* playerCamera = player->addComponent<ObjectTPSCameraComponent>();
 	playerCamera->setMainCamera(true);
 
 	physXMgr->createPlane();
 
-	I4Object* objFloor = objectMgr->createObject("floor");
-	I4ObjectViewComponent* viewFloor = objFloor->addComponent<I4ObjectViewComponent>();
+	Object* objFloor = objectMgr->createObject("floor");
+	ObjectViewComponent* viewFloor = objFloor->addComponent<ObjectViewComponent>();
 	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
 
-	I4Vector3 lightPointColor[] =
+	Vector3 lightPointColor[] =
 	{
-		I4Vector3(1.0f, 0.125f, 0.93f),
-		I4Vector3(1.0f, 0.0f, 0.0f),
-		I4Vector3(0.0f, 0.8f, 0.8f),
-		I4Vector3(1.0f, 1.0f, 0.0f),
-		I4Vector3(1.0f, 0.5f, 0.25f),
-		I4Vector3(0.0f, 0.125f, 0.93f),
-		I4Vector3(1.0f, 0.0f, 0.5f),
-		I4Vector3(1.0f, 0.8f, 0.8f),
-		I4Vector3(0.5f, 1.0f, 0.3f),
-		I4Vector3(0.7f, 0.5f, 0.25f),
-		I4Vector3(0.0f, 1.0f, 0.0f),
-		I4Vector3(0.7f, 0.9f, 0.75f),
-		I4Vector3(0.5f, 0.7f, 0.7f),
+		Vector3(1.0f, 0.125f, 0.93f),
+		Vector3(1.0f, 0.0f, 0.0f),
+		Vector3(0.0f, 0.8f, 0.8f),
+		Vector3(1.0f, 1.0f, 0.0f),
+		Vector3(1.0f, 0.5f, 0.25f),
+		Vector3(0.0f, 0.125f, 0.93f),
+		Vector3(1.0f, 0.0f, 0.5f),
+		Vector3(1.0f, 0.8f, 0.8f),
+		Vector3(0.5f, 1.0f, 0.3f),
+		Vector3(0.7f, 0.5f, 0.25f),
+		Vector3(0.0f, 1.0f, 0.0f),
+		Vector3(0.7f, 0.9f, 0.75f),
+		Vector3(0.5f, 0.7f, 0.7f),
 	};
 	
 	for (int i = 0; i < 10; ++i)
@@ -117,17 +117,17 @@ bool I4MiniGameFrameCallback::onStart()
 
 			char charName[256] = {0, };
 			sprintf(charName, "char_%d", idx);
-			I4Object* objChar = objectMgr->createObject(charName);
-			objChar->setPosition(I4Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
+			Object* objChar = objectMgr->createObject(charName);
+			objChar->setPosition(Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
 
-			I4ObjectViewComponent* view = objChar->addComponent<I4ObjectViewComponent>();
-			I4ObjectRigidBodyComponent* rigid = objChar->addComponent<I4ObjectRigidBodyComponent>();
+			ObjectViewComponent* view = objChar->addComponent<ObjectViewComponent>();
+			ObjectRigidBodyComponent* rigid = objChar->addComponent<ObjectRigidBodyComponent>();
 
 			{
-				objChar->setScale(I4Vector3(0.035f, 0.035f, 0.035f));
+				objChar->setScale(Vector3(0.035f, 0.035f, 0.035f));
 
 				view->attachModel(charName, "testmodel/elin", true, true, false);
-				I4Matrix4x4 offset;
+				Matrix4x4 offset;
 				offset.makeTranslation(0, -0.55f, 0);
 				rigid->setOffset(offset);
 				rigid->attachCapsule(0.2f, 0.7f, 1, false);
@@ -136,9 +136,9 @@ bool I4MiniGameFrameCallback::onStart()
 			char lightName[256] = {0, };
 			sprintf(lightName, "light_%d", idx);
 			objLight[idx] = objectMgr->createObject(lightName);
-			objLight[idx]->setPosition(I4Vector3(-20.0f + i*4.0f, 0.5f, -20.0f + j*4.0f));
+			objLight[idx]->setPosition(Vector3(-20.0f + i*4.0f, 0.5f, -20.0f + j*4.0f));
 
-			I4ObjectPointLightComponent* lightPoint = objLight[idx]->addComponent<I4ObjectPointLightComponent>();
+			ObjectPointLightComponent* lightPoint = objLight[idx]->addComponent<ObjectPointLightComponent>();
 			lightPoint->setColor(lightPointColor[idx%13]);
 			if ((i == 3 && j == 3) || (i == 6 && j == 6))
 			{
@@ -155,7 +155,7 @@ bool I4MiniGameFrameCallback::onStart()
 	return true;
 }
 
-void I4MiniGameFrameCallback::onEnd()
+void MiniGameFrameCallback::onEnd()
 {
 	delete physXMgr;
 	delete modelMgr;
@@ -163,48 +163,48 @@ void I4MiniGameFrameCallback::onEnd()
 	delete objectMgr;
 }
 
-bool I4MiniGameFrameCallback::onTick(float dt)
+bool MiniGameFrameCallback::onTick(float dt)
 {
-	I4PROFILE_THISFUNC;
+	PROFILE_THISFUNC;
 	
 	{
-		I4PROFILE_BLOCK("onPreSimulate");
+		PROFILE_BLOCK("onPreSimulate");
 
-		I4MessageArgs preSimulateArgs;
+		MessageArgs preSimulateArgs;
 		preSimulateArgs.push_back(dt);
-		objectMgr->getMessenger().send(I4Hash("onPreSimulate"), preSimulateArgs);
+		objectMgr->getMessenger().send(Hash("onPreSimulate"), preSimulateArgs);
 	}
 	
 	{
-		I4PROFILE_BLOCK("PhysX simulate");
+		PROFILE_BLOCK("PhysX simulate");
 
 		physXMgr->simulate(dt);
 	}
 
 	{
-		I4PROFILE_BLOCK("onPostSimulate");
+		PROFILE_BLOCK("onPostSimulate");
 
-		I4MessageArgs postSimulateArgs;
+		MessageArgs postSimulateArgs;
 		postSimulateArgs.push_back(dt);
-		objectMgr->getMessenger().send(I4Hash("onPostSimulate"), postSimulateArgs);
+		objectMgr->getMessenger().send(Hash("onPostSimulate"), postSimulateArgs);
 	}
 	
 
 	return true;
 }
 
-bool I4MiniGameFrameCallback::onUpdate()
+bool MiniGameFrameCallback::onUpdate()
 {
-	I4PROFILE_THISFUNC;
+	PROFILE_THISFUNC;
 
-	if (I4InputState::KeyPressed[VK_ESCAPE])
+	if (InputState::KeyPressed[VK_ESCAPE])
 		return false;
 
-	float dt = I4FrameTimer::getFrameTimer()->getFrameDelta();
+	float dt = FrameTimer::getFrameTimer()->getFrameDelta();
 
-	I4MessageArgs updateArgs;
+	MessageArgs updateArgs;
 	updateArgs.push_back(dt);
-	objectMgr->getMessenger().send(I4Hash("onUpdateLogic"), updateArgs);
+	objectMgr->getMessenger().send(Hash("onUpdateLogic"), updateArgs);
 	
 	static float degree = 0;
 	degree += 30*dt;
@@ -225,60 +225,60 @@ bool I4MiniGameFrameCallback::onUpdate()
 
 			int idx = i*10 + j;
 
-			objLight[idx]->setPosition(I4Vector3(-18.0f + i*4.0f + sign*2.5f*cos(I4MathUtil::degreeToRadian(degree)),
-				1.0f + sign*0.5f*cos(I4MathUtil::degreeToRadian(degree)),
-				-18.0f + j*4.0f + sign*2.5f*sin(I4MathUtil::degreeToRadian(degree))));
+			objLight[idx]->setPosition(Vector3(-18.0f + i*4.0f + sign*2.5f*cos(MathUtil::degreeToRadian(degree)),
+				1.0f + sign*0.5f*cos(MathUtil::degreeToRadian(degree)),
+				-18.0f + j*4.0f + sign*2.5f*sin(MathUtil::degreeToRadian(degree))));
 		}
 	}
 	
 	{
-		I4PROFILE_BLOCK("onLateUpdate");
-		I4MessageArgs readyToRenderArgs;
-		objectMgr->getMessenger().send(I4Hash("onLateUpdate"), readyToRenderArgs);
+		PROFILE_BLOCK("onLateUpdate");
+		MessageArgs readyToRenderArgs;
+		objectMgr->getMessenger().send(Hash("onLateUpdate"), readyToRenderArgs);
 	}
 
 
 	return true;
 }
 
-bool I4MiniGameFrameCallback::onRender()
+bool MiniGameFrameCallback::onRender()
 {
-	I4PROFILE_THISFUNC;
+	PROFILE_THISFUNC;
 
-	float dt = I4FrameTimer::getFrameTimer()->getFrameDelta();
+	float dt = FrameTimer::getFrameTimer()->getFrameDelta();
 	
 	{
-		I4PROFILE_BLOCK("onAnimate");
-		I4MessageArgs aniArgs;
+		PROFILE_BLOCK("onAnimate");
+		MessageArgs aniArgs;
 		aniArgs.push_back(dt);
-		objectMgr->getMessenger().send(I4Hash("onAnimate"), aniArgs);
+		objectMgr->getMessenger().send(Hash("onAnimate"), aniArgs);
 	}
 
 	{
-		I4PROFILE_BLOCK("onCommitToRenderer");
-		I4MessageArgs renderArgs;
-		objectMgr->getMessenger().send(I4Hash("onCommitToRenderer"), renderArgs);
+		PROFILE_BLOCK("onCommitToRenderer");
+		MessageArgs renderArgs;
+		objectMgr->getMessenger().send(Hash("onCommitToRenderer"), renderArgs);
 	}
 	
 	if (renderer->isDebugMode())
 	{
-		I4PROFILE_BLOCK("physXMgr->commitDebugToRenderer(renderer)");
+		PROFILE_BLOCK("physXMgr->commitDebugToRenderer(renderer)");
 		physXMgr->commitDebugToRenderer(renderer);
 	}
 
 	{
-		I4PROFILE_BLOCK("renderer->render()");
+		PROFILE_BLOCK("renderer->render()");
 		renderer->render();
 	}
 
 	return true;
 }
 
-void I4MiniGameFrameCallback::onInput(const I4InputState& state)
+void MiniGameFrameCallback::onInput(const InputState& state)
 {
 	switch (state.type)
 	{
-	case I4INPUT_KEY_DOWN:
+	case INPUT_KEY_DOWN:
 		{
 			if (state.key == VK_F1)
 			{
@@ -297,55 +297,55 @@ void I4MiniGameFrameCallback::onInput(const I4InputState& state)
 
 				isFree = !isFree;
 
-				I4ObjectCharacterControllerComponent* playerController = player->findComponent<I4ObjectCharacterControllerComponent>();
+				ObjectCharacterControllerComponent* playerController = player->findComponent<ObjectCharacterControllerComponent>();
 				playerController->activate(!isFree);
-				I4ObjectTPSCameraComponent* playerCam = player->findComponent<I4ObjectTPSCameraComponent>();
+				ObjectTPSCameraComponent* playerCam = player->findComponent<ObjectTPSCameraComponent>();
 				playerCam->setMainCamera(!isFree);
 
-				I4ObjectStaticCameraComponent* spectatorCamera = spectator->findComponent<I4ObjectStaticCameraComponent>();
+				ObjectStaticCameraComponent* spectatorCamera = spectator->findComponent<ObjectStaticCameraComponent>();
 				spectatorCamera->setMainCamera(isFree);
 
-				I4ObjectFlyControllerComponent* spectatorController = spectator->findComponent<I4ObjectFlyControllerComponent>();
+				ObjectFlyControllerComponent* spectatorController = spectator->findComponent<ObjectFlyControllerComponent>();
 				spectatorController->activate(isFree);
 			}
 		}
 		break;
-	case I4INPUT_KEY_UP:
+	case INPUT_KEY_UP:
 		break;
-	case I4INPUT_LEFT_MOUSE_DOWN:
+	case INPUT_LEFT_MOUSE_DOWN:
 		{
 			static int i = 0;
 			char name[256] = {0, };
 			sprintf(name, "physics_%d", i);
-			I4Object* objPhysics = objectMgr->createObject(name);
-			objPhysics->setPosition(I4Vector3(0, 5, 2));
+			Object* objPhysics = objectMgr->createObject(name);
+			objPhysics->setPosition(Vector3(0, 5, 2));
 
 			if (i%3 == 0)
 			{
-				I4ObjectViewComponent* view = objPhysics->addComponent<I4ObjectViewComponent>();
+				ObjectViewComponent* view = objPhysics->addComponent<ObjectViewComponent>();
 				view->attachModel(name, "testmodel/box", true, false, false);
-				I4ObjectRigidBodyComponent* rigid = objPhysics->addComponent<I4ObjectRigidBodyComponent>();
-				rigid->attachBox(I4Vector3(0.1f, 0.1f, 0.1f), 1, false);
+				ObjectRigidBodyComponent* rigid = objPhysics->addComponent<ObjectRigidBodyComponent>();
+				rigid->attachBox(Vector3(0.1f, 0.1f, 0.1f), 1, false);
 			}
 			else if (i%3 == 1)
 			{
-				I4ObjectRigidBodyComponent* rigid = objPhysics->addComponent<I4ObjectRigidBodyComponent>();
+				ObjectRigidBodyComponent* rigid = objPhysics->addComponent<ObjectRigidBodyComponent>();
 				rigid->attachSphere(0.1f, 1, false);
 			}
 			else if (i%3 == 2)
 			{
-				I4ObjectRigidBodyComponent* rigid = objPhysics->addComponent<I4ObjectRigidBodyComponent>();
+				ObjectRigidBodyComponent* rigid = objPhysics->addComponent<ObjectRigidBodyComponent>();
 				rigid->attachCapsule(0.3f, 1.0f, 1, false);
 			}
 
 			i++;
 		}
 		break;
-	case I4INPUT_LEFT_MOUSE_UP:
+	case INPUT_LEFT_MOUSE_UP:
 		break;
-	case I4INPUT_RIGHT_MOUSE_DOWN:
+	case INPUT_RIGHT_MOUSE_DOWN:
 		break;
-	case I4INPUT_RIGHT_MOUSE_UP:
+	case INPUT_RIGHT_MOUSE_UP:
 		break;
 	default:
 		break;

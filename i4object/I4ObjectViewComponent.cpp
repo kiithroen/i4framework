@@ -6,29 +6,29 @@
 
 namespace i4object {
 
-	I4ObjectViewComponent::I4ObjectViewComponent(void)
-		: offset(I4MATRIX4X4_IDENTITY)
+	ObjectViewComponent::ObjectViewComponent(void)
+		: offset(MATRIX4X4_IDENTITY)
 	{
 	}
 
 
-	I4ObjectViewComponent::~I4ObjectViewComponent(void)
+	ObjectViewComponent::~ObjectViewComponent(void)
 	{
 	}
 
-	void I4ObjectViewComponent::onAdd()
+	void ObjectViewComponent::onAdd()
 	{
 	}
 
-	void I4ObjectViewComponent::onRemove()
+	void ObjectViewComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onAnimate"), this);
-		getBroadcastMessenger().unsubscribe(I4Hash("onCommitToRenderer"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onAnimate"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onCommitToRenderer"), this);
 	}
 
-	bool I4ObjectViewComponent::attachModel(const char* name, const char* modelPrefixName, bool hasMesh, bool hasMtrl, bool hasBone)
+	bool ObjectViewComponent::attachModel(const char* name, const char* modelPrefixName, bool hasMesh, bool hasMtrl, bool hasBone)
 	{
-		I4ModelMgr* modelMgr = getOwner()->getObjectMgr()->getModelMgr();
+		ModelMgr* modelMgr = getOwner()->getObjectMgr()->getModelMgr();
 		model = modelMgr->createModel(name);
 		if (model == nullptr)
 			return false;
@@ -59,26 +59,26 @@ namespace i4object {
 
 		model->initialize();
 
-		getBroadcastMessenger().subscribe(I4Hash("onCommitToRenderer"), this, bind(&I4ObjectViewComponent::onCommitToRenderer, this, _1));
+		getBroadcastMessenger().subscribe(Hash("onCommitToRenderer"), this, bind(&ObjectViewComponent::onCommitToRenderer, this, _1));
 
 		return true;
 	}
 
-	bool I4ObjectViewComponent::attachAni(const char* fname, const char* aniName)
+	bool ObjectViewComponent::attachAni(const char* fname, const char* aniName)
 	{
 		if (model == nullptr)
 			return false;
 
-		I4ModelMgr* modelMgr = getOwner()->getObjectMgr()->getModelMgr();
+		ModelMgr* modelMgr = getOwner()->getObjectMgr()->getModelMgr();
 		if (!modelMgr->attachAni(model, fname, aniName))
 			return false;
 
-		getBroadcastMessenger().subscribe(I4Hash("onAnimate"), this, bind(&I4ObjectViewComponent::onUpateAnimation, this, _1));
+		getBroadcastMessenger().subscribe(Hash("onAnimate"), this, bind(&ObjectViewComponent::onUpateAnimation, this, _1));
 
 		return true;
 	}
 
-	void I4ObjectViewComponent::playAnimation(const char* name)
+	void ObjectViewComponent::playAnimation(const char* name)
 	{
 		if (model)
 		{
@@ -86,7 +86,7 @@ namespace i4object {
 		}
 	}
 
-	void I4ObjectViewComponent::onUpateAnimation(I4MessageArgs& args)
+	void ObjectViewComponent::onUpateAnimation(MessageArgs& args)
 	{
 		if (model)
 		{
@@ -94,7 +94,7 @@ namespace i4object {
 		}
 	}
 
-	void I4ObjectViewComponent::onCommitToRenderer(I4MessageArgs& args)
+	void ObjectViewComponent::onCommitToRenderer(MessageArgs& args)
 	{
 		if (model)
 		{
@@ -102,12 +102,12 @@ namespace i4object {
 		}
 	}
 
-	void I4ObjectViewComponent::setShadowCaster(bool enable)
+	void ObjectViewComponent::setShadowCaster(bool enable)
 	{
 		model->setShadowCaster(enable);
 	}
 
-	void I4ObjectViewComponent::setShadowReceiver(bool enable)
+	void ObjectViewComponent::setShadowReceiver(bool enable)
 	{
 		model->setShadowReceiver(enable);
 	}

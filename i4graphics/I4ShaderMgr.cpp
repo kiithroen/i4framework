@@ -7,12 +7,12 @@
 
 namespace i4graphics
 {
-	I4ShaderMgr::I4ShaderMgr()
+	ShaderMgr::ShaderMgr()
 		:activeShader(nullptr)
 	{
 	}
 
-	I4ShaderMgr::~I4ShaderMgr()
+	ShaderMgr::~ShaderMgr()
 	{
 		for (auto& itr : mapShader)
 		{
@@ -22,7 +22,7 @@ namespace i4graphics
 	}
 
 
-	bool I4ShaderMgr::load(const char* fname)
+	bool ShaderMgr::load(const char* fname)
 	{
 		ifstream ifs;
 
@@ -30,7 +30,7 @@ namespace i4graphics
 
 		if (ifs.is_open() == false)
 		{
-			I4LOG_WARN << L"can't open file. :" << fname;
+			LOG_WARN << L"can't open file. :" << fname;
 			return false;
 		}
 
@@ -39,7 +39,7 @@ namespace i4graphics
 		int size = (int)ifs.tellg();
 		if (size <= 0)
 		{
-			I4LOG_WARN << L"incorrect file. : " << fname;
+			LOG_WARN << L"incorrect file. : " << fname;
 			return false;
 		}
 
@@ -50,7 +50,7 @@ namespace i4graphics
 
 		if (strlen(buffer) == 0)
 		{
-			I4LOG_WARN << L"%s is empty\n" << fname;
+			LOG_WARN << L"%s is empty\n" << fname;
 			delete[] buffer;
 			return false;
 		}
@@ -62,7 +62,7 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4ShaderMgr::begin(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
+	bool ShaderMgr::begin(unsigned int mask, const INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
 		auto itr = mapShader.find(mask);
 		if (itr == mapShader.end())
@@ -90,7 +90,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ShaderMgr::end()
+	void ShaderMgr::end()
 	{
 		if (activeShader)
 		{
@@ -98,7 +98,7 @@ namespace i4graphics
 		}
 	}
 	
-	void I4ShaderMgr::setConstantBuffer(I4ShaderType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)
+	void ShaderMgr::setConstantBuffer(ShaderType type, unsigned int slot, ConstantBuffer* constantBuffer, void* data)
 	{
 		if (activeShader)
 		{
@@ -106,7 +106,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setTexture(unsigned int slot, const I4Texture* tex)
+	void ShaderMgr::setTexture(unsigned int slot, const Texture* tex)
 	{
 		if (activeShader)
 		{
@@ -114,7 +114,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setRenderTarget(unsigned int slot, const I4RenderTarget* tex)
+	void ShaderMgr::setRenderTarget(unsigned int slot, const RenderTarget* tex)
 	{
 		if (activeShader)
 		{
@@ -122,7 +122,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderMgr::setSamplerState(unsigned int slot, I4SamplerState state)
+	void ShaderMgr::setSamplerState(unsigned int slot, SamplerState state)
 	{
 		if (activeShader)
 		{
@@ -130,35 +130,35 @@ namespace i4graphics
 		}
 	}
 
-	I4Shader* I4ShaderMgr::createShader(unsigned int mask, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
+	Shader* ShaderMgr::createShader(unsigned int mask, const INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		string finalShaderCode = "";
 
-		if (mask & I4SHADER_MASK_TEX_DIFFUSE)
+		if (mask & SHADER_MASK_TEX_DIFFUSE)
 		{
 			finalShaderCode += "#define MASK_TEX_DIFFUSE\r\n";
 		}
 
-		if (mask & I4SHADER_MASK_TEX_SPECULAR)
+		if (mask & SHADER_MASK_TEX_SPECULAR)
 		{
 			finalShaderCode += "#define MASK_TEX_SPECULAR\r\n";
 		}
 
-		if (mask & I4SHADER_MASK_TEX_NORMAL)
+		if (mask & SHADER_MASK_TEX_NORMAL)
 		{
 			finalShaderCode += "#define MASK_TEX_NORMAL\r\n";
 		}
 	
-		if (mask & I4SHADER_MASK_SKINNING)
+		if (mask & SHADER_MASK_SKINNING)
 		{
 			finalShaderCode += "#define MASK_SKINNING\r\n";
 		}
 
 		finalShaderCode += baseShaderCode;
 
-		I4Shader* shaderProgram = I4VideoDriver::getVideoDriver()->createShader();
+		Shader* shaderProgram = VideoDriver::getVideoDriver()->createShader();
 		if (shaderProgram->createFromString(finalShaderCode.c_str(), inputElements, numElements) == false)
 		{
 			delete shaderProgram;
@@ -170,18 +170,18 @@ namespace i4graphics
 
 	//--------------------------------------------------------------------------------
 
-	I4ShaderMgrMap I4ShaderMgr::mapShaderMgr;
+	ShaderMgrMap ShaderMgr::mapShaderMgr;
 
-	bool I4ShaderMgr::addShaderMgr(const string& fxName)
+	bool ShaderMgr::addShaderMgr(const string& fxName)
 	{
-		I4ShaderMgr* shaderMgr = nullptr;
+		ShaderMgr* shaderMgr = nullptr;
 		auto itr = mapShaderMgr.find(fxName);
 		if (itr == mapShaderMgr.end())
 		{
-			shaderMgr = new I4ShaderMgr;
+			shaderMgr = new ShaderMgr;
 			if (shaderMgr->load(fxName.c_str()) == false)
 			{
-				I4LOG_WARN << L"shaderMgr load failed.(" << fxName.c_str() << L")";
+				LOG_WARN << L"shaderMgr load failed.(" << fxName.c_str() << L")";
 				delete shaderMgr;
 				shaderMgr = nullptr;
 			}
@@ -189,13 +189,13 @@ namespace i4graphics
 		}
 		else
 		{
-			I4LOG_WARN << L"shaderMgr already added.(" << fxName.c_str() << L")";
+			LOG_WARN << L"shaderMgr already added.(" << fxName.c_str() << L")";
 		}
 
 		return true;
 	}
 
-	I4ShaderMgr* I4ShaderMgr::findShaderMgr(const string& fxName)
+	ShaderMgr* ShaderMgr::findShaderMgr(const string& fxName)
 	{
 		auto itr = mapShaderMgr.find(fxName);
 		if (itr != mapShaderMgr.end())
@@ -203,11 +203,11 @@ namespace i4graphics
 			return itr->second;
 		}
 
-		I4LOG_WARN << L"can't find shader mgr.(" << fxName.c_str() << L")";
+		LOG_WARN << L"can't find shader mgr.(" << fxName.c_str() << L")";
 		return nullptr;
 	}
 
-	void I4ShaderMgr::destroyShaderMgr()
+	void ShaderMgr::destroyShaderMgr()
 	{
 		for (auto& itr : mapShaderMgr)
 		{

@@ -2,15 +2,15 @@
 
 namespace i4graphics
 {
-	class I4VertexBuffer;
-	class I4IndexBuffer;
-	class I4Texture;
+	class VertexBuffer;
+	class IndexBuffer;
+	class Texture;
 
-	class I4LineMesh
+	class LineMesh
 	{
 	public:
-		I4LineMesh();
-		~I4LineMesh();
+		LineMesh();
+		~LineMesh();
 		
 		void			bind();
 		void			unbind();
@@ -20,7 +20,7 @@ namespace i4graphics
 
 		//-------------------------------
 		
-		I4VertexBuffer*		vertexBuffer;
+		VertexBuffer*		vertexBuffer;
 	};
 	
 }

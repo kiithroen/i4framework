@@ -14,9 +14,9 @@
 
 namespace i4graphics
 {
-	//------------------------- I4ModelElement ---------------------
+	//------------------------- ModelElement ---------------------
 
-	I4ModelElement::I4ModelElement(I4Model* _model, I4ModelElementInfo* info)
+	ModelElement::ModelElement(Model* _model, ModelElementInfo* info)
 		: model(_model)
 		, elementInfo(info)
 		, parentElement(nullptr)
@@ -25,22 +25,22 @@ namespace i4graphics
 		resultTM = elementInfo->localTM;
 	}
 
-	I4ModelElement::~I4ModelElement()
+	ModelElement::~ModelElement()
 	{
 		delete aniController;
 	}
 
-	void I4ModelElement::registerAni(const char* name, I4KeyFrameSet* keyFrameSet)
+	void ModelElement::registerAni(const char* name, KeyFrameSet* keyFrameSet)
 	{
 		if (aniController == nullptr)
 		{
-			aniController = new I4AnimationController;
+			aniController = new AnimationController;
 		}
 		
 		aniController->addTrack(name, keyFrameSet);
 	}
 
-	void I4ModelElement::playAni(const char* name)
+	void ModelElement::playAni(const char* name)
 	{
 		if (aniController == nullptr)
 			return;
@@ -48,14 +48,14 @@ namespace i4graphics
 		aniController->playTrack(name);
 	}
 
-	bool I4ModelElement::initialize()
+	bool ModelElement::initialize()
 	{
 		parentElement = model->findElement(elementInfo->parentName.c_str());
 
 		return true;
 	}
 
-	void I4ModelElement::animate(float dt, const I4Matrix4x4& parentTM)
+	void ModelElement::animate(float dt, const Matrix4x4& parentTM)
 	{
 		if (aniController == nullptr)
 		{
@@ -69,39 +69,39 @@ namespace i4graphics
 		}
 	}
 
-	//------------------------- I4ModelBone ---------------------
+	//------------------------- ModelBone ---------------------
 
-	I4ModelBone::I4ModelBone(I4Model* model, I4ModelElementInfo* info)
-	: I4ModelElement(model, info)
+	ModelBone::ModelBone(Model* model, ModelElementInfo* info)
+	: ModelElement(model, info)
 	{
 	}
 
-	I4ModelBone::~I4ModelBone()
+	ModelBone::~ModelBone()
 	{
 	}
 
-	bool I4ModelBone::initialize()
+	bool ModelBone::initialize()
 	{
-		I4ModelElement::initialize();
+		ModelElement::initialize();
 
 		elementInfo->worldTM.extractInversePrimitive(worldInverseTM);
 
 		return true;
 	}
 
-	void I4ModelBone::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& parentTM)
+	void ModelBone::commitToRenderer(Renderer* renderer, const Matrix4x4& parentTM)
 	{
-		I4AABB aa(I4Vector3(-1, -1, -1), I4Vector3(1, 1, 1));
+		AABB aa(Vector3(-1, -1, -1), Vector3(1, 1, 1));
 
-		I4Vector3 edges[8];
+		Vector3 edges[8];
 		aa.extractEdges(edges);
 
-		I4Matrix4x4 m = resultTM*parentTM;
+		Matrix4x4 m = resultTM*parentTM;
 		worldInverseTM.extractInverse(m);
 		m = m*parentTM;
 
-		I4DebugLine l;
-		l.color = I4Vector4(1, 0, 0, 1);
+		DebugLine l;
+		l.color = Vector4(1, 0, 0, 1);
 		l.p0 = m.transformCoord(edges[0]);
 		l.p1 = m.transformCoord(edges[1]);
 		renderer->commit(l);
@@ -151,12 +151,12 @@ namespace i4graphics
 		renderer->commit(l);
 	}
 
-	//------------------------- I4ModelMesh -------------------------
+	//------------------------- ModelMesh -------------------------
 
-	static I4Material defaultMaterial;
+	static Material defaultMaterial;
 
-	I4ModelMesh::I4ModelMesh(I4Model* model, I4ModelElementInfo* info, I4TriangleMesh* _mesh)
-	: I4ModelElement(model, info)
+	ModelMesh::ModelMesh(Model* model, ModelElementInfo* info, TriangleMesh* _mesh)
+	: ModelElement(model, info)
 	, mesh(_mesh)
 	{
 		vecMaterial.resize(mesh->subMeshes.size());
@@ -166,16 +166,16 @@ namespace i4graphics
 		}
 	}
 
-	I4ModelMesh::~I4ModelMesh()
+	ModelMesh::~ModelMesh()
 	{
 	}
 
 
-	void I4ModelMesh::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM)
+	void ModelMesh::commitToRenderer(Renderer* renderer, const Matrix4x4& worldTM)
 	{
-		const I4Matrix4x4 finalTM = resultTM*worldTM;
+		const Matrix4x4 finalTM = resultTM*worldTM;
 
-		I4MeshRenderItem item;
+		MeshRenderItem item;
 		item.mesh = mesh;
 
 		
@@ -186,31 +186,31 @@ namespace i4graphics
 		item.shadowCaster = model->isShadowCaster();
 		item.shadowReceiver = model->isShadowReceiver();
 
-		item.shaderMask = I4SHADER_MASK_NONE;
+		item.shaderMask = SHADER_MASK_NONE;
 
 		for (unsigned int i = 0; i < mesh->subMeshes.size(); ++i)
 		{
 			item.subMeshID = i;
 			item.material = vecMaterial[i];
 
-			if (item.material->diffuseMap != I4INVALID_HASHCODE)
+			if (item.material->diffuseMap != INVALID_HASHCODE)
 			{
-				item.shaderMask |= I4SHADER_MASK_TEX_DIFFUSE;
+				item.shaderMask |= SHADER_MASK_TEX_DIFFUSE;
 			}
 
-			if (item.material->specularMap != I4INVALID_HASHCODE)
+			if (item.material->specularMap != INVALID_HASHCODE)
 			{
-				item.shaderMask |= I4SHADER_MASK_TEX_SPECULAR;
+				item.shaderMask |= SHADER_MASK_TEX_SPECULAR;
 			}
 
-			if (item.material->normalMap != I4INVALID_HASHCODE)
+			if (item.material->normalMap != INVALID_HASHCODE)
 			{
-				item.shaderMask |= I4SHADER_MASK_TEX_NORMAL;
+				item.shaderMask |= SHADER_MASK_TEX_NORMAL;
 			}
 
 			if (mesh->skined && model->getBoneCount() > 0)
 			{
-				item.shaderMask |= I4SHADER_MASK_SKINNING;
+				item.shaderMask |= SHADER_MASK_SKINNING;
 				item.worldTM = worldTM;
 				item.boneCount = model->getBoneCount();
 				item.resultTM = resultTM;
@@ -222,7 +222,7 @@ namespace i4graphics
 				// 아래 정보들은 사용안함
 				item.boneCount = 0;
 				item.skinTMs = nullptr;
-				item.resultTM = I4MATRIX4X4_IDENTITY; 
+				item.resultTM = MATRIX4X4_IDENTITY; 
 			}		
 
 			renderer->commit(item);

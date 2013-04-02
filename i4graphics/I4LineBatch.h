@@ -4,27 +4,27 @@
 
 namespace i4core
 {
-	class I4Camera;
+	class Camera;
 }
 using namespace i4core;
 
 namespace i4graphics
 {
-	class I4LineMesh;
+	class LineMesh;
 
-	class I4LineBatch
+	class LineBatch
 	{
 	public:
-		I4LineBatch(void);
-		~I4LineBatch(void);
+		LineBatch(void);
+		~LineBatch(void);
 
 		bool	create(int count);
 
 		void draw();
 
-		void	add(const I4Vector3& p0, const I4Vector3& p1, const I4Vector4& color)
+		void	add(const Vector3& p0, const Vector3& p1, const Vector4& color)
 		{
-			I4Vertex_Pos_Col v;
+			Vertex_Pos_Col v;
 			v.pos = p0;
 			v.color = color;
 			vecSceneVertex.push_back(v);
@@ -35,9 +35,9 @@ namespace i4graphics
 		}
 
 	private:
-		I4LineMesh*					mesh;
-		vector<I4Vertex_Pos_Col>	vecSceneVertex;
-		vector<I4Vertex_Pos_Col>	vecCulledVertex;
+		LineMesh*					mesh;
+		vector<Vertex_Pos_Col>	vecSceneVertex;
+		vector<Vertex_Pos_Col>	vecCulledVertex;
 	};
 
 }

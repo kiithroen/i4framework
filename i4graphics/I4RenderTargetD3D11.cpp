@@ -5,7 +5,7 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	I4RenderTargetD3D11::I4RenderTargetD3D11(ID3D11Device* d3dDevice)
+	RenderTargetD3D11::RenderTargetD3D11(ID3D11Device* d3dDevice)
 		: d3dDevice(d3dDevice)
 		, renderTargetView(nullptr)
 		, depthStencilView(nullptr)
@@ -13,12 +13,12 @@ namespace i4graphics
 	{	  	
 	}
 
-	I4RenderTargetD3D11::~I4RenderTargetD3D11()
+	RenderTargetD3D11::~RenderTargetD3D11()
 	{
 		unload();
 	}
 
-	bool I4RenderTargetD3D11::create(unsigned int width, unsigned int height, I4FORMAT format)
+	bool RenderTargetD3D11::create(unsigned int width, unsigned int height, FORMAT format)
 	{		
 		D3D11_TEXTURE2D_DESC texDesc;
 		ZeroMemory(&texDesc, sizeof(texDesc));
@@ -35,7 +35,7 @@ namespace i4graphics
 		texDesc.MiscFlags = 0;
 		if (FAILED(d3dDevice->CreateTexture2D(&texDesc, nullptr, &renderTargetTex)))
 		{
-			I4LOG_WARN << L"render target texture create failed.";
+			LOG_WARN << L"render target texture create failed.";
 			return false;
 		}
 
@@ -47,7 +47,7 @@ namespace i4graphics
 		rtDesc.Texture2DArray.MipSlice = 0;
 		if (FAILED(d3dDevice->CreateRenderTargetView(renderTargetTex, &rtDesc, &renderTargetView)))
 		{
-			I4LOG_WARN << L"render target view create failed.";
+			LOG_WARN << L"render target view create failed.";
 			return false;
 		}
 
@@ -61,14 +61,14 @@ namespace i4graphics
 		srvDesc.Texture2DArray.MostDetailedMip = 0;
 		if (FAILED(d3dDevice->CreateShaderResourceView(renderTargetTex, &srvDesc, &shaderResourceView)))
 		{
-			I4LOG_WARN << L"shader resource view create failed.";
+			LOG_WARN << L"shader resource view create failed.";
 			return false;
 		}
 
 		return true;
 	}
 
-	bool I4RenderTargetD3D11::createDepthStencil(unsigned int width, unsigned int height, I4FORMAT texFormat, I4FORMAT dsvFormat, I4FORMAT srvFormat)
+	bool RenderTargetD3D11::createDepthStencil(unsigned int width, unsigned int height, FORMAT texFormat, FORMAT dsvFormat, FORMAT srvFormat)
 	{		
 		D3D11_TEXTURE2D_DESC texDesc;
 		ZeroMemory(&texDesc, sizeof(texDesc));
@@ -85,7 +85,7 @@ namespace i4graphics
 		texDesc.MiscFlags = 0;
 		if (FAILED(d3dDevice->CreateTexture2D(&texDesc, nullptr, &renderTargetTex)))
 		{
-			I4LOG_WARN << L"render target texture create failed.";
+			LOG_WARN << L"render target texture create failed.";
 			return false;
 		}
 
@@ -96,7 +96,7 @@ namespace i4graphics
 		dsvDesc.Texture2D.MipSlice = 0;
 		if (FAILED(d3dDevice->CreateDepthStencilView(renderTargetTex, &dsvDesc, &depthStencilView)))
 		{
-			I4LOG_WARN << L"render target view create failed.";
+			LOG_WARN << L"render target view create failed.";
 			return false;
 		}
 
@@ -109,14 +109,14 @@ namespace i4graphics
 
 		if (FAILED(d3dDevice->CreateShaderResourceView(renderTargetTex, &srvDesc, &shaderResourceView)))
 		{
-			I4LOG_WARN << L"shader resource view create failed.";
+			LOG_WARN << L"shader resource view create failed.";
 			return false;
 		}
 
 		return true;
 	}
 
-	void I4RenderTargetD3D11::unload()
+	void RenderTargetD3D11::unload()
 	{
 		if (shaderResourceView)
 		{

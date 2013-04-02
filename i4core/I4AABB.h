@@ -4,28 +4,28 @@
 
 namespace i4core
 {
-	class I4AABB
+	class AABB
 	{
 	public:
-		I4AABB()
+		AABB()
 			: minEdge(FLT_MAX)
 			, maxEdge(-FLT_MAX)
 		{
 		}
 
-		I4AABB(const I4Vector3& pos)
+		AABB(const Vector3& pos)
 			: minEdge(pos)
 			, maxEdge(pos)
 		{
 		}
 
-		I4AABB(const I4Vector3& inMin, const I4Vector3& inMax)
+		AABB(const Vector3& inMin, const Vector3& inMax)
 			: minEdge(inMin)
 			, maxEdge(inMax)
 		{
 		}
 
-		const I4AABB& operator = (const I4AABB& rhs)
+		const AABB& operator = (const AABB& rhs)
 		{
 			minEdge = rhs.minEdge;
 			maxEdge = rhs.maxEdge;
@@ -33,13 +33,13 @@ namespace i4core
 			return *this;
 		}
 
-		void init(const I4Vector3& pos)
+		void init(const Vector3& pos)
 		{
 			minEdge = pos;
 			maxEdge = pos;
 		}
 
-		void merge(const I4Vector3& v)
+		void merge(const Vector3& v)
 		{
 			if (minEdge.x > v.x)
 			{
@@ -72,7 +72,7 @@ namespace i4core
 			}
 		}
 
-		void merge(const I4AABB& box)
+		void merge(const AABB& box)
 		{
 			if (minEdge.x > box.minEdge.x) minEdge.x = box.minEdge.x;
 			if (minEdge.y > box.minEdge.y) minEdge.y = box.minEdge.y;
@@ -92,18 +92,18 @@ namespace i4core
 			if (minEdge.z > maxEdge.z) swap(minEdge.z, maxEdge.z);
 		}
 
-		const I4AABB transform(const I4Matrix4x4& mat) const
+		const AABB transform(const Matrix4x4& mat) const
 		{
 			/*
 			// 최적화된 AABB가 아니다.
 			// 최적화된 AABB를 만드려면 8개점을 모두 옮기고 다시 AABB를 구해야함.
-			I4AABB aabb(mat.transformCoord(minEdge), mat.transformCoord(maxEdge));
+			AABB aabb(mat.transformCoord(minEdge), mat.transformCoord(maxEdge));
 			aabb.repair();
 			*/
-			I4Vector3 edges[8];
+			Vector3 edges[8];
 			extractEdges(edges);
 
-			I4AABB aabb;
+			AABB aabb;
 			for (int i = 0; i < 8; ++i)
 			{
 				edges[i] = mat.transformCoord(edges[i]);
@@ -116,9 +116,9 @@ namespace i4core
 			return aabb;
 		}
 
-		const I4AABB transformInto(const I4Matrix4x4& mat) const
+		const AABB transformInto(const Matrix4x4& mat) const
 		{
-			I4Matrix4x4 matInv;
+			Matrix4x4 matInv;
 			mat.extractInversePrimitive(matInv);
 
 			return transform(matInv);
@@ -133,7 +133,7 @@ namespace i4core
 		// 		|/        | /
 		// 		0---------3/ 
 
-		void extractEdges(I4Vector3* edges) const
+		void extractEdges(Vector3* edges) const
 		{
 			edges[0].set(minEdge.x, minEdge.y, minEdge.z);
 			edges[1].set(minEdge.x, maxEdge.y, minEdge.z);
@@ -145,7 +145,7 @@ namespace i4core
 			edges[7].set(maxEdge.x, minEdge.y, maxEdge.z);
 		}
 
-		void extractEdge(I4Vector3& edge, unsigned int i) const
+		void extractEdge(Vector3& edge, unsigned int i) const
 		{
 			switch (i)
 			{
@@ -179,19 +179,19 @@ namespace i4core
 			}
 		}
 
-		I4Vector3 getCenter()
+		Vector3 getCenter()
 		{
-			return (minEdge + maxEdge)*I4VECTOR3_HALF;
+			return (minEdge + maxEdge)*VECTOR3_HALF;
 		}
 
-		I4Vector3 getExtent()
+		Vector3 getExtent()
 		{
-			return (maxEdge - minEdge)*I4VECTOR3_HALF;
+			return (maxEdge - minEdge)*VECTOR3_HALF;
 		}
 
 	public:
-		I4Vector3	minEdge;
-		I4Vector3	maxEdge;		
+		Vector3	minEdge;
+		Vector3	maxEdge;		
 	};
 
 }

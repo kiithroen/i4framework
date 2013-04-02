@@ -7,91 +7,91 @@
 namespace i4object
 {
 
-	I4ObjectFlyControllerComponent::I4ObjectFlyControllerComponent(void)
+	ObjectFlyControllerComponent::ObjectFlyControllerComponent(void)
 	{
 	}
 
 
-	I4ObjectFlyControllerComponent::~I4ObjectFlyControllerComponent(void)
+	ObjectFlyControllerComponent::~ObjectFlyControllerComponent(void)
 	{
 	}
 
-	void I4ObjectFlyControllerComponent::onAdd()
+	void ObjectFlyControllerComponent::onAdd()
 	{
-		prevMouseX = I4InputState::MouseX;
-		prevMouseY = I4InputState::MouseY;
+		prevMouseX = InputState::MouseX;
+		prevMouseY = InputState::MouseY;
 
 		float yawRad;
 		float pitchRad;
 		float rollRad;
 
-		I4Quaternion rot;
+		Quaternion rot;
 		rot.makeRotationMatrix(getOwner()->getWorldTM());
 		rot.extractYawPitchRoll(yawRad, pitchRad, rollRad);
 
-		yaw = I4MathUtil::radianToDegree(yawRad);
-		pitch = I4MathUtil::radianToDegree(pitchRad);
+		yaw = MathUtil::radianToDegree(yawRad);
+		pitch = MathUtil::radianToDegree(pitchRad);
 	}
 
-	void I4ObjectFlyControllerComponent::onRemove()
+	void ObjectFlyControllerComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onUpdateLogic"), this);
 	}
 	
-	void I4ObjectFlyControllerComponent::activate(bool isActive)
+	void ObjectFlyControllerComponent::activate(bool isActive)
 	{
 		if (isActive)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onUpdateLogic"), this, bind(&I4ObjectFlyControllerComponent::onUpdateLogic, this, _1));
+			getBroadcastMessenger().subscribe(Hash("onUpdateLogic"), this, bind(&ObjectFlyControllerComponent::onUpdateLogic, this, _1));
 		}
 		else
 		{
-			getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
+			getBroadcastMessenger().unsubscribe(Hash("onUpdateLogic"), this);
 		}
 	}
 
-	void I4ObjectFlyControllerComponent::onUpdateLogic(I4MessageArgs& args)
+	void ObjectFlyControllerComponent::onUpdateLogic(MessageArgs& args)
 	{
 		float dt = args[0].asFloat();
 
 		float moveSpeed = 6.0f*dt;
 
-		I4Vector3 right = getOwner()->getWorldTM().getAxisX();
-		I4Vector3 forward = getOwner()->getWorldTM().getAxisZ();
-		I4Vector3 position = getOwner()->getPosition();
+		Vector3 right = getOwner()->getWorldTM().getAxisX();
+		Vector3 forward = getOwner()->getWorldTM().getAxisZ();
+		Vector3 position = getOwner()->getPosition();
 
 		right.normalize();
 		forward.normalize();
 
-		if (I4InputState::KeyPressed[VK_SHIFT])
+		if (InputState::KeyPressed[VK_SHIFT])
 		{
 			moveSpeed *= 3;
 		}
 
-		if (I4InputState::KeyPressed['w'] || I4InputState::KeyPressed['W'])
+		if (InputState::KeyPressed['w'] || InputState::KeyPressed['W'])
 		{
 			position += forward*moveSpeed;
 		}
 
-		if (I4InputState::KeyPressed['s'] || I4InputState::KeyPressed['S'])
+		if (InputState::KeyPressed['s'] || InputState::KeyPressed['S'])
 		{
 			position -= forward*moveSpeed;
 		}
 
-		if (I4InputState::KeyPressed['a'] || I4InputState::KeyPressed['A'])
+		if (InputState::KeyPressed['a'] || InputState::KeyPressed['A'])
 		{
 			position -= right*moveSpeed;
 		}
 
-		if (I4InputState::KeyPressed['d'] || I4InputState::KeyPressed['D'])
+		if (InputState::KeyPressed['d'] || InputState::KeyPressed['D'])
 		{
 			position += right*moveSpeed;
 		}
 
-		int curMouseX = I4InputState::MouseX;
-		int curMouseY = I4InputState::MouseY;
+		int curMouseX = InputState::MouseX;
+		int curMouseY = InputState::MouseY;
 
-		if (I4InputState::RightMousePressed)
+		if (InputState::RightMousePressed)
 		{
 			int dx = curMouseX - prevMouseX;
 			int dy = curMouseY - prevMouseY;
@@ -116,8 +116,8 @@ namespace i4object
 			}		
 		}
 
-		I4Matrix4x4 mat;
-		mat.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(yaw), I4MathUtil::degreeToRadian(pitch), 0);
+		Matrix4x4 mat;
+		mat.makeRotationYawPitchRoll(MathUtil::degreeToRadian(yaw), MathUtil::degreeToRadian(pitch), 0);
 		mat.setPosition(position);
 
 		getOwner()->setWorldTM(mat);

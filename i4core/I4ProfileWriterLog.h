@@ -2,15 +2,15 @@
 
 namespace i4core
 {
-	class I4ProfileNode;
+	class ProfileNode;
 
-	class I4ProfileWriterLog
+	class ProfileWriterLog
 	{
 	public:
-		void write(I4ProfileNode* node, float fps);
+		void write(ProfileNode* node, float fps);
 
 	private:
-		static void writeRecursive(I4ProfileNode* node, float parentTotalTime, int depth, float fps);
+		static void writeRecursive(ProfileNode* node, float parentTotalTime, int depth, float fps);
 	};
 
 }

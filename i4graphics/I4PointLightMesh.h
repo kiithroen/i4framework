@@ -5,11 +5,11 @@
 namespace i4graphics
 {
 
-	class I4PointLightMesh
+	class PointLightMesh
 	{
 	public:
-		I4PointLightMesh(void);
-		~I4PointLightMesh(void);
+		PointLightMesh(void);
+		~PointLightMesh(void);
 
 		bool	create(float r, unsigned short ringCount, unsigned short segmentCount);
 		void	destroy();
@@ -20,8 +20,8 @@ namespace i4graphics
 		void	draw();
 
 	private:
-		I4VertexBuffer*	vertexBuffer;
-		I4IndexBuffer*	indexBuffer;
+		VertexBuffer*	vertexBuffer;
+		IndexBuffer*	indexBuffer;
 	};
 
 }

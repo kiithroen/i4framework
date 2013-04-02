@@ -8,11 +8,11 @@ using namespace i4core;
 
 namespace i4object
 {
-	class I4ObjectCharacterMovementComponent : public I4ObjectComponent
+	class ObjectCharacterMovementComponent : public ObjectComponent
 	{
 	public:
-		I4ObjectCharacterMovementComponent();
-		virtual ~I4ObjectCharacterMovementComponent(void);
+		ObjectCharacterMovementComponent();
+		virtual ~ObjectCharacterMovementComponent(void);
 
 		static const char*	getComponentID()	{ return "Character"; }
 
@@ -21,7 +21,7 @@ namespace i4object
 		
 		void attach(float radius, float height, float slopeLimit, float stepOffset);
 
-		void	setDirection(const I4Vector3& dir);
+		void	setDirection(const Vector3& dir);
 		void	move(float speed);
 		void	jump(float speed);
 		void	stop();
@@ -30,7 +30,7 @@ namespace i4object
 		bool	isGrounded() const		{ return grounded; }
 		bool	isMoving() const		{ return moving; }
 		bool	isStopped() const		{ return stopped; }
-		void	onUpdateLogic(I4MessageArgs& args);
+		void	onUpdateLogic(MessageArgs& args);
 
 	private:
 		PxController*	controller;

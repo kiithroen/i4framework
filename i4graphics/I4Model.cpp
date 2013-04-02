@@ -9,25 +9,25 @@
 namespace i4graphics
 {
 
-	I4Model::I4Model()
+	Model::Model()
 		: shadowCaster(true)
 		, shadowReceiver(true)
 	{
 	}
 
-	I4Model::~I4Model()
+	Model::~Model()
 	{
 		destroy();
 	}
 
-	bool I4Model::registerBone(I4ModelBoneResource* boneResource)
+	bool Model::registerBone(ModelBoneResource* boneResource)
 	{
 		unsigned int boneCount = boneResource->getBoneCount();
 		for (unsigned int i = 0; i < boneCount; ++i)
 		{
-			I4ModelElementInfo* boneInfo = boneResource->getBoneInfo(i);
+			ModelElementInfo* boneInfo = boneResource->getBoneInfo(i);
 
-			I4ModelBone* modelBone = new I4ModelBone(this, boneInfo);
+			ModelBone* modelBone = new ModelBone(this, boneInfo);
 
 			vecBone.push_back(modelBone);
 			mapElement.insert(make_pair(boneInfo->name, modelBone));
@@ -38,15 +38,15 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4Model::registerMesh(I4ModelMeshResource* meshResource)
+	bool Model::registerMesh(ModelMeshResource* meshResource)
 	{
 		unsigned int meshCount = meshResource->getMeshCount();
 		for (unsigned int i = 0; i < meshCount; ++i)
 		{
-			I4ModelElementInfo* meshInfo = meshResource->getMeshInfo(i);
-			I4TriangleMesh* mesh = meshResource->getMesh(i);
+			ModelElementInfo* meshInfo = meshResource->getMeshInfo(i);
+			TriangleMesh* mesh = meshResource->getMesh(i);
 
-			I4ModelMesh* modelMesh = new I4ModelMesh(this, meshInfo, mesh);
+			ModelMesh* modelMesh = new ModelMesh(this, meshInfo, mesh);
 
 			vecMesh.push_back(modelMesh);
 			mapElement.insert(make_pair(meshInfo->name, modelMesh));
@@ -55,7 +55,7 @@ namespace i4graphics
 		return true;
 	}
 	
-	bool I4Model::registerMaterial(I4ModelMaterialResource* mtrlResource)
+	bool Model::registerMaterial(ModelMaterialResource* mtrlResource)
 	{
 		unsigned int mtrlCount = mtrlResource->getMaterialCount();
 		for (unsigned int i = 0; i < mtrlCount; ++i)
@@ -63,7 +63,7 @@ namespace i4graphics
 			unsigned int subMeshCount = vecMesh[i]->getMesh()->subMeshes.size();
 			for (unsigned int j = 0; j < subMeshCount; ++j)
 			{
-				I4Material* material = mtrlResource->getMaterial(i, j);
+				Material* material = mtrlResource->getMaterial(i, j);
 				vecMesh[i]->setMaterial(j, material);
 			}
 		} 
@@ -71,13 +71,13 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4Model::registerAni(I4ModelAniResource* aniResource, const char* aniName)
+	bool Model::registerAni(ModelAniResource* aniResource, const char* aniName)
 	{
 		unsigned int keyFrameSetCount = aniResource->getKeyFrameSetCount();
 		for (unsigned int i = 0; i < keyFrameSetCount; ++i)
 		{
-			I4KeyFrameSet* keyFrameSet = aniResource->getKeyFrameSet(i);
-			I4ModelElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
+			KeyFrameSet* keyFrameSet = aniResource->getKeyFrameSet(i);
+			ModelElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
 			if (itr != mapElement.end())
 			{
 				(itr->second)->registerAni(aniName, keyFrameSet);
@@ -87,7 +87,7 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4Model::initialize()
+	bool Model::initialize()
 	{
 		for (auto& itr : mapElement)
 		{
@@ -100,7 +100,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4Model::destroy()
+	void Model::destroy()
 	{
 		for (auto& itr : mapElement)
 		{
@@ -112,7 +112,7 @@ namespace i4graphics
 		mapElement.clear();
 	}
 
-	I4ModelElement* I4Model::findElement(const char* name)
+	ModelElement* Model::findElement(const char* name)
 	{
 		auto itr = mapElement.find(name);
 		if (itr != mapElement.end())
@@ -121,9 +121,9 @@ namespace i4graphics
 		return nullptr;
 	}
 
-	void I4Model::animate(float dt)
+	void Model::animate(float dt)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		unsigned int boneSize = vecBone.size();
 		for (unsigned int i = 0; i < boneSize; ++i)
@@ -140,9 +140,9 @@ namespace i4graphics
 	}
 
 
-	void I4Model::commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM)
+	void Model::commitToRenderer(Renderer* renderer, const Matrix4x4& worldTM)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		unsigned int boneSize = vecBone.size();
 		for (unsigned int i = 0; i < boneSize; ++i)
@@ -157,7 +157,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4Model::playAnimation(const char* aniName)
+	void Model::playAnimation(const char* aniName)
 	{
 		for (auto& itr : mapElement)
 		{

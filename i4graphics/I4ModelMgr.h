@@ -7,41 +7,41 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	class I4Model;
-	class I4ModelBoneResource;
-	class I4ModelMeshResource;
-	class I4ModelAniResource;
-	class I4ModelMaterialResource;
-	class I4Texture;
-	class I4TriangleMesh;
+	class Model;
+	class ModelBoneResource;
+	class ModelMeshResource;
+	class ModelAniResource;
+	class ModelMaterialResource;
+	class Texture;
+	class TriangleMesh;
 
-	class I4ModelMgr
+	class ModelMgr
 	{
-		typedef map<string, I4Model*>					I4ModelMap;
-		typedef map<string, I4ModelBoneResource*>		I4ModelBoneResourceMap;
-		typedef map<string, I4ModelMeshResource*>		I4ModelMeshResourceMap;
-		typedef map<string, I4ModelMaterialResource*>	I4ModelMaterialResourceMap;
-		typedef map<string, I4ModelAniResource*>		I4ModelAniResourceMap;
+		typedef map<string, Model*>					ModelMap;
+		typedef map<string, ModelBoneResource*>		ModelBoneResourceMap;
+		typedef map<string, ModelMeshResource*>		ModelMeshResourceMap;
+		typedef map<string, ModelMaterialResource*>	ModelMaterialResourceMap;
+		typedef map<string, ModelAniResource*>		ModelAniResourceMap;
 		
 	public:
-		I4ModelMgr(void);
-		~I4ModelMgr(void);
+		ModelMgr(void);
+		~ModelMgr(void);
 
-		I4Model*		createModel(const string& name);
+		Model*		createModel(const string& name);
 
-		bool			attachBone(I4Model* model, const char* fname);
-		bool			attachMesh(I4Model* model, const char* fname);
-		bool			attachMaterial(I4Model* model, const char* fname);
-		bool			attachAni(I4Model* model, const char* fname, const char* aniName);
+		bool			attachBone(Model* model, const char* fname);
+		bool			attachMesh(Model* model, const char* fname);
+		bool			attachMaterial(Model* model, const char* fname);
+		bool			attachAni(Model* model, const char* fname, const char* aniName);
 
 		void			destroy();
 
 	private:
-		I4ModelMap					mapModel;
-		I4ModelBoneResourceMap		mapModelBoneResource;
-		I4ModelMeshResourceMap		mapModelMeshResource;
-		I4ModelMaterialResourceMap	mapModelMaterialResource;
-		I4ModelAniResourceMap		mapModelAniResource;
+		ModelMap					mapModel;
+		ModelBoneResourceMap		mapModelBoneResource;
+		ModelMeshResourceMap		mapModelMeshResource;
+		ModelMaterialResourceMap	mapModelMaterialResource;
+		ModelAniResourceMap		mapModelAniResource;
 	};
 
 }

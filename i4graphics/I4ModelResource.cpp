@@ -13,32 +13,32 @@
 
 namespace i4graphics
 {
-	struct I4ParsedMeshData
+	struct ParsedMeshData
 	{
 		bool					skined;
-		I4AABB					localAABB;
-		vector<I4Vector3>		vecPosition;
-		vector<I4Vector3>		vecNormal;
-		vector<I4Vector4>		vecTangent;
-		vector<I4TextureUV>		vecUV;
-		vector<I4Index16>		vecIndex;
-		vector<I4BoneID>		vecBoneID;
-		vector<I4Weight>		vecWeight;
-		vector<I4SubMesh>		subMeshes;
+		AABB					localAABB;
+		vector<Vector3>		vecPosition;
+		vector<Vector3>		vecNormal;
+		vector<Vector4>		vecTangent;
+		vector<TextureUV>		vecUV;
+		vector<Index16>		vecIndex;
+		vector<BoneID>		vecBoneID;
+		vector<Weight>		vecWeight;
+		vector<SubMesh>		subMeshes;
 	};
 
-	I4ModelBoneResource::I4ModelBoneResource()
+	ModelBoneResource::ModelBoneResource()
 	{
 	}
 
-	I4ModelBoneResource::~I4ModelBoneResource()
+	ModelBoneResource::~ModelBoneResource()
 	{
 		destroy();
 	}
 
-	bool I4ModelBoneResource::loadBone(const char* fname)
+	bool ModelBoneResource::loadBone(const char* fname)
 	{
-		I4XmlData xml;
+		XmlData xml;
 		if (xml.parseFromFile(fname) == false)
 			return false;
 
@@ -47,7 +47,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ModelBoneResource::destroy()
+	void ModelBoneResource::destroy()
 	{
 		for (unsigned int i = 0; i < vecBoneInfo.size(); ++i)
 		{
@@ -57,21 +57,21 @@ namespace i4graphics
 	}
 
 
-	void I4ModelBoneResource::parseBone(I4XmlData& xml)
+	void ModelBoneResource::parseBone(XmlData& xml)
 	{
 		if (xml.selectNodeByPath("bone/node") == false)
 			return;
 
 		do
 		{
-			I4ModelElementInfo* nodeInfo = new I4ModelElementInfo();
+			ModelElementInfo* nodeInfo = new ModelElementInfo();
 			vecBoneInfo.push_back(nodeInfo);
 			parseNodeInfo(*nodeInfo, xml);
 
 		} while (xml.selectNextSiblingNode("node"));
 	}
 
-	void I4ModelBoneResource::parseNodeInfo(I4ModelElementInfo& out, I4XmlData& xml)
+	void ModelBoneResource::parseNodeInfo(ModelElementInfo& out, XmlData& xml)
 	{
 		xml.getAttrValue(out.name, "name");
 		xml.getAttrValue(out.parentName, "parent_name");
@@ -80,7 +80,7 @@ namespace i4graphics
  		parseNodeInfoWorldTM(out, xml);
 	}
 
-	void I4ModelBoneResource::parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml)
+	void ModelBoneResource::parseNodeInfoLocalTM(ModelElementInfo& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("localTM"))
 		{
@@ -108,7 +108,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelBoneResource::parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml)
+	void ModelBoneResource::parseNodeInfoWorldTM(ModelElementInfo& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("worldTM"))
 		{
@@ -136,20 +136,20 @@ namespace i4graphics
 		}
 	}
 
-	//-------------------- I4ModelMeshResource -----------------------
+	//-------------------- ModelMeshResource -----------------------
 
-	I4ModelMeshResource::I4ModelMeshResource()
+	ModelMeshResource::ModelMeshResource()
 	{
 	}
 
-	I4ModelMeshResource::~I4ModelMeshResource()
+	ModelMeshResource::~ModelMeshResource()
 	{
 		destroy();
 	}
 
-	bool I4ModelMeshResource::loadMesh(const char* fname)
+	bool ModelMeshResource::loadMesh(const char* fname)
 	{
-		I4XmlData xml;
+		XmlData xml;
 		if (xml.parseFromFile(fname) == false)
 			return false;
 
@@ -158,7 +158,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ModelMeshResource::destroy()
+	void ModelMeshResource::destroy()
 	{
 		for (unsigned int i = 0; i < vecMeshInfo.size(); ++i)
 		{
@@ -174,19 +174,19 @@ namespace i4graphics
 		vecMesh.clear();
 	}
 
-	void I4ModelMeshResource::parseMesh(I4XmlData& xml)
+	void ModelMeshResource::parseMesh(XmlData& xml)
 	{
 		if (xml.selectNodeByPath("mesh/node") == false)
 			return;
 
 		do
 		{
-			I4ModelElementInfo* nodeInfo = new I4ModelElementInfo();
+			ModelElementInfo* nodeInfo = new ModelElementInfo();
 			vecMeshInfo.push_back(nodeInfo);
 
 			parseNodeInfo(*nodeInfo, xml);	 
 
-			I4ParsedMeshData data;
+			ParsedMeshData data;
 			parseMeshPosition(data, xml);
 			parseMeshNormal(data, xml);
 			parseMeshUV(data, xml);
@@ -194,13 +194,13 @@ namespace i4graphics
 			parseMeshIndex(data, xml);
 			parseMeshSub(data, xml);
 
-			I4TriangleMesh* mesh = buildMesh(data);
+			TriangleMesh* mesh = buildMesh(data);
 			vecMesh.push_back(mesh);
 
 		} while (xml.selectNextSiblingNode("node"));
 	}
 
-	void I4ModelMeshResource::parseNodeInfo(I4ModelElementInfo& out, I4XmlData& xml)
+	void ModelMeshResource::parseNodeInfo(ModelElementInfo& out, XmlData& xml)
 	{
 		xml.getAttrValue(out.name, "name");
 		xml.getAttrValue(out.parentName, "parent_name");
@@ -209,7 +209,7 @@ namespace i4graphics
 		parseNodeInfoWorldTM(out, xml);
 	}
 
-	void I4ModelMeshResource::parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml)
+	void ModelMeshResource::parseNodeInfoLocalTM(ModelElementInfo& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("localTM"))
 		{
@@ -237,7 +237,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml)
+	void ModelMeshResource::parseNodeInfoWorldTM(ModelElementInfo& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("worldTM"))
 		{
@@ -265,7 +265,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshPosition(I4ParsedMeshData& out, I4XmlData& xml)
+	void ModelMeshResource::parseMeshPosition(ParsedMeshData& out, XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("position"))
 		{
@@ -295,7 +295,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml)
+	void ModelMeshResource::parseMeshNormal(ParsedMeshData& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("normal"))
 		{
@@ -324,7 +324,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshUV(I4ParsedMeshData& out,I4XmlData& xml)
+	void ModelMeshResource::parseMeshUV(ParsedMeshData& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("uv"))
 		{
@@ -354,7 +354,7 @@ namespace i4graphics
 		}
 	}
 
-	void I4ModelMeshResource::parseMeshWeight(I4ParsedMeshData& out, I4XmlData& xml)
+	void ModelMeshResource::parseMeshWeight(ParsedMeshData& out, XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("weight"))
 		{
@@ -416,7 +416,7 @@ namespace i4graphics
 		}
 	}
 	
-	void I4ModelMeshResource::parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml)
+	void ModelMeshResource::parseMeshIndex(ParsedMeshData& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("index"))
 		{
@@ -450,7 +450,7 @@ namespace i4graphics
 			xml.selectParentNode();
 		}
 	}
-	void I4ModelMeshResource::parseMeshSub(I4ParsedMeshData& out,I4XmlData& xml)
+	void ModelMeshResource::parseMeshSub(ParsedMeshData& out,XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("sub"))
 		{
@@ -478,7 +478,7 @@ namespace i4graphics
 		}
 	}
 
-	I4TriangleMesh* I4ModelMeshResource::buildMesh(I4ParsedMeshData &data)
+	TriangleMesh* ModelMeshResource::buildMesh(ParsedMeshData &data)
 	{
 		if (data.vecUV.size() > 0)
 		{
@@ -487,7 +487,7 @@ namespace i4graphics
 				data.vecUV, data.vecIndex.size(), data.vecIndex, data.vecTangent);
 		}
 
-		I4TriangleMesh* mesh = new I4TriangleMesh();
+		TriangleMesh* mesh = new TriangleMesh();
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
@@ -495,7 +495,7 @@ namespace i4graphics
 
 		if (data.skined)	
 		{
-			vector<I4Vertex_Pos_Normal_Tex_Tan_SkinInfo> vertices;
+			vector<Vertex_Pos_Normal_Tex_Tan_SkinInfo> vertices;
 			vertices.resize(data.vecPosition.size());
 
 			for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
@@ -508,8 +508,8 @@ namespace i4graphics
 				vertices[i].weight = data.vecWeight[i];
 			}
 
-			mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-			if (mesh->vertexBuffer->create(vertices.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan_SkinInfo), &vertices[0]) == false)
+			mesh->vertexBuffer = VideoDriver::getVideoDriver()->createVertexBuffer();
+			if (mesh->vertexBuffer->create(vertices.size(), sizeof(Vertex_Pos_Normal_Tex_Tan_SkinInfo), &vertices[0]) == false)
 			{
 				return nullptr;
 			}
@@ -518,7 +518,7 @@ namespace i4graphics
 		{
 			if (data.vecUV.size() > 0)
 			{
-				vector<I4Vertex_Pos_Normal_Tex_Tan> vertices;
+				vector<Vertex_Pos_Normal_Tex_Tan> vertices;
 				vertices.resize(data.vecPosition.size());
 
 				for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
@@ -529,12 +529,12 @@ namespace i4graphics
 					vertices[i].uv = data.vecUV[i];
 				}
 
-				mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-				mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal_Tex_Tan), &vertices[0]);
+				mesh->vertexBuffer = VideoDriver::getVideoDriver()->createVertexBuffer();
+				mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(Vertex_Pos_Normal_Tex_Tan), &vertices[0]);
 			}
 			else
 			{
-				vector<I4Vertex_Pos_Normal> vertices;
+				vector<Vertex_Pos_Normal> vertices;
 				vertices.resize(data.vecPosition.size());
 
 				for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
@@ -543,24 +543,24 @@ namespace i4graphics
 					vertices[i].normal = data.vecNormal[i];
 				}
 
-				mesh->vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-				mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(I4Vertex_Pos_Normal), &vertices[0]);
+				mesh->vertexBuffer = VideoDriver::getVideoDriver()->createVertexBuffer();
+				mesh->vertexBuffer->create(data.vecPosition.size(), sizeof(Vertex_Pos_Normal), &vertices[0]);
 			}
 		}
 
-		mesh->indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
+		mesh->indexBuffer = VideoDriver::getVideoDriver()->createIndexBuffer();
 		mesh->indexBuffer->create(data.vecIndex.size()*3, sizeof(unsigned short), &data.vecIndex[0]);
 
 		return mesh;
 	}
 
 
-	void I4ModelMeshResource::CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
-		const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent)
+	void ModelMeshResource::CalculateTangentArray(long vertexCount, const vector<Vector3>& vertex, const vector<Vector3>& normal,
+		const vector<TextureUV>& texCoord, long triangleCount, const vector<Index16>& triangle, vector<Vector4>& tangent)
 	{
-		I4Vector3* tan1 = new I4Vector3[vertexCount * 2];
-		I4Vector3* tan2 = tan1 + vertexCount;
-		ZeroMemory(tan1, vertexCount * sizeof(I4Vector3) * 2);
+		Vector3* tan1 = new Vector3[vertexCount * 2];
+		Vector3* tan2 = tan1 + vertexCount;
+		ZeroMemory(tan1, vertexCount * sizeof(Vector3) * 2);
 
 		for (long a = 0; a < triangleCount; a++)
 		{
@@ -568,13 +568,13 @@ namespace i4graphics
 			long i2 = triangle[a].i[1];
 			long i3 = triangle[a].i[2];
 
-			const I4Vector3& v1 = vertex[i1];
-			const I4Vector3& v2 = vertex[i2];
-			const I4Vector3& v3 = vertex[i3];
+			const Vector3& v1 = vertex[i1];
+			const Vector3& v2 = vertex[i2];
+			const Vector3& v3 = vertex[i3];
 
-			const I4TextureUV& w1 = texCoord[i1];
-			const I4TextureUV& w2 = texCoord[i2];
-			const I4TextureUV& w3 = texCoord[i3];
+			const TextureUV& w1 = texCoord[i1];
+			const TextureUV& w2 = texCoord[i2];
+			const TextureUV& w3 = texCoord[i3];
 
 			float x1 = v2.x - v1.x;
 			float x2 = v3.x - v1.x;
@@ -589,9 +589,9 @@ namespace i4graphics
 			float t2 = w3.v - w1.v;
 
 			float r = 1.0F / (s1 * t2 - s2 * t1);
-			I4Vector3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
+			Vector3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
 				(t2 * z1 - t1 * z2) * r);
-			I4Vector3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r,
+			Vector3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r,
 				(s1 * z2 - s2 * z1) * r);
 
 			tan1[i1] += sdir;
@@ -605,11 +605,11 @@ namespace i4graphics
 
 		for (long a = 0; a < vertexCount; a++)
 		{
-			const I4Vector3& n = normal[a];
-			const I4Vector3& t = tan1[a];
+			const Vector3& n = normal[a];
+			const Vector3& t = tan1[a];
 
 			// Gram-Schmidt orthogonalize
-			I4Vector3 v = (t - n * I4Vector3::dotProduct(n, t));			
+			Vector3 v = (t - n * Vector3::dotProduct(n, t));			
 			v.normalize();
 			if (_finite(v.x) == 0 || _finite(v.y) == 0 || _finite(v.z) == 0)
 			{
@@ -623,26 +623,26 @@ namespace i4graphics
 			tangent[a].z = v.z;
 
 			// Calculate handedness			
-			tangent[a].w = (I4Vector3::dotProduct(I4Vector3::crossProduct(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
+			tangent[a].w = (Vector3::dotProduct(Vector3::crossProduct(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
 		}
 
 		delete[] tan1;
 	}
 
-	//-------------------- I4ModelMaterialResource -----------------------
+	//-------------------- ModelMaterialResource -----------------------
 
-	I4ModelMaterialResource::I4ModelMaterialResource()
+	ModelMaterialResource::ModelMaterialResource()
 	{
 	}
 
-	I4ModelMaterialResource::~I4ModelMaterialResource()
+	ModelMaterialResource::~ModelMaterialResource()
 	{
 		destroy();
 	}
 
-	bool I4ModelMaterialResource::loadMaterial(const char* fname)
+	bool ModelMaterialResource::loadMaterial(const char* fname)
 	{
-		I4XmlData xml;
+		XmlData xml;
 		if (xml.parseFromFile(fname) == false)
 			return false;
 
@@ -657,15 +657,15 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ModelMaterialResource::destroy()
+	void ModelMaterialResource::destroy()
 	{
 		for (auto &itr : materialContainer)
 		{
 			for (auto& itrSub : itr)
 			{
-				I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->diffuseMap);
-				I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->specularMap);
-				I4VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->normalMap);
+				VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->diffuseMap);
+				VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->specularMap);
+				VideoDriver::getVideoDriver()->getTextureMgr()->unload(itrSub->normalMap);
 				delete itrSub;
 			}
 		}
@@ -673,15 +673,15 @@ namespace i4graphics
 	}
 
 	
-	void I4ModelMaterialResource::parseMaterials(I4XmlData& xml)
+	void ModelMaterialResource::parseMaterials(XmlData& xml)
 	{		
-		I4MaterialVector vecMaterial;
+		MaterialVector vecMaterial;
 
 		if (xml.selectFirstChildNode("sub"))
 		{
 			do
 			{
-				I4Material* material = new I4Material;
+				Material* material = new Material;
 
 				if (xml.selectFirstChildNode("ambient"))
 				{
@@ -721,7 +721,7 @@ namespace i4graphics
 					char texturePath[256] = "texture/";
 					strcat_s(texturePath, val);
 
-					material->diffuseMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+					material->diffuseMap = VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
 
 					xml.selectParentNode();
 				}
@@ -734,7 +734,7 @@ namespace i4graphics
 					char texturePath[256] = "texture/";
 					strcat_s(texturePath, val);
 
-					material->specularMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+					material->specularMap = VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
 
 					xml.selectParentNode();
 				}
@@ -747,7 +747,7 @@ namespace i4graphics
 					char texturePath[256] = "texture/";
 					strcat_s(texturePath, val);
 
-					material->normalMap = I4VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
+					material->normalMap = VideoDriver::getVideoDriver()->getTextureMgr()->load(texturePath);
 
 					xml.selectParentNode();
 				}
@@ -780,26 +780,26 @@ namespace i4graphics
 		if (vecMaterial.empty())
 		{
 			// 없으면 기본 마테리얼로 최소 1개는 넣어준다.
-			vecMaterial.push_back(new I4Material);
+			vecMaterial.push_back(new Material);
 		}		
 		materialContainer.push_back(vecMaterial);
 	}
 
-	//-------------------- I4ModelAniResource -----------------------
+	//-------------------- ModelAniResource -----------------------
 
 
-	I4ModelAniResource::I4ModelAniResource()
+	ModelAniResource::ModelAniResource()
 	{
 	}
 
-	I4ModelAniResource::~I4ModelAniResource()
+	ModelAniResource::~ModelAniResource()
 	{
 		destroy();
 	}
 
-	bool I4ModelAniResource::loadAni(const char* fname)
+	bool ModelAniResource::loadAni(const char* fname)
 	{
-		I4XmlData xml;
+		XmlData xml;
 		if (xml.parseFromFile(fname) == false)
 			return nullptr;
 
@@ -808,7 +808,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ModelAniResource::destroy()
+	void ModelAniResource::destroy()
 	{
 		for (unsigned int i = 0; i < vecKeyFrameSet.size(); ++i)
 		{
@@ -817,7 +817,7 @@ namespace i4graphics
 		vecKeyFrameSet.clear();
 	}
 
-	void I4ModelAniResource::parseAnimation(I4XmlData& xml)
+	void ModelAniResource::parseAnimation(XmlData& xml)
 	{
 		if (xml.selectNodeByPath("ani") == false)
 			return;
@@ -844,7 +844,7 @@ namespace i4graphics
 
 		do
 		{
-			I4KeyFrameSet* keyFrameSet = new I4KeyFrameSet();
+			KeyFrameSet* keyFrameSet = new KeyFrameSet();
 			xml.getAttrValue(keyFrameSet->nodeName, "name");
 			keyFrameSet->startFrame = startFrame;
 			keyFrameSet->endFrame = endFrame;
@@ -856,7 +856,7 @@ namespace i4graphics
 		} while (xml.selectNextSiblingNode("node"));
 	}
 
-	void I4ModelAniResource::parseKeyFrameSet(I4KeyFrameSet& out, I4XmlData& xml)
+	void ModelAniResource::parseKeyFrameSet(KeyFrameSet& out, XmlData& xml)
 	{
 		if (xml.selectFirstChildNode("posKey"))
 		{

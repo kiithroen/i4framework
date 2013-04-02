@@ -5,14 +5,14 @@
 
 namespace i4graphics
 {
-	class I4RenderTargetD3D11 : public I4RenderTarget
+	class RenderTargetD3D11 : public RenderTarget
 	{
-		friend class I4VideoDriverD3D11;
+		friend class VideoDriverD3D11;
 	public:
-		virtual ~I4RenderTargetD3D11();
+		virtual ~RenderTargetD3D11();
 
-		virtual bool				create(unsigned int width, unsigned int height, I4FORMAT format) override;
-		virtual bool				createDepthStencil(unsigned int width, unsigned int height, I4FORMAT texFormat, I4FORMAT srvFormat, I4FORMAT dsvFormat)	override;
+		virtual bool				create(unsigned int width, unsigned int height, FORMAT format) override;
+		virtual bool				createDepthStencil(unsigned int width, unsigned int height, FORMAT texFormat, FORMAT srvFormat, FORMAT dsvFormat)	override;
 
 		ID3D11RenderTargetView*		getRenderTargetView() const	{ return renderTargetView; }
 		ID3D11DepthStencilView*		getDepthStencilView() const	{ return depthStencilView; }
@@ -22,7 +22,7 @@ namespace i4graphics
 		void						unload();
 
 	private:
-		I4RenderTargetD3D11(ID3D11Device* d3dDevice);
+		RenderTargetD3D11(ID3D11Device* d3dDevice);
 
 	private:
 		ID3D11Device*				d3dDevice;

@@ -7,18 +7,18 @@
 #include <algorithm>
 using namespace std;
 
-enum I4ExportType
+enum ExportType
 {
-	I4EXPORT_MESH = 0,
-	I4EXPORT_MTRL,
-	I4EXPORT_BONE,
-	I4EXPORT_ANI,
+	EXPORT_MESH = 0,
+	EXPORT_MTRL,
+	EXPORT_BONE,
+	EXPORT_ANI,
 };
 
-struct I4TriIndex
+struct TriIndex
 {
-	I4TriIndex() {}
-	I4TriIndex(int _i0, int _i1, int _i2)
+	TriIndex() {}
+	TriIndex(int _i0, int _i1, int _i2)
 	{
 		i[0] = _i0;
 		i[1] = _i1;
@@ -30,15 +30,15 @@ struct I4TriIndex
 
 #define TEX_UV_NA 9999.0f
 	
-struct I4TextureUV
+struct TextureUV
 {
-	I4TextureUV()
+	TextureUV()
 		: u(TEX_UV_NA)
 		, v(TEX_UV_NA)
 	{
 	}
 
-	I4TextureUV(float _u, float _v)
+	TextureUV(float _u, float _v)
 		: u(_u)
 		, v(_v)
 	{
@@ -47,35 +47,35 @@ struct I4TextureUV
 	float u, v;
 };
 
-struct I4SkinInfo
+struct SkinInfo
 {
 	int boneID;
 	float boneWeight;
 };
 
-struct I4SkinData
+struct SkinData
 {
-	vector<I4SkinInfo>	data;
+	vector<SkinInfo>	data;
 };
 
-struct I4MeshData
+struct MeshData
 {
 	vector<FbxVector4>		vecPosition;
 	vector<FbxVector4>		vecNormal;
-	vector<I4TextureUV>		vecUV;
-	vector<I4TriIndex>		vecIndex;
-	vector<I4TextureUV>		vecTexUV;
-	vector<I4TriIndex>		vecTexIndex;
-	vector<I4SkinData>		vecI4SkinInfo;
+	vector<TextureUV>		vecUV;
+	vector<TriIndex>		vecIndex;
+	vector<TextureUV>		vecTexUV;
+	vector<TriIndex>		vecTexIndex;
+	vector<SkinData>		vecI4SkinInfo;
 	vector<int>				vecMtrlID;
 };
 
 
-class I4FbxConverter
+class FbxConverter
 {
 public:
-	I4FbxConverter(void);
-	~I4FbxConverter(void);
+	FbxConverter(void);
+	~FbxConverter(void);
 
 	void Initialize();
 	void Finalize();
@@ -108,9 +108,9 @@ private:
 		return (float)(col.mData[0]*0.3f + col.mData[1]*0.59f + col.mData[2]*0.11f);
 	}
 
-	I4TextureUV FbxUVToI4(const I4TextureUV& v)
+	TextureUV FbxUVToI4(const TextureUV& v)
 	{
-		return I4TextureUV(v.u, 1.0f - v.v);
+		return TextureUV(v.u, 1.0f - v.v);
 	}
 
 	FbxVector4 FbxVectorToI4(const FbxVector4& v)
@@ -136,9 +136,9 @@ private:
 	}
 
 
-	I4TriIndex I4TriIndexToI4(const I4TriIndex& i)
+	TriIndex TriIndexToI4(const TriIndex& i)
 	{
-		return I4TriIndex(i.i[0], i.i[2], i.i[1]);
+		return TriIndex(i.i[0], i.i[2], i.i[1]);
 	}
 
 	FbxAMatrix FbxMatrixToI4(const FbxAMatrix& m)
@@ -175,12 +175,12 @@ private:
 		return pNode->EvaluateGlobalTransform()*GetGeometricTransform(pNode);
 	}
 		
-	void splitVertexDifferentI4TextureUV(I4MeshData& out);
+	void splitVertexDifferentI4TextureUV(MeshData& out);
 	void WriteMesh(FbxMesh* pMesh, FILE* fpMesh);
 	void WriteNodeTransform(FbxNode* pNode, FILE* fp);
 	void WriteNodeStart(FbxNode* pNode, const char* nodeName, const char* nodeParentName, FILE* fp);
 	void WriteNodeEnd(FILE* fp);
-	void WriteNode(FbxNode* pNode, I4ExportType I4ExportType);
+	void WriteNode(FbxNode* pNode, ExportType ExportType);
 	void TriangulateRecursive(FbxNode* pNode);
 	void BuildBoneNameList(FbxNode* pNode);
 

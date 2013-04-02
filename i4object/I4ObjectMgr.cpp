@@ -6,14 +6,14 @@
 
 namespace i4object {
 
-	I4ObjectMgr::I4ObjectMgr()
+	ObjectMgr::ObjectMgr()
 		: renderer(nullptr)
 		, modelMgr(nullptr)
 	{
 	}
 
 
-	I4ObjectMgr::~I4ObjectMgr()
+	ObjectMgr::~ObjectMgr()
 	{
 		for (auto& itr : mapObject)
 		{
@@ -22,7 +22,7 @@ namespace i4object {
 		mapObject.clear();
 	}
 
-	bool I4ObjectMgr::init(I4Renderer* _renderer, I4ModelMgr* _modelMgr, I4PhysXMgr* _physXMgr)
+	bool ObjectMgr::init(Renderer* _renderer, ModelMgr* _modelMgr, PhysXMgr* _physXMgr)
 	{
 		renderer = _renderer;
 		modelMgr = _modelMgr;
@@ -31,17 +31,17 @@ namespace i4object {
 		return true;
 	}
 
-	I4Object* I4ObjectMgr::createObject(const char* name)
+	Object* ObjectMgr::createObject(const char* name)
 	{
 		assert(findObject(name) == nullptr);		// 같은 이름으로는 처음 생성되어야 한다.
 
-		I4Object* sceneNode = new I4Object(this, name);
+		Object* sceneNode = new Object(this, name);
 		mapObject.insert(make_pair(name, sceneNode));
 		
 		return sceneNode;
 	}
 
-	void I4ObjectMgr::destroyObject(I4Object* obj)
+	void ObjectMgr::destroyObject(Object* obj)
 	{
 		auto itr = mapObject.find(obj->getName());
 		assert(itr != mapObject.end());
@@ -50,7 +50,7 @@ namespace i4object {
 		mapObject.erase(itr);
 	}
 
-	I4Object* I4ObjectMgr::findObject(const char* name)
+	Object* ObjectMgr::findObject(const char* name)
 	{
 		auto itr = mapObject.find(name);
 		if (itr == mapObject.end())

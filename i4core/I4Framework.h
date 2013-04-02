@@ -5,23 +5,23 @@
 
 namespace i4core
 {
-	class I4FrameCallback;
+	class FrameCallback;
 
-	enum I4InputStateType
+	enum InputStateType
 	{
-		I4INPUT_KEY_DOWN = 0,
-		I4INPUT_KEY_UP,
-		I4INPUT_LEFT_MOUSE_DOWN,
-		I4INPUT_LEFT_MOUSE_UP,
-		I4INPUT_RIGHT_MOUSE_DOWN,
-		I4INPUT_RIGHT_MOUSE_UP,
+		INPUT_KEY_DOWN = 0,
+		INPUT_KEY_UP,
+		INPUT_LEFT_MOUSE_DOWN,
+		INPUT_LEFT_MOUSE_UP,
+		INPUT_RIGHT_MOUSE_DOWN,
+		INPUT_RIGHT_MOUSE_UP,
 	};
 
-	struct I4InputState
+	struct InputState
 	{
 		static void initialize();
 
-		I4InputStateType	type;
+		InputStateType	type;
 		int					key;
 
 		static int			MouseX;
@@ -32,17 +32,17 @@ namespace i4core
 		static bool			MoveMouseCenter;
 	};
 
-	class I4Framework
+	class Framework
 	{
 	public:
-		I4Framework();
-		virtual ~I4Framework();
+		Framework();
+		virtual ~Framework();
 
 		bool				create(unsigned int width, unsigned int height, const string& title);
 		void				destroy();
 		void				run();
 		
-		void				setFrameCallback(I4FrameCallback* callback);
+		void				setFrameCallback(FrameCallback* callback);
 
 		void*				getWindowID() const						{ return windowID; }
 		string				getTitle() const						{ return title; }
@@ -51,7 +51,7 @@ namespace i4core
 		bool				isActivated() const						{ return activated; }
 		float				getFps()								{ return fps; }
 	public:
-		static I4Framework*	getFramework()		{ return framework; }
+		static Framework*	getFramework()		{ return framework; }
 
 		static void			createFramework();
 		static void			destroyFramework();
@@ -70,9 +70,9 @@ namespace i4core
 		unsigned int		height;
 		bool				activated;
 		float				fps;
-		I4FrameCallback*	frameCallback;
+		FrameCallback*	frameCallback;
 
 	private:
-		static I4Framework*	framework;
+		static Framework*	framework;
 	};
 }

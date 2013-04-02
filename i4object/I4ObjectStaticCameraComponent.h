@@ -6,17 +6,17 @@ using namespace i4core;
 
 namespace i4core
 {
-	class I4Camera;
+	class Camera;
 }
 
 namespace i4object
 {
 
-	class I4ObjectStaticCameraComponent : public I4ObjectComponent
+	class ObjectStaticCameraComponent : public ObjectComponent
 	{
 	public:
-		I4ObjectStaticCameraComponent(void);
-		virtual ~I4ObjectStaticCameraComponent(void);
+		ObjectStaticCameraComponent(void);
+		virtual ~ObjectStaticCameraComponent(void);
 
 		static const char*	getComponentID()	{ return "StaticCamera"; }
 
@@ -25,7 +25,7 @@ namespace i4object
 
 		void setMainCamera(bool isMain);
 
-		void onLateUpdate(I4MessageArgs& args);
+		void onLateUpdate(MessageArgs& args);
 
 	private:
 		bool		isMainCamera;

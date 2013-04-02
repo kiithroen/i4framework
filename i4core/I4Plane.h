@@ -4,49 +4,49 @@
 
 namespace i4core
 {
-	enum I4PlaneLoc { I4PL_FRONT = 0, I4PL_BACK = 1, I4PL_CLIPED = 2 };
+	enum PlaneLoc { PL_FRONT = 0, PL_BACK = 1, PL_CLIPED = 2 };
 
-	class I4Plane
+	class Plane
 	{
 	public:
-		I4Plane()
+		Plane()
 		{
 		}
 
-		I4Plane(const I4Plane& p)
+		Plane(const Plane& p)
 			: N(p.N), D(p.D)
 		{
 		}
 
-		I4Plane(float a, float b, float c, float d)
+		Plane(float a, float b, float c, float d)
 			: N(a, b, c), D(d)
 		{
 			normalize();
 		}
 
-		I4Plane(const I4Vector3& n, float d)
+		Plane(const Vector3& n, float d)
 			: N(n), D(d)
 		{
 		}
 
-		I4Plane(const I4Vector3& n, const I4Vector3& p)
+		Plane(const Vector3& n, const Vector3& p)
 		{
 			N = n;
 			N.normalize();
-			D = -I4Vector3::dotProduct(N, p);
+			D = -Vector3::dotProduct(N, p);
 		}
 
-		I4Plane(const I4Vector3& a, const I4Vector3& b, const I4Vector3& c)
+		Plane(const Vector3& a, const Vector3& b, const Vector3& c)
 		{
-			I4Vector3 p0 = b - a;
-			I4Vector3 p1 = c - a;
-			N = I4Vector3::crossProduct(p0, p1);
+			Vector3 p0 = b - a;
+			Vector3 p1 = c - a;
+			N = Vector3::crossProduct(p0, p1);
 			N.normalize();
 
-			D = I4Vector3::dotProduct(N, a);
+			D = Vector3::dotProduct(N, a);
 		}
 
-		const I4Plane& operator = (const I4Plane& rhs)
+		const Plane& operator = (const Plane& rhs)
 		{
 			N = rhs.N;
 			D = rhs.D;
@@ -54,12 +54,12 @@ namespace i4core
 			return *this;
 		}
 
-		bool operator == (const I4Plane& rhs)
+		bool operator == (const Plane& rhs)
 		{
 			return ((D = rhs.D) && (N == rhs.N));
 		}
 
-		bool operator != (const I4Plane& rhs)
+		bool operator != (const Plane& rhs)
 		{
 			return !(*this == rhs);
 		}
@@ -72,65 +72,65 @@ namespace i4core
 			D /= length;
 		}
 
-		float distanceFrom(const I4Vector3& p) const
+		float distanceFrom(const Vector3& p) const
 		{
-			return (I4Vector3::dotProduct(N, p) + D);
+			return (Vector3::dotProduct(N, p) + D);
 		}
 
-		const I4Plane transform(const I4Matrix4x4& mat) const
+		const Plane transform(const Matrix4x4& mat) const
 		{
-			return I4Plane(mat.transformVector(N), D);
+			return Plane(mat.transformVector(N), D);
 		}
 
-		I4PlaneLoc testPoint(const I4Vector3& p) const
+		PlaneLoc testPoint(const Vector3& p) const
 		{
 			float dp = distanceFrom(p);
 
 			if (dp > 0.0f)
 			{
-				return I4PL_FRONT;
+				return PL_FRONT;
 			}
 			else if (dp < 0.0f)
 			{
-				return I4PL_BACK;
+				return PL_BACK;
 			}
 			else
 			{
-				return I4PL_CLIPED;
+				return PL_CLIPED;
 			}
 		}
 
-		I4PlaneLoc testTriangle(const I4Vector3& p0, const I4Vector3& p1, const I4Vector3& p2)
+		PlaneLoc testTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2)
 		{
-			I4PlaneLoc n = testPoint(p0);
+			PlaneLoc n = testPoint(p0);
 			if ((n == testPoint(p1)) && (n == testPoint(p2)))
 				return n;
 
-			return I4PL_CLIPED;
+			return PL_CLIPED;
 		}
 
-		I4PlaneLoc testSphere(const I4Vector3& p, float r) const
+		PlaneLoc testSphere(const Vector3& p, float r) const
 		{
 			float dp = distanceFrom(p);
 
 			if (dp - r > 0.0f)
 			{
-				return I4PL_FRONT;
+				return PL_FRONT;
 			}
 			else if (dp + r < 0.0f)	
 			{
-				return I4PL_BACK;
+				return PL_BACK;
 			}
 			else
 			{
-				return I4PL_CLIPED;
+				return PL_CLIPED;
 			}
 		}
 
-		I4PlaneLoc testAABB(const I4Vector3& minEdge, const I4Vector3& maxEdge) const
+		PlaneLoc testAABB(const Vector3& minEdge, const Vector3& maxEdge) const
 		{
-			I4Vector3 nearEdge(maxEdge);
-			I4Vector3 farEdge(minEdge);
+			Vector3 nearEdge(maxEdge);
+			Vector3 farEdge(minEdge);
 
 			if (N.x > 0.0f)
 			{
@@ -152,21 +152,21 @@ namespace i4core
 
 			if (distanceFrom(nearEdge) > 0.0f)
 			{
-				return I4PL_FRONT;
+				return PL_FRONT;
 			}
 
 			else if (distanceFrom(farEdge) > 0.0f)
 			{
-				return I4PL_CLIPED;
+				return PL_CLIPED;
 			}
 			else
 			{
-				return I4PL_BACK;
+				return PL_BACK;
 			}
 		}
 
 	public:
-		I4Vector3	N;
+		Vector3	N;
 		float		D;
 	};
 }

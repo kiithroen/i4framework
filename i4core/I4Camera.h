@@ -7,66 +7,66 @@
 
 namespace i4core
 {
-	class I4Camera
+	class Camera
 	{
 	public:
-		I4Camera();
-		~I4Camera();
+		Camera();
+		~Camera();
 		
 		void				setPerspectiveFovLH(float fovY, float aspect, float zn, float zf);
 		void				setOrthoOffCenterLH(float left, float right, float bottom, float top, float znearPlane, float zfarPlane);
 
-		void				setLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up);
-		void				setViewMatrix(const I4Matrix4x4& view);
+		void				setLookAtLH(const Vector3& eye, const Vector3& lookAt, const Vector3& up);
+		void				setViewMatrix(const Matrix4x4& view);
 
-		bool				isVisiblePoint(const I4Vector3& p) const			{ return frustum.isInPoint(p); }
-		bool				isVisibleSphere(const I4Vector3& p, float r) const	{ return frustum.isInSphere(p, r); }
-		bool				isVisibleSphere(const I4Sphere& sphere) const		{ return frustum.isInSphere(sphere); }
-		bool				isVisibleAABB(const I4AABB& aabb) const				{ return frustum.isInAABB(aabb); }
+		bool				isVisiblePoint(const Vector3& p) const			{ return frustum.isInPoint(p); }
+		bool				isVisibleSphere(const Vector3& p, float r) const	{ return frustum.isInSphere(p, r); }
+		bool				isVisibleSphere(const Sphere& sphere) const		{ return frustum.isInSphere(sphere); }
+		bool				isVisibleAABB(const AABB& aabb) const				{ return frustum.isInAABB(aabb); }
 
-		const I4Matrix4x4&	getProjectionMatrix() const							{ return projectionMatrix; }
-		const I4Matrix4x4&	getViewMatrix()	const								{ return viewMatrix; }
-		const I4Matrix4x4&	getWorldMatrix()	const							{ return worldMatrix; }
-		const I4Matrix4x4&	getViewProjectionMatrix()	const					{ return viewProjectionMatrix; }
+		const Matrix4x4&	getProjectionMatrix() const							{ return projectionMatrix; }
+		const Matrix4x4&	getViewMatrix()	const								{ return viewMatrix; }
+		const Matrix4x4&	getWorldMatrix()	const							{ return worldMatrix; }
+		const Matrix4x4&	getViewProjectionMatrix()	const					{ return viewProjectionMatrix; }
 		
-		const I4Vector3&	getEye() const										{ return eye; }
+		const Vector3&	getEye() const										{ return eye; }
 
-		const I4Vector3&	getNearTopLeft() const								{ return nearTopLeft; }
-		const I4Vector3&	getNearTopRight() const								{ return nearTopRight; }
-		const I4Vector3&	getNearDownLeft() const								{ return nearDownLeft; }
-		const I4Vector3&	getNearDownRight() const							{ return nearDownRight; }
+		const Vector3&	getNearTopLeft() const								{ return nearTopLeft; }
+		const Vector3&	getNearTopRight() const								{ return nearTopRight; }
+		const Vector3&	getNearDownLeft() const								{ return nearDownLeft; }
+		const Vector3&	getNearDownRight() const							{ return nearDownRight; }
 
-		const I4Vector3&	getFarTopLeft() const								{ return farTopLeft; }
-		const I4Vector3&	getFarTopRight() const								{ return farTopRight; }
-		const I4Vector3&	getFarDownLeft() const								{ return farDownLeft; }
-		const I4Vector3&	getFarDownRight() const								{ return farDownRight; }
+		const Vector3&	getFarTopLeft() const								{ return farTopLeft; }
+		const Vector3&	getFarTopRight() const								{ return farTopRight; }
+		const Vector3&	getFarDownLeft() const								{ return farDownLeft; }
+		const Vector3&	getFarDownRight() const								{ return farDownRight; }
 
 		float				getFovY() const										{ return fovY; }
 		float				getAspect() const									{ return aspect; }
 		float				getZNear() const									{ return zNear; }
 		float				getZFar() const										{ return zFar; }
 
-		void				extractCorners(I4Vector3* corners) const;
+		void				extractCorners(Vector3* corners) const;
 
 	private:
-		I4Frustum			frustum;
+		Frustum			frustum;
 
-		I4Matrix4x4			projectionMatrix;
-		I4Matrix4x4			viewMatrix;	
-		I4Matrix4x4			worldMatrix;
-		I4Matrix4x4			viewProjectionMatrix;
+		Matrix4x4			projectionMatrix;
+		Matrix4x4			viewMatrix;	
+		Matrix4x4			worldMatrix;
+		Matrix4x4			viewProjectionMatrix;
 
-		I4Vector3			eye;
+		Vector3			eye;
 
-		I4Vector3			nearTopLeft;
-		I4Vector3			nearTopRight;
-		I4Vector3			nearDownLeft;
-		I4Vector3			nearDownRight;
+		Vector3			nearTopLeft;
+		Vector3			nearTopRight;
+		Vector3			nearDownLeft;
+		Vector3			nearDownRight;
 
-		I4Vector3			farTopLeft;
-		I4Vector3			farTopRight;
-		I4Vector3			farDownLeft;
-		I4Vector3			farDownRight;
+		Vector3			farTopLeft;
+		Vector3			farTopRight;
+		Vector3			farDownLeft;
+		Vector3			farDownRight;
 
 		float				fovY;
 		float				aspect;

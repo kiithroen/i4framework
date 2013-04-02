@@ -5,41 +5,41 @@
 // http://isthe.com/chongo/tech/comp/fnv/
 // 어디까지나 해시니까 충돌가능성이 있다.
 // 사용시에는 항상 원본이 맞는지 확인할수 있는 수단이 었어야 한다.
-#define I4INVALID_HASHCODE 0xffffffff
-#define I4HASH_INIT	0x811c9dc5
-#define I4HASH_PRIME	0x01000193
+#define INVALID_HASHCODE 0xffffffff
+#define HASH_INIT	0x811c9dc5
+#define HASH_PRIME	0x01000193
 
 namespace i4core
 {
-	class I4Hash
+	class Hash
 	{
 	public:
-		I4Hash()
-			: hashCode(I4INVALID_HASHCODE)
+		Hash()
+			: hashCode(INVALID_HASHCODE)
 		{
 		}
 
-		I4Hash(const string& str)
+		Hash(const string& str)
 		{
 			hashCode = getHashCode(str.c_str());
 		}
 
-		I4Hash(const char* str)
+		Hash(const char* str)
 		{
 			hashCode = getHashCode(str);
 		}
 
-		I4Hash(unsigned int _hashCode)
+		Hash(unsigned int _hashCode)
 		{
 			hashCode = _hashCode;
 		}
 
-		I4Hash(const I4Hash& rhs)
+		Hash(const Hash& rhs)
 		{
 			hashCode = rhs.hashCode;
 		}
 
-		const I4Hash& operator = (const I4Hash& rhs)
+		const Hash& operator = (const Hash& rhs)
 		{
 			hashCode = rhs.hashCode;
 			return *this;
@@ -50,27 +50,27 @@ namespace i4core
 			return hashCode;
 		}
 
-		const bool operator < (const I4Hash &rhs) const
+		const bool operator < (const Hash &rhs) const
 		{
 			return hashCode < rhs.hashCode;
 		}
 
-		const bool operator > (const I4Hash &rhs) const
+		const bool operator > (const Hash &rhs) const
 		{
 			return hashCode > rhs.hashCode;
 		}
 
-		const bool operator <= (const I4Hash &rhs) const
+		const bool operator <= (const Hash &rhs) const
 		{
 			return hashCode <= rhs.hashCode;
 		}
 
-		const bool operator >= (const I4Hash &rhs) const
+		const bool operator >= (const Hash &rhs) const
 		{
 			return hashCode >= rhs.hashCode;
 		}
 
-		const bool operator == (const I4Hash &rhs) const
+		const bool operator == (const Hash &rhs) const
 		{
 			return hashCode == rhs.hashCode;
 		}
@@ -80,7 +80,7 @@ namespace i4core
 			return hashCode == code;
 		}
 
-		const bool operator != (const I4Hash &rhs) const
+		const bool operator != (const Hash &rhs) const
 		{
 			return hashCode != rhs.hashCode;
 		}
@@ -94,14 +94,14 @@ namespace i4core
 		static unsigned int getHashCode(const char* str)
 		{
 			if (!str || !str[0])
-				return I4INVALID_HASHCODE;
+				return INVALID_HASHCODE;
 
 			const unsigned char* st = (const unsigned char*)str;
-			unsigned int hash = I4HASH_INIT;
+			unsigned int hash = HASH_INIT;
 
 			while (*st)
 			{
-				hash *= I4HASH_PRIME;
+				hash *= HASH_PRIME;
 
 				char c = *st++;
 				if (c == '\\')

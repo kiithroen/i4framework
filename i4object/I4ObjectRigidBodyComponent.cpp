@@ -7,70 +7,70 @@
 namespace i4object {
 
 
-	I4ObjectRigidBodyComponent::I4ObjectRigidBodyComponent(void)
-		: matOffset(I4MATRIX4X4_IDENTITY)
+	ObjectRigidBodyComponent::ObjectRigidBodyComponent(void)
+		: matOffset(MATRIX4X4_IDENTITY)
 		, body(nullptr)
 	{
 	}
 
 
-	I4ObjectRigidBodyComponent::~I4ObjectRigidBodyComponent(void)
+	ObjectRigidBodyComponent::~ObjectRigidBodyComponent(void)
 	{
 	}
 
-	void I4ObjectRigidBodyComponent::onAdd()
+	void ObjectRigidBodyComponent::onAdd()
 	{
 	}
 
-	void I4ObjectRigidBodyComponent::onRemove()
+	void ObjectRigidBodyComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onPreSimulate"), this);
-		getBroadcastMessenger().unsubscribe(I4Hash("onPostSimulate"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onPreSimulate"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onPostSimulate"), this);
 	}
 
-	void I4ObjectRigidBodyComponent::setOffset(const I4Matrix4x4& m)
+	void ObjectRigidBodyComponent::setOffset(const Matrix4x4& m)
 	{
 		matOffset = m;
 	}
 
-	void I4ObjectRigidBodyComponent::setKinematic(bool isKinematic)
+	void ObjectRigidBodyComponent::setKinematic(bool isKinematic)
 	{
 		if (isKinematic)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onPreSimulate"), this, bind(&I4ObjectRigidBodyComponent::onPreSimulate, this, _1));
-			getBroadcastMessenger().unsubscribe(I4Hash("onPostSimulate"), this);
+			getBroadcastMessenger().subscribe(Hash("onPreSimulate"), this, bind(&ObjectRigidBodyComponent::onPreSimulate, this, _1));
+			getBroadcastMessenger().unsubscribe(Hash("onPostSimulate"), this);
 
 			body->setRigidDynamicFlag(PxRigidDynamicFlag::eKINEMATIC, true);
 		}
 		else
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onPostSimulate"), this, bind(&I4ObjectRigidBodyComponent::onPostSimulate, this, _1));
-			getBroadcastMessenger().unsubscribe(I4Hash("onPreSimulate"), this);
+			getBroadcastMessenger().subscribe(Hash("onPostSimulate"), this, bind(&ObjectRigidBodyComponent::onPostSimulate, this, _1));
+			getBroadcastMessenger().unsubscribe(Hash("onPreSimulate"), this);
 
 			body->setRigidDynamicFlag(PxRigidDynamicFlag::eKINEMATIC, false);
 		}
 
 	}
 
-	void I4ObjectRigidBodyComponent::onPreSimulate(I4MessageArgs& args)
+	void ObjectRigidBodyComponent::onPreSimulate(MessageArgs& args)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		PxTransform transform;
 		WorldTM2PxTransform(transform);
 		body->setKinematicTarget(transform);
 	}
 
-	void I4ObjectRigidBodyComponent::onPostSimulate(I4MessageArgs& args)
+	void ObjectRigidBodyComponent::onPostSimulate(MessageArgs& args)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		I4Matrix4x4 worldTM;
+		Matrix4x4 worldTM;
 		PxTransform2WorldTM(worldTM);
 		getOwner()->setWorldTM(worldTM);
 	}
 
-	void I4ObjectRigidBodyComponent::attachBox(const I4Vector3& ext, float density, bool kinematic)
+	void ObjectRigidBodyComponent::attachBox(const Vector3& ext, float density, bool kinematic)
 	{
 		PxTransform transform;
 		WorldTM2PxTransform(transform);
@@ -79,7 +79,7 @@ namespace i4object {
 		setKinematic(kinematic);
 	}
 
-	void I4ObjectRigidBodyComponent::attachSphere(float radius, float density, bool kinematic)
+	void ObjectRigidBodyComponent::attachSphere(float radius, float density, bool kinematic)
 	{
 		PxTransform transform;
 		WorldTM2PxTransform(transform);
@@ -88,7 +88,7 @@ namespace i4object {
 		setKinematic(kinematic);
 	}
 
-	void I4ObjectRigidBodyComponent::attachCapsule(float radius, float height, float density, bool kinematic)
+	void ObjectRigidBodyComponent::attachCapsule(float radius, float height, float density, bool kinematic)
 	{
 		PxTransform transform;
 		WorldTM2PxTransform(transform);
@@ -97,32 +97,32 @@ namespace i4object {
 		setKinematic(kinematic);
 	}
 
-	void I4ObjectRigidBodyComponent::WorldTM2PxTransform(PxTransform& transform)
+	void ObjectRigidBodyComponent::WorldTM2PxTransform(PxTransform& transform)
 	{
-		I4Matrix4x4 invOffset;
+		Matrix4x4 invOffset;
 		matOffset.extractInverse(invOffset);
 
-		I4Matrix4x4 objectTM;
-		I4Vector3 pos;
+		Matrix4x4 objectTM;
+		Vector3 pos;
 		getOwner()->getWorldTM().decompose(nullptr, &objectTM, &pos);
 		objectTM.setPosition(pos);
 
 		PxMat44 matTransform;
-		convertToPxMat4x4(matTransform, invOffset*objectTM);
+		convertTo(matTransform, invOffset*objectTM);
 
 		transform = PxTransform(matTransform);
 	}
 
-	void I4ObjectRigidBodyComponent::PxTransform2WorldTM(I4Matrix4x4& matWorldTM)
+	void ObjectRigidBodyComponent::PxTransform2WorldTM(Matrix4x4& matWorldTM)
 	{
 		const PxMat44 matTransform = PxMat44(body->getGlobalPose());
 
-		convertToI4Matrix4x4(matWorldTM, matTransform);
+		convertTo(matWorldTM, matTransform);
 
-		I4Vector3 scale;
+		Vector3 scale;
 		getOwner()->getWorldTM().decompose(&scale, nullptr, nullptr);
 
-		I4Matrix4x4 matScale;
+		Matrix4x4 matScale;
 		matScale.makeScale(scale.x, scale.y, scale.z);
 
 		matWorldTM = matScale*matOffset*matWorldTM;

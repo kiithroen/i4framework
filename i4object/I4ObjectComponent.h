@@ -7,22 +7,22 @@ using namespace i4core;
 namespace i4object {
 	
 
-	class I4ObjectComponent
+	class ObjectComponent
 	{
 	public:
-		I4ObjectComponent(void)				{}
-		virtual ~I4ObjectComponent(void)	{}
+		ObjectComponent(void)				{}
+		virtual ~ObjectComponent(void)	{}
 
 		virtual void				onAdd()						{}
 		virtual void				onRemove()					{}
 
-		I4Object*				getOwner()						{ return owner; }
-		void						setOwner(I4Object* _owner)	{ owner = _owner; }
+		Object*				getOwner()						{ return owner; }
+		void						setOwner(Object* _owner)	{ owner = _owner; }
 
-		I4ObjectComponentMessenger&	getBroadcastMessenger()			{ return owner->getObjectMgr()->getMessenger(); }
-		I4ObjectComponentMessenger&	getDirectMessenger()			{ return owner->getMessenger(); }
+		ObjectComponentMessenger&	getBroadcastMessenger()			{ return owner->getObjectMgr()->getMessenger(); }
+		ObjectComponentMessenger&	getDirectMessenger()			{ return owner->getMessenger(); }
 
 	private:
-		I4Object*		owner;
+		Object*		owner;
 	};
 }

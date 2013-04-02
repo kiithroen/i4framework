@@ -6,11 +6,11 @@ using namespace i4core;
 
 namespace i4object
 {
-	class I4ObjectFlyControllerComponent : public I4ObjectComponent
+	class ObjectFlyControllerComponent : public ObjectComponent
 	{
 	public:
-		I4ObjectFlyControllerComponent(void);
-		virtual ~I4ObjectFlyControllerComponent(void);
+		ObjectFlyControllerComponent(void);
+		virtual ~ObjectFlyControllerComponent(void);
 
 		static const char*	getComponentID()	{ return "FlyController"; }
 
@@ -19,7 +19,7 @@ namespace i4object
 
 		void activate(bool isActive);
 
-		void onUpdateLogic(I4MessageArgs& args);
+		void onUpdateLogic(MessageArgs& args);
 
 	private:
 		int					prevMouseX;

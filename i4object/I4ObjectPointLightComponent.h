@@ -7,18 +7,18 @@ using namespace i4core;
 
 namespace i4object
 {
-	class I4ObjectPointLightComponent : public I4ObjectComponent
+	class ObjectPointLightComponent : public ObjectComponent
 	{
 	public:
-		I4ObjectPointLightComponent(void);
-		virtual ~I4ObjectPointLightComponent(void);
+		ObjectPointLightComponent(void);
+		virtual ~ObjectPointLightComponent(void);
 
 		static const char*		getComponentID()	{ return "PointLight"; }
 
 		virtual void			onAdd() override;
 		virtual void			onRemove() override;
 
-		void setColor(const I4Vector3& color)
+		void setColor(const Vector3& color)
 		{
 			light.color = color;
 		}
@@ -49,11 +49,11 @@ namespace i4object
 			}
 		}
 
-		void onUpdateLogic(I4MessageArgs& args);
-		void onCommitToRenderer(I4MessageArgs& args);
+		void onUpdateLogic(MessageArgs& args);
+		void onCommitToRenderer(MessageArgs& args);
 
 	private:
-		I4PointLight	light;
+		PointLight	light;
 		bool			isTurnOn;
 		bool			blinkEnable;
 		float			blinkTurnOnTime;

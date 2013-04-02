@@ -7,12 +7,12 @@
 namespace i4graphics
 {
 
-	I4TextureMgr::I4TextureMgr(void)
+	TextureMgr::TextureMgr(void)
 	{
 	}
 
 
-	I4TextureMgr::~I4TextureMgr(void)
+	TextureMgr::~TextureMgr(void)
 	{
 		for (auto& itr : mapTextureProxy)
 		{
@@ -22,16 +22,16 @@ namespace i4graphics
 		mapTextureProxy.clear();
 	}
 
-	I4Hash I4TextureMgr::load(const char* fname, bool loadNow)
+	Hash TextureMgr::load(const char* fname, bool loadNow)
 	{
-		I4Hash hash(fname);
+		Hash hash(fname);
 
 		auto itr = mapTextureProxy.find(hash);
 		if (itr == mapTextureProxy.end())
 		{
-			I4Texture* texture = I4VideoDriver::getVideoDriver()->createTexture();
+			Texture* texture = VideoDriver::getVideoDriver()->createTexture();
 
-			I4TextureProxy proxy;
+			TextureProxy proxy;
 			proxy.fname = fname;
 			proxy.loadCount = 1;
 			proxy.texture = texture;
@@ -40,16 +40,16 @@ namespace i4graphics
 			{
 				if (texture->load(fname))
 				{
-					proxy.status = I4TEXTURE_PROXY_STATUS_OK;
+					proxy.status = TEXTURE_PROXY_STATUS_OK;
 				}
 				else
 				{
-					proxy.status = I4TEXTURE_PROXY_STATUS_LOAD_FAILED;
+					proxy.status = TEXTURE_PROXY_STATUS_LOAD_FAILED;
 				}
 			}
 			else
 			{
-				proxy.status = I4TEXTURE_PROXY_STATUS_NOT_LOADED;
+				proxy.status = TEXTURE_PROXY_STATUS_NOT_LOADED;
 			}
 
 			mapTextureProxy.insert(make_pair(hash, proxy));
@@ -62,15 +62,15 @@ namespace i4graphics
 		return hash;
 	}
 	
-	void I4TextureMgr::unload(I4Hash hash)
+	void TextureMgr::unload(Hash hash)
 	{
-		if (hash == I4INVALID_HASHCODE)
+		if (hash == INVALID_HASHCODE)
 			return;
 
 		auto itr = mapTextureProxy.find(hash);
 		if (itr == mapTextureProxy.end())
 		{
-			I4LOG_WARN << L"can't release texture proxy.";
+			LOG_WARN << L"can't release texture proxy.";
 			return;
 		}
 
@@ -82,32 +82,32 @@ namespace i4graphics
 		}
 	}
 
-	I4Texture* I4TextureMgr::find(I4Hash hash)
+	Texture* TextureMgr::find(Hash hash)
 	{
-		if (hash == I4INVALID_HASHCODE)
+		if (hash == INVALID_HASHCODE)
 			return nullptr;
 
 		auto itr = mapTextureProxy.find(hash);
 		if (itr == mapTextureProxy.end())
 		{
-			I4LOG_WARN << L"can't find texture proxy.";
+			LOG_WARN << L"can't find texture proxy.";
 			return nullptr;
 		}
 		
-		if (itr->second.status == I4TEXTURE_PROXY_STATUS_OK)
+		if (itr->second.status == TEXTURE_PROXY_STATUS_OK)
 		{
 			return itr->second.texture;
 		}
-		else if (itr->second.status == I4TEXTURE_PROXY_STATUS_NOT_LOADED)
+		else if (itr->second.status == TEXTURE_PROXY_STATUS_NOT_LOADED)
 		{
 			if (itr->second.texture->load(itr->second.fname.c_str()))
 			{
-				itr->second.status = I4TEXTURE_PROXY_STATUS_OK;
+				itr->second.status = TEXTURE_PROXY_STATUS_OK;
 				return itr->second.texture;
 			}
 			else
 			{
-				itr->second.status = I4TEXTURE_PROXY_STATUS_LOAD_FAILED;
+				itr->second.status = TEXTURE_PROXY_STATUS_LOAD_FAILED;
 				return nullptr;
 			}
 

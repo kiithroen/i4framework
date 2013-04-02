@@ -6,44 +6,44 @@
 
 namespace i4graphics {
 
-	I4ModelMgr::I4ModelMgr(void)
+	ModelMgr::ModelMgr(void)
 	{
 	}
 
-	I4ModelMgr::~I4ModelMgr(void)
+	ModelMgr::~ModelMgr(void)
 	{
 		destroy();
 	}
 
-	I4Model* I4ModelMgr::createModel(const string& name)
+	Model* ModelMgr::createModel(const string& name)
 	{
-		I4Model* model = nullptr;
+		Model* model = nullptr;
 
 		auto itr = mapModel.find(name);
 		if (itr == mapModel.end())
 		{
-			model = new I4Model;
+			model = new Model;
 			mapModel.insert(make_pair(name, model));
 		}
 		else
 		{
-			I4LOG_WARN << "duplicated model name : " << name.c_str();
+			LOG_WARN << "duplicated model name : " << name.c_str();
 		}
 
 		return model;
 	}
 
-	bool I4ModelMgr::attachBone(I4Model* model, const char* fname)
+	bool ModelMgr::attachBone(Model* model, const char* fname)
 	{
-		I4ModelBoneResource* boneResource = nullptr;
+		ModelBoneResource* boneResource = nullptr;
 
 		auto itr = mapModelBoneResource.find(fname);
 		if (itr == mapModelBoneResource.end())
 		{
-			boneResource = new I4ModelBoneResource;
+			boneResource = new ModelBoneResource;
 			if (boneResource->loadBone(fname) == false)
 			{
-				I4LOG_WARN << "model bone can't load : " << fname;
+				LOG_WARN << "model bone can't load : " << fname;
 				delete boneResource;
 				return false;
 			}
@@ -58,17 +58,17 @@ namespace i4graphics {
 		return model->registerBone(boneResource);
 	}
 
-	bool I4ModelMgr::attachMesh(I4Model* model, const char* fname)
+	bool ModelMgr::attachMesh(Model* model, const char* fname)
 	{
-		I4ModelMeshResource* meshResource = nullptr;
+		ModelMeshResource* meshResource = nullptr;
 
 		auto itr = mapModelMeshResource.find(fname);
 		if (itr == mapModelMeshResource.end())
 		{
-			meshResource = new I4ModelMeshResource;
+			meshResource = new ModelMeshResource;
 			if (meshResource->loadMesh(fname) == false)
 			{
-				I4LOG_WARN << "model mesh can't load : " << fname;
+				LOG_WARN << "model mesh can't load : " << fname;
 				delete meshResource;
 				return false;
 			}
@@ -83,17 +83,17 @@ namespace i4graphics {
 		return model->registerMesh(meshResource);
 	}
 
-	bool I4ModelMgr::attachMaterial(I4Model* model, const char* fname)
+	bool ModelMgr::attachMaterial(Model* model, const char* fname)
 	{
-		I4ModelMaterialResource* mtrlResource = nullptr;
+		ModelMaterialResource* mtrlResource = nullptr;
 
 		auto itr = mapModelMaterialResource.find(fname);
 		if (itr == mapModelMaterialResource.end())
 		{
-			mtrlResource = new I4ModelMaterialResource;
+			mtrlResource = new ModelMaterialResource;
 			if (mtrlResource->loadMaterial(fname) == false)
 			{
-				I4LOG_WARN << "model material can't load : " << fname;
+				LOG_WARN << "model material can't load : " << fname;
 				delete mtrlResource;
 				return false;
 			}
@@ -108,17 +108,17 @@ namespace i4graphics {
 		return model->registerMaterial(mtrlResource);
 	}
 
-	bool I4ModelMgr::attachAni(I4Model* model, const char* fname, const char* aniName)
+	bool ModelMgr::attachAni(Model* model, const char* fname, const char* aniName)
 	{
-		I4ModelAniResource* aniResource = nullptr;
+		ModelAniResource* aniResource = nullptr;
 
 		auto itr = mapModelAniResource.find(fname);
 		if (itr == mapModelAniResource.end())
 		{
-			aniResource = new I4ModelAniResource;
+			aniResource = new ModelAniResource;
 			if (aniResource->loadAni(fname) == false)
 			{
-				I4LOG_WARN << "model material can't load : " << fname;
+				LOG_WARN << "model material can't load : " << fname;
 				delete aniResource;
 				return false;
 			}
@@ -133,7 +133,7 @@ namespace i4graphics {
 		return model->registerAni(aniResource, aniName);
 	}
 
-	void I4ModelMgr::destroy()
+	void ModelMgr::destroy()
 	{
 		for (auto& itr : mapModel)
 		{			

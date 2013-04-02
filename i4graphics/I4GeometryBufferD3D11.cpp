@@ -13,21 +13,21 @@ namespace i4graphics
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
 	};
 	
-	I4VertexBufferD3D11::I4VertexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
+	VertexBufferD3D11::VertexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
 		: d3dDevice(device)
 		, immediateContext(context)
 		, vertexBuffer(nullptr)
 	{
 	}
 
-	I4VertexBufferD3D11::~I4VertexBufferD3D11()
+	VertexBufferD3D11::~VertexBufferD3D11()
 	{
 		destroy();
 	}
 
-	bool I4VertexBufferD3D11::create(unsigned int count, unsigned int stride, const void* vertices)
+	bool VertexBufferD3D11::create(unsigned int count, unsigned int stride, const void* vertices)
 	{
-		if (I4VertexBuffer::create(count, stride, vertices) == false)
+		if (VertexBuffer::create(count, stride, vertices) == false)
 			return false;
 
 		if (vertices != nullptr)
@@ -62,12 +62,12 @@ namespace i4graphics
 			}
 		}
 
-		I4LOG_WARN << L"vertext buffer create failed.";
+		LOG_WARN << L"vertext buffer create failed.";
 		return false;
 	}
 
 
-	void I4VertexBufferD3D11::destroy()
+	void VertexBufferD3D11::destroy()
 	{
 		if (vertexBuffer)
 		{
@@ -75,11 +75,11 @@ namespace i4graphics
 		}
 	}
 
-	bool I4VertexBufferD3D11::lock(void** data)
+	bool VertexBufferD3D11::lock(void** data)
 	{
 		if (FAILED(immediateContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource)))
 		{
-			I4LOG_WARN << L"vertext buffer lock failed.";
+			LOG_WARN << L"vertext buffer lock failed.";
 			return false;
 		}
 
@@ -88,17 +88,17 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4VertexBufferD3D11::unlock()
+	void VertexBufferD3D11::unlock()
 	{
 		immediateContext->Unmap(vertexBuffer, 0);
 	}
 
-	bool I4VertexBufferD3D11::copyFrom(const void* data)
+	bool VertexBufferD3D11::copyFrom(const void* data)
 	{
 		return copyFrom(data, count);
 	}
 
-	bool I4VertexBufferD3D11::copyFrom(const void* data, unsigned int _count)
+	bool VertexBufferD3D11::copyFrom(const void* data, unsigned int _count)
 	{
 		void* vertices;
 		if (lock(&vertices) == false)
@@ -112,19 +112,19 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4VertexBufferD3D11::bind()
+	void VertexBufferD3D11::bind()
 	{
 		UINT offset = 0;
 		immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	}
 
-	void I4VertexBufferD3D11::draw(I4PrimitiveType pt)
+	void VertexBufferD3D11::draw(PrimitiveType pt)
 	{		
 		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		immediateContext->Draw(count, 0);
 	}
 
-	void I4VertexBufferD3D11::draw(I4PrimitiveType pt, unsigned int _count, unsigned int _start)
+	void VertexBufferD3D11::draw(PrimitiveType pt, unsigned int _count, unsigned int _start)
 	{
 		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		immediateContext->Draw(_count, _start);
@@ -132,7 +132,7 @@ namespace i4graphics
 
 	// -----------------------------------------------------------------------------------------------------------------
 
-	I4IndexBufferD3D11::I4IndexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
+	IndexBufferD3D11::IndexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context)
 		: d3dDevice(device)
 		, immediateContext(context)
 		, indexBuffer(nullptr)
@@ -140,14 +140,14 @@ namespace i4graphics
 
 	}
 
-	I4IndexBufferD3D11::~I4IndexBufferD3D11()
+	IndexBufferD3D11::~IndexBufferD3D11()
 	{
 		destroy();
 	}
 
-	bool I4IndexBufferD3D11::create(unsigned int count, unsigned int stride, const void* indices)
+	bool IndexBufferD3D11::create(unsigned int count, unsigned int stride, const void* indices)
 	{
-		if (I4IndexBuffer::create(count, stride, indices) == false)
+		if (IndexBuffer::create(count, stride, indices) == false)
 			return false;
 
 		if (indices != nullptr)
@@ -182,11 +182,11 @@ namespace i4graphics
 			}
 		}		
 
-		I4LOG_WARN << L"index buffer create failed.";
+		LOG_WARN << L"index buffer create failed.";
 		return false;
 	}
 
-	void I4IndexBufferD3D11::destroy()
+	void IndexBufferD3D11::destroy()
 	{
 		if (indexBuffer)
 		{
@@ -195,11 +195,11 @@ namespace i4graphics
 		}
 	}
 
-	bool I4IndexBufferD3D11::lock(void **data)
+	bool IndexBufferD3D11::lock(void **data)
 	{
 		if (FAILED(immediateContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource)))
 		{
-			I4LOG_WARN << L"index buffer lock failed.";
+			LOG_WARN << L"index buffer lock failed.";
 			return false;
 		}
 
@@ -209,17 +209,17 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4IndexBufferD3D11::unlock()
+	void IndexBufferD3D11::unlock()
 	{
 		immediateContext->Unmap(indexBuffer, 0);
 	}
 
-	bool I4IndexBufferD3D11::copyFrom(const void* data)
+	bool IndexBufferD3D11::copyFrom(const void* data)
 	{
 		return copyFrom(data, count);
 	}
 
-	bool I4IndexBufferD3D11::copyFrom(const void* data, unsigned int _count)
+	bool IndexBufferD3D11::copyFrom(const void* data, unsigned int _count)
 	{
 		void* indices;
 		if (lock(&indices) == false)
@@ -233,18 +233,18 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4IndexBufferD3D11::bind()
+	void IndexBufferD3D11::bind()
 	{
 		immediateContext->IASetIndexBuffer(indexBuffer, (DXGI_FORMAT)format, 0);
 	}
 
-	void I4IndexBufferD3D11::draw(I4PrimitiveType pt)
+	void IndexBufferD3D11::draw(PrimitiveType pt)
 	{
 		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		immediateContext->DrawIndexed(count, 0, 0);
 	}
 
-	void I4IndexBufferD3D11::draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex)
+	void IndexBufferD3D11::draw(PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex)
 	{
 		immediateContext->IASetPrimitiveTopology(PRIMITIVE_TYPE[pt]);
 		immediateContext->DrawIndexed(_count, _startIndex, _baseVertex);
@@ -252,19 +252,19 @@ namespace i4graphics
 
 	// -----------------------------------------------------------------------------------------------------------------
 
-	I4ConstantBufferD3D11::I4ConstantBufferD3D11(ID3D11Device* device)
+	ConstantBufferD3D11::ConstantBufferD3D11(ID3D11Device* device)
 		: d3dDevice(device)
 		, constantBuffer(nullptr)
 	{
 
 	}
 
-	I4ConstantBufferD3D11::~I4ConstantBufferD3D11()
+	ConstantBufferD3D11::~ConstantBufferD3D11()
 	{
 		destroy();
 	}
 
-	bool I4ConstantBufferD3D11::create(unsigned int stride)
+	bool ConstantBufferD3D11::create(unsigned int stride)
 	{
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
@@ -275,14 +275,14 @@ namespace i4graphics
 		HRESULT hr = d3dDevice->CreateBuffer(&bd, nullptr, &constantBuffer);
 		if (FAILED(hr))
 		{
-			I4LOG_WARN << L"can't create constant buffer";
+			LOG_WARN << L"can't create constant buffer";
 			return false;
 		}
 
 		return true;
 	}
 
-	void I4ConstantBufferD3D11::destroy()
+	void ConstantBufferD3D11::destroy()
 	{
 		if (constantBuffer)
 		{

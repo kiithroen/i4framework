@@ -9,30 +9,30 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	enum I4PrimitiveType
+	enum PrimitiveType
 	{
-		I4PT_POINTLIST		= 0,
-		I4PT_LINELIST,
-		I4PT_LINESTRIP ,
-		I4PT_TRIANGLELIST,
-		I4PT_TRIANGLESTRIP,
+		PT_POINTLIST		= 0,
+		PT_LINELIST,
+		PT_LINESTRIP ,
+		PT_TRIANGLELIST,
+		PT_TRIANGLESTRIP,
 	};
 
-	enum I4INPUT_CLASSIFICATION
+	enum INPUT_CLASSIFICATION
     {
-		I4INPUT_PER_VERTEX_DATA	= 0,
-		I4INPUT_PER_INSTANCE_DATA	= 1
+		INPUT_PER_VERTEX_DATA	= 0,
+		INPUT_PER_INSTANCE_DATA	= 1
     };
 
 
-	struct I4INPUT_ELEMENT
+	struct INPUT_ELEMENT
     {
 		const char*				SemanticName;
 		unsigned int			SemanticIndex;
-		I4FORMAT				Format;
+		FORMAT				Format;
 		unsigned int			InputSlot;
 		unsigned int			AlignedByteOffset;
-		I4INPUT_CLASSIFICATION	InputSlotClass;
+		INPUT_CLASSIFICATION	InputSlotClass;
 		unsigned int			InstanceDataStepRate;
     };
 
@@ -40,17 +40,17 @@ namespace i4graphics
 
 #pragma pack(push, 1)
 
-#define I4TEX_UV_NA 9999.0f
+#define TEX_UV_NA 9999.0f
 	
-	struct I4TextureUV
+	struct TextureUV
 	{
-		I4TextureUV()
-			: u(I4TEX_UV_NA)
-			, v(I4TEX_UV_NA)
+		TextureUV()
+			: u(TEX_UV_NA)
+			, v(TEX_UV_NA)
 		{
 		}
 
-		I4TextureUV(float _u, float _v)
+		TextureUV(float _u, float _v)
 			: u(_u)
 			, v(_v)
 		{
@@ -59,13 +59,13 @@ namespace i4graphics
 		float u, v;
 	};
 
-	struct I4Index16
+	struct Index16
 	{
-		I4Index16()
+		Index16()
 		{
 		}
 
-		I4Index16(unsigned short _i1, unsigned short _i2, unsigned short _i3)
+		Index16(unsigned short _i1, unsigned short _i2, unsigned short _i3)
 		{			
 			i[0] = _i1;
 			i[1] = _i2;
@@ -75,121 +75,121 @@ namespace i4graphics
 		unsigned short i[3];
 	};
 	
-	struct I4BoneID
+	struct BoneID
 	{
 		unsigned int boneID[4];
 	};
 
-	struct I4Weight
+	struct Weight
 	{
 		float weight[4];
 	};
 
-	struct I4Vertex_Pos
+	struct Vertex_Pos
 	{
 		float x, y, z;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Col
+	struct Vertex_Pos_Col
 	{
-		I4Vector3		pos;
-		I4Vector4		color;	
+		Vector3		pos;
+		Vector4		color;	
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_COL[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS_COL[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, FORMAT_R32G32B32A32_FLOAT, 0, 12, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Tex
+	struct Vertex_Pos_Tex
 	{
-		I4Vector3	pos;
-		I4TextureUV	uv;
+		Vector3	pos;
+		TextureUV	uv;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_TEX[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS_TEX[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, I4FORMAT_R32G32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, FORMAT_R32G32_FLOAT, 0, 12, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Normal
+	struct Vertex_Pos_Normal
 	{
-		I4Vector3	position;
-		I4Vector3	normal;
+		Vector3	position;
+		Vector3	normal;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS_NORMAL[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, FORMAT_R32G32B32_FLOAT, 0, 12, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Normal_Tex
+	struct Vertex_Pos_Normal_Tex
 	{
-		I4Vector3	position;
-		I4Vector3	normal;
-		I4TextureUV	uv;
+		Vector3	position;
+		Vector3	normal;
+		TextureUV	uv;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL_TEX[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS_NORMAL_TEX[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, I4FORMAT_R32G32_FLOAT, 0, 24, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, FORMAT_R32G32B32_FLOAT, 0, 12, INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, FORMAT_R32G32_FLOAT, 0, 24, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Normal_Tex_Tan
+	struct Vertex_Pos_Normal_Tex_Tan
 	{
-		I4Vector3	position;
-		I4Vector3	normal;
-		I4TextureUV	uv;
-		I4Vector4	tangent;
+		Vector3	position;
+		Vector3	normal;
+		TextureUV	uv;
+		Vector4	tangent;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS_NORMAL_TEX_TAN[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, I4FORMAT_R32G32_FLOAT, 0, 24, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 32, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, FORMAT_R32G32B32_FLOAT, 0, 12, INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, FORMAT_R32G32_FLOAT, 0, 24, INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, FORMAT_R32G32B32A32_FLOAT, 0, 32, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	struct I4Vertex_Pos_Normal_Tex_Tan_SkinInfo
+	struct Vertex_Pos_Normal_Tex_Tan_SkinInfo
 	{
-		I4Vector3		position;
-		I4Vector3		normal;
-		I4TextureUV		uv;
-		I4Vector4		tangent;
-		I4BoneID		boneID;
-		I4Weight		weight;
+		Vector3		position;
+		Vector3		normal;
+		TextureUV		uv;
+		Vector4		tangent;
+		BoneID		boneID;
+		Weight		weight;
 	};
 
-	static I4INPUT_ELEMENT I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO[] = 
+	static INPUT_ELEMENT INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO[] = 
 	{
-		{ "POSITION", 0, I4FORMAT_R32G32B32_FLOAT, 0, 0, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, I4FORMAT_R32G32B32_FLOAT, 0, 12, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, I4FORMAT_R32G32_FLOAT, 0, 24, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0, 32, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "BONEID", 0, I4FORMAT_R32G32B32A32_UINT, 0,     48, I4INPUT_PER_VERTEX_DATA, 0 },
-		{ "WEIGHT", 0, I4FORMAT_R32G32B32A32_FLOAT, 0,  64, I4INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, FORMAT_R32G32B32_FLOAT, 0, 0, INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, FORMAT_R32G32B32_FLOAT, 0, 12, INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, FORMAT_R32G32_FLOAT, 0, 24, INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, FORMAT_R32G32B32A32_FLOAT, 0, 32, INPUT_PER_VERTEX_DATA, 0 },
+		{ "BONEID", 0, FORMAT_R32G32B32A32_UINT, 0,     48, INPUT_PER_VERTEX_DATA, 0 },
+		{ "WEIGHT", 0, FORMAT_R32G32B32A32_FLOAT, 0,  64, INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 #pragma pack(pop)
 
 //-------------------------------------------------------------------------------------
 
-	class I4VertexBuffer
+	class VertexBuffer
 	{
 	public:
-		I4VertexBuffer();
-		virtual ~I4VertexBuffer();
+		VertexBuffer();
+		virtual ~VertexBuffer();
 
 		virtual bool		create(unsigned int count, unsigned int stride, const void* vertices = 0);
 
@@ -202,8 +202,8 @@ namespace i4graphics
 		virtual void		bind();
 		virtual void		unbind();
 
-		virtual void		draw(I4PrimitiveType pt);
-		virtual void		draw(I4PrimitiveType pt, unsigned int count, unsigned int start);
+		virtual void		draw(PrimitiveType pt);
+		virtual void		draw(PrimitiveType pt, unsigned int count, unsigned int start);
 
 		unsigned int		getCount()			{ return count; }
 		unsigned int		getStride()			{ return stride; }
@@ -216,11 +216,11 @@ namespace i4graphics
 
 //-------------------------------------------------------------------------------------
 
-	class I4IndexBuffer
+	class IndexBuffer
 	{
 	public:
-		I4IndexBuffer();
-		virtual ~I4IndexBuffer();
+		IndexBuffer();
+		virtual ~IndexBuffer();
 
 		virtual bool		create(unsigned int count, unsigned int stride, const void* indices = 0);
 
@@ -233,8 +233,8 @@ namespace i4graphics
 		virtual void		bind();
 		virtual void		unbind();
 
-		virtual void		draw(I4PrimitiveType pt);
-		virtual void		draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex);
+		virtual void		draw(PrimitiveType pt);
+		virtual void		draw(PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex);
 
 		unsigned int		getCount()			{ return count; }
 		unsigned int		getStride()			{ return stride; }
@@ -242,14 +242,14 @@ namespace i4graphics
 	protected:
 		unsigned int		count;
 		unsigned int		stride;
-		I4FORMAT			format;
+		FORMAT			format;
 	};
 
-	class I4ConstantBuffer
+	class ConstantBuffer
 	{
 	public:
-		I4ConstantBuffer();
-		virtual ~I4ConstantBuffer();
+		ConstantBuffer();
+		virtual ~ConstantBuffer();
 
 		virtual bool		create(unsigned int stride);
 	};

@@ -5,28 +5,28 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct I4KeyFrameSet;
-	class I4AnimationTrack;
+	struct KeyFrameSet;
+	class AnimationTrack;
 
-	class I4AnimationController
+	class AnimationController
 	{
-		typedef map<string, I4AnimationTrack*>		I4AnimationTrackMap;
+		typedef map<string, AnimationTrack*>		AnimationTrackMap;
 
 	public:
-		I4AnimationController();
-		~I4AnimationController();
+		AnimationController();
+		~AnimationController();
 
-		void				addTrack(const char* name, I4KeyFrameSet* keyFrameSet);
+		void				addTrack(const char* name, KeyFrameSet* keyFrameSet);
 		void				playTrack(const char* name);
 
 		void				animate(float dt);
 
-		const I4Matrix4x4&	getAnimationTM() const		{ return animationTM; }
+		const Matrix4x4&	getAnimationTM() const		{ return animationTM; }
 
 	private:
-		I4AnimationTrackMap	mapAnimationTrack;
-		I4Matrix4x4			animationTM;
-		I4AnimationTrack*	curAnimationTrack;
+		AnimationTrackMap	mapAnimationTrack;
+		Matrix4x4			animationTM;
+		AnimationTrack*	curAnimationTrack;
 	};
 
 }

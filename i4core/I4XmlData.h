@@ -11,15 +11,15 @@ namespace rapidxml
 
 namespace i4core
 {
-	typedef rapidxml::xml_document<char>		I4XmlDocument;
-	typedef rapidxml::xml_node<char>			I4XmlNode;
-	typedef rapidxml::xml_attribute<char>		I4XmlAttribute;
+	typedef rapidxml::xml_document<char>		XmlDocument;
+	typedef rapidxml::xml_node<char>			XmlNode;
+	typedef rapidxml::xml_attribute<char>		XmlAttribute;
 
-	class I4XmlData
+	class XmlData
 	{		
 	public:
-		I4XmlData();
-		~I4XmlData();
+		XmlData();
+		~XmlData();
 
 		bool 		parseFromFile(const char* fname);
 		bool 		parseFromMemory(char* text);
@@ -67,12 +67,12 @@ namespace i4core
 		}
 
 	private:		
-		bool	getNode(I4XmlNode*& result, const char* path);
+		bool	getNode(XmlNode*& result, const char* path);
 		void	splitPath(vector<string>& result, const char* path);
 
 	private:
-		I4XmlDocument*	xmlDoc;
-		I4XmlNode*		selNode;
+		XmlDocument*	xmlDoc;
+		XmlNode*		selNode;
 		char*			textBuffer;
 	};
 

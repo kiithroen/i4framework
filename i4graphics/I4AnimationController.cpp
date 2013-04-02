@@ -5,13 +5,13 @@
 namespace i4graphics
 {
 
-	I4AnimationController::I4AnimationController()
+	AnimationController::AnimationController()
 		: curAnimationTrack(nullptr)
 	{
 		animationTM.makeIdentity();
 	}
 
-	I4AnimationController::~I4AnimationController()
+	AnimationController::~AnimationController()
 	{
 		for (auto& itr : mapAnimationTrack)
 		{
@@ -20,20 +20,20 @@ namespace i4graphics
 		mapAnimationTrack.clear();
 	}
 
-	void I4AnimationController::animate(float dt)
+	void AnimationController::animate(float dt)
 	{		
 		if (curAnimationTrack == nullptr)
 			return;
 
 		curAnimationTrack->advanceFrame(dt);	
 
-		I4Quaternion q;
+		Quaternion q;
 		if (curAnimationTrack->getKeyRotation(q) == true)
 		{
 			q.extractRotationMatrix(animationTM);
 		}
 
-		I4Vector3 v;
+		Vector3 v;
 		if (curAnimationTrack->getKeyPosition(v) == true)
 		{
 			animationTM._41 = v.x;
@@ -43,19 +43,19 @@ namespace i4graphics
 
 		if (curAnimationTrack->getKeyScale(v) == true)
 		{
-			I4Matrix4x4 m;
+			Matrix4x4 m;
 			m.makeScale(v.x, v.y, v.z);
 			animationTM = m*animationTM;
 		}
 	}
 
-	void I4AnimationController::addTrack(const char* name, I4KeyFrameSet* keyFrameSet)
+	void AnimationController::addTrack(const char* name, KeyFrameSet* keyFrameSet)
 	{
-		I4AnimationTrack* animationTrack = new I4AnimationTrack(keyFrameSet);
+		AnimationTrack* animationTrack = new AnimationTrack(keyFrameSet);
 		mapAnimationTrack.insert(make_pair(name, animationTrack));	
 	}
 
-	void I4AnimationController::playTrack(const char* name)
+	void AnimationController::playTrack(const char* name)
 	{
 		auto itr = mapAnimationTrack.find(name);
 		if (itr == mapAnimationTrack.end())

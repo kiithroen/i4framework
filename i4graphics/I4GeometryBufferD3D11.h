@@ -5,11 +5,11 @@
 
 namespace i4graphics
 {
-	class I4VertexBufferD3D11 : public I4VertexBuffer
+	class VertexBufferD3D11 : public VertexBuffer
 	{
 	public:
-		I4VertexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context);
-		virtual ~I4VertexBufferD3D11();
+		VertexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context);
+		virtual ~VertexBufferD3D11();
 
 		virtual bool	create(unsigned int count, unsigned int stride, const void* vertices = 0) override;
 		void			destroy();
@@ -22,8 +22,8 @@ namespace i4graphics
 
 		virtual void	bind() override;
 
-		virtual void	draw(I4PrimitiveType type) override;
-		virtual void	draw(I4PrimitiveType pt, unsigned int _count, unsigned int _start);
+		virtual void	draw(PrimitiveType type) override;
+		virtual void	draw(PrimitiveType pt, unsigned int _count, unsigned int _start);
 
 	private:
 		ID3D11Device*				d3dDevice;
@@ -34,11 +34,11 @@ namespace i4graphics
 
 	// ---------------------------------------------------------------------------------------------
 
-	class I4IndexBufferD3D11 : public I4IndexBuffer
+	class IndexBufferD3D11 : public IndexBuffer
 	{
 	public:
-		I4IndexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context);
-		~I4IndexBufferD3D11();
+		IndexBufferD3D11(ID3D11Device* device, ID3D11DeviceContext* context);
+		~IndexBufferD3D11();
 
 		virtual bool	create(unsigned int count, unsigned int stride, const void* indices = 0) override;	
 		void			destroy();
@@ -51,8 +51,8 @@ namespace i4graphics
 
 		virtual void	bind() override;
 
-		virtual void	draw(I4PrimitiveType pt) override;
-		virtual void	draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex);
+		virtual void	draw(PrimitiveType pt) override;
+		virtual void	draw(PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex);
 
 	private:
 		ID3D11Device*				d3dDevice;
@@ -61,11 +61,11 @@ namespace i4graphics
 		ID3D11Buffer*				indexBuffer;
 	};
 
-	class I4ConstantBufferD3D11 : public I4ConstantBuffer
+	class ConstantBufferD3D11 : public ConstantBuffer
 	{
 	public:
-		I4ConstantBufferD3D11(ID3D11Device* device);
-		~I4ConstantBufferD3D11();
+		ConstantBufferD3D11(ID3D11Device* device);
+		~ConstantBufferD3D11();
 
 		virtual bool	create(unsigned int stride) override;	
 		void			destroy();

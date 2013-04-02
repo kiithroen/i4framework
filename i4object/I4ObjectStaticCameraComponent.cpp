@@ -8,42 +8,42 @@
 namespace i4object
 {
 
-	I4ObjectStaticCameraComponent::I4ObjectStaticCameraComponent(void)
+	ObjectStaticCameraComponent::ObjectStaticCameraComponent(void)
 	{
 	}
 
 
-	I4ObjectStaticCameraComponent::~I4ObjectStaticCameraComponent(void)
+	ObjectStaticCameraComponent::~ObjectStaticCameraComponent(void)
 	{
 	}
 
-	void I4ObjectStaticCameraComponent::onAdd()
+	void ObjectStaticCameraComponent::onAdd()
 	{
 		
 	}
 
-	void I4ObjectStaticCameraComponent::onRemove()
+	void ObjectStaticCameraComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onLateUpdate"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onLateUpdate"), this);
 	}
 
-	void I4ObjectStaticCameraComponent::setMainCamera(bool isMain)
+	void ObjectStaticCameraComponent::setMainCamera(bool isMain)
 	{
 		if (isMain)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onLateUpdate"), this, bind(&I4ObjectStaticCameraComponent::onLateUpdate, this, _1));
+			getBroadcastMessenger().subscribe(Hash("onLateUpdate"), this, bind(&ObjectStaticCameraComponent::onLateUpdate, this, _1));
 		}
 		else
 		{
-			getBroadcastMessenger().unsubscribe(I4Hash("onLateUpdate"), this);
+			getBroadcastMessenger().unsubscribe(Hash("onLateUpdate"), this);
 		}
 	}
 
-	void I4ObjectStaticCameraComponent::onLateUpdate(I4MessageArgs& args)
+	void ObjectStaticCameraComponent::onLateUpdate(MessageArgs& args)
 	{
-		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
+		Matrix4x4 matTarget = getOwner()->getWorldTM();
 
-		I4Matrix4x4 matCamView;
+		Matrix4x4 matCamView;
 		matTarget.extractInverse(matCamView);
 
 		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matCamView);

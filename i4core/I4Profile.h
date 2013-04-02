@@ -4,16 +4,16 @@
 
 namespace i4core
 {
-	class I4ProfileNode
+	class ProfileNode
 	{
 	public:
-		I4ProfileNode(const char* _name, I4ProfileNode* _parent, I4ProfileNode* _sibling);
-		~I4ProfileNode();
+		ProfileNode(const char* _name, ProfileNode* _parent, ProfileNode* _sibling);
+		~ProfileNode();
 
-		I4ProfileNode* findSubNode(const char* name)
+		ProfileNode* findSubNode(const char* name)
 		{
 			// 첫번째 자식들중에 있는지 찾아서 있으면 리턴
-			I4ProfileNode* _child = child;
+			ProfileNode* _child = child;
 			while (_child)
 			{
 				if (_child->name == name)
@@ -23,7 +23,7 @@ namespace i4core
 			}
 
 			// 없으면 새로운 자식을 만들고 첫번째 자식으로 추가하고 리턴
-			I4ProfileNode* node = new I4ProfileNode(name, this, child);
+			ProfileNode* node = new ProfileNode(name, this, child);
 			child = node;
 
 			return child;
@@ -66,26 +66,26 @@ namespace i4core
 
 		float			getTotalTime()				{ return totalTime; }
 		int				getTotalCalls()				{ return totalCalls; }	
-		I4ProfileNode*	getParent()					{ return parent; }
-		I4ProfileNode*	getChild()					{ return child; }				
-		I4ProfileNode*	getSibling()				{ return sibling; }
+		ProfileNode*	getParent()					{ return parent; }
+		ProfileNode*	getChild()					{ return child; }				
+		ProfileNode*	getSibling()				{ return sibling; }
 		const char*		getName()					{ return name; }
 
 	private:
-		I4StopWatch		stopWatch;
+		StopWatch		stopWatch;
 		float			totalTime;		
 		int				totalCalls;
 		int				recursionCounter;
-		I4ProfileNode*	parent;
-		I4ProfileNode*	child;
-		I4ProfileNode*	sibling;
+		ProfileNode*	parent;
+		ProfileNode*	child;
+		ProfileNode*	sibling;
 		const char*		name;		
 	};
 
-	class I4ProfileIterator
+	class ProfileIterator
 	{
 	public:
-		I4ProfileIterator(I4ProfileNode* start)
+		ProfileIterator(ProfileNode* start)
 		{
 			curNode = start;
 			curChildNode = start->getChild();
@@ -144,11 +144,11 @@ namespace i4core
 		float		getCurChildTotalTime()		{ return curChildNode->getTotalTime(); }
 
 	private:
-		I4ProfileNode*		curNode;
-		I4ProfileNode*		curChildNode;
+		ProfileNode*		curNode;
+		ProfileNode*		curChildNode;
 	};
 
-	class I4ProfileManager
+	class ProfileManager
 	{
 	public:
 		static void	begin(const char* name)
@@ -185,35 +185,35 @@ namespace i4core
 			curNode = &rootNode;
 		}
 
-		static I4ProfileIterator	getRootIterator()									{ return I4ProfileIterator(&rootNode); }
-		static I4ProfileNode*		getRootNode()										{ return &rootNode; }
+		static ProfileIterator	getRootIterator()									{ return ProfileIterator(&rootNode); }
+		static ProfileNode*		getRootNode()										{ return &rootNode; }
 
 	private:
-		static I4ProfileNode	rootNode;
-		static I4ProfileNode*	curNode;
+		static ProfileNode	rootNode;
+		static ProfileNode*	curNode;
 	};
 
-	class I4ProfileSample
+	class ProfileSample
 	{
 	public:
-		I4ProfileSample(const char* name)
+		ProfileSample(const char* name)
 		{
-			I4ProfileManager::begin(name);
+			ProfileManager::begin(name);
 		}
 
-		~I4ProfileSample()
+		~ProfileSample()
 		{
-			I4ProfileManager::end();
+			ProfileManager::end();
 		}
 	};
 
-	class I4ProfileWriter
+	class ProfileWriter
 	{
 	public:
-		virtual void write(I4ProfileNode* node, const wchar_t* fname) = 0;
+		virtual void write(ProfileNode* node, const wchar_t* fname) = 0;
 	};
 	
-#define I4PROFILE_BLOCK(name)	I4ProfileSample __profile(name)
-#define I4PROFILE_THISFUNC	I4ProfileSample __profile(__FUNCTION__)
+#define PROFILE_BLOCK(name)	ProfileSample __profile(name)
+#define PROFILE_THISFUNC	ProfileSample __profile(__FUNCTION__)
 
 }

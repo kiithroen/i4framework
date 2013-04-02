@@ -5,10 +5,10 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	struct I4ModelElementInfo
+	struct ModelElementInfo
 	{
-		I4Matrix4x4	localTM;
-		I4Matrix4x4	worldTM;
+		Matrix4x4	localTM;
+		Matrix4x4	worldTM;
 		int			parentID;
 		string		parentName;
 		string		name;

@@ -2,10 +2,10 @@
 
 namespace i4core {
 
-	class I4Variant
+	class Variant
 	{
 	private:
-		union I4VariantValue
+		union VariantValue
 		{
 			char			asChar;
 			unsigned char	asUChar;
@@ -20,172 +20,172 @@ namespace i4core {
 			void*			asVoidPtr;
 		};
 	public:
-		enum I4VariantType
+		enum VariantType
 		{
-			I4VT_INVALID = 0,
-			I4VT_CHAR,
-			I4VT_UCHAR,
-			I4VT_SHORT,
-			I4VT_USHORT,
-			I4VT_INT,
-			I4VT_UINT,
-			I4VT_LONG,
-			I4VT_ULONG,
-			I4VT_FLOAT,
-			I4VT_STRING,
-			I4VT_VOID_PTR,
+			VT_INVALID = 0,
+			VT_CHAR,
+			VT_UCHAR,
+			VT_SHORT,
+			VT_USHORT,
+			VT_INT,
+			VT_UINT,
+			VT_LONG,
+			VT_ULONG,
+			VT_FLOAT,
+			VT_STRING,
+			VT_VOID_PTR,
 		};
 	public:
-		I4Variant()
+		Variant()
 		{
-			dataType = I4VT_INVALID;
+			dataType = VT_INVALID;
 			dataValue.asInt = 0;
 		}
 
-		~I4Variant()
+		~Variant()
 		{
 			switch (dataType)
 			{
-			case I4VT_STRING:
+			case VT_STRING:
 				delete dataValue.asString;
 				break;
 			}
 		}
 
-		I4Variant(char v)
+		Variant(char v)
 		{
-			dataType = I4VT_CHAR;
+			dataType = VT_CHAR;
 			dataValue.asChar = v;
 		}
 
-		I4Variant(unsigned char v)
+		Variant(unsigned char v)
 		{
-			dataType = I4VT_UCHAR;
+			dataType = VT_UCHAR;
 			dataValue.asUChar = v;
 		}
 
-		I4Variant(short v)
+		Variant(short v)
 		{
-			dataType = I4VT_SHORT;
+			dataType = VT_SHORT;
 			dataValue.asShort = v;
 		}
 
-		I4Variant(unsigned short v)
+		Variant(unsigned short v)
 		{
-			dataType = I4VT_USHORT;
+			dataType = VT_USHORT;
 			dataValue.asUShort = v;
 		}
 
-		I4Variant(int v)
+		Variant(int v)
 		{
-			dataType = I4VT_INT;
+			dataType = VT_INT;
 			dataValue.asInt = v;
 		}
 
-		I4Variant(unsigned int v)
+		Variant(unsigned int v)
 		{
-			dataType = I4VT_UINT;
+			dataType = VT_UINT;
 			dataValue.asUInt = v;
 		}
 
-		I4Variant(long v)
+		Variant(long v)
 		{
-			dataType = I4VT_LONG;
+			dataType = VT_LONG;
 			dataValue.asLong = v;
 		}
 
-		I4Variant(unsigned long v)
+		Variant(unsigned long v)
 		{
-			dataType = I4VT_ULONG;
+			dataType = VT_ULONG;
 			dataValue.asULong = v;
 		}
 
-		I4Variant(float v)
+		Variant(float v)
 		{
-			dataType = I4VT_FLOAT;
+			dataType = VT_FLOAT;
 			dataValue.asFloat = v;
 		}
 
-		I4Variant(char* v)
+		Variant(char* v)
 		{
-			dataType = I4VT_STRING;
+			dataType = VT_STRING;
 			dataValue.asString = new string(v);
 		}
 
-		I4Variant(void* v)
+		Variant(void* v)
 		{
-			dataType = I4VT_VOID_PTR;
+			dataType = VT_VOID_PTR;
 			dataValue.asVoidPtr = v;
 		}
 
 		char asChar()
 		{
-			assert(dataType == I4VT_CHAR);
+			assert(dataType == VT_CHAR);
 			return dataValue.asChar;
 		}
 
 		unsigned char asUChar()
 		{
-			assert(dataType == I4VT_UCHAR);
+			assert(dataType == VT_UCHAR);
 			return dataValue.asUChar;
 		}
 
 		short asShort()
 		{
-			assert(dataType == I4VT_SHORT);
+			assert(dataType == VT_SHORT);
 			return dataValue.asShort;
 		}
 
 		unsigned short asUShort()
 		{
-			assert(dataType == I4VT_USHORT);
+			assert(dataType == VT_USHORT);
 			return dataValue.asUShort;
 		}
 
 		int asInt()
 		{
-			assert(dataType == I4VT_INT);
+			assert(dataType == VT_INT);
 			return dataValue.asInt;
 		}
 
 		unsigned int asUInt()
 		{
-			assert(dataType == I4VT_UINT);
+			assert(dataType == VT_UINT);
 			return dataValue.asUInt;
 		}
 
 		long asLong()
 		{
-			assert(dataType == I4VT_LONG);
+			assert(dataType == VT_LONG);
 			return dataValue.asLong;
 		}
 
 		unsigned long asULong()
 		{
-			assert(dataType == I4VT_ULONG);
+			assert(dataType == VT_ULONG);
 			return dataValue.asULong;
 		}
 
 		float asFloat()
 		{
-			assert(dataType == I4VT_FLOAT);
+			assert(dataType == VT_FLOAT);
 			return dataValue.asFloat;
 		}
 
 		const char* asString()
 		{
-			assert(dataType == I4VT_STRING);
+			assert(dataType == VT_STRING);
 			return dataValue.asString->c_str();
 		}
 
 		void* asVoidPtr()
 		{
-			assert(dataType == I4VT_VOID_PTR);
+			assert(dataType == VT_VOID_PTR);
 			return dataValue.asVoidPtr;
 		}
 
 	private:	
-		I4VariantType		dataType;
-		I4VariantValue		dataValue;
+		VariantType		dataType;
+		VariantValue		dataValue;
 	};
 }

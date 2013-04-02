@@ -18,7 +18,7 @@
 namespace i4graphics
 {
 	// TODO : 그림자 그릴때와 일반일때 정렬알고리즘을 달리하자.
-	bool I4MeshRenderItem::operator < (const I4MeshRenderItem& other) const
+	bool MeshRenderItem::operator < (const MeshRenderItem& other) const
 	{
 		if (shaderMask < other.shaderMask)									// 셰이더 우선으로 정렬하고
 		{
@@ -46,7 +46,7 @@ namespace i4graphics
 		return false;
 	}
 
-	I4DeferredRenderer::I4DeferredRenderer()
+	DeferredRenderer::DeferredRenderer()
 		: shaderMgr(nullptr)
 		, rtDiffuse(nullptr)
 		, rtSpecular(nullptr)
@@ -74,132 +74,132 @@ namespace i4graphics
 		clouds, haze=189,190,192
 		overcast=174,183,190
 		*/
-		sunLight.direction = I4Vector3(-0.3f, -1.0f, -0.85f);
-		sunLight.color = I4Vector3(1.0f, 1.0f, 1.0f);
+		sunLight.direction = Vector3(-0.3f, -1.0f, -0.85f);
+		sunLight.color = Vector3(1.0f, 1.0f, 1.0f);
 		commit(&sunLight);
 	}
 
 
-	I4DeferredRenderer::~I4DeferredRenderer(void)
+	DeferredRenderer::~DeferredRenderer(void)
 	{
 		finalize();
 	}
 
-	bool I4DeferredRenderer::initialize(void* _windowID, unsigned int _width, unsigned int _height)
+	bool DeferredRenderer::initialize(void* _windowID, unsigned int _width, unsigned int _height)
 	{
 		// video driver
-		I4VideoDriver::createVideoDriver(I4VIDEO_DRIVER_MODE_D3D11);
-		videoDriver = I4VideoDriver::getVideoDriver();
+		VideoDriver::createVideoDriver(VIDEO_DRIVER_MODE_D3D11);
+		videoDriver = VideoDriver::getVideoDriver();
 		if (videoDriver->initialize(_windowID, _width, _height) == false)
 		{
-			I4LOG_ERROR << L"video driver initalize failed.";
+			LOG_ERROR << L"video driver initalize failed.";
 			return false;
 		}
 
 		if (videoDriver->setupEnvironment() == false)
 		{
-			I4LOG_ERROR << L"setup environment failed.";
+			LOG_ERROR << L"setup environment failed.";
 			return false;
 		}
 	
 		// shader mgr
-		if (I4ShaderMgr::addShaderMgr("shader/deferred_g.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/deferred_g.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deferred_g add failed.";
+			LOG_ERROR << L"shader deferred_g add failed.";
 			return false;
 		}
 	
-		if (I4ShaderMgr::addShaderMgr("shader/deferred_l_directional.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/deferred_l_directional.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deferred_l_directional add failed.";
+			LOG_ERROR << L"shader deferred_l_directional add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/deferred_l_point.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/deferred_l_point.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deferred_l_point add failed.";
+			LOG_ERROR << L"shader deferred_l_point add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/deferred_m.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/deferred_m.fx") == false)
 		{
-			I4LOG_ERROR << L"shader deferred_m add failed.";
+			LOG_ERROR << L"shader deferred_m add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/shadowmap.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/shadowmap.fx") == false)
 		{
-			I4LOG_ERROR << L"shader shadowmap add failed.";
+			LOG_ERROR << L"shader shadowmap add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/default.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/default.fx") == false)
 		{
-			I4LOG_ERROR << L"shader default add failed.";
+			LOG_ERROR << L"shader default add failed.";
 			return false;
 		}
 
-		if (I4ShaderMgr::addShaderMgr("shader/line.fx") == false)
+		if (ShaderMgr::addShaderMgr("shader/line.fx") == false)
 		{
-			I4LOG_ERROR << L"shader line add failed.";
+			LOG_ERROR << L"shader line add failed.";
 			return false;
 		}
 		
 		// render target
 		rtDiffuse = videoDriver->createRenderTarget();
-		if (rtDiffuse->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
+		if (rtDiffuse->create(videoDriver->getWidth(), videoDriver->getHeight(), FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target diffuse create failed.";
+			LOG_ERROR << L"render target diffuse create failed.";
 			return false;
 		}
 
 		rtSpecular = videoDriver->createRenderTarget();
-		if (rtSpecular->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
+		if (rtSpecular->create(videoDriver->getWidth(), videoDriver->getHeight(), FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target specular create failed.";
+			LOG_ERROR << L"render target specular create failed.";
 			return false;
 		}
 
 		rtNormal = videoDriver->createRenderTarget();
-		if (rtNormal->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
+		if (rtNormal->create(videoDriver->getWidth(), videoDriver->getHeight(), FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target normal create failed.";
+			LOG_ERROR << L"render target normal create failed.";
 			return false;
 		}
 
 		rtDepth = videoDriver->createRenderTarget();
-		if (rtDepth->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R32_FLOAT) == false)
+		if (rtDepth->create(videoDriver->getWidth(), videoDriver->getHeight(), FORMAT_R32_FLOAT) == false)
 		{
-			I4LOG_ERROR << L"render target depth create failed.";
+			LOG_ERROR << L"render target depth create failed.";
 			return false;
 		}
 		
 		rtLight = videoDriver->createRenderTarget();
-		if (rtLight->create(videoDriver->getWidth(), videoDriver->getHeight(), I4FORMAT_R8G8B8A8_UNORM) == false)
+		if (rtLight->create(videoDriver->getWidth(), videoDriver->getHeight(), FORMAT_R8G8B8A8_UNORM) == false)
 		{
-			I4LOG_ERROR << L"render target light create failed.";
+			LOG_ERROR << L"render target light create failed.";
 			return false;
 		}
 
 		rtShadow = videoDriver->createRenderTarget();
-		if (rtShadow->createDepthStencil(shadowSplitSize*SHADOW_SPLIT_NUM, shadowSplitSize, I4FORMAT_R32_TYPELESS, I4FORMAT_D32_FLOAT, I4FORMAT_R32_FLOAT) == false)
+		if (rtShadow->createDepthStencil(shadowSplitSize*SHADOW_SPLIT_NUM, shadowSplitSize, FORMAT_R32_TYPELESS, FORMAT_D32_FLOAT, FORMAT_R32_FLOAT) == false)
 		{
-			I4LOG_ERROR << L"render target shadow create failed.";
+			LOG_ERROR << L"render target shadow create failed.";
 			return false;
 		}
 
 		// light mesh
-		screenQuadMesh = new I4ScreenQuadMesh;
+		screenQuadMesh = new ScreenQuadMesh;
 		if (screenQuadMesh->create() == false)
 		{
-			I4LOG_ERROR << L"quad mesh create failed.";
+			LOG_ERROR << L"quad mesh create failed.";
 			return false;
 		}
 
-		pointLightMesh = new I4PointLightMesh;
+		pointLightMesh = new PointLightMesh;
 		if (pointLightMesh->create(1.0f, 16, 16) == false)
 		{
-			I4LOG_ERROR << L"sphere mesh create failed.";
+			LOG_ERROR << L"sphere mesh create failed.";
 			return false;
 		}
 		
@@ -245,13 +245,13 @@ namespace i4graphics
 		if (cbEachFrame_Line.create() == false)
 			return false;
 
-		debugLineBatch = new I4LineBatch;
+		debugLineBatch = new LineBatch;
 		debugLineBatch->create(1024);
 
 		return true;
 	}
 
-	void I4DeferredRenderer::finalize()
+	void DeferredRenderer::finalize()
 	{
 		delete debugLineBatch;
 		delete pointLightMesh;
@@ -263,29 +263,29 @@ namespace i4graphics
 		delete rtSpecular;
 		delete rtDiffuse;
 
-		I4ShaderMgr::destroyShaderMgr();
-		I4VideoDriver::destroyVideoDriver();
+		ShaderMgr::destroyShaderMgr();
+		VideoDriver::destroyVideoDriver();
 	}
 
-	void I4DeferredRenderer::commit(const I4MeshRenderItem& item)
+	void DeferredRenderer::commit(const MeshRenderItem& item)
 	{
 		vecSceneMeshRenderItem.push_back(item);
 	}
 
-	void I4DeferredRenderer::commit(I4DirectionalLight* light)
+	void DeferredRenderer::commit(DirectionalLight* light)
 	{
 		sunLight = *light;
 
-		directionalLightPerspectiveCamera.setLookAtLH(sunLight.direction*-100.0f, sunLight.direction, I4VECTOR3_AXISY);
-		directionalLightPerspectiveCamera.setPerspectiveFovLH(I4PI/4, 1.0f, 0.1f, 100.0f);
+		directionalLightPerspectiveCamera.setLookAtLH(sunLight.direction*-100.0f, sunLight.direction, VECTOR3_AXISY);
+		directionalLightPerspectiveCamera.setPerspectiveFovLH(PI/4, 1.0f, 0.1f, 100.0f);
 	}
 
-	void I4DeferredRenderer::commit(I4PointLight* light)
+	void DeferredRenderer::commit(PointLight* light)
 	{
 		vecScenePointLight.push_back(*light);
 	}
 
-	void I4DeferredRenderer::commit(const I4DebugLine& line)
+	void DeferredRenderer::commit(const DebugLine& line)
 	{
 		if (debugMode)
 		{
@@ -293,9 +293,9 @@ namespace i4graphics
 		}
 	}
 
-	void I4DeferredRenderer::render()
+	void DeferredRenderer::render()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 		
 		beginRender();
 
@@ -309,18 +309,18 @@ namespace i4graphics
 
 	}
 	
-	void I4DeferredRenderer::beginRender()
+	void DeferredRenderer::beginRender()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		videoDriver->beginScene();
 
 		clearAllRenderTarget();
 	}
 
-	void I4DeferredRenderer::endRender()
+	void DeferredRenderer::endRender()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		videoDriver->endScene();
 
@@ -329,9 +329,9 @@ namespace i4graphics
 	}
 
 
-	void I4DeferredRenderer::clearAllRenderTarget()
+	void DeferredRenderer::clearAllRenderTarget()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 					
 		videoDriver->clearBackBuffer(0, 32, 76);
 
@@ -344,21 +344,21 @@ namespace i4graphics
 		videoDriver->clearDepthStencil(rtShadow, 1.0f, 0);
 	}
 
-	void I4DeferredRenderer::renderStageGeometry()
+	void DeferredRenderer::renderStageGeometry()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		I4RenderTarget*	renderTargetG[] = { rtDiffuse, rtSpecular, rtNormal, rtDepth, rtLight };
+		RenderTarget*	renderTargetG[] = { rtDiffuse, rtSpecular, rtNormal, rtDepth, rtLight };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG);
-		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
+		videoDriver->setBlendMode(BLEND_MODE_NONE);
 
 		cullAndSortMeshGeometryRenderItem();
 		renderMeshGeometryRenderItem();		
 	}
 
-	void I4DeferredRenderer::cullAndSortMeshGeometryRenderItem()
+	void DeferredRenderer::cullAndSortMeshGeometryRenderItem()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		vecCulledMeshRenderItem.clear();
 
@@ -374,12 +374,12 @@ namespace i4graphics
 	}
 
 	
-	void I4DeferredRenderer::renderMeshGeometryRenderItem()
+	void DeferredRenderer::renderMeshGeometryRenderItem()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		I4MeshRenderItem* prevItem = nullptr;
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_g.fx");
+		MeshRenderItem* prevItem = nullptr;
+		ShaderMgr* shaderMgr = ShaderMgr::findShaderMgr("shader/deferred_g.fx");
 
 		for (auto& itr : vecCulledMeshRenderItem)
 		{
@@ -436,21 +436,21 @@ namespace i4graphics
 			{
 				if (itr.mesh->skined)
 				{
-					shaderMgr->begin(itr.shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+					shaderMgr->begin(itr.shaderMask, INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
 				}
 				else
 				{
-					shaderMgr->begin(itr.shaderMask, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
+					shaderMgr->begin(itr.shaderMask, INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
 				}
 					
-				shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+				shaderMgr->setSamplerState(0, SAMPLER_STATE_LINEAR);
 
 				cbOnResize_G.getData()->projection = mainCamera.getProjectionMatrix(); 
 				cbOnResize_G.getData()->farDistance = mainCamera.getZFar();
-				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
+				shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 0, cbOnResize_G.getBuffer(), cbOnResize_G.getData());
 
 				cbEveryFrame_G.getData()->view = mainCamera.getViewMatrix();
-				shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
+				shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 1, cbEveryFrame_G.getBuffer(), cbEveryFrame_G.getData());
 			}
 		
 			if (isChangedMesh)
@@ -465,52 +465,52 @@ namespace i4graphics
 				cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
 				cbEachMeshInstance_G_PS.getData()->specularLevel = itr.material->specularLevel;
 				cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
-				shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
+				shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 
-				if (itr.shaderMask & I4SHADER_MASK_SKINNING)
+				if (itr.shaderMask & SHADER_MASK_SKINNING)
 				{
 					buildMatrixPalette(cbEachSkinedMesh_G.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
-					shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+					shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
 				}
 			}
 
 			if (isChangedTwoSide)
 			{
-				int mode = I4RASTERIZER_MODE_SOLID_FRONT;
+				int mode = RASTERIZER_MODE_SOLID_FRONT;
 				if (itr.material->twoSide)
 				{
-					mode = I4RASTERIZER_MODE_SOLID_NONE;
+					mode = RASTERIZER_MODE_SOLID_NONE;
 				}
 				
 				if (wireMode)
 				{
-					mode += I4RASTERIZER_MODE_WIRE_NONE;
+					mode += RASTERIZER_MODE_WIRE_NONE;
 				}
 
-				videoDriver->setRasterizerMode((I4RasterizerMode)mode);
+				videoDriver->setRasterizerMode((RasterizerMode)mode);
 			}
 
 			if (isChangedDiffuseMap)
 			{
-				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->diffuseMap);
+				Texture* texture = VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->diffuseMap);
 				shaderMgr->setTexture(0, texture);
 			}
 						
 			if (isChangedSpecularMap)
 			{
-				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->specularMap);
+				Texture* texture = VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->specularMap);
 				shaderMgr->setTexture(1, texture);
 			}
 
 			if (isChangedNormalMap)
 			{
-				I4Texture* texture = I4VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->normalMap);
+				Texture* texture = VideoDriver::getVideoDriver()->getTextureMgr()->find(itr.material->normalMap);
 				shaderMgr->setTexture(2, texture);
 			}				
 
 			cbEachAllMesh_G_VS.getData()->world = itr.worldTM;
 			cbEachAllMesh_G_VS.getData()->result = itr.resultTM;
-			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
+			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
 
 			itr.mesh->drawSub(itr.subMeshID);
 
@@ -525,22 +525,22 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderStageShadow()
+	void DeferredRenderer::renderStageShadow()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		I4RenderTarget*	renderTargetG[] = { rtShadow };
+		RenderTarget*	renderTargetG[] = { rtShadow };
 		videoDriver->setRenderTarget(_countof(renderTargetG), renderTargetG, rtShadow);
-		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_NONE);
-		videoDriver->setBlendMode(I4BLEND_MODE_NONE);		
+		videoDriver->setRasterizerMode(RASTERIZER_MODE_SOLID_NONE);
+		videoDriver->setBlendMode(BLEND_MODE_NONE);		
 
-		I4Camera tempSplitCamera;
+		Camera tempSplitCamera;
 		tempSplitCamera.setViewMatrix(mainCamera.getViewMatrix());
 
-		I4Matrix4x4 matInvView;
+		Matrix4x4 matInvView;
 		tempSplitCamera.getViewMatrix().extractInversePrimitive(matInvView);
 
-		I4Matrix4x4 matToLightView = matInvView*directionalLightPerspectiveCamera.getViewMatrix();
+		Matrix4x4 matToLightView = matInvView*directionalLightPerspectiveCamera.getViewMatrix();
 
 		for (int i = 0; i < SHADOW_SPLIT_NUM; ++i)
 		{
@@ -562,7 +562,7 @@ namespace i4graphics
 			}
 			tempSplitCamera.setPerspectiveFovLH(mainCamera.getFovY(), mainCamera.getAspect(), nearZ, farZ);
 																											
-			I4Vector3 corners[8];
+			Vector3 corners[8];
 			tempSplitCamera.extractCorners(corners);
 
 			for (int j = 0; j < 8; ++j)
@@ -570,7 +570,7 @@ namespace i4graphics
 				corners[j] = matToLightView.transformCoord(corners[j]);				
 			}
 
-			I4AABB aabbInLightSpace;
+			AABB aabbInLightSpace;
 			for (int j = 0; j < 8; ++j)
 			{
 				aabbInLightSpace.merge(corners[j]);
@@ -597,7 +597,7 @@ namespace i4graphics
 				{
 					if (directionalLightSplitOrthoCamera[i].isVisibleAABB(itr.worldAABB) == true)
 					{
-						I4AABB aabb = itr.worldAABB.transform(directionalLightSplitOrthoCamera[i].getViewMatrix());
+						AABB aabb = itr.worldAABB.transform(directionalLightSplitOrthoCamera[i].getViewMatrix());
 						if (aabb.minEdge.x < finalMinX)
 						{
 							finalMinX = aabb.minEdge.x;
@@ -646,9 +646,9 @@ namespace i4graphics
 		videoDriver->resetViewport();
 	}
 
-	void I4DeferredRenderer::cullAndSortMeshShadowRenderItem(const I4Camera& camera)
+	void DeferredRenderer::cullAndSortMeshShadowRenderItem(const Camera& camera)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		vecCulledMeshRenderItem.clear();
 
@@ -666,12 +666,12 @@ namespace i4graphics
 		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end());
 	}
 
-	void I4DeferredRenderer::renderMeshShadowRenderItem(const I4Camera& camera)
+	void DeferredRenderer::renderMeshShadowRenderItem(const Camera& camera)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		I4MeshRenderItem* prevItem = nullptr;
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/shadowmap.fx");
+		MeshRenderItem* prevItem = nullptr;
+		ShaderMgr* shaderMgr = ShaderMgr::findShaderMgr("shader/shadowmap.fx");
 
 		for (auto& itr : vecCulledMeshRenderItem)
 		{
@@ -706,11 +706,11 @@ namespace i4graphics
 			{
 				if (itr.mesh->skined)
 				{
-					shaderMgr->begin(I4SHADER_MASK_SKINNING, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
+					shaderMgr->begin(SHADER_MASK_SKINNING, INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO, _countof(INPUT_ELEMENTS_POS_NORMAL_TEX_TAN_SKININFO));
 				}
 				else
 				{
-					shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(I4INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
+					shaderMgr->begin(SHADER_MASK_NONE, INPUT_ELEMENTS_POS_NORMAL_TEX_TAN, _countof(INPUT_ELEMENTS_POS_NORMAL_TEX_TAN));					
 				}
 			}
 		
@@ -723,31 +723,31 @@ namespace i4graphics
 					
 				itr.mesh->bind();
 
-				if (itr.shaderMask & I4SHADER_MASK_SKINNING)
+				if (itr.shaderMask & SHADER_MASK_SKINNING)
 				{
 					buildMatrixPalette(cbEachSkinedMesh_S_VS.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
-					shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
+					shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
 				}
 			}
 	
 			if (isChangedTwoSide)
 			{
-				int mode = I4RASTERIZER_MODE_SOLID_FRONT;
+				int mode = RASTERIZER_MODE_SOLID_FRONT;
 				if (itr.material->twoSide)
 				{
-					mode = I4RASTERIZER_MODE_SOLID_NONE;
+					mode = RASTERIZER_MODE_SOLID_NONE;
 				}
 
 				if (wireMode)
 				{
-					mode += I4RASTERIZER_MODE_WIRE_NONE;
+					mode += RASTERIZER_MODE_WIRE_NONE;
 				}
 
-				videoDriver->setRasterizerMode((I4RasterizerMode)mode);
+				videoDriver->setRasterizerMode((RasterizerMode)mode);
 			}
 
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
-			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
+			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
 			
 			itr.mesh->drawAll();
 
@@ -762,7 +762,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::buildMatrixPalette(I4Matrix4x4* matrixPalette, const I4Matrix4x4& resultTM, const I4Matrix4x4* skinTMs, unsigned int boneCount)
+	void DeferredRenderer::buildMatrixPalette(Matrix4x4* matrixPalette, const Matrix4x4& resultTM, const Matrix4x4* skinTMs, unsigned int boneCount)
 	{
 		// 매트릭스 팔레트를 만들어서 넘겨준다.
 		// 또 모델이 바낄때마다 매트릭스 팔레트를 바꺼주고 resultTM을 셰이더에 넘겨주는것도 생각해봤는데 셰이더 연산량이 너무 많아서 안되겠다.
@@ -775,13 +775,13 @@ namespace i4graphics
 		}
 	}
 
-	void I4DeferredRenderer::renderStageLight()
+	void DeferredRenderer::renderStageLight()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		videoDriver->setRenderTarget(1, &rtLight, nullptr);
-		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
-		videoDriver->setBlendMode(I4BLEND_MODE_ADD);
+		videoDriver->setRasterizerMode(RASTERIZER_MODE_SOLID_FRONT);
+		videoDriver->setBlendMode(BLEND_MODE_ADD);
 
 		renderDirectionalLight();
 
@@ -789,21 +789,21 @@ namespace i4graphics
 		renderPointLight();
 	}
 
-	void I4DeferredRenderer::renderDirectionalLight()
+	void DeferredRenderer::renderDirectionalLight()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_l_directional.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));	
-		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
-		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
-		shaderMgr->setSamplerState(2, I4SAMPLER_STATE_SHADOW);
+		shaderMgr = ShaderMgr::findShaderMgr("shader/deferred_l_directional.fx");
+		shaderMgr->begin(SHADER_MASK_NONE, INPUT_ELEMENTS_POS_TEX, _countof(INPUT_ELEMENTS_POS_TEX));	
+		shaderMgr->setSamplerState(0, SAMPLER_STATE_LINEAR);
+		shaderMgr->setSamplerState(1, SAMPLER_STATE_POINT);
+		shaderMgr->setSamplerState(2, SAMPLER_STATE_SHADOW);
 
 		shaderMgr->setRenderTarget(0, rtNormal);
 		shaderMgr->setRenderTarget(1, rtDepth);
 		shaderMgr->setRenderTarget(2, rtShadow);
 
-		I4Matrix4x4 matInvView;
+		Matrix4x4 matInvView;
 		mainCamera.getViewMatrix().extractInversePrimitive(matInvView);
 		for (int i = 0; i < SHADOW_SPLIT_NUM; ++i)
 		{
@@ -813,13 +813,13 @@ namespace i4graphics
 		}
 		cbOnResize_L_directional.getData()->shadowSplitSize = (float)shadowSplitSize;
 		
-		const I4Vector3 lightViewDir = mainCamera.getViewMatrix().transformVector(sunLight.direction);
+		const Vector3 lightViewDir = mainCamera.getViewMatrix().transformVector(sunLight.direction);
 
 		cbOnResize_L_directional.getData()->farTopRight = mainCamera.getFarTopRight();
 		cbOnResize_L_directional.getData()->lightViewDirection = lightViewDir;
 		cbOnResize_L_directional.getData()->lightColor = sunLight.color;
 
-		shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
+		shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 0, cbOnResize_L_directional.getBuffer(), cbOnResize_L_directional.getData());
 
 		screenQuadMesh->bind();
 		screenQuadMesh->draw();
@@ -832,9 +832,9 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::cullAndSortPointLight()
+	void DeferredRenderer::cullAndSortPointLight()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		vecCulledPointLight.clear();
 		
@@ -847,40 +847,40 @@ namespace i4graphics
 		}
 	}
 
-	void I4DeferredRenderer::renderPointLight()
+	void DeferredRenderer::renderPointLight()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_l_point.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS, _countof(I4INPUT_ELEMENTS_POS));
-		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
-		shaderMgr->setSamplerState(1, I4SAMPLER_STATE_POINT);
+		ShaderMgr* shaderMgr = ShaderMgr::findShaderMgr("shader/deferred_l_point.fx");
+		shaderMgr->begin(SHADER_MASK_NONE, INPUT_ELEMENTS_POS, _countof(INPUT_ELEMENTS_POS));
+		shaderMgr->setSamplerState(0, SAMPLER_STATE_LINEAR);
+		shaderMgr->setSamplerState(1, SAMPLER_STATE_POINT);
 
 		shaderMgr->setRenderTarget(0, rtNormal);
 		shaderMgr->setRenderTarget(1, rtDepth);
 		
 		cbOnResize_L_point_VS.getData()->projection = mainCamera.getProjectionMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbOnResize_L_point_VS.getBuffer(), cbOnResize_L_point_VS.getData());
+		shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 0, cbOnResize_L_point_VS.getBuffer(), cbOnResize_L_point_VS.getData());
 
 		cbOnResize_L_point_PS.getData()->farTopRight = mainCamera.getFarTopRight();
-		shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 1, cbOnResize_L_point_PS.getBuffer(), cbOnResize_L_point_PS.getData());
+		shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 1, cbOnResize_L_point_PS.getBuffer(), cbOnResize_L_point_PS.getData());
 
 		cbEveryFrame_L_point.getData()->view = mainCamera.getViewMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 2, cbEveryFrame_L_point.getBuffer(), cbEveryFrame_L_point.getData());
+		shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 2, cbEveryFrame_L_point.getBuffer(), cbEveryFrame_L_point.getData());
 
 		pointLightMesh->bind();
 
-		I4Matrix4x4 matLight;
+		Matrix4x4 matLight;
 
 		for (auto& itr : vecCulledPointLight)
 		{
-			const I4PointLight& light = itr;
+			const PointLight& light = itr;
 
 			matLight.makeScale(light.radius, light.radius, light.radius);
 			matLight.setPosition(light.position);
 
 			
-			const I4Vector3 lightViewPos =  mainCamera.getViewMatrix().transformCoord(light.position);
+			const Vector3 lightViewPos =  mainCamera.getViewMatrix().transformCoord(light.position);
 
 			// 카메라와 라이트의 관계를 찾는데 near plane 을 고려해서 생각해야한다.
 			// 안그러면 카메라가 라이트의 외부에 있지만 near plane 안쪽에 있을때 깜박이는 현상이 생긴다.
@@ -888,22 +888,22 @@ namespace i4graphics
 			if (lightViewPos.getLengthSq() - lightRadiusPlusZNear*lightRadiusPlusZNear > 0)
 			{
 				// 카메라가 라이트의 외부에 있으므로 일반 방식으로 그리면 된다. 
-				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
+				videoDriver->setRasterizerMode(RASTERIZER_MODE_SOLID_FRONT);
 			}
 			else
 			{
 				// 카메라가 라이트의 안쪽에 있으므로 뒤집어서 그려야한다.
-				videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_BACK);
+				videoDriver->setRasterizerMode(RASTERIZER_MODE_SOLID_BACK);
 			}
 
 			cbEachLight_L_point_VS.getData()->world = matLight;
-			shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 3, cbEachLight_L_point_VS.getBuffer(), cbEachLight_L_point_VS.getData());
+			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 3, cbEachLight_L_point_VS.getBuffer(), cbEachLight_L_point_VS.getData());
 
 
 			cbEachLight_L_point_PS.getData()->lightPosition = lightViewPos;
 			cbEachLight_L_point_PS.getData()->lightRadius = light.radius;
 			cbEachLight_L_point_PS.getData()->lightColor = light.color;
-			shaderMgr->setConstantBuffer(I4SHADER_TYPE_PS, 4, cbEachLight_L_point_PS.getBuffer(), cbEachLight_L_point_PS.getData());
+			shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 4, cbEachLight_L_point_PS.getBuffer(), cbEachLight_L_point_PS.getData());
 
 			pointLightMesh->draw();
 		}
@@ -915,17 +915,17 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderStageMerge()
+	void DeferredRenderer::renderStageMerge()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		videoDriver->resetBackBufferRenderTarget(false);
-		videoDriver->setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
-		videoDriver->setBlendMode(I4BLEND_MODE_NONE);
+		videoDriver->setRasterizerMode(RASTERIZER_MODE_SOLID_FRONT);
+		videoDriver->setBlendMode(BLEND_MODE_NONE);
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/deferred_m.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_TEX, _countof(I4INPUT_ELEMENTS_POS_TEX));
-		shaderMgr->setSamplerState(0, I4SAMPLER_STATE_LINEAR);
+		ShaderMgr* shaderMgr = ShaderMgr::findShaderMgr("shader/deferred_m.fx");
+		shaderMgr->begin(SHADER_MASK_NONE, INPUT_ELEMENTS_POS_TEX, _countof(INPUT_ELEMENTS_POS_TEX));
+		shaderMgr->setSamplerState(0, SAMPLER_STATE_LINEAR);
 
 		shaderMgr->setRenderTarget(0, rtDiffuse);
 		shaderMgr->setRenderTarget(1, rtSpecular);
@@ -942,7 +942,7 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void I4DeferredRenderer::renderDebug()
+	void DeferredRenderer::renderDebug()
 	{
 		if (debugMode)
 		{
@@ -950,26 +950,26 @@ namespace i4graphics
 		}
 	}
 
-	void I4DeferredRenderer::renderDebugLine()
+	void DeferredRenderer::renderDebugLine()
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		videoDriver->resetBackBufferRenderTarget(true);
 
-		videoDriver->setDepthStencilMode(I4DEPTH_OFF_STENCIL_OFF);
+		videoDriver->setDepthStencilMode(DEPTH_OFF_STENCIL_OFF);
 
 
-		I4ShaderMgr* shaderMgr = I4ShaderMgr::findShaderMgr("shader/line.fx");
-		shaderMgr->begin(I4SHADER_MASK_NONE, I4INPUT_ELEMENTS_POS_COL, _countof(I4INPUT_ELEMENTS_POS_COL));
+		ShaderMgr* shaderMgr = ShaderMgr::findShaderMgr("shader/line.fx");
+		shaderMgr->begin(SHADER_MASK_NONE, INPUT_ELEMENTS_POS_COL, _countof(INPUT_ELEMENTS_POS_COL));
 
 		cbEachFrame_Line.getData()->viewProjection = mainCamera.getViewProjectionMatrix();
-		shaderMgr->setConstantBuffer(I4SHADER_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
+		shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 0, cbEachFrame_Line.getBuffer(), cbEachFrame_Line.getData());
 
 		debugLineBatch->draw();
 
 		shaderMgr->end();
 
-		videoDriver->setDepthStencilMode(I4DEPTH_LESS_STENCIL_OFF);
+		videoDriver->setDepthStencilMode(DEPTH_LESS_STENCIL_OFF);
 	}
 
 }

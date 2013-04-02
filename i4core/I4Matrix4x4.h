@@ -5,14 +5,14 @@
 
 namespace i4core
 {
-	class I4Matrix4x4
+	class Matrix4x4
 	{
 	public:
-		I4Matrix4x4()
+		Matrix4x4()
 		{
 		}
 
-		I4Matrix4x4(float m11, float m12, float m13, float m14,
+		Matrix4x4(float m11, float m12, float m13, float m14,
 				float m21, float m22, float m23, float m24,
 				float m31, float m32, float m33, float m34,
 				float m41, float m42, float m43, float m44)
@@ -23,7 +23,7 @@ namespace i4core
 		{		
 		}
 
-		I4Matrix4x4(const I4Matrix4x4& m)
+		Matrix4x4(const Matrix4x4& m)
 		: _11(m._11), _12(m._12), _13(m._13), _14(m._14)
 		, _21(m._21), _22(m._22), _23(m._23), _24(m._24)
 		, _31(m._31), _32(m._32), _33(m._33), _34(m._34)
@@ -31,22 +31,22 @@ namespace i4core
 		{		
 		}
 
-		const I4Matrix4x4& operator = (const I4Matrix4x4& rhs)
+		const Matrix4x4& operator = (const Matrix4x4& rhs)
 		{
-			memcpy(&m, &rhs.m, sizeof(I4Matrix4x4));
+			memcpy(&m, &rhs.m, sizeof(Matrix4x4));
 
 			return *this;
 		}
 
-		const I4Matrix4x4 operator - () const
+		const Matrix4x4 operator - () const
 		{
-			return I4Matrix4x4(-_11, -_12, -_13, -_14,
+			return Matrix4x4(-_11, -_12, -_13, -_14,
 						   -_21, -_22, -_23, -_24,
 						   -_31, -_32, -_33, -_34,
 						   -_41, -_42, -_43, -_44);
 		}
 			
-		void operator += (const I4Matrix4x4& rhs)
+		void operator += (const Matrix4x4& rhs)
 		{
 			_11 += rhs._11; _12 += rhs._12; _13 += rhs._13; _14 += rhs._14;
 			_21 += rhs._21; _22 += rhs._22; _23 += rhs._23; _24 += rhs._24;
@@ -54,7 +54,7 @@ namespace i4core
 			_41 += rhs._41; _42 += rhs._42; _43 += rhs._43; _44 += rhs._44;
 		}
 
-		void operator -= (const I4Matrix4x4& rhs)
+		void operator -= (const Matrix4x4& rhs)
 		{
 			_11 -= rhs._11; _12 -= rhs._12; _13 -= rhs._13; _14 -= rhs._14;
 			_21 -= rhs._21; _22 -= rhs._22; _23 -= rhs._23; _24 -= rhs._24;
@@ -62,9 +62,9 @@ namespace i4core
 			_41 -= rhs._41; _42 -= rhs._42; _43 -= rhs._43; _44 -= rhs._44;				
 		}
 
-		void operator *= (const I4Matrix4x4& rhs)
+		void operator *= (const Matrix4x4& rhs)
 		{
-			I4Matrix4x4 result;
+			Matrix4x4 result;
 			multiply(result, *this, rhs);
 			*this = result;
 		}
@@ -87,49 +87,49 @@ namespace i4core
 			_41 *= inv; _42 *= inv; _43 *= inv; _44 *= inv;
 		}
 
-		const I4Matrix4x4 operator + (const I4Matrix4x4& rhs) const
+		const Matrix4x4 operator + (const Matrix4x4& rhs) const
 		{
-			return I4Matrix4x4(_11 + rhs._11, _12 + rhs._12, _13 + rhs._13, _14 + rhs._14,
+			return Matrix4x4(_11 + rhs._11, _12 + rhs._12, _13 + rhs._13, _14 + rhs._14,
 						   _21 + rhs._21, _22 + rhs._22, _23 + rhs._23, _24 + rhs._24,
 						   _31 + rhs._31, _32 + rhs._32, _33 + rhs._33, _34 + rhs._34,
 						   _41 + rhs._41, _42 + rhs._42, _43 + rhs._43, _44 + rhs._44);
 		}
 
-		const I4Matrix4x4 operator - (const I4Matrix4x4& rhs) const
+		const Matrix4x4 operator - (const Matrix4x4& rhs) const
 		{
-			return I4Matrix4x4(_11 - rhs._11, _12 - rhs._12, _13 - rhs._13, _14 - rhs._14,
+			return Matrix4x4(_11 - rhs._11, _12 - rhs._12, _13 - rhs._13, _14 - rhs._14,
 						   _21 - rhs._21, _22 - rhs._22, _23 - rhs._23, _24 - rhs._24,
 						   _31 - rhs._31, _32 - rhs._32, _33 - rhs._33, _34 - rhs._34,
 						   _41 - rhs._41, _42 - rhs._42, _43 - rhs._43, _44 - rhs._44);
 		}
 
-		const I4Matrix4x4 operator * (const I4Matrix4x4& rhs) const
+		const Matrix4x4 operator * (const Matrix4x4& rhs) const
 		{
-			I4Matrix4x4 result;
+			Matrix4x4 result;
 			multiply(result, *this, rhs);
 
 			return result;		
 		}
 
-		const I4Matrix4x4 operator * (float val) const
+		const Matrix4x4 operator * (float val) const
 		{
-			return I4Matrix4x4(_11*val, _12*val, _13*val, _14*val,
+			return Matrix4x4(_11*val, _12*val, _13*val, _14*val,
 						   _21*val, _22*val, _23*val, _24*val,
 						   _31*val, _32*val, _33*val, _34*val,
 						   _41*val, _42*val, _43*val, _44*val);
 		}
 
-		const I4Matrix4x4 operator / (float val) const
+		const Matrix4x4 operator / (float val) const
 		{
 			float inv = 1.0f / val;
 
-			return I4Matrix4x4(_11*inv, _12*inv, _13*inv, _14*inv,
+			return Matrix4x4(_11*inv, _12*inv, _13*inv, _14*inv,
 						   _21*inv, _22*inv, _23*inv, _24*inv,
 						   _31*inv, _32*inv, _33*inv, _34*inv,
 						   _41*inv, _42*inv, _43*inv, _44*inv);
 		}
 
-		void setAxisX(const I4Vector3& v)
+		void setAxisX(const Vector3& v)
 		{
 			_11 = v.x;
 			_12 = v.y;
@@ -137,14 +137,14 @@ namespace i4core
 		}
 
 
-		void setAxisY(const I4Vector3& v)
+		void setAxisY(const Vector3& v)
 		{
 			_21 = v.x;
 			_22 = v.y;
 			_23 = v.z;
 		}
 
-		void setAxisZ(const I4Vector3& v)
+		void setAxisZ(const Vector3& v)
 		{
 			_31 = v.x;
 			_32 = v.y;
@@ -152,41 +152,41 @@ namespace i4core
 		}
 
 
-		void setPosition(const I4Vector3& pos)
+		void setPosition(const Vector3& pos)
 		{
 			_41 = pos.x;
 			_42 = pos.y;
 			_43 = pos.z;
 		}
 
-		void addPosition(const I4Vector3& pos)
+		void addPosition(const Vector3& pos)
 		{
 			_41 += pos.x;
 			_42 += pos.y;
 			_43 += pos.z;
 		}
 
-		const I4Vector3 getAxisX() const
+		const Vector3 getAxisX() const
 		{
-			return I4Vector3(_11, _12, _13);
+			return Vector3(_11, _12, _13);
 		}
 
-		const I4Vector3 getAxisY() const
+		const Vector3 getAxisY() const
 		{
-			return I4Vector3(_21, _22, _23);
+			return Vector3(_21, _22, _23);
 		}
 
-		const I4Vector3 getAxisZ() const
+		const Vector3 getAxisZ() const
 		{
-			return I4Vector3(_31, _32, _33);
+			return Vector3(_31, _32, _33);
 		}
 
-		const I4Vector3 getPosition() const
+		const Vector3 getPosition() const
 		{
-			return I4Vector3(_41, _42, _43);
+			return Vector3(_41, _42, _43);
 		}
 
-		void extractAxis(I4Vector3& vx, I4Vector3& vy, I4Vector3& vz) const
+		void extractAxis(Vector3& vx, Vector3& vy, Vector3& vz) const
 		{
 			vx = getAxisX();
 			vy = getAxisY();
@@ -194,7 +194,7 @@ namespace i4core
 		}
 
 		
-		void extractInversePrimitive(I4Matrix4x4& mat) const
+		void extractInversePrimitive(Matrix4x4& mat) const
 		{
 			// 회전 이동 반사로만 구성된 행렬일때 역행렬은 다음과 같다.
 
@@ -220,7 +220,7 @@ namespace i4core
 			mat._44 = 1.0f;
 		}
 
-		bool extractInverse(I4Matrix4x4& mat) const
+		bool extractInverse(Matrix4x4& mat) const
 		{
 			float d = (_11*_22 - _12*_21)*(_33*_44 - _34*_43) -
 						(_11*_23 - _13*_21)*(_32*_44 - _34*_42) +
@@ -254,7 +254,7 @@ namespace i4core
 			return true;
 		}
 
-		void makeTranspose(const I4Matrix4x4& mat)
+		void makeTranspose(const Matrix4x4& mat)
 		{
 			_11 = mat._11;
 			_12 = mat._21;
@@ -276,7 +276,7 @@ namespace i4core
 
 		void makeZero()
 		{
-			memset(arr, 0, sizeof(I4Matrix4x4));			
+			memset(arr, 0, sizeof(Matrix4x4));			
 		}
 
 		void makeIdentity()
@@ -344,9 +344,9 @@ namespace i4core
 			_13 = _14 = _23 = _24 = _31 = _32 = _34 = _41 = _42 = _43 = 0.0f;
 		}
 
-		void makeRotationAxis(const I4Vector3& inAxis, float angle)
+		void makeRotationAxis(const Vector3& inAxis, float angle)
 		{
-			I4Vector3 axis = inAxis;
+			Vector3 axis = inAxis;
 			axis.normalize();
 
 			float c = cos(angle);
@@ -464,15 +464,15 @@ namespace i4core
 			_12 = _13 = _14 = _21 = _23 = _24 = _31 = _32 = _41 = _42 = _44 = 0.0f;
 		}
 
-		void makeObjectLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
+		void makeObjectLookAtLH(const Vector3& eye, const Vector3& lookAt, const Vector3& up)
 		{
-			I4Vector3 zAxis = lookAt - eye;
+			Vector3 zAxis = lookAt - eye;
 			zAxis.normalize();
 
-			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
+			Vector3 xAxis = Vector3::crossProduct(up, zAxis);
 			xAxis.normalize();
 
-			I4Vector3 yAxis = I4Vector3::crossProduct(zAxis, xAxis);
+			Vector3 yAxis = Vector3::crossProduct(zAxis, xAxis);
 			yAxis.normalize();
 			
 			_11 = xAxis.x;	_12 = xAxis.y;	_13 = xAxis.z;
@@ -484,15 +484,15 @@ namespace i4core
 			_44 = 1.0f;
 		}
 
-		void makeObjectLookAtRH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
+		void makeObjectLookAtRH(const Vector3& eye, const Vector3& lookAt, const Vector3& up)
 		{
-			I4Vector3 zAxis = eye - lookAt;
+			Vector3 zAxis = eye - lookAt;
 			zAxis.normalize();
 
-			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
+			Vector3 xAxis = Vector3::crossProduct(up, zAxis);
 			xAxis.normalize();
 
-			I4Vector3 yAxis = I4Vector3::crossProduct(zAxis, xAxis);
+			Vector3 yAxis = Vector3::crossProduct(zAxis, xAxis);
 			yAxis.normalize();
 			
 			_11 = xAxis.x;	_12 = xAxis.y;	_13 = xAxis.z;
@@ -504,53 +504,53 @@ namespace i4core
 			_44 = 1.0f;
 		}
 
-		void makeCameraLookAtLH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
+		void makeCameraLookAtLH(const Vector3& eye, const Vector3& lookAt, const Vector3& up)
 		{
-			I4Vector3 zAxis = lookAt - eye;
+			Vector3 zAxis = lookAt - eye;
 			zAxis.normalize();
 
-			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
+			Vector3 xAxis = Vector3::crossProduct(up, zAxis);
 			xAxis.normalize();
 
-			I4Vector3 yAxis = I4Vector3::crossProduct(zAxis, xAxis);
+			Vector3 yAxis = Vector3::crossProduct(zAxis, xAxis);
 			yAxis.normalize();
 			
 			_11 = xAxis.x; _12 = yAxis.x; _13 = zAxis.x;
 			_21 = xAxis.y; _22 = yAxis.y; _23 = zAxis.y;
 			_31 = xAxis.z; _32 = yAxis.z; _33 = zAxis.z;
 
-			_41 = -I4Vector3::dotProduct(xAxis, eye);
-			_42 = -I4Vector3::dotProduct(yAxis, eye);
-			_43 = -I4Vector3::dotProduct(zAxis, eye);
+			_41 = -Vector3::dotProduct(xAxis, eye);
+			_42 = -Vector3::dotProduct(yAxis, eye);
+			_43 = -Vector3::dotProduct(zAxis, eye);
 
 			_14 = _24 = _34 = 0.0f;
 			_44 = 1.0f;
 		}
 
-		void makeCameraLookAtRH(const I4Vector3& eye, const I4Vector3& lookAt, const I4Vector3& up)
+		void makeCameraLookAtRH(const Vector3& eye, const Vector3& lookAt, const Vector3& up)
 		{
-			I4Vector3 zAxis = eye - lookAt;
+			Vector3 zAxis = eye - lookAt;
 			zAxis.normalize();
 
-			I4Vector3 xAxis = I4Vector3::crossProduct(up, zAxis);
+			Vector3 xAxis = Vector3::crossProduct(up, zAxis);
 			xAxis.normalize();
 
-			I4Vector3 yAxis = I4Vector3::crossProduct(zAxis, xAxis);
+			Vector3 yAxis = Vector3::crossProduct(zAxis, xAxis);
 			yAxis.normalize();
 			
 			_11 = xAxis.x; _12 = yAxis.x; _13 = zAxis.x;
 			_21 = xAxis.y; _22 = yAxis.y; _23 = zAxis.y;
 			_31 = xAxis.z; _32 = yAxis.z; _33 = zAxis.z;
 
-			_41 = -I4Vector3::dotProduct(xAxis, eye);
-			_42 = -I4Vector3::dotProduct(yAxis, eye);
-			_43 = -I4Vector3::dotProduct(zAxis, eye);
+			_41 = -Vector3::dotProduct(xAxis, eye);
+			_42 = -Vector3::dotProduct(yAxis, eye);
+			_43 = -Vector3::dotProduct(zAxis, eye);
 
 			_14 = _24 = _34 = 0.0f;
 			_44 = 1.0f;
 		}
 
-		void decompose(I4Vector3* scale, I4Matrix4x4* rotation, I4Vector3* position) const
+		void decompose(Vector3* scale, Matrix4x4* rotation, Vector3* position) const
 		{
 			if (position != nullptr)
 			{
@@ -559,7 +559,7 @@ namespace i4core
 
 			if (scale != nullptr || rotation != nullptr)
 			{
-				I4Vector3 xAxis, yAxis, zAxis;
+				Vector3 xAxis, yAxis, zAxis;
 				extractAxis(xAxis, yAxis, zAxis);
 
 				float xScale = xAxis.getLength();
@@ -618,30 +618,30 @@ namespace i4core
 		}
 
 
-		const I4Vector3 transformCoord(const I4Vector3& v) const
+		const Vector3 transformCoord(const Vector3& v) const
 		{
-			return I4Vector3(v.x*_11 + v.y*_21 + v.z*_31 + _41,
+			return Vector3(v.x*_11 + v.y*_21 + v.z*_31 + _41,
 							v.x*_12 + v.y*_22 + v.z*_32 + _42,
 							v.x*_13 + v.y*_23 + v.z*_33 + _43);
 		}
 
-		const I4Vector3 transformCoordTranspose(const I4Vector3& v) const
+		const Vector3 transformCoordTranspose(const Vector3& v) const
 		{
-			return I4Vector3(v.x*_11 + v.y*_12 + v.z*_13 + _14,
+			return Vector3(v.x*_11 + v.y*_12 + v.z*_13 + _14,
 						   v.x*_21 + v.y*_22 + v.z*_23 + _24,
 						   v.x*_31 + v.y*_32 + v.z*_33 + _34);
 		}
 
-		const I4Vector3 transformVector(const I4Vector3& v) const
+		const Vector3 transformVector(const Vector3& v) const
 		{
-			return I4Vector3(v.x*_11 + v.y*_21 + v.z*_31,
+			return Vector3(v.x*_11 + v.y*_21 + v.z*_31,
 						   v.x*_12 + v.y*_22 + v.z*_32,
 						   v.x*_13 + v.y*_23 + v.z*_33);
 		}
 
-		const I4Vector3 transformVectorTranspose(const I4Vector3& v) const
+		const Vector3 transformVectorTranspose(const Vector3& v) const
 		{
-			return I4Vector3(v.x*_11 + v.y*_12 + v.z*_13,
+			return Vector3(v.x*_11 + v.y*_12 + v.z*_13,
 						   v.x*_21 + v.y*_22 + v.z*_23,
 						   v.x*_31 + v.y*_32 + v.z*_33);
 		}
@@ -649,7 +649,7 @@ namespace i4core
 		
 
 	public:
-		static void multiply(I4Matrix4x4& result, const I4Matrix4x4& a, const I4Matrix4x4& b)
+		static void multiply(Matrix4x4& result, const Matrix4x4& a, const Matrix4x4& b)
 		{
 			assert(&result != &a);
 			assert(&result != &b);
@@ -694,16 +694,16 @@ namespace i4core
 
 
 	inline
-	const I4Matrix4x4 operator * (float val, const I4Matrix4x4& rhs)
+	const Matrix4x4 operator * (float val, const Matrix4x4& rhs)
 	{
-		return I4Matrix4x4(rhs._11*val, rhs._12*val, rhs._13*val, rhs._14*val,
+		return Matrix4x4(rhs._11*val, rhs._12*val, rhs._13*val, rhs._14*val,
 					   rhs._21*val, rhs._22*val, rhs._23*val, rhs._24*val,
 					   rhs._31*val, rhs._32*val, rhs._33*val, rhs._34*val,
 					   rhs._41*val, rhs._42*val, rhs._43*val, rhs._44*val);
 	}	
 
 	
-	static const I4Matrix4x4 I4MATRIX4X4_IDENTITY = I4Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
+	static const Matrix4x4 MATRIX4X4_IDENTITY = Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
 																0.0f, 1.0f, 0.0f, 0.0f,
 																0.0f, 0.0f, 1.0f, 0.0f,
 																0.0f, 0.0f, 0.0f, 1.0f);

@@ -7,37 +7,37 @@
 
 namespace i4object {
 
-	I4ObjectPointLightComponent::I4ObjectPointLightComponent(void)
+	ObjectPointLightComponent::ObjectPointLightComponent(void)
 		: isTurnOn(true)
 		, blinkEnable(false)
 		, blinkTurnOnTime(0)
 		, blinkTurnOffTime(0)
 		, blinkElapsedTime(0)
 	{
-		light.color = I4VECTOR3_ONE;
+		light.color = VECTOR3_ONE;
 		light.radius = 1;
-		light.position = I4VECTOR3_ZERO;
+		light.position = VECTOR3_ZERO;
 	}
 
 
-	I4ObjectPointLightComponent::~I4ObjectPointLightComponent(void)
+	ObjectPointLightComponent::~ObjectPointLightComponent(void)
 	{
 	}
 
-	void I4ObjectPointLightComponent::onAdd()
+	void ObjectPointLightComponent::onAdd()
 	{
-		getBroadcastMessenger().subscribe(I4Hash("onUpdateLogic"), this, bind(&I4ObjectPointLightComponent::onUpdateLogic, this, _1));
-		getBroadcastMessenger().subscribe(I4Hash("onCommitToRenderer"), this, bind(&I4ObjectPointLightComponent::onCommitToRenderer, this, _1));
+		getBroadcastMessenger().subscribe(Hash("onUpdateLogic"), this, bind(&ObjectPointLightComponent::onUpdateLogic, this, _1));
+		getBroadcastMessenger().subscribe(Hash("onCommitToRenderer"), this, bind(&ObjectPointLightComponent::onCommitToRenderer, this, _1));
 	}
 
-	void I4ObjectPointLightComponent::onRemove()
+	void ObjectPointLightComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
-		getBroadcastMessenger().unsubscribe(I4Hash("onCommitToRenderer"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onUpdateLogic"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onCommitToRenderer"), this);
 	}
 
 
-	void I4ObjectPointLightComponent::onUpdateLogic(I4MessageArgs& args)
+	void ObjectPointLightComponent::onUpdateLogic(MessageArgs& args)
 	{
 		float dt = args[0].asFloat();
 
@@ -65,7 +65,7 @@ namespace i4object {
 		}
 	}
 	
-	void I4ObjectPointLightComponent::onCommitToRenderer(I4MessageArgs& args)
+	void ObjectPointLightComponent::onCommitToRenderer(MessageArgs& args)
 	{
 		if (isTurnOn)
 		{

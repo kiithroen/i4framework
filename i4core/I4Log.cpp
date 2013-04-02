@@ -4,15 +4,15 @@
 namespace i4core
 {
 
-	int I4Log::reportFlag = I4Log::FLAG_CONSOLE|I4Log::FLAG_DEBUGGER|I4Log::FLAG_FILE;
-	I4Log::Level I4Log::reportLevel = I4Log::LEVEL_DEBUG;
-	wofstream I4Log::ofs;
+	int Log::reportFlag = Log::FLAG_CONSOLE|Log::FLAG_DEBUGGER|Log::FLAG_FILE;
+	Log::Level Log::reportLevel = Log::LEVEL_DEBUG;
+	wofstream Log::ofs;
 
-	I4Log::I4Log(void)
+	Log::Log(void)
 	{
 	}
 
-	I4Log::~I4Log(void)
+	Log::~Log(void)
 	{
 		oss << endl;
 
@@ -33,7 +33,7 @@ namespace i4core
 		}
 	}
 
-	wostringstream& I4Log::get(Level level, const char* file, const char* func, int line)
+	wostringstream& Log::get(Level level, const char* file, const char* func, int line)
 	{
 		oss << L"[" << getLevelString(level) << L"]";
 		oss << L" ";
@@ -41,7 +41,7 @@ namespace i4core
 		return oss;
 	}
 
-	const wchar_t* I4Log::getLevelString(Level level) const
+	const wchar_t* Log::getLevelString(Level level) const
 	{
 		static const wchar_t* LEVEL_STRING[] =
 		{
@@ -55,7 +55,7 @@ namespace i4core
 		return LEVEL_STRING[level];
 	}
 
-	void I4Log::initialize(int flag, Level level, const wchar_t* fname/* = L"i4.log"*/)
+	void Log::initialize(int flag, Level level, const wchar_t* fname/* = L"i4.log"*/)
 	{
 		reportFlag = flag;
 		reportLevel = level;
@@ -65,10 +65,10 @@ namespace i4core
 			ofs.open(fname);
 		}
 
-		I4LOG_INFO << "log initialized.";
+		LOG_INFO << "log initialized.";
 	}
 
-	void I4Log::finalize()
+	void Log::finalize()
 	{
 		if (reportFlag & FLAG_FILE)
 		{

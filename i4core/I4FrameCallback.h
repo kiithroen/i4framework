@@ -4,14 +4,14 @@
 
 namespace i4core
 {
-	class I4Framework;
-	struct I4InputState;
+	class Framework;
+	struct InputState;
 
-	class I4FrameCallback
+	class FrameCallback
 	{
 	public:
-		I4FrameCallback()			{}
-		virtual ~I4FrameCallback()	{}
+		FrameCallback()			{}
+		virtual ~FrameCallback()	{}
 
 		virtual	bool	onStart()								{ return true; }
 		virtual void	onEnd()									{}
@@ -20,6 +20,6 @@ namespace i4core
 		virtual bool	onUpdate()								{ return true; }
 		virtual bool 	onRender()								{ return true; }
 
-		virtual void	onInput(const I4InputState& state)		{}
+		virtual void	onInput(const InputState& state)		{}
 	};
 }

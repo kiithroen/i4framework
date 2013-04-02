@@ -5,11 +5,11 @@
 namespace i4graphics
 {
 
-	class I4ScreenQuadMesh
+	class ScreenQuadMesh
 	{
 	public:
-		I4ScreenQuadMesh(void);
-		~I4ScreenQuadMesh(void);
+		ScreenQuadMesh(void);
+		~ScreenQuadMesh(void);
 
 		bool	create();
 		void	destroy();
@@ -20,8 +20,8 @@ namespace i4graphics
 		void	draw();
 
 	private:
-		I4VertexBuffer*	vertexBuffer;
-		I4IndexBuffer*	indexBuffer;
+		VertexBuffer*	vertexBuffer;
+		IndexBuffer*	indexBuffer;
 	};
 
 }

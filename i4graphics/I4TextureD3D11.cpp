@@ -7,32 +7,32 @@
 
 namespace i4graphics
 {
-	I4TextureD3D11::I4TextureD3D11(ID3D11Device* _d3dDevice, ID3D11DeviceContext* _d3dContext)
+	TextureD3D11::TextureD3D11(ID3D11Device* _d3dDevice, ID3D11DeviceContext* _d3dContext)
 		: d3dDevice(_d3dDevice)
 		, d3dContext(_d3dContext)
 		, shaderResourceView(nullptr)
 	{
 	}
 
-	I4TextureD3D11::~I4TextureD3D11()
+	TextureD3D11::~TextureD3D11()
 	{
 		unload();
 	}
 
-	bool I4TextureD3D11::load(const char* fname)
+	bool TextureD3D11::load(const char* fname)
 	{
-		if (I4Texture::load(fname) == false)
+		if (Texture::load(fname) == false)
 			return false;
 
 		wstring wfname;
 		to_wstring(wfname, fname);
 		if (FAILED(DirectX::CreateDDSTextureFromFile(d3dDevice, wfname.c_str(), nullptr, &shaderResourceView)))
 		{
-			I4LOG_WARN << L"texture is not dds. : " << wfname;
+			LOG_WARN << L"texture is not dds. : " << wfname;
 
 			if (FAILED(DirectX::CreateWICTextureFromFile(d3dDevice, d3dContext, wfname.c_str(), nullptr, &shaderResourceView)))
 			{
-				I4LOG_WARN << L"texture load failed. : " << wfname;
+				LOG_WARN << L"texture load failed. : " << wfname;
 				return false;
 			}
 		}
@@ -40,7 +40,7 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4TextureD3D11::unload()
+	void TextureD3D11::unload()
 	{
 		if (shaderResourceView)
 		{

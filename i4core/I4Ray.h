@@ -4,44 +4,44 @@
 
 namespace i4core
 {
-	class I4Ray
+	class Ray
 	{
 	public:
-		I4Ray()
+		Ray()
 		{
 		}
 
-		I4Ray(const I4Vector3& _origin, const I4Vector3& _direction)
+		Ray(const Vector3& _origin, const Vector3& _direction)
 			: origin(_origin)
 			, direction(_direction) 
 		{
 		}
 
-		I4Ray(const I4Ray& r)
+		Ray(const Ray& r)
 			: origin(r.origin)
 			, direction(r.direction)
 		{
 		}
 
-		void operator = (const I4Ray& rhs)
+		void operator = (const Ray& rhs)
 		{
 			origin = rhs.origin;
 			direction = rhs.direction;
 		}
 
-		const I4Ray transform(const I4Matrix4x4& mat) const
+		const Ray transform(const Matrix4x4& mat) const
 		{
-			return I4Ray(mat.transformCoord(origin), mat.transformVector(direction));
+			return Ray(mat.transformCoord(origin), mat.transformVector(direction));
 		}
 
-		bool intersectTriangle(const I4Vector3& p0, const I4Vector3& p1, const I4Vector3& p2, bool isCull, float* dist)
+		bool intersectTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, bool isCull, float* dist)
 		{
-			I4Vector3 edge1 = p1 - p0;
-			I4Vector3 edge2 = p2 - p0;
+			Vector3 edge1 = p1 - p0;
+			Vector3 edge2 = p2 - p0;
 
-			I4Vector3 pvec = I4Vector3::crossProduct(direction, edge2);
+			Vector3 pvec = Vector3::crossProduct(direction, edge2);
 
-			float det = I4Vector3::dotProduct(edge1, pvec);
+			float det = Vector3::dotProduct(edge1, pvec);
 
 			if (isCull && det < 0.0001f)	
 				return false;
@@ -49,19 +49,19 @@ namespace i4core
 			if (det < 0.0001f && det > -0.0001f)	
 				return false;
 
-			I4Vector3 tvec = origin - p0;
-			float u = I4Vector3::dotProduct(tvec, pvec);
+			Vector3 tvec = origin - p0;
+			float u = Vector3::dotProduct(tvec, pvec);
 			if (u < 0.0f || u > det)
 				return false;
 
-			I4Vector3 qvec = I4Vector3::crossProduct(tvec, edge1);
-			float v = I4Vector3::dotProduct(direction, qvec);
+			Vector3 qvec = Vector3::crossProduct(tvec, edge1);
+			float v = Vector3::dotProduct(direction, qvec);
 			if (v < 0.0f || u + v > det)
 				return false;
 
 			if (dist != nullptr)
 			{				
-				*dist = I4Vector3::dotProduct(edge2, qvec);
+				*dist = Vector3::dotProduct(edge2, qvec);
 				float invDet = 1.0f / det;
 				*dist *= invDet;
 			}
@@ -69,9 +69,9 @@ namespace i4core
 			return true;
 		}
 
-		bool intersectPlane(const I4Vector3& N, float D, bool isCull, float* dist)
+		bool intersectPlane(const Vector3& N, float D, bool isCull, float* dist)
 		{
-			float vd = I4Vector3::dotProduct(N, direction);
+			float vd = Vector3::dotProduct(N, direction);
 
 			if(fabs(vd) < 0.00001f)
 				return false;
@@ -79,7 +79,7 @@ namespace i4core
 			if(isCull && vd > 0.0f)
 				return false;
 
-			float vo = -(I4Vector3::dotProduct(N, origin) + D);
+			float vo = -(Vector3::dotProduct(N, origin) + D);
 			float _dist = vo / vd;
 
 			if (_dist < 0.0f)
@@ -91,11 +91,11 @@ namespace i4core
 			return true;
 		}
 
-		bool intersectAABB(const I4Vector3& minEdge, const I4Vector3& maxEdge, I4Vector3* hit)
+		bool intersectAABB(const Vector3& minEdge, const Vector3& maxEdge, Vector3* hit)
 		{
 			bool isInside = true;
-			I4Vector3 maxT(-1.0f, -1.0f, -1.0f);
-			I4Vector3 _hit;
+			Vector3 maxT(-1.0f, -1.0f, -1.0f);
+			Vector3 _hit;
 
 			if (origin.x < minEdge.x)
 			{
@@ -193,12 +193,12 @@ namespace i4core
 			}
 		}
 
-		bool intersectSphere(const I4Vector3& center, float radius, float* dist)
+		bool intersectSphere(const Vector3& center, float radius, float* dist)
 		{
-			I4Vector3 rsVec = center - origin;
-			float rsLength = I4Vector3::dotProduct(rsVec, rsVec);
+			Vector3 rsVec = center - origin;
+			float rsLength = Vector3::dotProduct(rsVec, rsVec);
 
-			float testA = I4Vector3::dotProduct(rsVec, direction);
+			float testA = Vector3::dotProduct(rsVec, direction);
 
 			if (testA < 0 )
 				return false;
@@ -216,8 +216,8 @@ namespace i4core
 			return true;
 		}
 	public:
-		I4Vector3	origin;
-		I4Vector3	direction;
+		Vector3	origin;
+		Vector3	direction;
 	};
 
 }

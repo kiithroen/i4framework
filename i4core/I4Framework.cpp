@@ -13,14 +13,14 @@
 
 namespace i4core {
 
-	int	 I4InputState::MouseX;
-	int	 I4InputState::MouseY;
-	bool I4InputState::KeyPressed[256];
-	bool I4InputState::LeftMousePressed;
-	bool I4InputState::RightMousePressed;
-	bool I4InputState::MoveMouseCenter;
+	int	 InputState::MouseX;
+	int	 InputState::MouseY;
+	bool InputState::KeyPressed[256];
+	bool InputState::LeftMousePressed;
+	bool InputState::RightMousePressed;
+	bool InputState::MoveMouseCenter;
 
-	void I4InputState::initialize()
+	void InputState::initialize()
 	{
 		MouseX = 0;
 		MouseY = 0;
@@ -36,7 +36,7 @@ namespace i4core {
 	}
 
 
-	I4Framework::I4Framework()
+	Framework::Framework()
 		: windowID(nullptr)
 		, title("Untitled")
 		, width(800)
@@ -44,15 +44,15 @@ namespace i4core {
 		, fps(0)
 		, frameCallback(nullptr)
 	{
-		I4InputState::initialize();
+		InputState::initialize();
 	}
 
-	I4Framework::~I4Framework()
+	Framework::~Framework()
 	{
 		destroy();
 	}
 
-	bool I4Framework::create(unsigned int _width, unsigned int _height, const string& _title)
+	bool Framework::create(unsigned int _width, unsigned int _height, const string& _title)
 	{
 		width	= _width;
 		height	= _height;
@@ -66,7 +66,7 @@ namespace i4core {
 		const float TICK_INTERVAL = 1.0f/60.0f;
 #endif
 
-		I4FrameTimer::createFrameTimer(TICK_INTERVAL);
+		FrameTimer::createFrameTimer(TICK_INTERVAL);
 		
 		if (onCreate() == false)
 		{
@@ -77,14 +77,14 @@ namespace i4core {
 		return true;
 	}
 
-	void I4Framework::destroy()
+	void Framework::destroy()
 	{
-		I4FrameTimer::destroyFrameTimer();
+		FrameTimer::destroyFrameTimer();
 
 		onDestroy();
 	}
 
-	void I4Framework::run()
+	void Framework::run()
 	{
 		int frameCount = 0;
 		float elapsedSec = 0;
@@ -98,7 +98,7 @@ namespace i4core {
 			}			
 		}
 
-		I4FrameTimer::getFrameTimer()->updateFrameDelta();
+		FrameTimer::getFrameTimer()->updateFrameDelta();
 
 		bool done = false;
 		while (!done)
@@ -108,18 +108,18 @@ namespace i4core {
 				done = true;
 			}
 
-			float dt = I4FrameTimer::getFrameTimer()->updateFrameDelta();
+			float dt = FrameTimer::getFrameTimer()->updateFrameDelta();
 
 			elapsedSec += dt;		
 
-			while (elapsedSec >= I4FrameTimer::getFrameTimer()->getTickInterval())	// 고정타이밍으로 불려야하는 것들. ex) 물리..
+			while (elapsedSec >= FrameTimer::getFrameTimer()->getTickInterval())	// 고정타이밍으로 불려야하는 것들. ex) 물리..
 			{
-				elapsedSec -= I4FrameTimer::getFrameTimer()->getTickInterval();
+				elapsedSec -= FrameTimer::getFrameTimer()->getTickInterval();
 
 				if (frameCallback)
 				{
-					I4FrameTimer::getFrameTimer()->updateTickCount();
-					if (frameCallback->onTick(I4FrameTimer::getFrameTimer()->getTickInterval()) == false)
+					FrameTimer::getFrameTimer()->updateTickCount();
+					if (frameCallback->onTick(FrameTimer::getFrameTimer()->getTickInterval()) == false)
 					{
 						done = true;
 					}
@@ -149,10 +149,10 @@ namespace i4core {
 				elapsedLastDisplayFPS = 0;
 				frameCount = 0;
 
-				I4ProfileWriterLog	writer;
-				writer.write(I4ProfileManager::getRootNode(), fps);
+				ProfileWriterLog	writer;
+				writer.write(ProfileManager::getRootNode(), fps);
 
-				I4ProfileManager::clear();
+				ProfileManager::clear();
 			}
 		}
 
@@ -162,29 +162,29 @@ namespace i4core {
 		}
 	}
 	
-	void I4Framework::setFrameCallback(I4FrameCallback* callback)
+	void Framework::setFrameCallback(FrameCallback* callback)
 	{
 		frameCallback = callback;
 	}
 
 	//-----------------------------------------------------------------------------
 
-	I4Framework* I4Framework::framework = nullptr;
+	Framework* Framework::framework = nullptr;
 
-	void I4Framework::createFramework()
+	void Framework::createFramework()
 	{
 		assert(framework == nullptr);
 
 #ifdef _WIN32
-		framework = new I4FrameworkWin;
+		framework = new FrameworkWin;
 #else
-		I4LOG_WARN << "not implement yet...";
+		LOG_WARN << "not implement yet...";
 		assert(false);
-		framework = new I4Framework;		
+		framework = new Framework;		
 #endif	
 	}
 
-	void I4Framework::destroyFramework()
+	void Framework::destroyFramework()
 	{
 		delete framework;
 		framework = nullptr;

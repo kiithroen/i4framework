@@ -4,28 +4,28 @@
 
 namespace i4graphics
 {
-	I4ScreenQuadMesh::I4ScreenQuadMesh(void)
+	ScreenQuadMesh::ScreenQuadMesh(void)
 	{
 	}
 
 
-	I4ScreenQuadMesh::~I4ScreenQuadMesh(void)
+	ScreenQuadMesh::~ScreenQuadMesh(void)
 	{
 		destroy();
 	}
 
-	bool I4ScreenQuadMesh::create()
+	bool ScreenQuadMesh::create()
 	{
-		const static I4Vertex_Pos_Tex quad[] =
+		const static Vertex_Pos_Tex quad[] =
 		{			
-			{ I4Vector3(-1.0f, -1.0f, 0.0f), I4TextureUV(0.0f, 1.0f) },
-			{ I4Vector3(-1.0f, 1.0f, 0.0f), I4TextureUV(0.0f, 0.0f) },
-			{ I4Vector3(1.0f, 1.0f, 0.0f), I4TextureUV(1.0f, 0.0f) },
-			{ I4Vector3(1.0f, -1.0f, 0.0f), I4TextureUV(1.0f, 1.0f) },
+			{ Vector3(-1.0f, -1.0f, 0.0f), TextureUV(0.0f, 1.0f) },
+			{ Vector3(-1.0f, 1.0f, 0.0f), TextureUV(0.0f, 0.0f) },
+			{ Vector3(1.0f, 1.0f, 0.0f), TextureUV(1.0f, 0.0f) },
+			{ Vector3(1.0f, -1.0f, 0.0f), TextureUV(1.0f, 1.0f) },
 		};
 
-		vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-		if (vertexBuffer->create(_countof(quad), sizeof(I4Vertex_Pos_Tex), quad) == false)
+		vertexBuffer = VideoDriver::getVideoDriver()->createVertexBuffer();
+		if (vertexBuffer->create(_countof(quad), sizeof(Vertex_Pos_Tex), quad) == false)
 		{
 			destroy();
 			return false;
@@ -37,7 +37,7 @@ namespace i4graphics
 			0, 2, 3,
 		};
 
-		indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
+		indexBuffer = VideoDriver::getVideoDriver()->createIndexBuffer();
 		if (indexBuffer->create(_countof(indices), sizeof(unsigned short), indices) == false)
 		{
 			destroy();
@@ -47,26 +47,26 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ScreenQuadMesh::destroy()
+	void ScreenQuadMesh::destroy()
 	{
 		delete indexBuffer;
 		delete vertexBuffer;
 	}
 
-	void I4ScreenQuadMesh::bind()
+	void ScreenQuadMesh::bind()
 	{
 		vertexBuffer->bind();
 		indexBuffer->bind();
 	}
 
-	void I4ScreenQuadMesh::unbind()
+	void ScreenQuadMesh::unbind()
 	{
 		indexBuffer->unbind();
 		vertexBuffer->unbind();
 	}
 
-	void I4ScreenQuadMesh::draw()
+	void ScreenQuadMesh::draw()
 	{		
-		indexBuffer->draw(I4PT_TRIANGLELIST);
+		indexBuffer->draw(PT_TRIANGLELIST);
 	}
 }

@@ -4,28 +4,28 @@
 
 namespace i4core {
 
-	typedef vector<I4Variant>		I4MessageArgs;
+	typedef vector<Variant>		MessageArgs;
 
-	typedef function<void (I4MessageArgs& args)>		I4MessageCallback;
+	typedef function<void (MessageArgs& args)>		MessageCallback;
 
 	template <typename T>
-	class I4Messenger
+	class Messenger
 	{
 	public:
-		typedef vector<pair<T*, I4MessageCallback>>			I4MessageCallbackVector;
-		typedef map<unsigned int, I4MessageCallbackVector*>	I4MessageCallbackTable;
+		typedef vector<pair<T*, MessageCallback>>			MessageCallbackVector;
+		typedef map<unsigned int, MessageCallbackVector*>	MessageCallbackTable;
 	public:
-		I4Messenger(void)		{}
-		~I4Messenger(void)		{}
+		Messenger(void)		{}
+		~Messenger(void)		{}
 		
-		void subscribe(unsigned int msgID, T* receiver, I4MessageCallback cb)
+		void subscribe(unsigned int msgID, T* receiver, MessageCallback cb)
 		{
-			I4MessageCallbackVector* v = nullptr;
+			MessageCallbackVector* v = nullptr;
 
 			auto itr = tableMessageCallback.find(msgID);
 			if (itr == tableMessageCallback.end())
 			{
-				v = new I4MessageCallbackVector;
+				v = new MessageCallbackVector;
 				tableMessageCallback.insert(make_pair(msgID, v));
 			}
 			else
@@ -34,7 +34,7 @@ namespace i4core {
 			}
 
 			// 이미 등록했으면 그만둔다.
-			auto i = find_if(v->begin(), v->end(), [&receiver](const pair<T*, I4MessageCallback>& p) { return p.first == receiver; });
+			auto i = find_if(v->begin(), v->end(), [&receiver](const pair<T*, MessageCallback>& p) { return p.first == receiver; });
 			if (i != v->end())
 				return;
 
@@ -47,10 +47,10 @@ namespace i4core {
 			if (itr == tableMessageCallback.end())
 				return;
 
-			I4MessageCallbackVector* v = itr->second;
+			MessageCallbackVector* v = itr->second;
 
 			// 등록한거 지워버린다.
-			v->erase(remove_if(v->begin(), v->end(), [&receiver](const pair<T*, I4MessageCallback>& p) { return p.first == receiver; }), v->end());
+			v->erase(remove_if(v->begin(), v->end(), [&receiver](const pair<T*, MessageCallback>& p) { return p.first == receiver; }), v->end());
 
 			if (v->size() == 0)
 			{
@@ -59,14 +59,14 @@ namespace i4core {
 			}
 		}
 
-		void send(unsigned int msgID, I4MessageArgs& args)
+		void send(unsigned int msgID, MessageArgs& args)
 		{
 			auto itr = tableMessageCallback.find(msgID);
 			if (itr == tableMessageCallback.end())
 				return;
 
 			// 등록되있는 모든 receiver들에게 전송.
-			I4MessageCallbackVector* v = itr->second;
+			MessageCallbackVector* v = itr->second;
 			for (auto& i : *v)
 			{
 				i.second(args);
@@ -74,7 +74,7 @@ namespace i4core {
 		}
 
 	private:
-		I4MessageCallbackTable		tableMessageCallback;
+		MessageCallbackTable		tableMessageCallback;
 	};
 }
 

@@ -6,45 +6,45 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	class I4Texture;
+	class Texture;
 
-	enum I4TexureProxyStatus
+	enum TexureProxyStatus
 	{
-		I4TEXTURE_PROXY_STATUS_NOT_LOADED = 0,
-		I4TEXTURE_PROXY_STATUS_LOAD_FAILED,
-		I4TEXTURE_PROXY_STATUS_OK,
+		TEXTURE_PROXY_STATUS_NOT_LOADED = 0,
+		TEXTURE_PROXY_STATUS_LOAD_FAILED,
+		TEXTURE_PROXY_STATUS_OK,
 
 	};
 
-	struct I4TextureProxy
+	struct TextureProxy
 	{
-		I4TextureProxy()
+		TextureProxy()
 			: texture(nullptr)
 			, loadCount(0)
-			, status(I4TEXTURE_PROXY_STATUS_NOT_LOADED)
+			, status(TEXTURE_PROXY_STATUS_NOT_LOADED)
 		{
 		}
 
-		I4Texture*				texture;
+		Texture*				texture;
 		int						loadCount;
-		I4TexureProxyStatus		status;
+		TexureProxyStatus		status;
 		string					fname;
 	};
 
-	class I4TextureMgr
+	class TextureMgr
 	{
-		typedef std::map<I4Hash, I4TextureProxy>			I4TextureProxyMap;
+		typedef std::map<Hash, TextureProxy>			TextureProxyMap;
 	public:
-		I4TextureMgr(void);
-		~I4TextureMgr(void);
+		TextureMgr(void);
+		~TextureMgr(void);
 
-		I4Hash			load(const char* fname, bool loadNow = true);
-		void			unload(I4Hash hash);
+		Hash			load(const char* fname, bool loadNow = true);
+		void			unload(Hash hash);
 
-		I4Texture*		find(I4Hash hash);
+		Texture*		find(Hash hash);
 
 	private:
-		I4TextureProxyMap	mapTextureProxy;
+		TextureProxyMap	mapTextureProxy;
 	};
 
 }

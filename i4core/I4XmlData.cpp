@@ -5,28 +5,28 @@
 
 namespace i4core
 {
-	I4XmlData::I4XmlData()
+	XmlData::XmlData()
 		: xmlDoc(nullptr)
 		, selNode(nullptr)		
 		, textBuffer(nullptr)
 	{
-		xmlDoc = new I4XmlDocument;
+		xmlDoc = new XmlDocument;
 	}
 
-	I4XmlData::~I4XmlData()
+	XmlData::~XmlData()
 	{
 		delete[] textBuffer;
 		delete xmlDoc;
 	}
 
-	bool I4XmlData::parseFromFile(const char* fname)
+	bool XmlData::parseFromFile(const char* fname)
 	{
 		ifstream ifs;
 		ifs.open(fname, ifstream::in);
 
 		if (ifs.is_open() == false)
 		{
-			I4LOG_WARN << L"can't open file. :" << fname;
+			LOG_WARN << L"can't open file. :" << fname;
 			return false;
 		}
 
@@ -34,7 +34,7 @@ namespace i4core
 		int size = (int)ifs.tellg();
 		if (size <= 0)
 		{
-			I4LOG_WARN << L"incorrect file. : " << fname;
+			LOG_WARN << L"incorrect file. : " << fname;
 			return false;
 		}
 
@@ -45,7 +45,7 @@ namespace i4core
 
 		if (strlen(textBuffer) == 0)
 		{
-			I4LOG_WARN << L"%s is empty\n" << fname;
+			LOG_WARN << L"%s is empty\n" << fname;
 			delete[] textBuffer;
 			return false;
 		}
@@ -56,7 +56,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::parseFromMemory(char* text)
+	bool XmlData::parseFromMemory(char* text)
 	{
 		try
 		{
@@ -64,21 +64,21 @@ namespace i4core
 		}
 		catch (rapidxml::parse_error e)
 		{
-			I4LOG_WARN << e.where<char>() << ":" << e.what();
+			LOG_WARN << e.where<char>() << ":" << e.what();
 			return false;
 		}
 		catch (...)
 		{
-			I4LOG_WARN << "unknown error";
+			LOG_WARN << "unknown error";
 			return false;
 		}
 
 		return true;
 	}
 
-	bool I4XmlData::selectNodeByPath(const char* path)
+	bool XmlData::selectNodeByPath(const char* path)
 	{
-		I4XmlNode* node = nullptr;
+		XmlNode* node = nullptr;
 		getNode(node, path);
 		if (node == nullptr)
 			return false;
@@ -88,12 +88,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::selectParentNode()
+	bool XmlData::selectParentNode()
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlNode* node = selNode->parent();
+		XmlNode* node = selNode->parent();
 		if (node == nullptr)
 			return false;
 
@@ -102,12 +102,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::selectFirstChildNode(const char* name)
+	bool XmlData::selectFirstChildNode(const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlNode* node = selNode->first_node(name);
+		XmlNode* node = selNode->first_node(name);
 		if (node == nullptr)
 			return false;
 
@@ -116,12 +116,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::selectNextSiblingNode(const char* name)
+	bool XmlData::selectNextSiblingNode(const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlNode* node = selNode->next_sibling(name);
+		XmlNode* node = selNode->next_sibling(name);
 		if (node == nullptr)
 			return false;
 
@@ -130,7 +130,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNodeValue(short& result)
+	bool XmlData::getNodeValue(short& result)
 	{
 		if (selNode == nullptr)
 			return false;
@@ -140,7 +140,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNodeValue(unsigned short& result)
+	bool XmlData::getNodeValue(unsigned short& result)
 	{
 		if (selNode == nullptr)
 			return false;
@@ -150,7 +150,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNodeValue(int& result)
+	bool XmlData::getNodeValue(int& result)
 	{
 		if (selNode == nullptr)
 			return false;
@@ -160,7 +160,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNodeValue(unsigned int& result)
+	bool XmlData::getNodeValue(unsigned int& result)
 	{
 		if (selNode == nullptr)
 			return false;
@@ -170,7 +170,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNodeValue(float& result)
+	bool XmlData::getNodeValue(float& result)
 	{
 		if (selNode == nullptr)
 			return false;
@@ -180,7 +180,7 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNodeValue(const char*& result)
+	bool XmlData::getNodeValue(const char*& result)
 	{
 		if (selNode == nullptr)
 			return false;
@@ -190,12 +190,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getAttrValue(short& result, const char* name)
+	bool XmlData::getAttrValue(short& result, const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -204,12 +204,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getAttrValue(unsigned short& result, const char* name)
+	bool XmlData::getAttrValue(unsigned short& result, const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -218,12 +218,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getAttrValue(int& result, const char* name)
+	bool XmlData::getAttrValue(int& result, const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -232,12 +232,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getAttrValue(unsigned int& result, const char* name)
+	bool XmlData::getAttrValue(unsigned int& result, const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -246,12 +246,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getAttrValue(float& result, const char* name)
+	bool XmlData::getAttrValue(float& result, const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -260,12 +260,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getAttrValue(const char*& result, const char* name)
+	bool XmlData::getAttrValue(const char*& result, const char* name)
 	{
 		if (selNode == nullptr)
 			return false;
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -274,11 +274,11 @@ namespace i4core
 		return true;
 	}
 	
-	bool I4XmlData::getAttrValue(string& result, const char* name)
+	bool XmlData::getAttrValue(string& result, const char* name)
 	{
 		assert(selNode != nullptr);
 
-		I4XmlAttribute* attr = selNode->first_attribute(name);
+		XmlAttribute* attr = selNode->first_attribute(name);
 		if (attr == nullptr)
 			return false;
 
@@ -287,12 +287,12 @@ namespace i4core
 		return true;
 	}
 
-	bool I4XmlData::getNode(I4XmlNode*& result, const char* path)
+	bool XmlData::getNode(XmlNode*& result, const char* path)
 	{
 		vector<string> split;
 		splitPath(split, path);
 
-		I4XmlNode* node = xmlDoc->first_node(split[0].c_str());
+		XmlNode* node = xmlDoc->first_node(split[0].c_str());
 
 		for (unsigned int i = 1; i < split.size(); ++i)
 		{
@@ -310,7 +310,7 @@ namespace i4core
 		return true;
 	}
 
-	void I4XmlData::splitPath(vector<string>& result, const char* path)
+	void XmlData::splitPath(vector<string>& result, const char* path)
 	{
 		string tempPath = path;
 		for (;;)

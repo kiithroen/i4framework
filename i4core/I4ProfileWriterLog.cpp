@@ -5,14 +5,14 @@
 
 namespace i4core
 {
-	void I4ProfileWriterLog::write(I4ProfileNode* node, float fps)
+	void ProfileWriterLog::write(ProfileNode* node, float fps)
 	{
-		I4LOG_INFO << "fps : " << fps;
+		LOG_INFO << "fps : " << fps;
 
 		writeRecursive(node, 0, 0, fps);
 	}
 
-	void I4ProfileWriterLog::writeRecursive(I4ProfileNode* node, float parentTotalTime, int depth, float fps)
+	void ProfileWriterLog::writeRecursive(ProfileNode* node, float parentTotalTime, int depth, float fps)
 	{
 		if (depth != 0)
 		{
@@ -26,10 +26,10 @@ namespace i4core
 			float nodePercentPerParent = (nodeTotalTimeSec*100.0f)/parentTotalTime;
 			float nodeTimePerCalls = nodeTotalTimeSec/(float)node->getTotalCalls();
 
-			I4LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f/fps << L" ms/frame : " << nodePercentPerParent << " %/parent : " << nodeTimePerCalls*1000.0f << L" ms/call" << " : " << node->getTotalCalls() << " call";
+			LOG_INFO << depthStr << node->getName() << L" : " << nodeTotalTimeSec*1000.0f/fps << L" ms/frame : " << nodePercentPerParent << " %/parent : " << nodeTimePerCalls*1000.0f << L" ms/call" << " : " << node->getTotalCalls() << " call";
 		}
 
-		I4ProfileNode* child = nullptr;
+		ProfileNode* child = nullptr;
 
 		child = node->getChild();
 		while (child != nullptr)

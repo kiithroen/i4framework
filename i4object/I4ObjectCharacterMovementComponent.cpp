@@ -6,7 +6,7 @@
 
 namespace i4object {
 
-	I4ObjectCharacterMovementComponent::I4ObjectCharacterMovementComponent(void)
+	ObjectCharacterMovementComponent::ObjectCharacterMovementComponent(void)
 		: controller(nullptr)
 		, grounded(false)
 		, stopped(false)
@@ -19,30 +19,30 @@ namespace i4object {
 	}
 
 
-	I4ObjectCharacterMovementComponent::~I4ObjectCharacterMovementComponent(void)
+	ObjectCharacterMovementComponent::~ObjectCharacterMovementComponent(void)
 	{
 	}
 
-	void I4ObjectCharacterMovementComponent::onAdd()
+	void ObjectCharacterMovementComponent::onAdd()
 	{
-		getBroadcastMessenger().subscribe(I4Hash("onUpdateLogic"), this, bind(&I4ObjectCharacterMovementComponent::onUpdateLogic, this, _1));
-		setDirection(I4VECTOR3_AXISZ);
+		getBroadcastMessenger().subscribe(Hash("onUpdateLogic"), this, bind(&ObjectCharacterMovementComponent::onUpdateLogic, this, _1));
+		setDirection(VECTOR3_AXISZ);
 	}
 
-	void I4ObjectCharacterMovementComponent::onRemove()
+	void ObjectCharacterMovementComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onUpdateLogic"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onUpdateLogic"), this);
 	}
 
-	void I4ObjectCharacterMovementComponent::attach(float radius, float height, float slopeLimit, float stepOffset)
+	void ObjectCharacterMovementComponent::attach(float radius, float height, float slopeLimit, float stepOffset)
 	{
-		I4Vector3 p = getOwner()->getPosition();
+		Vector3 p = getOwner()->getPosition();
 		controller = getOwner()->getObjectMgr()->getPhysXMgr()->createCapsuleController(p, radius, height, slopeLimit, stepOffset, nullptr, nullptr);
 	}
 
-	void I4ObjectCharacterMovementComponent::onUpdateLogic(I4MessageArgs& args)
+	void ObjectCharacterMovementComponent::onUpdateLogic(MessageArgs& args)
 	{
-		I4PROFILE_THISFUNC;
+		PROFILE_THISFUNC;
 
 		float dt = args[0].asFloat();
 
@@ -101,18 +101,18 @@ namespace i4object {
 		}
 
 		const PxExtendedVec3 p = controller->getFootPosition();
-		getOwner()->setPosition(I4Vector3((float)p.x, (float)p.y, (float)p.z));
+		getOwner()->setPosition(Vector3((float)p.x, (float)p.y, (float)p.z));
 	}
 
-	void I4ObjectCharacterMovementComponent::setDirection(const I4Vector3& dir)
+	void ObjectCharacterMovementComponent::setDirection(const Vector3& dir)
 	{
 		if (grounded == false)
 			return;
 
-		convertToPxVec3(direction, dir);
+		convertTo(direction, dir);
 	}
 
-	void I4ObjectCharacterMovementComponent::move(float speed)
+	void ObjectCharacterMovementComponent::move(float speed)
 	{
 		if (grounded == false)
 			return;
@@ -123,7 +123,7 @@ namespace i4object {
 		stopped = false;
 	}
 
-	void I4ObjectCharacterMovementComponent::stop()
+	void ObjectCharacterMovementComponent::stop()
 	{
 		if (stopped)
 			return;
@@ -132,7 +132,7 @@ namespace i4object {
 		stopped = true;
 	}
 
-	void I4ObjectCharacterMovementComponent::jump(float speed)
+	void ObjectCharacterMovementComponent::jump(float speed)
 	{
 		if (grounded == false)
 			return;
@@ -142,7 +142,7 @@ namespace i4object {
 		grounded = false;
 	}
 
-	void I4ObjectCharacterMovementComponent::setGravity(float _gravity)
+	void ObjectCharacterMovementComponent::setGravity(float _gravity)
 	{
 		gravity = _gravity;
 	}

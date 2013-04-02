@@ -11,13 +11,13 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	class I4Renderer;
+	class Renderer;
 }
 using namespace i4graphics;
 
 namespace i4object
 {
-	inline void convertToI4Color(I4Vector4& color, const PxU32 rgba)
+	inline void convertTo(Vector4& color, const PxU32 rgba)
 	{
 		const float inv255 = 1.0f / 255.0f;
 
@@ -27,35 +27,35 @@ namespace i4object
 		color.a = 1.0f;
 	}
 
-	inline void convertToI4Vector3(I4Vector3& out, const PxVec3& vec)
+	inline void convertTo(Vector3& out, const PxVec3& vec)
 	{
 		out.x = vec.x;
 		out.y = vec.y;
 		out.z = vec.z;
 	}
 
-	inline void convertToPxVec3(PxVec3& out, const I4Vector3& vec)
+	inline void convertTo(PxVec3& out, const Vector3& vec)
 	{
 		out.x = vec.x;
 		out.y = vec.y;
 		out.z = vec.z;
 	}
 
-	inline void convertToI4Matrix4x4(I4Matrix4x4& out, const physx::PxMat44& mat)
+	inline void convertTo(Matrix4x4& out, const physx::PxMat44& mat)
 	{
 		memcpy(&out._11, mat.front(), 4 * 4 * sizeof (float));
 	}
 
-	inline void convertToPxMat4x4(physx::PxMat44& out, const I4Matrix4x4& mat)
+	inline void convertTo(physx::PxMat44& out, const Matrix4x4& mat)
 	{
 		memcpy(&out.column0.x, &mat._11, 4 * 4 * sizeof (float));
 	}
 
 
-	class I4PvdConnectionHandler : public PVD::PvdConnectionHandler
+	class PvdConnectionHandler : public PVD::PvdConnectionHandler
 	{
 	public:
-		I4PvdConnectionHandler(PxPhysics* physx)
+		PvdConnectionHandler(PxPhysics* physx)
 			: mPhysics(physx)
 		{
 
@@ -81,11 +81,11 @@ namespace i4object
 	};
 
 
-	class I4PhysXMgr
+	class PhysXMgr
 	{
 	public:
-		I4PhysXMgr(void);
-		~I4PhysXMgr(void);
+		PhysXMgr(void);
+		~PhysXMgr(void);
 
 		bool init();
 
@@ -94,13 +94,13 @@ namespace i4object
 		void destroy();
 
 		void simulate(PxReal dt);
-		void commitDebugToRenderer(I4Renderer* renderer);
+		void commitDebugToRenderer(Renderer* renderer);
 
 		PxActor* createPlane();
-		PxRigidDynamic* createBox(const PxTransform& transform, const I4Vector3& ext, float density);
+		PxRigidDynamic* createBox(const PxTransform& transform, const Vector3& ext, float density);
 		PxRigidDynamic* createSphere(const PxTransform& transform, float radius, float density);
 		PxRigidDynamic* createCapsule(const PxTransform& transform, float radius, float height, float density);
-		PxController* createCapsuleController(const I4Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
+		PxController* createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
 
 	private:
 		void enablePvdConnection(bool enable);
@@ -117,7 +117,7 @@ namespace i4object
 #ifdef PX_WINDOWS
 		pxtask::CudaContextManager*		mCudaContextManager;
 #endif
-		I4PvdConnectionHandler*			mPvdConnectionHandler;
+		PvdConnectionHandler*			mPvdConnectionHandler;
 		PxControllerManager*			mControllerManager;
 		float							mAccumulator;
 	};

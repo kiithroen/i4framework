@@ -11,158 +11,158 @@
 
 namespace i4graphics
 {
-	I4VideoDriver::I4VideoDriver()
+	VideoDriver::VideoDriver()
 		: width(0)
 		, height(0)
-		, curRasterizerMode(I4RASTERIZER_MODE_INVALID)
-		, curDepthStencilMode(I4DEPTHSTENCIL_MODE_INVAILD)
-		, curBlendMode(I4BLEND_MODE_INVALID)
+		, curRasterizerMode(RASTERIZER_MODE_INVALID)
+		, curDepthStencilMode(DEPTHSTENCIL_MODE_INVAILD)
+		, curBlendMode(BLEND_MODE_INVALID)
 		, textureMgr(nullptr)
 	{
 	}
 
-	I4VideoDriver::~I4VideoDriver()
+	VideoDriver::~VideoDriver()
 	{
 	}
 
-	bool I4VideoDriver::initialize(void* _windowID, unsigned int _width, unsigned int _height)
+	bool VideoDriver::initialize(void* _windowID, unsigned int _width, unsigned int _height)
 	{
 		windowID = _windowID;
 		width	= _width;
 		height	= _height;
 
-		textureMgr = new I4TextureMgr;
+		textureMgr = new TextureMgr;
 
 		return true;
 	}
 
-	void I4VideoDriver::finalize()
+	void VideoDriver::finalize()
 	{
 		delete textureMgr;
 	}
 
-	bool I4VideoDriver::setupEnvironment()
+	bool VideoDriver::setupEnvironment()
 	{
 		setViewport(0, 0, width, height);
 
 		return true;
 	}
 
-	bool I4VideoDriver::beginScene()
+	bool VideoDriver::beginScene()
 	{
 		return true;
 	}
 
-	void I4VideoDriver::endScene()
+	void VideoDriver::endScene()
 	{
 
 	}
 
-	void I4VideoDriver::clearBackBuffer(unsigned char r, unsigned char g, unsigned char b)
+	void VideoDriver::clearBackBuffer(unsigned char r, unsigned char g, unsigned char b)
 	{
 	}
 
-	void I4VideoDriver::clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a)
+	void VideoDriver::clearRenderTarget(RenderTarget* renderTarget, float r, float g, float b, float a)
 	{
 	}
 
-	void I4VideoDriver::clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil)
+	void VideoDriver::clearDepthStencil(RenderTarget* renderTarget, float depth, unsigned char stencil)
 	{
 	}
 
-	void I4VideoDriver::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+	void VideoDriver::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 	{
 	}
 
-	void I4VideoDriver::resetViewport()
+	void VideoDriver::resetViewport()
 	{
 	}
 
-	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	void VideoDriver::setRenderTarget(unsigned int num, RenderTarget** arrRenderTarget)
 	{
 	}
 
-	void I4VideoDriver::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil)
+	void VideoDriver::setRenderTarget(unsigned int num, RenderTarget** arrRenderTarget, RenderTarget* depthStencil)
 	{
 	}
 
-	void I4VideoDriver::setRenderTargetDepthStencil(I4RenderTarget* depthStencil)
+	void VideoDriver::setRenderTargetDepthStencil(RenderTarget* depthStencil)
 	{
 	}
 
-	void I4VideoDriver::resetBackBufferRenderTarget(bool enableDepthStencil)
+	void VideoDriver::resetBackBufferRenderTarget(bool enableDepthStencil)
 	{
 	}
 
-	void I4VideoDriver::setRasterizerMode(I4RasterizerMode mode)
+	void VideoDriver::setRasterizerMode(RasterizerMode mode)
 	{
 		curRasterizerMode = mode;
 	}
 
-	void I4VideoDriver::setDepthStencilMode(I4DepthStencilMode mode)
+	void VideoDriver::setDepthStencilMode(DepthStencilMode mode)
 	{
 		curDepthStencilMode = mode;
 	}
 
-	void I4VideoDriver::setBlendMode(I4BlendMode mode)
+	void VideoDriver::setBlendMode(BlendMode mode)
 	{
 		curBlendMode = mode;
 	}
 	
-	I4Shader* I4VideoDriver::createShader()
+	Shader* VideoDriver::createShader()
 	{
-		return new I4Shader;
+		return new Shader;
 	}
 
-	I4VertexBuffer* I4VideoDriver::createVertexBuffer()
+	VertexBuffer* VideoDriver::createVertexBuffer()
 	{
-		return new I4VertexBuffer;
+		return new VertexBuffer;
 	}
 
-	I4IndexBuffer* I4VideoDriver::createIndexBuffer()
+	IndexBuffer* VideoDriver::createIndexBuffer()
 	{
-		return new I4IndexBuffer;
+		return new IndexBuffer;
 	}
 
-	I4ConstantBuffer* I4VideoDriver::createConstantBuffer()
+	ConstantBuffer* VideoDriver::createConstantBuffer()
 	{
-		return new I4ConstantBuffer;
+		return new ConstantBuffer;
 	}
 
-	I4Texture* I4VideoDriver::createTexture()
+	Texture* VideoDriver::createTexture()
 	{
-		return new I4Texture;
+		return new Texture;
 	}
 
-	I4RenderTarget* I4VideoDriver::createRenderTarget()
+	RenderTarget* VideoDriver::createRenderTarget()
 	{
-		return new I4RenderTarget;
+		return new RenderTarget;
 	}
 
 	//------------------------------------------------------------
 
-	I4VideoDriver* I4VideoDriver::videoDriver = nullptr;
+	VideoDriver* VideoDriver::videoDriver = nullptr;
 
-	void I4VideoDriver::createVideoDriver(I4VideoDriverMode mode)
+	void VideoDriver::createVideoDriver(VideoDriverMode mode)
 	{
 		assert(videoDriver == nullptr);
 
 		switch (mode)
 		{
-		case I4VIDEO_DRIVER_MODE_NULL:
-			videoDriver = new I4VideoDriver;
+		case VIDEO_DRIVER_MODE_NULL:
+			videoDriver = new VideoDriver;
 			break;
-		case I4VIDEO_DRIVER_MODE_D3D11:
-			videoDriver = new I4VideoDriverD3D11;
+		case VIDEO_DRIVER_MODE_D3D11:
+			videoDriver = new VideoDriverD3D11;
 			break;
 		default:
-			I4LOG_WARN << "Undefined Video Driver Mode : " << mode;
-			videoDriver = new I4VideoDriver;
+			LOG_WARN << "Undefined Video Driver Mode : " << mode;
+			videoDriver = new VideoDriver;
 			break;
 		}
 	}
 
-	void I4VideoDriver::destroyVideoDriver()
+	void VideoDriver::destroyVideoDriver()
 	{
 		if (videoDriver)
 		{

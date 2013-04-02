@@ -5,11 +5,11 @@
 
 namespace i4core
 {
-	class I4FrameworkWin : public I4Framework
+	class FrameworkWin : public Framework
 	{
-		friend class I4Framework;
+		friend class Framework;
 	public:
-		virtual ~I4FrameworkWin();
+		virtual ~FrameworkWin();
 
 	public:
 		virtual bool		onCreate();
@@ -23,7 +23,7 @@ namespace i4core
 		bool				mainLoop(float deltaMs);
 
 	private:
-		I4FrameworkWin();
+		FrameworkWin();
 
 	private:
 		HINSTANCE		hInst;

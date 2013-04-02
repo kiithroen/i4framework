@@ -6,17 +6,17 @@ using namespace i4core;
 
 namespace i4core
 {
-	class I4Camera;
+	class Camera;
 }
 
 namespace i4object
 {
 
-	class I4ObjectTPSCameraComponent : public I4ObjectComponent
+	class ObjectTPSCameraComponent : public ObjectComponent
 	{
 	public:
-		I4ObjectTPSCameraComponent(void);
-		virtual ~I4ObjectTPSCameraComponent(void);
+		ObjectTPSCameraComponent(void);
+		virtual ~ObjectTPSCameraComponent(void);
 
 		static const char*	getComponentID()	{ return "TPSCamera"; }
 
@@ -25,7 +25,7 @@ namespace i4object
 
 		void setMainCamera(bool isMain);
 
-		void onLateUpdate(I4MessageArgs& args);
+		void onLateUpdate(MessageArgs& args);
 
 	private:
 		bool		isMainCamera;
@@ -36,8 +36,8 @@ namespace i4object
 		float		yaw;
 		float		pitch;
 
-		I4Vector3	originalEyeDir;
-		I4Vector3	eyeDir;
+		Vector3	originalEyeDir;
+		Vector3	eyeDir;
 	};
 
 }

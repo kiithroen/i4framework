@@ -5,14 +5,14 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	class I4Texture
+	class Texture
 	{
-		friend class I4VideoDriver;
+		friend class VideoDriver;
 	public:
-		virtual ~I4Texture()	{}
+		virtual ~Texture()	{}
 
 		virtual bool	load(const char* fname)	{ return true; }
 	protected:
-		I4Texture()			{}
+		Texture()			{}
 	};
 }

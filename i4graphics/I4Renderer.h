@@ -8,72 +8,72 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	class I4Model;
-	class I4TriangleMesh;
-	struct I4Material;
+	class Model;
+	class TriangleMesh;
+	struct Material;
 
-	struct I4MeshRenderItem
+	struct MeshRenderItem
 	{
-		I4Matrix4x4			worldTM;
-		I4Matrix4x4			resultTM;
-		I4AABB				worldAABB;
+		Matrix4x4			worldTM;
+		Matrix4x4			resultTM;
+		AABB				worldAABB;
 		unsigned int		shaderMask;
 		unsigned int		boneCount;
 		unsigned int		subMeshID;
-		I4TriangleMesh*		mesh;
-		I4Material*			material;
-		I4Matrix4x4*		skinTMs;
+		TriangleMesh*		mesh;
+		Material*			material;
+		Matrix4x4*		skinTMs;
 		bool				shadowCaster;
 		bool				shadowReceiver;
 
-		bool operator < (const I4MeshRenderItem& other) const;
+		bool operator < (const MeshRenderItem& other) const;
 	};
 
 
-	struct I4DirectionalLight
+	struct DirectionalLight
 	{
-		I4Vector3	direction;
-		I4Vector3	color;
+		Vector3	direction;
+		Vector3	color;
 	};
 
-	struct I4PointLight
+	struct PointLight
 	{
-		I4Vector3	position;
+		Vector3	position;
 		float		radius;
-		I4Vector3	color;
+		Vector3	color;
 	};
 
-	struct I4DebugLine
+	struct DebugLine
 	{
-		I4Vector3	p0;
-		I4Vector3	p1;
-		I4Vector4	color;
+		Vector3	p0;
+		Vector3	p1;
+		Vector4	color;
 	};
 
-	class I4Renderer
+	class Renderer
 	{
 	public:
-		I4Renderer()
+		Renderer()
 			: wireMode(false)
 			, debugMode(false)
 			, mainCamera()
 		{
 		}
 
-		virtual ~I4Renderer(void)
+		virtual ~Renderer(void)
 		{
 		}
 
 		virtual bool	initialize(void* _windowID, unsigned int _width, unsigned int _height)	{ return true; }
 
-		virtual void	commit(const I4MeshRenderItem& item)			{}
-		virtual void	commit(I4DirectionalLight* light)				{}
-		virtual void	commit(I4PointLight* light)						{}
-		virtual void	commit(const I4DebugLine& line)					{}
+		virtual void	commit(const MeshRenderItem& item)			{}
+		virtual void	commit(DirectionalLight* light)				{}
+		virtual void	commit(PointLight* light)						{}
+		virtual void	commit(const DebugLine& line)					{}
 
 		virtual void	render()										{}
 
-		I4Camera&		getMainCamera()					{ return mainCamera; }
+		Camera&		getMainCamera()					{ return mainCamera; }
 
 		bool			isWireMode() const				{ return wireMode; }
 		void			setWireMode(bool enable)		{ wireMode = enable; }
@@ -82,7 +82,7 @@ namespace i4graphics {
 		void			setDebugMode(bool enable)		{ debugMode = enable; }
 
 	protected:
-		I4Camera	mainCamera;
+		Camera	mainCamera;
 		bool		wireMode;
 		bool		debugMode;
 	};

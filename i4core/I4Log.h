@@ -2,7 +2,7 @@
 
 namespace i4core
 {
-	class I4Log
+	class Log
 	{
 	public:
 		enum Flag
@@ -24,8 +24,8 @@ namespace i4core
 		};
 
 	public:
-		I4Log(void);
-		~I4Log(void);
+		Log(void);
+		~Log(void);
 
 		wostringstream& get(Level level, const char* file, const char* func, int line);
 
@@ -33,8 +33,8 @@ namespace i4core
 		const wchar_t* getLevelString(Level level) const;
 
 	private:
-		I4Log(const I4Log&);
-		I4Log& operator = (const I4Log&);
+		Log(const Log&);
+		Log& operator = (const Log&);
 
 	private:
 		wostringstream	oss;
@@ -52,14 +52,14 @@ namespace i4core
 		static wofstream		ofs;
 	};
 
-#define I4LOG(level, file, func, line) \
-	if (I4Log::getReportFlag() == 0 || level < I4Log::getReportLevel()) ; \
-	else I4Log().get(level, file, func, line)
+#define LOG(level, file, func, line) \
+	if (Log::getReportFlag() == 0 || level < Log::getReportLevel()) ; \
+	else Log().get(level, file, func, line)
 
-#define I4LOG_DEBUG		I4LOG(I4Log::LEVEL_DEBUG, __FILE__, __FUNCTION__, __LINE__)
-#define I4LOG_INFO		I4LOG(I4Log::LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__)
-#define I4LOG_WARN		I4LOG(I4Log::LEVEL_WARN, __FILE__, __FUNCTION__, __LINE__)
-#define I4LOG_ERROR		I4LOG(I4Log::LEVEL_ERROR, __FILE__, __FUNCTION__, __LINE__)
-#define I4LOG_FATAL		I4LOG(I4Log::LEVEL_FATAL, __FILE__, __FUNCTION__, __LINE__)
+#define LOG_DEBUG		LOG(Log::LEVEL_DEBUG, __FILE__, __FUNCTION__, __LINE__)
+#define LOG_INFO		LOG(Log::LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__)
+#define LOG_WARN		LOG(Log::LEVEL_WARN, __FILE__, __FUNCTION__, __LINE__)
+#define LOG_ERROR		LOG(Log::LEVEL_ERROR, __FILE__, __FUNCTION__, __LINE__)
+#define LOG_FATAL		LOG(Log::LEVEL_FATAL, __FILE__, __FUNCTION__, __LINE__)
 
 }

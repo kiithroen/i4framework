@@ -9,30 +9,30 @@
 namespace i4object
 {
 
-	I4ObjectTPSCameraComponent::I4ObjectTPSCameraComponent(void)
+	ObjectTPSCameraComponent::ObjectTPSCameraComponent(void)
 	{
 	}
 
 
-	I4ObjectTPSCameraComponent::~I4ObjectTPSCameraComponent(void)
+	ObjectTPSCameraComponent::~ObjectTPSCameraComponent(void)
 	{
 	}
 
-	void I4ObjectTPSCameraComponent::onAdd()
+	void ObjectTPSCameraComponent::onAdd()
 	{
-		prevMouseX = I4InputState::MouseX;
-		prevMouseY = I4InputState::MouseY;
+		prevMouseX = InputState::MouseX;
+		prevMouseY = InputState::MouseY;
 
 		float yawRad;
 		float pitchRad;
 		float rollRad;
 
-		I4Quaternion rot;
+		Quaternion rot;
 		rot.makeRotationMatrix(getOwner()->getWorldTM());
 		rot.extractYawPitchRoll(yawRad, pitchRad, rollRad);
 
-		yaw = I4MathUtil::radianToDegree(yawRad);
-		pitch = I4MathUtil::radianToDegree(pitchRad);
+		yaw = MathUtil::radianToDegree(yawRad);
+		pitch = MathUtil::radianToDegree(pitchRad);
 
 		originalEyeDir = getOwner()->getWorldTM().getAxisZ();
 		originalEyeDir.normalize();
@@ -40,29 +40,29 @@ namespace i4object
 		eyeDir = originalEyeDir;
 	}
 
-	void I4ObjectTPSCameraComponent::onRemove()
+	void ObjectTPSCameraComponent::onRemove()
 	{
-		getBroadcastMessenger().unsubscribe(I4Hash("onLateUpdate"), this);
+		getBroadcastMessenger().unsubscribe(Hash("onLateUpdate"), this);
 	}
 
-	void I4ObjectTPSCameraComponent::setMainCamera(bool isMain)
+	void ObjectTPSCameraComponent::setMainCamera(bool isMain)
 	{
 		if (isMain)
 		{
-			getBroadcastMessenger().subscribe(I4Hash("onLateUpdate"), this, bind(&I4ObjectTPSCameraComponent::onLateUpdate, this, _1));
+			getBroadcastMessenger().subscribe(Hash("onLateUpdate"), this, bind(&ObjectTPSCameraComponent::onLateUpdate, this, _1));
 		}
 		else
 		{
-			getBroadcastMessenger().unsubscribe(I4Hash("onLateUpdate"), this);
+			getBroadcastMessenger().unsubscribe(Hash("onLateUpdate"), this);
 		}
 	}
 
-	void I4ObjectTPSCameraComponent::onLateUpdate(I4MessageArgs& args)
+	void ObjectTPSCameraComponent::onLateUpdate(MessageArgs& args)
 	{
-		int curMouseX = I4InputState::MouseX;
-		int curMouseY = I4InputState::MouseY;
+		int curMouseX = InputState::MouseX;
+		int curMouseY = InputState::MouseY;
 
-		if (I4InputState::RightMousePressed)
+		if (InputState::RightMousePressed)
 		{
 			int dx = curMouseX - prevMouseX;
 			int dy = curMouseY - prevMouseY;
@@ -86,8 +86,8 @@ namespace i4object
 				pitch = 60;
 			}
 
-			I4Quaternion q;
-			q.makeRotationYawPitchRoll(I4MathUtil::degreeToRadian(yaw), I4MathUtil::degreeToRadian(pitch), 0);
+			Quaternion q;
+			q.makeRotationYawPitchRoll(MathUtil::degreeToRadian(yaw), MathUtil::degreeToRadian(pitch), 0);
 
 			eyeDir = q.transform(originalEyeDir);
 		}		
@@ -95,19 +95,19 @@ namespace i4object
 		prevMouseX = curMouseX;
 		prevMouseY = curMouseY;
 
-		I4Matrix4x4 matTarget = getOwner()->getWorldTM();
+		Matrix4x4 matTarget = getOwner()->getWorldTM();
 		
-		I4Vector3 up = matTarget.getAxisY();
+		Vector3 up = matTarget.getAxisY();
 		up.normalize();
 
-		I4Vector3 right = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
+		Vector3 right = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
 		right.normalize();
 
-		I4Vector3 position = matTarget.getPosition();
+		Vector3 position = matTarget.getPosition();
 
-		I4Vector3 eye = position - eyeDir*1.8f + right*0.25f + up*0.95f;
-		I4Matrix4x4 matCamView;
-		matCamView.makeCameraLookAtLH(eye, eye + eyeDir, I4VECTOR3_AXISY);
+		Vector3 eye = position - eyeDir*1.8f + right*0.25f + up*0.95f;
+		Matrix4x4 matCamView;
+		matCamView.makeCameraLookAtLH(eye, eye + eyeDir, VECTOR3_AXISY);
 
 		getOwner()->getObjectMgr()->getRenderer()->getMainCamera().setViewMatrix(matCamView);
 	}

@@ -5,42 +5,42 @@
 using namespace i4core;
 
 namespace i4graphics {
-	class I4Renderer;
-	class I4ModelMgr;
+	class Renderer;
+	class ModelMgr;
 }
 
 using namespace i4graphics;
 
 namespace i4object {
 
-	class I4PhysXMgr;
-	class I4Object;
+	class PhysXMgr;
+	class Object;
 
-	class I4ObjectMgr
+	class ObjectMgr
 	{
-		typedef map<string, I4Object*>			I4ObjectMap;
+		typedef map<string, Object*>			ObjectMap;
 	public:
-		I4ObjectMgr();
-		~I4ObjectMgr();
+		ObjectMgr();
+		~ObjectMgr();
 
-		bool						init(I4Renderer* renderer, I4ModelMgr* modelMgr, I4PhysXMgr* physXMgr);
+		bool						init(Renderer* renderer, ModelMgr* modelMgr, PhysXMgr* physXMgr);
 
-		I4Object*					createObject(const char* name);
-		void						destroyObject(I4Object* obj);
+		Object*					createObject(const char* name);
+		void						destroyObject(Object* obj);
 
-		I4Object*					findObject(const char* name);
+		Object*					findObject(const char* name);
 
-		I4ObjectComponentMessenger&	getMessenger()		{ return messenger; }
-		I4Renderer*					getRenderer()		{ return renderer; }
-		I4ModelMgr*					getModelMgr()		{ return modelMgr; }
-		I4PhysXMgr*					getPhysXMgr()		{ return physXMgr; }
+		ObjectComponentMessenger&	getMessenger()		{ return messenger; }
+		Renderer*					getRenderer()		{ return renderer; }
+		ModelMgr*					getModelMgr()		{ return modelMgr; }
+		PhysXMgr*					getPhysXMgr()		{ return physXMgr; }
 
 	private:
-		I4ObjectMap					mapObject;
-		I4ObjectComponentMessenger	messenger;
-		I4Renderer*					renderer;
-		I4ModelMgr*					modelMgr;
-		I4PhysXMgr*					physXMgr;
+		ObjectMap					mapObject;
+		ObjectComponentMessenger	messenger;
+		Renderer*					renderer;
+		ModelMgr*					modelMgr;
+		PhysXMgr*					physXMgr;
 	};
 
 }

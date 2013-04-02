@@ -2,25 +2,25 @@
 
 namespace i4core
 {
-	class I4Vector2
+	class Vector2
 	{
 	public:
-		I4Vector2()
+		Vector2()
 		{
 		}
 
-		I4Vector2(float nx, float ny)
+		Vector2(float nx, float ny)
 			: x(nx), y(ny)
 		{
 		}
 
-		I4Vector2(const I4Vector2& v)
+		Vector2(const Vector2& v)
 			: x(v.x), y(v.y)
 		{
 		}
 
 
-		const I4Vector2& operator = (const I4Vector2& rhs)
+		const Vector2& operator = (const Vector2& rhs)
 		{
 			x = rhs.x;
 			y = rhs.y;
@@ -28,18 +28,18 @@ namespace i4core
 			return *this;
 		}
 
-		const I4Vector2 operator - () const
+		const Vector2 operator - () const
 		{
-			return I4Vector2(-x, -y);
+			return Vector2(-x, -y);
 		}
 
-		void operator += (const I4Vector2& rhs)
+		void operator += (const Vector2& rhs)
 		{
 			x += rhs.x;
 			y += rhs.y;
 		}
 
-		void operator -= (const I4Vector2& rhs)
+		void operator -= (const Vector2& rhs)
 		{
 			x -= rhs.x;
 			y -= rhs.y;
@@ -58,38 +58,38 @@ namespace i4core
 			y *= inv;
 		}
 
-		const I4Vector2 operator + (const I4Vector2& rhs) const
+		const Vector2 operator + (const Vector2& rhs) const
 		{
-			return I4Vector2(x + rhs.x, y + rhs.y);
+			return Vector2(x + rhs.x, y + rhs.y);
 		}
 
-		const I4Vector2 operator - (const I4Vector2& rhs) const
+		const Vector2 operator - (const Vector2& rhs) const
 		{
-			return I4Vector2(x - rhs.x, y - rhs.y);
+			return Vector2(x - rhs.x, y - rhs.y);
 		}
 
-		const I4Vector2 operator * (const I4Vector2& rhs) const
+		const Vector2 operator * (const Vector2& rhs) const
 		{
-			return I4Vector2(x*rhs.x, y*rhs.y);
+			return Vector2(x*rhs.x, y*rhs.y);
 		}
 
-		const I4Vector2 operator * (float val) const
+		const Vector2 operator * (float val) const
 		{
-			return I4Vector2(x*val, y*val);
+			return Vector2(x*val, y*val);
 		}
 
-		const I4Vector2 operator / (float val) const
+		const Vector2 operator / (float val) const
 		{
 			float inv = 1.0f / val;
-			return I4Vector2(x*inv, y*inv);
+			return Vector2(x*inv, y*inv);
 		}
 
-		bool operator == (const I4Vector2& rhs) const
+		bool operator == (const Vector2& rhs) const
 		{
 			return (x == rhs.x) && (y == rhs.y);
 		}
 
-		bool operator != (const I4Vector2& rhs) const
+		bool operator != (const Vector2& rhs) const
 		{
 			return !(*this == rhs);
 		}
@@ -120,8 +120,8 @@ namespace i4core
 		};
 	};
 
-	inline const I4Vector2 operator * (float val, const I4Vector2& rhs)
+	inline const Vector2 operator * (float val, const Vector2& rhs)
 	{
-		return I4Vector2(rhs.x*val, rhs.y*val);
+		return Vector2(rhs.x*val, rhs.y*val);
 	}
 }

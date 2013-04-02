@@ -6,7 +6,7 @@
 
 namespace i4core {
 
-	I4FrameworkWin* g_frameworkWin = nullptr;
+	FrameworkWin* g_frameworkWin = nullptr;
 
 	// 전역 메시지 프로시저
 	LRESULT CALLBACK appWndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam)
@@ -15,7 +15,7 @@ namespace i4core {
 		return g_frameworkWin->wndProc(hWnd, iMsg, wParam, lParam);
 	}
 
-	I4FrameworkWin::I4FrameworkWin()
+	FrameworkWin::FrameworkWin()
 	: hInst(nullptr)
 	{
 		assert(g_frameworkWin == nullptr);	// 하나만 생성되어야 하기때문에 이미 할당되있으면 안된다.
@@ -23,12 +23,12 @@ namespace i4core {
 		g_frameworkWin = this;
 	}
 
-	I4FrameworkWin::~I4FrameworkWin()
+	FrameworkWin::~FrameworkWin()
 	{
 		g_frameworkWin = nullptr;
 	}
 
-	bool I4FrameworkWin::onCreate()
+	bool FrameworkWin::onCreate()
 	{
 		hInst = GetModuleHandle(nullptr);
 
@@ -86,7 +86,7 @@ namespace i4core {
 		return true;
 	}
 
-	void I4FrameworkWin::onDestroy()
+	void FrameworkWin::onDestroy()
 	{
 		wstring wtitle;
 		to_wstring(wtitle, title);
@@ -94,15 +94,15 @@ namespace i4core {
 	}
 
 
-	bool I4FrameworkWin::onMessagePump()
+	bool FrameworkWin::onMessagePump()
 	{
 		POINT pt;
 		GetCursorPos(&pt);
 
-		I4InputState::MouseX = pt.x;
-		I4InputState::MouseY = pt.y;
+		InputState::MouseX = pt.x;
+		InputState::MouseY = pt.y;
 
-		if (I4InputState::MoveMouseCenter)
+		if (InputState::MoveMouseCenter)
 		{
 			// 마우스를 윈도우의 중앙으로 초기화
 			POINT pt;
@@ -125,21 +125,21 @@ namespace i4core {
 		return (msg.message != WM_QUIT);
 	}
 	
-	LRESULT CALLBACK I4FrameworkWin::wndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK FrameworkWin::wndProc(HWND hWnd, unsigned int iMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (iMsg)
 		{
 		case WM_KEYDOWN:
 			{
 				unsigned int key = (unsigned int)wParam;
-				if (I4InputState::KeyPressed[key] == false)
+				if (InputState::KeyPressed[key] == false)
 				{
-					I4InputState::KeyPressed[key] = true;
+					InputState::KeyPressed[key] = true;
 
 					if (frameCallback)
 					{						
-						I4InputState state;
-						state.type = I4INPUT_KEY_DOWN;
+						InputState state;
+						state.type = INPUT_KEY_DOWN;
 						state.key = key;
 						frameCallback->onInput(state);
 					}
@@ -149,14 +149,14 @@ namespace i4core {
 		case WM_KEYUP:
 			{
 				unsigned int key = (unsigned int)wParam;
-				if (I4InputState::KeyPressed[key] == true)
+				if (InputState::KeyPressed[key] == true)
 				{
-					I4InputState::KeyPressed[key] = false;
+					InputState::KeyPressed[key] = false;
 
 					if (frameCallback)
 					{
-						I4InputState state;
-						state.type = I4INPUT_KEY_UP;
+						InputState state;
+						state.type = INPUT_KEY_UP;
 						state.key = key;
 						frameCallback->onInput(state);
 					}
@@ -166,16 +166,16 @@ namespace i4core {
 			break;
 		case WM_LBUTTONDOWN:
 			{
-				if (I4InputState::LeftMousePressed == false)
+				if (InputState::LeftMousePressed == false)
 				{
 					SetCapture(hWnd);
 
-					I4InputState::LeftMousePressed = true;
+					InputState::LeftMousePressed = true;
 
 					if (frameCallback)
 					{
-						I4InputState state;
-						state.type = I4INPUT_LEFT_MOUSE_DOWN;
+						InputState state;
+						state.type = INPUT_LEFT_MOUSE_DOWN;
 						state.key = -1;
 						frameCallback->onInput(state);
 					}
@@ -185,16 +185,16 @@ namespace i4core {
 			break;
 		case WM_LBUTTONUP:
 			{
-				if (I4InputState::LeftMousePressed == true)
+				if (InputState::LeftMousePressed == true)
 				{
 					SetCapture(nullptr);
 
-					I4InputState::LeftMousePressed = false;
+					InputState::LeftMousePressed = false;
 
 					if (frameCallback)
 					{
-						I4InputState state;
-						state.type = I4INPUT_LEFT_MOUSE_UP;
+						InputState state;
+						state.type = INPUT_LEFT_MOUSE_UP;
 						state.key = -1;
 						frameCallback->onInput(state);
 					}
@@ -203,16 +203,16 @@ namespace i4core {
 			break;
 		case WM_RBUTTONDOWN:
 			{
-				if (I4InputState::RightMousePressed == false)
+				if (InputState::RightMousePressed == false)
 				{
-					I4InputState::RightMousePressed = true;
+					InputState::RightMousePressed = true;
 
 					SetCapture(hWnd);
 
 					if (frameCallback)
 					{
-						I4InputState state;
-						state.type = I4INPUT_RIGHT_MOUSE_DOWN;
+						InputState state;
+						state.type = INPUT_RIGHT_MOUSE_DOWN;
 						state.key = -1;
 						frameCallback->onInput(state);
 					}
@@ -221,16 +221,16 @@ namespace i4core {
 			break;
 		case WM_RBUTTONUP:
 			{
-				if (I4InputState::RightMousePressed == true)
+				if (InputState::RightMousePressed == true)
 				{
-					I4InputState::RightMousePressed = false;
+					InputState::RightMousePressed = false;
 
 					SetCapture(nullptr);
 
 					if (frameCallback)
 					{
-						I4InputState state;
-						state.type = I4INPUT_RIGHT_MOUSE_UP;
+						InputState state;
+						state.type = INPUT_RIGHT_MOUSE_UP;
 						state.key = -1;
 						frameCallback->onInput(state);
 					}
@@ -247,7 +247,7 @@ namespace i4core {
 			else
 			{
 				activated = false;
-				I4InputState::initialize();
+				InputState::initialize();
 			}
 			break;
 		case WM_CLOSE:

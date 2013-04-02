@@ -13,7 +13,7 @@ namespace i4graphics
 	
 	
 
-	I4ShaderD3D11::I4ShaderD3D11(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11SamplerState** states)
+	ShaderD3D11::ShaderD3D11(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11SamplerState** states)
 		: d3dDevice(device)
 		, immediateContext(context)
 		, samplerStates(states)
@@ -23,7 +23,7 @@ namespace i4graphics
 	{
 	}
 
-	I4ShaderD3D11::~I4ShaderD3D11()
+	ShaderD3D11::~ShaderD3D11()
 	{
 		if (vertexLayout)
 		{
@@ -44,7 +44,7 @@ namespace i4graphics
 		}
 	}
 
-	bool I4ShaderD3D11::createFromString(const char* code, const I4INPUT_ELEMENT* inputElements, unsigned int numElements)
+	bool ShaderD3D11::createFromString(const char* code, const INPUT_ELEMENT* inputElements, unsigned int numElements)
 	{
 		HRESULT hr = S_OK;
 
@@ -82,7 +82,7 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4ShaderD3D11::begin()
+	bool ShaderD3D11::begin()
 	{
 		immediateContext->IASetInputLayout(vertexLayout);
 		immediateContext->VSSetShader(vertexShader, nullptr, 0);
@@ -91,34 +91,34 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4ShaderD3D11::end()
+	void ShaderD3D11::end()
 	{
 	}
 
-	void I4ShaderD3D11::setConstantBuffer(I4ShaderType type, unsigned int slot, I4ConstantBuffer* constantBuffer, void* data)
+	void ShaderD3D11::setConstantBuffer(ShaderType type, unsigned int slot, ConstantBuffer* constantBuffer, void* data)
 	{
-		ID3D11Buffer* buffer = ((I4ConstantBufferD3D11*)constantBuffer)->getBuffer();
+		ID3D11Buffer* buffer = ((ConstantBufferD3D11*)constantBuffer)->getBuffer();
 		immediateContext->UpdateSubresource(buffer, 0, nullptr, data, 0, 0);
 
-		if (type == I4SHADER_TYPE_VS)
+		if (type == SHADER_TYPE_VS)
 		{
 			immediateContext->VSSetConstantBuffers(slot, 1, &buffer);
 		}
-		else if (type == I4SHADER_TYPE_PS)
+		else if (type == SHADER_TYPE_PS)
 		{
 			immediateContext->PSSetConstantBuffers(slot, 1, &buffer);
 		}
-		else if (type == I4SHADER_TYPE_GS)
+		else if (type == SHADER_TYPE_GS)
 		{
 			immediateContext->GSSetConstantBuffers(slot, 1, &buffer);
 		}
 	}
 
-	void I4ShaderD3D11::setTexture(unsigned int slot, const I4Texture* tex)
+	void ShaderD3D11::setTexture(unsigned int slot, const Texture* tex)
 	{
 		if (tex != nullptr)
 		{
-			ID3D11ShaderResourceView* texRV = ((I4TextureD3D11*)tex)->getShaderResourceView();
+			ID3D11ShaderResourceView* texRV = ((TextureD3D11*)tex)->getShaderResourceView();
 			immediateContext->PSSetShaderResources(slot, 1, &texRV);
 		}
 		else
@@ -128,11 +128,11 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderD3D11::setRenderTarget(unsigned int slot, const I4RenderTarget* tex)
+	void ShaderD3D11::setRenderTarget(unsigned int slot, const RenderTarget* tex)
 	{
 		if (tex != nullptr)
 		{
-			ID3D11ShaderResourceView* texRV = ((I4RenderTargetD3D11*)tex)->getShaderResourceView();
+			ID3D11ShaderResourceView* texRV = ((RenderTargetD3D11*)tex)->getShaderResourceView();
 			immediateContext->PSSetShaderResources(slot, 1, &texRV);
 		}
 		else
@@ -142,12 +142,12 @@ namespace i4graphics
 		}
 	}
 
-	void I4ShaderD3D11::setSamplerState(unsigned int slot, I4SamplerState state)
+	void ShaderD3D11::setSamplerState(unsigned int slot, SamplerState state)
 	{
 		immediateContext->PSSetSamplers(slot, 1, &samplerStates[state]);
 	}
 
-	bool I4ShaderD3D11::compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut)
+	bool ShaderD3D11::compileShaderFromString(const char* code, const char* entryPoint, const char* shaderModel, ID3DBlob** ppBlobOut)
 	{
 		HRESULT hr = S_OK;
 
@@ -161,7 +161,7 @@ namespace i4graphics
 
 		if (pErrorBlob)
 		{
-			I4LOG_WARN << (char*)pErrorBlob->GetBufferPointer();
+			LOG_WARN << (char*)pErrorBlob->GetBufferPointer();
 			pErrorBlob->Release();
 		}
 

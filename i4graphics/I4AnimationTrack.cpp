@@ -57,20 +57,20 @@ namespace i4graphics
 		}
 	}
 
-	const float I4AnimationTrack::ANIMATION_FRAME_RATE = 30.0f;
+	const float AnimationTrack::ANIMATION_FRAME_RATE = 30.0f;
 
-	I4AnimationTrack::I4AnimationTrack(I4KeyFrameSet* _keyFrameSet)
+	AnimationTrack::AnimationTrack(KeyFrameSet* _keyFrameSet)
 		: keyFrameSet(_keyFrameSet)
 		, currentFrame(0)
 	{
 	}
 
-	I4AnimationTrack::~I4AnimationTrack()
+	AnimationTrack::~AnimationTrack()
 	{
 	}
 
 
-	void I4AnimationTrack::advanceFrame(float dt)
+	void AnimationTrack::advanceFrame(float dt)
 	{
 		currentFrame += dt*ANIMATION_FRAME_RATE;
 
@@ -80,15 +80,15 @@ namespace i4graphics
 		}
 	}
 
-	void I4AnimationTrack::resetStartFrame()
+	void AnimationTrack::resetStartFrame()
 	{
 		currentFrame = keyFrameSet->startFrame;
 	}
 
-	bool I4AnimationTrack::getKeyRotation(I4Quaternion& out) const
+	bool AnimationTrack::getKeyRotation(Quaternion& out) const
 	{
-		I4KeyRotation* key1 = nullptr;
-		I4KeyRotation* key2 = nullptr;
+		KeyRotation* key1 = nullptr;
+		KeyRotation* key2 = nullptr;
 		getPairKeys(currentFrame, keyFrameSet->vecKeyRotation, key1, key2);
 
 		if (key1 == nullptr || key2 == nullptr)
@@ -102,17 +102,17 @@ namespace i4graphics
 		}
 		else
 		{
-			float t = I4MathUtil::percent(key1->frame, key2->frame, currentFrame);
-			I4Quaternion::slerp(out, key1->rotation, key2->rotation, t);
+			float t = MathUtil::percent(key1->frame, key2->frame, currentFrame);
+			Quaternion::slerp(out, key1->rotation, key2->rotation, t);
 		}
 
 		return true;
 	}
 
-	bool I4AnimationTrack::getKeyPosition(I4Vector3& out) const
+	bool AnimationTrack::getKeyPosition(Vector3& out) const
 	{
-		I4KeyPosition* key1 = nullptr;
-		I4KeyPosition* key2 = nullptr;
+		KeyPosition* key1 = nullptr;
+		KeyPosition* key2 = nullptr;
 		getPairKeys(currentFrame, keyFrameSet->vecKeyPosition, key1, key2);
 
 		if (key1 == nullptr || key2 == nullptr)
@@ -126,17 +126,17 @@ namespace i4graphics
 		}
 		else
 		{
-			float t = I4MathUtil::percent(key1->frame, key2->frame, currentFrame);
-			out = I4MathUtil::lerp(key1->position, key2->position, t);
+			float t = MathUtil::percent(key1->frame, key2->frame, currentFrame);
+			out = MathUtil::lerp(key1->position, key2->position, t);
 		}
 
 		return true;
 	}
 
-	bool I4AnimationTrack::getKeyScale(I4Vector3& out) const
+	bool AnimationTrack::getKeyScale(Vector3& out) const
 	{
-		I4KeyScale* key1 = nullptr;
-		I4KeyScale* key2 = nullptr;
+		KeyScale* key1 = nullptr;
+		KeyScale* key2 = nullptr;
 
 		getPairKeys(currentFrame, keyFrameSet->vecKeyScale, key1, key2);
 
@@ -151,8 +151,8 @@ namespace i4graphics
 		}
 		else
 		{
-			float t = I4MathUtil::percent(key1->frame, key2->frame, currentFrame);
-			out = I4MathUtil::lerp(key1->scale, key2->scale, t);
+			float t = MathUtil::percent(key1->frame, key2->frame, currentFrame);
+			out = MathUtil::lerp(key1->scale, key2->scale, t);
 		}
 
 		return true;

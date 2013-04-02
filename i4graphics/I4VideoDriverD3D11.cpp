@@ -11,7 +11,7 @@
 
 namespace i4graphics
 {
-	I4VideoDriverD3D11::I4VideoDriverD3D11()
+	VideoDriverD3D11::VideoDriverD3D11()
 		: d3dDevice(nullptr)
 		, immediateContext(nullptr)
 		, swapChain(nullptr)
@@ -19,28 +19,28 @@ namespace i4graphics
 		, backBufferDepthStencilTex(nullptr)
 		, backBufferDepthStencilView(nullptr)
 	{
-		for (int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
+		for (int i = 0; i < RASTERIZER_MODE_NUM; ++i)
 		{
 			rasterizerStates[i] = nullptr;
 		}
 
-		for (int i = 0; i < I4DEPTHSTENCIL_MODE_NUM; ++i)
+		for (int i = 0; i < DEPTHSTENCIL_MODE_NUM; ++i)
 		{
 			depthStencilStates[i] = nullptr;
 		}
 
-		for (int i = 0; i < I4BLEND_MODE_NUM; ++i)
+		for (int i = 0; i < BLEND_MODE_NUM; ++i)
 		{
 			blendModes[i] = nullptr;
 		}
 
-		for (int i = 0; i < I4SAMPLER_STATE_NUM; ++i)
+		for (int i = 0; i < SAMPLER_STATE_NUM; ++i)
 		{
 			samplerStates[i] = nullptr;
 		}
 	}
 
-	I4VideoDriverD3D11::~I4VideoDriverD3D11()
+	VideoDriverD3D11::~VideoDriverD3D11()
 	{
 		if (d3dDevice)	
 		{
@@ -84,7 +84,7 @@ namespace i4graphics
 			d3dDevice = nullptr;
 		}
 		
-		for (int i = 0; i < I4DEPTHSTENCIL_MODE_NUM; ++i)
+		for (int i = 0; i < DEPTHSTENCIL_MODE_NUM; ++i)
 		{
 			if (depthStencilStates[i] != nullptr)
 			{
@@ -93,7 +93,7 @@ namespace i4graphics
 			}
 		}
 
-		for (int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
+		for (int i = 0; i < RASTERIZER_MODE_NUM; ++i)
 		{
 			if (rasterizerStates[i] != nullptr)
 			{
@@ -102,7 +102,7 @@ namespace i4graphics
 			}
 		}
 
-		for (int i = 0; i < I4BLEND_MODE_NUM; ++i)
+		for (int i = 0; i < BLEND_MODE_NUM; ++i)
 		{
 			if (blendModes[i] != nullptr)
 			{
@@ -111,7 +111,7 @@ namespace i4graphics
 			}
 		}
 
-		for (int i = 0; i < I4SAMPLER_STATE_NUM; ++i)
+		for (int i = 0; i < SAMPLER_STATE_NUM; ++i)
 		{
 			if (samplerStates[i] != nullptr)
 			{
@@ -121,9 +121,9 @@ namespace i4graphics
 		}
 	}
 
-	bool I4VideoDriverD3D11::initialize(void* windowID, unsigned int width, unsigned int height)
+	bool VideoDriverD3D11::initialize(void* windowID, unsigned int width, unsigned int height)
 	{
-		I4VideoDriver::initialize(windowID, width, height);
+		VideoDriver::initialize(windowID, width, height);
 
 		HRESULT hr = S_OK;
 
@@ -222,7 +222,7 @@ namespace i4graphics
 		immediateContext->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 
 		//------ rasterizer mode --------
-		D3D11_FILL_MODE fill[I4RASTERIZER_MODE_NUM] = 
+		D3D11_FILL_MODE fill[RASTERIZER_MODE_NUM] = 
 		{ 
 			D3D11_FILL_SOLID,
 			D3D11_FILL_SOLID,
@@ -231,7 +231,7 @@ namespace i4graphics
 			D3D11_FILL_WIREFRAME,
 			D3D11_FILL_WIREFRAME
 		};
-		D3D11_CULL_MODE cull[I4RASTERIZER_MODE_NUM] = 
+		D3D11_CULL_MODE cull[RASTERIZER_MODE_NUM] = 
 		{
 			D3D11_CULL_NONE,
 			D3D11_CULL_FRONT,
@@ -241,7 +241,7 @@ namespace i4graphics
 			D3D11_CULL_BACK
 		};
 
-		for (unsigned int i = 0; i < I4RASTERIZER_MODE_NUM; ++i)
+		for (unsigned int i = 0; i < RASTERIZER_MODE_NUM; ++i)
 		{
 			D3D11_RASTERIZER_DESC rasterizerDesc;
 			rasterizerDesc.FillMode = fill[i];
@@ -261,7 +261,7 @@ namespace i4graphics
 
 		//------ depth stencil mode --------
 
-		BOOL bDepthEnable[ I4DEPTHSTENCIL_MODE_NUM ] =
+		BOOL bDepthEnable[ DEPTHSTENCIL_MODE_NUM ] =
 		{
 			FALSE,
 			TRUE,
@@ -274,7 +274,7 @@ namespace i4graphics
 			TRUE
 		};
 
-		BOOL bStencilEnable[ I4DEPTHSTENCIL_MODE_NUM ] =
+		BOOL bStencilEnable[ DEPTHSTENCIL_MODE_NUM ] =
 		{
 			FALSE,
 			FALSE,
@@ -287,7 +287,7 @@ namespace i4graphics
 			TRUE
 		};
 
-		D3D11_COMPARISON_FUNC compFunc[ I4DEPTHSTENCIL_MODE_NUM ] =
+		D3D11_COMPARISON_FUNC compFunc[ DEPTHSTENCIL_MODE_NUM ] =
 		{
 			D3D11_COMPARISON_LESS,
 			D3D11_COMPARISON_LESS,
@@ -300,7 +300,7 @@ namespace i4graphics
 			D3D11_COMPARISON_GREATER,
 		};
 
-		D3D11_STENCIL_OP FailOp[ I4DEPTHSTENCIL_MODE_NUM ] =
+		D3D11_STENCIL_OP FailOp[ DEPTHSTENCIL_MODE_NUM ] =
 		{
 			D3D11_STENCIL_OP_KEEP,
 			D3D11_STENCIL_OP_KEEP,
@@ -315,7 +315,7 @@ namespace i4graphics
 			D3D11_STENCIL_OP_KEEP,
 		};
 
-		D3D11_STENCIL_OP PassOp[ I4DEPTHSTENCIL_MODE_NUM ] =
+		D3D11_STENCIL_OP PassOp[ DEPTHSTENCIL_MODE_NUM ] =
 		{
 			D3D11_STENCIL_OP_KEEP,
 			D3D11_STENCIL_OP_KEEP,
@@ -330,7 +330,7 @@ namespace i4graphics
 			D3D11_STENCIL_OP_INCR,
 		};
 
-		for( UINT i = 0; i < I4DEPTHSTENCIL_MODE_NUM; i++ )
+		for( UINT i = 0; i < DEPTHSTENCIL_MODE_NUM; i++ )
 		{
 			D3D11_DEPTH_STENCIL_DESC dsDesc;
 			dsDesc.DepthEnable = bDepthEnable[i];
@@ -366,7 +366,7 @@ namespace i4graphics
 		BlendState.IndependentBlendEnable = false;
 		BlendState.RenderTarget[0].BlendEnable = false;
 		BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		hr = d3dDevice->CreateBlendState(&BlendState, &blendModes[I4BLEND_MODE_NONE]);
+		hr = d3dDevice->CreateBlendState(&BlendState, &blendModes[BLEND_MODE_NONE]);
 		if (FAILED(hr))
 			return false;
 
@@ -382,7 +382,7 @@ namespace i4graphics
 		alphaBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		alphaBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		alphaBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		hr = d3dDevice->CreateBlendState(&alphaBlendDesc, &blendModes[I4BLEND_MODE_ALPHA]);
+		hr = d3dDevice->CreateBlendState(&alphaBlendDesc, &blendModes[BLEND_MODE_ALPHA]);
 		if (FAILED(hr))
 			return false;
 
@@ -398,7 +398,7 @@ namespace i4graphics
 		addBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 		addBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		addBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		hr = d3dDevice->CreateBlendState(&addBlendDesc, &blendModes[I4BLEND_MODE_ADD]);
+		hr = d3dDevice->CreateBlendState(&addBlendDesc, &blendModes[BLEND_MODE_ADD]);
 		if (FAILED(hr))
 			return false;
 
@@ -412,7 +412,7 @@ namespace i4graphics
 		sampDescPoint.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampDescPoint.MinLOD = 0;
 		sampDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
-		hr = d3dDevice->CreateSamplerState(&sampDescPoint, &samplerStates[I4SAMPLER_STATE_POINT]);
+		hr = d3dDevice->CreateSamplerState(&sampDescPoint, &samplerStates[SAMPLER_STATE_POINT]);
 		if (FAILED(hr))
 			return false;
 		
@@ -425,7 +425,7 @@ namespace i4graphics
 		sampDescLinear.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampDescLinear.MinLOD = 0;
 		sampDescLinear.MaxLOD = D3D11_FLOAT32_MAX;
-		hr = d3dDevice->CreateSamplerState(&sampDescLinear, &samplerStates[I4SAMPLER_STATE_LINEAR]);
+		hr = d3dDevice->CreateSamplerState(&sampDescLinear, &samplerStates[SAMPLER_STATE_LINEAR]);
 		if (FAILED(hr))
 			return false;
 
@@ -444,44 +444,44 @@ namespace i4graphics
 		sampDescShadow.BorderColor[3] = 0;
 		sampDescShadow.MinLOD = 0;
 		sampDescShadow.MaxLOD = 0;
-		hr = d3dDevice->CreateSamplerState(&sampDescShadow, &samplerStates[I4SAMPLER_STATE_SHADOW]);
+		hr = d3dDevice->CreateSamplerState(&sampDescShadow, &samplerStates[SAMPLER_STATE_SHADOW]);
 		if (FAILED(hr))
 			return false;
 
 		resetViewport();
-		setRasterizerMode(I4RASTERIZER_MODE_SOLID_FRONT);
-		setDepthStencilMode(I4DEPTH_LESS_STENCIL_OFF);
-		setBlendMode(I4BLEND_MODE_NONE);
+		setRasterizerMode(RASTERIZER_MODE_SOLID_FRONT);
+		setDepthStencilMode(DEPTH_LESS_STENCIL_OFF);
+		setBlendMode(BLEND_MODE_NONE);
 
 		return true;
 	}
 
-	bool I4VideoDriverD3D11::setupEnvironment()
+	bool VideoDriverD3D11::setupEnvironment()
 	{
-		if (I4VideoDriver::setupEnvironment() == false)
+		if (VideoDriver::setupEnvironment() == false)
 			return false;
 
 		return true;
 	}
 
-	bool I4VideoDriverD3D11::beginScene()
+	bool VideoDriverD3D11::beginScene()
 	{
 		return true;
 	}
 
-	void I4VideoDriverD3D11::endScene()
+	void VideoDriverD3D11::endScene()
 	{
 		swapChain->Present(0, 0);
 	}
 
-	void I4VideoDriverD3D11::clearBackBuffer(unsigned char r, unsigned char g, unsigned char b)
+	void VideoDriverD3D11::clearBackBuffer(unsigned char r, unsigned char g, unsigned char b)
 	{
 		float clearColor[4] = { (float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f };
 		immediateContext->ClearRenderTargetView(backBufferRenderTargetView, clearColor);
 		immediateContext->ClearDepthStencilView(backBufferDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
-	void I4VideoDriverD3D11::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+	void VideoDriverD3D11::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 	{
 		D3D11_VIEWPORT vp;
 		vp.Width = (FLOAT)width;
@@ -493,44 +493,44 @@ namespace i4graphics
 		immediateContext->RSSetViewports(1, &vp);
 	}
 
-	void I4VideoDriverD3D11::resetViewport()
+	void VideoDriverD3D11::resetViewport()
 	{
 		setViewport(0, 0, width, height);
 	}
 
-	void I4VideoDriverD3D11::clearRenderTarget(I4RenderTarget* renderTarget, float r, float g, float b, float a)
+	void VideoDriverD3D11::clearRenderTarget(RenderTarget* renderTarget, float r, float g, float b, float a)
 	{
 		float clearColor[4] = { r, g, b, a };
-		immediateContext->ClearRenderTargetView(static_cast<I4RenderTargetD3D11*>(renderTarget)->getRenderTargetView(), clearColor);
+		immediateContext->ClearRenderTargetView(static_cast<RenderTargetD3D11*>(renderTarget)->getRenderTargetView(), clearColor);
 	}
 
-	void I4VideoDriverD3D11::clearDepthStencil(I4RenderTarget* renderTarget, float depth, unsigned char stencil)
+	void VideoDriverD3D11::clearDepthStencil(RenderTarget* renderTarget, float depth, unsigned char stencil)
 	{
-		immediateContext->ClearDepthStencilView(static_cast<I4RenderTargetD3D11*>(renderTarget)->getDepthStencilView(), D3D11_CLEAR_DEPTH, depth, stencil);
+		immediateContext->ClearDepthStencilView(static_cast<RenderTargetD3D11*>(renderTarget)->getDepthStencilView(), D3D11_CLEAR_DEPTH, depth, stencil);
 	}
 
-	void I4VideoDriverD3D11::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget)
+	void VideoDriverD3D11::setRenderTarget(unsigned int num, RenderTarget** arrRenderTarget)
 	{
 		ID3D11RenderTargetView* arrRTViews[8] = { 0, };
 
 		for (unsigned int i = 0; i < num; ++i)
 		{
-			arrRTViews[i] = static_cast<I4RenderTargetD3D11*>(arrRenderTarget[i])->getRenderTargetView();
+			arrRTViews[i] = static_cast<RenderTargetD3D11*>(arrRenderTarget[i])->getRenderTargetView();
 		}
 		immediateContext->OMSetRenderTargets(num, arrRTViews, backBufferDepthStencilView);
 	}
 
-	void I4VideoDriverD3D11::setRenderTarget(unsigned int num, I4RenderTarget** arrRenderTarget, I4RenderTarget* depthStencil)
+	void VideoDriverD3D11::setRenderTarget(unsigned int num, RenderTarget** arrRenderTarget, RenderTarget* depthStencil)
 	{
 		ID3D11RenderTargetView* arrRTViews[8] = { 0, };
 
 		for (unsigned int i = 0; i < num; ++i)
 		{
-			arrRTViews[i] = static_cast<I4RenderTargetD3D11*>(arrRenderTarget[i])->getRenderTargetView();
+			arrRTViews[i] = static_cast<RenderTargetD3D11*>(arrRenderTarget[i])->getRenderTargetView();
 		}
 		if (depthStencil)
 		{
-			immediateContext->OMSetRenderTargets(num, arrRTViews, static_cast<I4RenderTargetD3D11*>(depthStencil)->getDepthStencilView());
+			immediateContext->OMSetRenderTargets(num, arrRTViews, static_cast<RenderTargetD3D11*>(depthStencil)->getDepthStencilView());
 		}
 		else
 		{
@@ -538,13 +538,13 @@ namespace i4graphics
 		}
 	}
 
-	void I4VideoDriverD3D11::setRenderTargetDepthStencil(I4RenderTarget* depthStencil)
+	void VideoDriverD3D11::setRenderTargetDepthStencil(RenderTarget* depthStencil)
 	{
 		ID3D11RenderTargetView* nullView = nullptr;
-		immediateContext->OMSetRenderTargets(1, &nullView, static_cast<I4RenderTargetD3D11*>(depthStencil)->getDepthStencilView());
+		immediateContext->OMSetRenderTargets(1, &nullView, static_cast<RenderTargetD3D11*>(depthStencil)->getDepthStencilView());
 	}
 
-	void I4VideoDriverD3D11::resetBackBufferRenderTarget(bool enableDepthStencil)
+	void VideoDriverD3D11::resetBackBufferRenderTarget(bool enableDepthStencil)
 	{
 		if (enableDepthStencil)
 		{
@@ -556,64 +556,64 @@ namespace i4graphics
 		}
 	}
 
-	void I4VideoDriverD3D11::setRasterizerMode(I4RasterizerMode mode)
+	void VideoDriverD3D11::setRasterizerMode(RasterizerMode mode)
 	{
 		if (curRasterizerMode != mode)
 		{
-			I4VideoDriver::setRasterizerMode(mode);
+			VideoDriver::setRasterizerMode(mode);
 
 			immediateContext->RSSetState(rasterizerStates[mode]);
 		}
 	}
 
-	void I4VideoDriverD3D11::setDepthStencilMode(I4DepthStencilMode mode)
+	void VideoDriverD3D11::setDepthStencilMode(DepthStencilMode mode)
 	{
 		if (curDepthStencilMode != mode)
 		{
-			I4VideoDriver::setDepthStencilMode(mode);
+			VideoDriver::setDepthStencilMode(mode);
 
 			immediateContext->OMSetDepthStencilState(depthStencilStates[mode], 0);
 		}
 	}
 
-	void I4VideoDriverD3D11::setBlendMode(I4BlendMode mode)
+	void VideoDriverD3D11::setBlendMode(BlendMode mode)
 	{
 		if (curBlendMode != mode)
 		{
-			I4VideoDriver::setBlendMode(mode);
+			VideoDriver::setBlendMode(mode);
 			float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			immediateContext->OMSetBlendState(blendModes[mode], blendFactor, 0xffffffff);
 		}
 	}
 
-	I4Shader* I4VideoDriverD3D11::createShader()
+	Shader* VideoDriverD3D11::createShader()
 	{
-		return new I4ShaderD3D11(d3dDevice, immediateContext, samplerStates);
+		return new ShaderD3D11(d3dDevice, immediateContext, samplerStates);
 	}
 
-	I4VertexBuffer* I4VideoDriverD3D11::createVertexBuffer()
+	VertexBuffer* VideoDriverD3D11::createVertexBuffer()
 	{
-		return new I4VertexBufferD3D11(d3dDevice, immediateContext);
+		return new VertexBufferD3D11(d3dDevice, immediateContext);
 	}
 
-	I4IndexBuffer* I4VideoDriverD3D11::createIndexBuffer()
+	IndexBuffer* VideoDriverD3D11::createIndexBuffer()
 	{
-		return new I4IndexBufferD3D11(d3dDevice, immediateContext);
+		return new IndexBufferD3D11(d3dDevice, immediateContext);
 	}
 
-	I4ConstantBuffer* I4VideoDriverD3D11::createConstantBuffer()
+	ConstantBuffer* VideoDriverD3D11::createConstantBuffer()
 	{
-		return new I4ConstantBufferD3D11(d3dDevice);
+		return new ConstantBufferD3D11(d3dDevice);
 	}
 
-	I4Texture* I4VideoDriverD3D11::createTexture()
+	Texture* VideoDriverD3D11::createTexture()
 	{
-		return new I4TextureD3D11(d3dDevice, immediateContext);
+		return new TextureD3D11(d3dDevice, immediateContext);
 	}
 
-	I4RenderTarget* I4VideoDriverD3D11::createRenderTarget()
+	RenderTarget* VideoDriverD3D11::createRenderTarget()
 	{
-		return new I4RenderTargetD3D11(d3dDevice);
+		return new RenderTargetD3D11(d3dDevice);
 	}
 
 }

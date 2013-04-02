@@ -4,10 +4,10 @@
 
 namespace i4core
 {
-	class I4FrameTimer
+	class FrameTimer
 	{
 	public:
-		virtual ~I4FrameTimer();
+		virtual ~FrameTimer();
 
 		float			updateFrameDelta();		
 
@@ -20,16 +20,16 @@ namespace i4core
 
 		float			getElapsed() const				{ return (float)((double)tickCount*tickInterval + elapsedAfterLastTick); }
 	protected:
-		I4FrameTimer(float tickInterval);
+		FrameTimer(float tickInterval);
 
 	public:
-		static I4FrameTimer*	getFrameTimer()	{ return timer; }
+		static FrameTimer*	getFrameTimer()	{ return timer; }
 
 		static void		createFrameTimer(float tickInterval);
 		static void		destroyFrameTimer();
 
 	private:
-		static I4FrameTimer*	timer;
+		static FrameTimer*	timer;
 
 	protected:
 		double			frameDelta;

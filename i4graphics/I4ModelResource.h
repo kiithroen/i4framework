@@ -4,135 +4,135 @@
 
 namespace i4core
 {
-	class I4XmlData;
+	class XmlData;
 }
 
 using namespace i4core;
 
 namespace i4graphics {
 	
-	class I4Texture;
-	class I4TriangleMesh;
-	struct I4ModelElementInfo;
-	struct I4Material;
-	struct I4KeyFrameSet;
-	struct I4ParsedMeshData;
+	class Texture;
+	class TriangleMesh;
+	struct ModelElementInfo;
+	struct Material;
+	struct KeyFrameSet;
+	struct ParsedMeshData;
 
-	//-------------------- I4ModelBoneResource -----------------------
+	//-------------------- ModelBoneResource -----------------------
 
-	class I4ModelBoneResource
+	class ModelBoneResource
 	{
-		typedef vector<I4ModelElementInfo*>		I4ModelInfoVector;
+		typedef vector<ModelElementInfo*>		ModelInfoVector;
 	public:
-		I4ModelBoneResource();
-		virtual ~I4ModelBoneResource();
+		ModelBoneResource();
+		virtual ~ModelBoneResource();
 		
 		bool					loadBone(const char* fname);
 
 		void					destroy();
 
 		unsigned int			getBoneCount() const				{ return vecBoneInfo.size(); }
-		I4ModelElementInfo*		getBoneInfo(unsigned int i) const	{ return vecBoneInfo[i]; }
+		ModelElementInfo*		getBoneInfo(unsigned int i) const	{ return vecBoneInfo[i]; }
 
 	private:
-		void					parseBone(I4XmlData& xml);
+		void					parseBone(XmlData& xml);
 
-		void					parseNodeInfo(I4ModelElementInfo& out, I4XmlData& xml);
-		void					parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml);
-		void					parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml);
+		void					parseNodeInfo(ModelElementInfo& out, XmlData& xml);
+		void					parseNodeInfoLocalTM(ModelElementInfo& out,XmlData& xml);
+		void					parseNodeInfoWorldTM(ModelElementInfo& out,XmlData& xml);
 		
 	private:
-		I4ModelInfoVector		vecBoneInfo;
+		ModelInfoVector		vecBoneInfo;
 	};
 
-	//-------------------- I4ModelMeshResource -----------------------
+	//-------------------- ModelMeshResource -----------------------
 
-	class I4ModelMeshResource
+	class ModelMeshResource
 	{
-		typedef vector<I4ModelElementInfo*>	I4ModelInfoVector;
-		typedef vector<I4TriangleMesh*>				I4MeshVector;
+		typedef vector<ModelElementInfo*>	ModelInfoVector;
+		typedef vector<TriangleMesh*>				MeshVector;
 
 	public:
-		I4ModelMeshResource();
-		virtual ~I4ModelMeshResource();
+		ModelMeshResource();
+		virtual ~ModelMeshResource();
 
 		bool					loadMesh(const char* fname);
 
 		void					destroy();
 
 		unsigned int			getMeshCount() const				{ return vecMeshInfo.size(); }
-		I4ModelElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
-		I4TriangleMesh*			getMesh(unsigned int i) const		{ return vecMesh[i]; }
+		ModelElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
+		TriangleMesh*			getMesh(unsigned int i) const		{ return vecMesh[i]; }
 
 	private:
-		void					parseMesh(I4XmlData& xml);
+		void					parseMesh(XmlData& xml);
 
-		void					parseNodeInfo(I4ModelElementInfo& out, I4XmlData& xml);
-		void					parseNodeInfoLocalTM(I4ModelElementInfo& out,I4XmlData& xml);
-		void					parseNodeInfoWorldTM(I4ModelElementInfo& out,I4XmlData& xml);
+		void					parseNodeInfo(ModelElementInfo& out, XmlData& xml);
+		void					parseNodeInfoLocalTM(ModelElementInfo& out,XmlData& xml);
+		void					parseNodeInfoWorldTM(ModelElementInfo& out,XmlData& xml);
 
-		void					parseMeshPosition(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshNormal(I4ParsedMeshData& out,I4XmlData& xml);	
-		void					parseMeshUV(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshWeight(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshIndex(I4ParsedMeshData& out,I4XmlData& xml);
-		void					parseMeshSub(I4ParsedMeshData& out,I4XmlData& xml);
+		void					parseMeshPosition(ParsedMeshData& out,XmlData& xml);
+		void					parseMeshNormal(ParsedMeshData& out,XmlData& xml);	
+		void					parseMeshUV(ParsedMeshData& out,XmlData& xml);
+		void					parseMeshWeight(ParsedMeshData& out,XmlData& xml);
+		void					parseMeshIndex(ParsedMeshData& out,XmlData& xml);
+		void					parseMeshSub(ParsedMeshData& out,XmlData& xml);
 
-		I4TriangleMesh*			buildMesh(I4ParsedMeshData &I4ParsedMeshData);
+		TriangleMesh*			buildMesh(ParsedMeshData &ParsedMeshData);
 
-		void					CalculateTangentArray(long vertexCount, const vector<I4Vector3>& vertex, const vector<I4Vector3>& normal,
-			const vector<I4TextureUV>& texCoord, long triangleCount, const vector<I4Index16>& triangle, vector<I4Vector4>& tangent);
+		void					CalculateTangentArray(long vertexCount, const vector<Vector3>& vertex, const vector<Vector3>& normal,
+			const vector<TextureUV>& texCoord, long triangleCount, const vector<Index16>& triangle, vector<Vector4>& tangent);
 	private:
-		I4ModelInfoVector		vecMeshInfo;
-		I4MeshVector			vecMesh;
+		ModelInfoVector		vecMeshInfo;
+		MeshVector			vecMesh;
 	};
 
-	//-------------------- I4ModelMaterialResource -----------------------
+	//-------------------- ModelMaterialResource -----------------------
 
-	class I4ModelMaterialResource
+	class ModelMaterialResource
 	{
-		typedef vector<I4Material*>			I4MaterialVector;
-		typedef vector<I4MaterialVector>	I4MaterialContainer;
+		typedef vector<Material*>			MaterialVector;
+		typedef vector<MaterialVector>	MaterialContainer;
 
 	public:
-		I4ModelMaterialResource();
-		virtual ~I4ModelMaterialResource();
+		ModelMaterialResource();
+		virtual ~ModelMaterialResource();
 
 		bool					loadMaterial(const char* fname);
 
 		void					destroy();
 
 		unsigned int			getMaterialCount() const								{ return materialContainer.size(); }
-		I4Material*				getMaterial(unsigned int i, unsigned int subID) const	{ return materialContainer[i][subID]; }
+		Material*				getMaterial(unsigned int i, unsigned int subID) const	{ return materialContainer[i][subID]; }
 
 	private:
-		void					parseMaterials(I4XmlData& xml);
+		void					parseMaterials(XmlData& xml);
 
 	private:
-		I4MaterialContainer		materialContainer;
+		MaterialContainer		materialContainer;
 	};
 
-	//-------------------- I4ModelAniResource -----------------------
+	//-------------------- ModelAniResource -----------------------
 
-	class I4ModelAniResource
+	class ModelAniResource
 	{
-		typedef vector<I4KeyFrameSet*>		I4KeyFrameSetVector;
+		typedef vector<KeyFrameSet*>		KeyFrameSetVector;
 	public:
-		I4ModelAniResource();
-		virtual ~I4ModelAniResource();
+		ModelAniResource();
+		virtual ~ModelAniResource();
 
 		bool					loadAni(const char* fname);
 
 		void					destroy();
 
 		unsigned int			getKeyFrameSetCount() const				{ return vecKeyFrameSet.size(); }
-		I4KeyFrameSet*			getKeyFrameSet(unsigned int i) const	{ return vecKeyFrameSet[i]; }
+		KeyFrameSet*			getKeyFrameSet(unsigned int i) const	{ return vecKeyFrameSet[i]; }
 
 	private:
-		void					parseAnimation(I4XmlData& xml);
-		void					parseKeyFrameSet(I4KeyFrameSet& out, I4XmlData& xml);
+		void					parseAnimation(XmlData& xml);
+		void					parseKeyFrameSet(KeyFrameSet& out, XmlData& xml);
 
 	private:
-		I4KeyFrameSetVector		vecKeyFrameSet;
+		KeyFrameSetVector		vecKeyFrameSet;
 	};
 }

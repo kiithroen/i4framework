@@ -4,38 +4,38 @@
 
 namespace i4graphics
 {
-	I4TriangleMesh::I4TriangleMesh()
+	TriangleMesh::TriangleMesh()
 		: vertexBuffer(nullptr)
 		, indexBuffer(nullptr)
 	{
 		
 	}
 
-	I4TriangleMesh::~I4TriangleMesh()
+	TriangleMesh::~TriangleMesh()
 	{
 		delete indexBuffer;
 		delete vertexBuffer;
 	}
 
-	void I4TriangleMesh::bind()
+	void TriangleMesh::bind()
 	{
 		vertexBuffer->bind();
 		indexBuffer->bind();
 	}
 
-	void I4TriangleMesh::unbind()
+	void TriangleMesh::unbind()
 	{
 		indexBuffer->unbind();
 		vertexBuffer->unbind();
 	}
 
-	void I4TriangleMesh::drawAll()
+	void TriangleMesh::drawAll()
 	{
-		indexBuffer->draw(I4PT_TRIANGLELIST);
+		indexBuffer->draw(PT_TRIANGLELIST);
 	}
 
-	void I4TriangleMesh::drawSub(unsigned int i)
+	void TriangleMesh::drawSub(unsigned int i)
 	{
-		indexBuffer->draw(I4PT_TRIANGLELIST, subMeshes[i].count*3, subMeshes[i].start*3, 0);
+		indexBuffer->draw(PT_TRIANGLELIST, subMeshes[i].count*3, subMeshes[i].start*3, 0);
 	}
 }

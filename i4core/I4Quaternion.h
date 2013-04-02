@@ -5,24 +5,24 @@
 
 namespace i4core
 {
-	class I4Quaternion
+	class Quaternion
 	{
 	public:
-		I4Quaternion()
+		Quaternion()
 		{
 		}
 
-		I4Quaternion(float nx, float ny, float nz, float nw)
+		Quaternion(float nx, float ny, float nz, float nw)
 			: x(nx), y(ny), z(nz), w(nw)
 		{
 		}
 
-		I4Quaternion(const I4Quaternion& q)
+		Quaternion(const Quaternion& q)
 			: x(q.x), y(q.y), z(q.z), w(q.w)
 		{
 		}
 
-		const I4Quaternion& operator = (const I4Quaternion& rhs)
+		const Quaternion& operator = (const Quaternion& rhs)
 		{
 			x = rhs.x;
 			y = rhs.y;
@@ -32,12 +32,12 @@ namespace i4core
 			return *this;
 		}
 
-		const I4Quaternion operator ~ () const	// ÄÓ·¹ »ç¿ø¼ö
+		const Quaternion operator ~ () const	// ÄÓ·¹ »ç¿ø¼ö
 		{
-			return I4Quaternion(-x, -y, -z, w);
+			return Quaternion(-x, -y, -z, w);
 		}
 
-		void operator += (const I4Quaternion& rhs)
+		void operator += (const Quaternion& rhs)
 		{
 			x += rhs.x;
 			y += rhs.y;
@@ -45,7 +45,7 @@ namespace i4core
 			w += rhs.w;
 		}
 
-		void operator -= (const I4Quaternion& rhs)
+		void operator -= (const Quaternion& rhs)
 		{
 			x -= rhs.x;
 			y -= rhs.y;
@@ -53,9 +53,9 @@ namespace i4core
 			w -= rhs.w;
 		}
 
-		void operator *= (const I4Quaternion& rhs)
+		void operator *= (const Quaternion& rhs)
 		{
-			I4Quaternion result;
+			Quaternion result;
 			multiply(result, *this, rhs);
 			*this = result;
 		}
@@ -77,49 +77,49 @@ namespace i4core
 			w *= inv;
 		}
 
-		const I4Quaternion operator + (const I4Quaternion& rhs) const
+		const Quaternion operator + (const Quaternion& rhs) const
 		{
-			return I4Quaternion(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
+			return Quaternion(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
 		}
 
-		const I4Quaternion operator - (const I4Quaternion& rhs) const
+		const Quaternion operator - (const Quaternion& rhs) const
 		{
-			return I4Quaternion(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
+			return Quaternion(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
 		}
 
-		const I4Quaternion operator * (const I4Quaternion& rhs) const
+		const Quaternion operator * (const Quaternion& rhs) const
 		{
-			I4Quaternion result;
+			Quaternion result;
 			multiply(result, *this, rhs);
 			return result;	
 		}
 
-		I4Quaternion operator * (const I4Vector3& v) const
+		Quaternion operator * (const Vector3& v) const
 		{
-			return I4Quaternion(w*v.x + y*v.z - z*v.y,
+			return Quaternion(w*v.x + y*v.z - z*v.y,
 				w*v.y + z*v.x - x*v.z,
 				w*v.z + x*v.y - y*v.x,
 				-(x*v.x + y*v.y + z*v.z));
 		}
 
-		const I4Quaternion operator * (float val) const
+		const Quaternion operator * (float val) const
 		{
-			return I4Quaternion(x*val, y*val, z*val, w*val);
+			return Quaternion(x*val, y*val, z*val, w*val);
 		}
 
-		const I4Quaternion operator / (float val) const
+		const Quaternion operator / (float val) const
 		{
 			float inv = 1.0f / val;
-			return I4Quaternion(x*inv, y*inv, z*inv, w*inv);
+			return Quaternion(x*inv, y*inv, z*inv, w*inv);
 		}
 
 		
-		bool operator == (const I4Quaternion& rhs) const
+		bool operator == (const Quaternion& rhs) const
 		{
 			return (x == rhs.x) && (y == rhs.y) && (z == rhs.z) && (w == rhs.z);
 		}
 
-		bool operator != (const I4Quaternion& rhs) const
+		bool operator != (const Quaternion& rhs) const
 		{
 			return !(*this == rhs);
 		}
@@ -134,10 +134,10 @@ namespace i4core
 			w *= inv;
 		}
 		
-		const I4Vector3 transform(const I4Vector3& v)
+		const Vector3 transform(const Vector3& v)
 		{
-			I4Quaternion result = (*this)*v*(~*this);
-			return I4Vector3(result.x, result.y, result.z);
+			Quaternion result = (*this)*v*(~*this);
+			return Vector3(result.x, result.y, result.z);
 		}
 
 		void makeIdentity()
@@ -146,9 +146,9 @@ namespace i4core
 			w = 1.0f;
 		}
 
-		void makeRotationAxis(const I4Vector3& inAxis, float fAngle)
+		void makeRotationAxis(const Vector3& inAxis, float fAngle)
 		{
-			I4Vector3 axis = inAxis;
+			Vector3 axis = inAxis;
 			axis.normalize();
 
 			float halfAngle = fAngle*0.5f;
@@ -186,7 +186,7 @@ namespace i4core
 			w = cX * cYcZ + sX * sYsZ;
 		}
 
-		void makeRotationMatrix(const I4Matrix4x4& mat)
+		void makeRotationMatrix(const Matrix4x4& mat)
 		{
 			const float diag = mat._11 + mat._22 + mat._33 + 1;
 
@@ -239,14 +239,14 @@ namespace i4core
 			if (test > 0.499)
 			{
 				yaw = 2.0f * atan2f(x,w);
-				roll = I4PI/2;
+				roll = PI/2;
 				pitch = 0.0f;
 				return;
 			}
 			if (test < -0.499)
 			{
 				yaw = -2.0f * atan2f(x,w);
-				roll = -I4PI/2;
+				roll = -PI/2;
 				pitch = 0.0f;
 				return;
 			}
@@ -258,7 +258,7 @@ namespace i4core
 			pitch = atan2f(2.0f*x*w-2.0f*y*z , 1.0f - 2.0f*sqx - 2.0f*sqz);
 		}
 
-		void extractRotationMatrix(I4Matrix4x4& mat) const
+		void extractRotationMatrix(Matrix4x4& mat) const
 		{
 			float x2 = x + x;
 			float y2 = y + y;
@@ -293,7 +293,7 @@ namespace i4core
 		float	w;
 
 	public:
-		static void multiply(I4Quaternion& out, const I4Quaternion& a, const I4Quaternion& b)
+		static void multiply(Quaternion& out, const Quaternion& a, const Quaternion& b)
 		{
 			assert(&out != &a);
 			assert(&out != &b);
@@ -304,10 +304,10 @@ namespace i4core
 			out.w = a.w*b.w - a.x*b.x - a.y*b.y - a.z*b.z;
 		}
 
-		static void slerp(I4Quaternion& out, const I4Quaternion& _a, const I4Quaternion& _b, float t)
+		static void slerp(Quaternion& out, const Quaternion& _a, const Quaternion& _b, float t)
 		{
-			I4Quaternion a = _a;
-			I4Quaternion b = _b;
+			Quaternion a = _a;
+			Quaternion b = _b;
 
 			float angle = a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;
 
@@ -342,8 +342,8 @@ namespace i4core
 				b.z = -a.w;
 				b.w = a.z;
 
-				scale = sinf(I4PI * (0.5f - t));
-				invscale = sinf(I4PI * t);
+				scale = sinf(PI * (0.5f - t));
+				invscale = sinf(PI * t);
 			}
 
 			out = (a*scale) + (b*invscale);

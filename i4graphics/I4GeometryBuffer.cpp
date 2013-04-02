@@ -5,7 +5,7 @@
 namespace i4graphics
 {
 
-	I4VertexBuffer::I4VertexBuffer()
+	VertexBuffer::VertexBuffer()
 		: count(0)
 		, stride(0)
 	{
@@ -13,12 +13,12 @@ namespace i4graphics
 	}
 
 
-	I4VertexBuffer::~I4VertexBuffer()
+	VertexBuffer::~VertexBuffer()
 	{
 
 	}
 
-	bool I4VertexBuffer::create(unsigned int _count, unsigned int _stride, const void* vertices)
+	bool VertexBuffer::create(unsigned int _count, unsigned int _stride, const void* vertices)
 	{
 		count = _count;
 		stride = _stride;
@@ -26,118 +26,118 @@ namespace i4graphics
 		return true;
 	}
 
-	bool I4VertexBuffer::copyFrom(const void* data)
+	bool VertexBuffer::copyFrom(const void* data)
 	{
 		return true;
 	}
 
-	bool I4VertexBuffer::copyFrom(const void* data, unsigned int count)
+	bool VertexBuffer::copyFrom(const void* data, unsigned int count)
 	{
 		return true;
 	}
 
-	bool I4VertexBuffer::lock(void** data)
+	bool VertexBuffer::lock(void** data)
 	{
 		return true;
 	}
 
-	void I4VertexBuffer::unlock()
+	void VertexBuffer::unlock()
 	{
 
 	}
 
-	void I4VertexBuffer::bind()
+	void VertexBuffer::bind()
 	{
 
 	}
 
-	void I4VertexBuffer::unbind()
+	void VertexBuffer::unbind()
 	{
 
 	}
 
-	void I4VertexBuffer::draw(I4PrimitiveType pt)
+	void VertexBuffer::draw(PrimitiveType pt)
 	{
 
 	}
 
-	void I4VertexBuffer::draw(I4PrimitiveType pt, unsigned int count, unsigned int start)
+	void VertexBuffer::draw(PrimitiveType pt, unsigned int count, unsigned int start)
 	{
 
 	}
 
 //-------------------------------------------------------------------------------------
 
-	I4IndexBuffer::I4IndexBuffer()
+	IndexBuffer::IndexBuffer()
 		: count(0)
 		, stride(0)
 	{
 
 	}
 
-	I4IndexBuffer::~I4IndexBuffer()
+	IndexBuffer::~IndexBuffer()
 	{
 
 	}
 
-	bool I4IndexBuffer::create(unsigned int _count, unsigned int _stride, const void* indices)
+	bool IndexBuffer::create(unsigned int _count, unsigned int _stride, const void* indices)
 	{
 		count = _count;
 		stride = _stride;
 
 		if (stride == sizeof(unsigned int))
 		{
-			format = I4FORMAT_R32_UINT;
+			format = FORMAT_R32_UINT;
 		}
 		else if (stride == sizeof(unsigned short))
 		{
-			format = I4FORMAT_R16_UINT;
+			format = FORMAT_R16_UINT;
 		}
 		else
 		{
-			I4LOG_WARN << L"unsupported format";
+			LOG_WARN << L"unsupported format";
 			return false;
 		}
 
 		return true;
 	}
 
-	bool I4IndexBuffer::copyFrom(const void* data)
+	bool IndexBuffer::copyFrom(const void* data)
 	{
 		return true;
 	}
 
-	bool I4IndexBuffer::copyFrom(const void* data, unsigned int count)
+	bool IndexBuffer::copyFrom(const void* data, unsigned int count)
 	{
 		return true;
 	}
 
-	bool I4IndexBuffer::lock(void** data)
+	bool IndexBuffer::lock(void** data)
 	{
 		return true;
 	}
 
-	void I4IndexBuffer::unlock()
+	void IndexBuffer::unlock()
 	{
 
 	}
 
-	void I4IndexBuffer::bind()
+	void IndexBuffer::bind()
 	{
 
 	}
 
-	void I4IndexBuffer::unbind()
+	void IndexBuffer::unbind()
 	{
 
 	}
 
-	void I4IndexBuffer::draw(I4PrimitiveType pt)
+	void IndexBuffer::draw(PrimitiveType pt)
 	{
 
 	}
 
-	void I4IndexBuffer::draw(I4PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex)
+	void IndexBuffer::draw(PrimitiveType pt, unsigned int _count, unsigned int _startIndex, int _baseVertex)
 	{
 
 	}
@@ -145,17 +145,17 @@ namespace i4graphics
 
 	//-------------------------------------------------------------------------------------
 
-	I4ConstantBuffer::I4ConstantBuffer()
+	ConstantBuffer::ConstantBuffer()
 	{
 
 	}
 
-	I4ConstantBuffer::~I4ConstantBuffer()
+	ConstantBuffer::~ConstantBuffer()
 	{
 
 	}
 
-	bool I4ConstantBuffer::create(unsigned int stride)
+	bool ConstantBuffer::create(unsigned int stride)
 	{
 		return true;
 	}

@@ -55,7 +55,7 @@ namespace i4object
 		return PxDefaultSimulationFilterShader;
 	}
 
-	I4PhysXMgr::I4PhysXMgr(void)
+	PhysXMgr::PhysXMgr(void)
 		: mFoundation(nullptr)
 		, mProfileZoneManager(nullptr)
 		, mPhysics(nullptr)
@@ -70,24 +70,24 @@ namespace i4object
 	{
 	}
 
-	I4PhysXMgr::~I4PhysXMgr()
+	PhysXMgr::~PhysXMgr()
 	{
 		destroy();
 	}
 
-	bool I4PhysXMgr::init()
+	bool PhysXMgr::init()
 	{
 		mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
 		if(!mFoundation)
 		{
-			I4LOG_ERROR << "PxCreateFoundation failed!";
+			LOG_ERROR << "PxCreateFoundation failed!";
 			return false;
 		}
 		/*
 		mProfileZoneManager = &PxProfileZoneManager::createProfileZoneManager(mFoundation);
 		if(!mProfileZoneManager)
 		{
-			I4LOG_ERROR << "PxProfileZoneManager::createProfileZoneManager failed!";
+			LOG_ERROR << "PxProfileZoneManager::createProfileZoneManager failed!";
 			return false;
 		}
 		*/
@@ -107,26 +107,26 @@ namespace i4object
 		mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, PxTolerancesScale(), recordMemoryAllocations, mProfileZoneManager );
 		if(!mPhysics)
 		{
-			I4LOG_ERROR << "PxCreatePhysics failed!";
+			LOG_ERROR << "PxCreatePhysics failed!";
 			return false;
 		}
 
 		if (!PxInitExtensions(*mPhysics))
 		{
-			I4LOG_ERROR << "PxInitExtensions failed!";
+			LOG_ERROR << "PxInitExtensions failed!";
 			return false;
 		}
 		
 		mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, PxCookingParams());
 		if (!mCooking)
 		{
-			I4LOG_ERROR << "PxCreateCooking failed!";
+			LOG_ERROR << "PxCreateCooking failed!";
 			return false;
 		}
 
 		if(mPhysics->getPvdConnectionManager())
 		{
-			mPvdConnectionHandler = new I4PvdConnectionHandler(mPhysics);
+			mPvdConnectionHandler = new PvdConnectionHandler(mPhysics);
 			mPhysics->getPvdConnectionManager()->addHandler(*mPvdConnectionHandler);
 		}
 
@@ -138,7 +138,7 @@ namespace i4object
 			mCpuDispatcher = PxDefaultCpuDispatcherCreate(1);
 			if(!mCpuDispatcher)
 			{
-				I4LOG_ERROR << "PxDefaultCpuDispatcherCreate failed!";
+				LOG_ERROR << "PxDefaultCpuDispatcherCreate failed!";
 				return false;
 			}
 
@@ -158,14 +158,14 @@ namespace i4object
 		mScene = mPhysics->createScene(sceneDesc);
 		if (!mScene)
 		{
-			I4LOG_ERROR << "createScene failed!";
+			LOG_ERROR << "createScene failed!";
 			return false;
 		}
 				
 		mMaterial = mPhysics->createMaterial(0.5f, 0.5f, 0.1f);    //static friction, dynamic friction, restitution
 		if(!mMaterial)
 		{
-			I4LOG_ERROR << "createMaterial failed!";
+			LOG_ERROR << "createMaterial failed!";
 			return false;
 		};
 
@@ -174,7 +174,7 @@ namespace i4object
 		return true;
 	}
 
-	void I4PhysXMgr::destroy()
+	void PhysXMgr::destroy()
 	{
 		if (mControllerManager)
 		{
@@ -230,7 +230,7 @@ namespace i4object
 		}
 	}
 
-	void I4PhysXMgr::simulate(PxReal dt)
+	void PhysXMgr::simulate(PxReal dt)
 	{
 		mScene->simulate(dt);
 
@@ -240,20 +240,20 @@ namespace i4object
 		}
 	}
 
-	PxActor* I4PhysXMgr::createPlane()
+	PxActor* PhysXMgr::createPlane()
 	{
 		PxTransform pose = PxTransform(PxVec3(0.0f, 0, 0.0f),PxQuat(PxHalfPi, PxVec3(0.0f, 0.0f, 1.0f)));
 		PxRigidStatic* plane = mPhysics->createRigidStatic(pose);
 		if (!plane)
 		{
-			I4LOG_WARN << "create plane failed!";
+			LOG_WARN << "create plane failed!";
 			return nullptr;
 		}
 
 		PxShape* shape = plane->createShape(PxPlaneGeometry(), *mMaterial);
 		if (!shape)
 		{
-			I4LOG_WARN << "create shape failed!";
+			LOG_WARN << "create shape failed!";
 			return nullptr;
 		}
 
@@ -262,12 +262,12 @@ namespace i4object
 		return plane;
 	}
 
-	PxRigidDynamic* I4PhysXMgr::createBox(const PxTransform& transform, const I4Vector3& ext, float density)
+	PxRigidDynamic* PhysXMgr::createBox(const PxTransform& transform, const Vector3& ext, float density)
 	{
 		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxBoxGeometry(PxVec3(ext.x, ext.y, ext.z)), *mMaterial, density);
 		if (!actor)
 		{
-			I4LOG_WARN << "create box failed!";
+			LOG_WARN << "create box failed!";
 		}
 
 		mScene->addActor(*actor);
@@ -277,12 +277,12 @@ namespace i4object
 
 
 
-	PxRigidDynamic* I4PhysXMgr::createSphere(const PxTransform& transform, float radius, float density)
+	PxRigidDynamic* PhysXMgr::createSphere(const PxTransform& transform, float radius, float density)
 	{
 		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxSphereGeometry(radius), *mMaterial, density);
 		if (!actor)
 		{
-			I4LOG_WARN << "create sphere failed!";
+			LOG_WARN << "create sphere failed!";
 		}
 
 		mScene->addActor(*actor);
@@ -290,13 +290,13 @@ namespace i4object
 		return actor;
 	}
 
-	PxRigidDynamic* I4PhysXMgr::createCapsule(const PxTransform& transform, float radius, float height, float density)
+	PxRigidDynamic* PhysXMgr::createCapsule(const PxTransform& transform, float radius, float height, float density)
 	{
 		// Y가 업이 되도록 Z축을 기준으로 90도 돌린다.(기본 캡슐은 X축으로 누워있다.)
-		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxCapsuleGeometry(radius, height*0.5f), *mMaterial, density, PxTransform(PxQuat(I4PI/2, PxVec3(0, 0, 1))));
+		PxRigidDynamic* actor = PxCreateDynamic(*mPhysics, transform, PxCapsuleGeometry(radius, height*0.5f), *mMaterial, density, PxTransform(PxQuat(PI/2, PxVec3(0, 0, 1))));
 		if (!actor)
 		{
-			I4LOG_WARN << "create capsule failed!";
+			LOG_WARN << "create capsule failed!";
 		}
 
 		mScene->addActor(*actor);
@@ -304,7 +304,7 @@ namespace i4object
 		return actor;
 	}
 
-	PxController* I4PhysXMgr::createCapsuleController(const I4Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback)
+	PxController* PhysXMgr::createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback)
 	{
 		PxCapsuleControllerDesc desc;		
 		desc.setToDefault();
@@ -320,13 +320,13 @@ namespace i4object
 		PxController* c = mControllerManager->createController(*mPhysics, mScene, desc);
 		if (!c)
 		{
-			I4LOG_WARN << "create controller failed!";
+			LOG_WARN << "create controller failed!";
 		}
 
 		return c;
 	}
 
-	void I4PhysXMgr::enablePvdConnection(bool enable)
+	void PhysXMgr::enablePvdConnection(bool enable)
 	{
 		if(!mPhysics->getPvdConnectionManager()) return;
 
@@ -346,7 +346,7 @@ namespace i4object
 		}
 	}
 
-	void I4PhysXMgr::createPvdConnection()
+	void PhysXMgr::createPvdConnection()
 	{
 		if(mPhysics->getPvdConnectionManager() == NULL)
 			return;
@@ -361,19 +361,19 @@ namespace i4object
 			theConnection->release();
 	}
 
-	void I4PhysXMgr::commitDebugToRenderer(I4Renderer* renderer)
+	void PhysXMgr::commitDebugToRenderer(Renderer* renderer)
 	{
-		I4DebugLine l;
+		DebugLine l;
 
 		const PxDebugLine* lines = mScene->getRenderBuffer().getLines();
 		PxU32 numLine = mScene->getRenderBuffer().getNbLines();
 				
 		for (PxU32 i = 0; i < numLine; ++i)
 		{
-			convertToI4Color(l.color, lines[i].color0);
+			convertTo(l.color, lines[i].color0);
 
-			convertToI4Vector3(l.p0, lines[i].pos0);
-			convertToI4Vector3(l.p1, lines[i].pos1);
+			convertTo(l.p0, lines[i].pos0);
+			convertTo(l.p1, lines[i].pos1);
 			
 			renderer->commit(l);
 		}
@@ -382,20 +382,20 @@ namespace i4object
 		PxU32 numTriangle = mScene->getRenderBuffer().getNbTriangles();
 		for (PxU32 i = 0; i < numTriangle; ++i)
 		{
-			convertToI4Color(l.color, triangles[i].color0);
+			convertTo(l.color, triangles[i].color0);
 
-			convertToI4Vector3(l.p0, triangles[i].pos0);
-			convertToI4Vector3(l.p1, triangles[i].pos1);
-
-			renderer->commit(l);
-
-			convertToI4Vector3(l.p0, triangles[i].pos1);
-			convertToI4Vector3(l.p1, triangles[i].pos2);
+			convertTo(l.p0, triangles[i].pos0);
+			convertTo(l.p1, triangles[i].pos1);
 
 			renderer->commit(l);
 
-			convertToI4Vector3(l.p0, triangles[i].pos2);
-			convertToI4Vector3(l.p1, triangles[i].pos0);
+			convertTo(l.p0, triangles[i].pos1);
+			convertTo(l.p1, triangles[i].pos2);
+
+			renderer->commit(l);
+
+			convertTo(l.p0, triangles[i].pos2);
+			convertTo(l.p1, triangles[i].pos0);
 
 			renderer->commit(l);
 		}
@@ -403,7 +403,7 @@ namespace i4object
 		// point 는 필요가 없어서 미구현. 혹시 중요한 정보가 생기면 그때 구현하도록 한다.
 	}
 
-	void I4PhysXMgr::enableVisualization(bool enable)
+	void PhysXMgr::enableVisualization(bool enable)
 	{
 		// 활성화하면 엄청 느려짐!
 

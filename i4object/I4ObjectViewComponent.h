@@ -6,16 +6,16 @@ using namespace i4core;
 
 namespace i4graphics 
 {
-	class I4Model;
+	class Model;
 }
 
 namespace i4object
 {
-	class I4ObjectViewComponent : public I4ObjectComponent
+	class ObjectViewComponent : public ObjectComponent
 	{
 	public:
-		I4ObjectViewComponent(void);
-		virtual ~I4ObjectViewComponent(void);
+		ObjectViewComponent(void);
+		virtual ~ObjectViewComponent(void);
 
 		static const char*		getComponentID()	{ return "View"; }
 
@@ -27,16 +27,16 @@ namespace i4object
 		
 		void playAnimation(const char* name);
 
-		void onUpateAnimation(I4MessageArgs& args);
-		void onCommitToRenderer(I4MessageArgs& args);
+		void onUpateAnimation(MessageArgs& args);
+		void onCommitToRenderer(MessageArgs& args);
 
-		void setOffset(const I4Matrix4x4& _offset)		{ offset = _offset; }
-		I4Model* getModel()								{ return model; }
+		void setOffset(const Matrix4x4& _offset)		{ offset = _offset; }
+		Model* getModel()								{ return model; }
 
 		void setShadowCaster(bool enable);
 		void setShadowReceiver(bool enable);
 	private:
-		I4Model*		model;
-		I4Matrix4x4		offset;
+		Model*		model;
+		Matrix4x4		offset;
 	};
 }

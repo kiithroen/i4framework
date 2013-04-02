@@ -4,20 +4,20 @@
 
 namespace i4core
 {		
-	class I4Sphere
+	class Sphere
 	{
 	public:
-		I4Sphere()
+		Sphere()
 		{
 		}
 
-		I4Sphere(const I4Vector3& _center, float _radius)
+		Sphere(const Vector3& _center, float _radius)
 			: center(_center)
 			, radius(_radius)
 		{
 		}
 
-		const I4Sphere& operator = (const I4Sphere& rhs)
+		const Sphere& operator = (const Sphere& rhs)
 		{
 			center = rhs.center;
 			radius = rhs.radius;
@@ -25,7 +25,7 @@ namespace i4core
 			return *this;
 		}
 
-		void fromAABB(const I4AABB& aabb)
+		void fromAABB(const AABB& aabb)
 		{
 			// ¹ÝÁö¸§º¤ÅÍ
 			center = aabb.maxEdge - aabb.minEdge;
@@ -38,13 +38,13 @@ namespace i4core
 			center += aabb.minEdge;
 		}
 
-		const I4Sphere transform(const I4Matrix4x4& mat) const
+		const Sphere transform(const Matrix4x4& mat) const
 		{
-			return I4Sphere(mat.transformCoord(center), radius);
+			return Sphere(mat.transformCoord(center), radius);
 		}
 				
 	public:
-		I4Vector3	center;
+		Vector3	center;
 		float		radius;
 	};
 

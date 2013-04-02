@@ -5,49 +5,49 @@ using namespace i4core;
 
 namespace i4graphics {
 
-	class I4ShaderMgr;
-	class I4ModelElement;
-	class I4ModelBone;
-	class I4ModelMesh;
-	class I4ModelBoneResource;
-	class I4ModelMeshResource;
-	class I4ModelMaterialResource;
-	class I4ModelAniResource;
-	class I4Renderer;
+	class ShaderMgr;
+	class ModelElement;
+	class ModelBone;
+	class ModelMesh;
+	class ModelBoneResource;
+	class ModelMeshResource;
+	class ModelMaterialResource;
+	class ModelAniResource;
+	class Renderer;
 
-	class I4Model
+	class Model
 	{
-		typedef map<string, I4ModelElement*>	I4ModelElementMap;
-		typedef vector<I4ModelBone*>			I4ModelBoneVector;
-		typedef vector<I4ModelMesh*>			I4ModelMeshVector;
-		typedef vector<I4Matrix4x4>				I4ModelSkinTMVector;
+		typedef map<string, ModelElement*>	ModelElementMap;
+		typedef vector<ModelBone*>			ModelBoneVector;
+		typedef vector<ModelMesh*>			ModelMeshVector;
+		typedef vector<Matrix4x4>				ModelSkinTMVector;
 	public:
-		I4Model();
-		virtual ~I4Model();
+		Model();
+		virtual ~Model();
 
-		bool					registerBone(I4ModelBoneResource* boneResource);
-		bool					registerMesh(I4ModelMeshResource* meshResource);
-		bool					registerMaterial(I4ModelMaterialResource* mtrlResource);
-		bool					registerAni(I4ModelAniResource* aniResource, const char* aniName);
+		bool					registerBone(ModelBoneResource* boneResource);
+		bool					registerMesh(ModelMeshResource* meshResource);
+		bool					registerMaterial(ModelMaterialResource* mtrlResource);
+		bool					registerAni(ModelAniResource* aniResource, const char* aniName);
 
 		bool					initialize();
 		void					destroy();
 
-		I4ModelElement*			findElement(const char* name);
+		ModelElement*			findElement(const char* name);
 
 		void					playAnimation(const char* aniName);
 
 		void					animate(float dt);	
-		void					commitToRenderer(I4Renderer* renderer, const I4Matrix4x4& worldTM);
+		void					commitToRenderer(Renderer* renderer, const Matrix4x4& worldTM);
 
-		const I4Matrix4x4&		getSkinTMs(unsigned int i) const		{ return vecSkinTM[i]; }
-		I4Matrix4x4*			getSkinTMs()							{ return &vecSkinTM[0]; }
+		const Matrix4x4&		getSkinTMs(unsigned int i) const		{ return vecSkinTM[i]; }
+		Matrix4x4*			getSkinTMs()							{ return &vecSkinTM[0]; }
 
 		unsigned int			getBoneCount() const				{ return vecBone.size(); }
-		I4ModelBone*			getBone(unsigned int i)				{ return vecBone[i]; }
+		ModelBone*			getBone(unsigned int i)				{ return vecBone[i]; }
 
 		unsigned int			getMeshCount() const				{ return vecMesh.size(); }
-		I4ModelMesh*			getMesh(unsigned int i)				{ return vecMesh[i]; }
+		ModelMesh*			getMesh(unsigned int i)				{ return vecMesh[i]; }
 
 		void					setShadowCaster(bool enable)		{ shadowCaster = enable; }
 		bool					isShadowCaster() const				{ return shadowCaster; }
@@ -56,10 +56,10 @@ namespace i4graphics {
 		bool					isShadowReceiver() const			{ return shadowReceiver; }
 
 	private:
-		I4ModelElementMap		mapElement;
-		I4ModelBoneVector		vecBone;
-		I4ModelMeshVector		vecMesh;
-		I4ModelSkinTMVector		vecSkinTM;
+		ModelElementMap		mapElement;
+		ModelBoneVector		vecBone;
+		ModelMeshVector		vecMesh;
+		ModelSkinTMVector		vecSkinTM;
 		bool					shadowCaster;
 		bool					shadowReceiver;
 	};

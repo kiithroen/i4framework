@@ -4,15 +4,15 @@
 
 namespace i4graphics
 {
-	class I4RenderTarget
+	class RenderTarget
 	{
-		friend class I4VideoDriver;
+		friend class VideoDriver;
 	public:
-		virtual ~I4RenderTarget()	{}
+		virtual ~RenderTarget()	{}
 
-		virtual bool	create(unsigned int width, unsigned int height, I4FORMAT format)														{ return true; }
-		virtual bool	createDepthStencil(unsigned int width, unsigned int height, I4FORMAT texFormat, I4FORMAT dsvFormat, I4FORMAT srvFormat)	{ return true; }
+		virtual bool	create(unsigned int width, unsigned int height, FORMAT format)														{ return true; }
+		virtual bool	createDepthStencil(unsigned int width, unsigned int height, FORMAT texFormat, FORMAT dsvFormat, FORMAT srvFormat)	{ return true; }
 	protected:
-		I4RenderTarget()			{}
+		RenderTarget()			{}
 	};
 }

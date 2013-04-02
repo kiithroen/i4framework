@@ -4,32 +4,32 @@
 
 namespace i4graphics
 {
-	I4PointLightMesh::I4PointLightMesh(void)
+	PointLightMesh::PointLightMesh(void)
 	{
 	}
 
 
-	I4PointLightMesh::~I4PointLightMesh(void)
+	PointLightMesh::~PointLightMesh(void)
 	{
 		destroy();
 	}
 
-	bool I4PointLightMesh::create(float r, unsigned short ringCount, unsigned short segmentCount)
+	bool PointLightMesh::create(float r, unsigned short ringCount, unsigned short segmentCount)
 	{	
 		int vertexCount = (ringCount + 1)*(segmentCount + 1);
-		vector<I4Vertex_Pos> vertices;
+		vector<Vertex_Pos> vertices;
 		vertices.resize(vertexCount);
 
 		int indexCount = 6*ringCount*(segmentCount + 1);
 		vector<unsigned short> indices;
 		indices.resize(indexCount);
 
-		float deltaRingAngle = (I4PI/ringCount);
-		float deltaSegAngle = (2*I4PI/segmentCount);
+		float deltaRingAngle = (PI/ringCount);
+		float deltaSegAngle = (2*PI/segmentCount);
 
 		unsigned short verticeIndex = 0 ;
 
-		I4Vertex_Pos* pV = &vertices[0];
+		Vertex_Pos* pV = &vertices[0];
 		unsigned short* pI = &indices[0];
 
 		for( int ring = 0; ring <= ringCount; ring++ )
@@ -62,15 +62,15 @@ namespace i4graphics
 			}
 		}
 
-		vertexBuffer = I4VideoDriver::getVideoDriver()->createVertexBuffer();
-		if (vertexBuffer->create(vertexCount, sizeof(I4Vertex_Pos), &vertices[0]) == false)
+		vertexBuffer = VideoDriver::getVideoDriver()->createVertexBuffer();
+		if (vertexBuffer->create(vertexCount, sizeof(Vertex_Pos), &vertices[0]) == false)
 		{
 			destroy();
 			return false;
 		}
  
 		
-		indexBuffer = I4VideoDriver::getVideoDriver()->createIndexBuffer();
+		indexBuffer = VideoDriver::getVideoDriver()->createIndexBuffer();
 		if (indexBuffer->create(indexCount, sizeof(unsigned short), &indices[0]) == false)
 		{
 			destroy();
@@ -80,26 +80,26 @@ namespace i4graphics
 		return true;
 	}
 
-	void I4PointLightMesh::destroy()
+	void PointLightMesh::destroy()
 	{
 		delete indexBuffer;
 		delete vertexBuffer;
 	}
 
-	void I4PointLightMesh::bind()
+	void PointLightMesh::bind()
 	{
 		vertexBuffer->bind();
 		indexBuffer->bind();
 	}
 
-	void I4PointLightMesh::unbind()
+	void PointLightMesh::unbind()
 	{
 		indexBuffer->unbind();
 		vertexBuffer->unbind();
 	}
 
-	void I4PointLightMesh::draw()
+	void PointLightMesh::draw()
 	{
-		indexBuffer->draw(I4PT_TRIANGLELIST);
+		indexBuffer->draw(PT_TRIANGLELIST);
 	}
 }

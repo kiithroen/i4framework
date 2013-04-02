@@ -5,22 +5,22 @@ using namespace i4core;
 
 namespace i4graphics
 {
-	struct I4SubMesh
+	struct SubMesh
 	{
 		int id;
 		int start;
 		int count;
 	};
 
-	class I4VertexBuffer;
-	class I4IndexBuffer;
-	class I4Texture;
+	class VertexBuffer;
+	class IndexBuffer;
+	class Texture;
 
-	class I4TriangleMesh
+	class TriangleMesh
 	{
 	public:
-		I4TriangleMesh();
-		~I4TriangleMesh();
+		TriangleMesh();
+		~TriangleMesh();
 		
 		void			bind();
 		void			unbind();
@@ -30,10 +30,10 @@ namespace i4graphics
 
 		//-------------------------------
 		
-		I4AABB				localAABB;
-		I4VertexBuffer*		vertexBuffer;
-		I4IndexBuffer*		indexBuffer;
-		vector<I4SubMesh>	subMeshes;
+		AABB				localAABB;
+		VertexBuffer*		vertexBuffer;
+		IndexBuffer*		indexBuffer;
+		vector<SubMesh>	subMeshes;
 		bool				skined;
 	};
 	
