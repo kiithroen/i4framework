@@ -167,21 +167,21 @@ namespace i4graphics
 		DeferredRenderer();
 		virtual ~DeferredRenderer(void);
 
-		virtual bool				initialize(void* _windowID, unsigned int _width, unsigned int _height) override;
-		void						finalize();
+		virtual bool		initialize(void* _windowID, unsigned int _width, unsigned int _height) override;
+		void				finalize();
 
-		virtual void				commit(const MeshRenderItem& item) override;
-		virtual void				commit(DirectionalLight* light) override;
-		virtual void				commit(PointLight* light) override;
+		virtual void		commit(const MeshRenderItem& item) override;
+		virtual void		commit(DirectionalLight* light) override;
+		virtual void		commit(PointLight* light) override;
+		virtual void		commit(const DebugLine& line) override;
+		virtual void		commit(const DebugBox& box) override;
 
-		virtual void				commit(const DebugLine& line) override;
+		virtual void		render() override;
 
-		virtual void				render() override;
+		void				renderDebug();
 
-		void renderDebug();
-
-		void						beginRender();
-		void						endRender();
+		void				beginRender();
+		void				endRender();
 
 		bool				isWireMode() const				{ return wireMode; }
 		void				setWireMode(bool enable)		{ wireMode = enable; }
@@ -209,34 +209,34 @@ namespace i4graphics
 		void				renderPointLight();
 
 	private:
-		VideoDriver*					videoDriver;
-		ShaderMgr*					shaderMgr;
-		ModelMgr*						modelMgr;
-		RenderTarget*					rtDiffuse;
-		RenderTarget*					rtSpecular;
-		RenderTarget*					rtNormal;
-		RenderTarget*					rtDepth;
-		RenderTarget*					rtLight;
-		RenderTarget*					rtShadow;
+		VideoDriver*			videoDriver;
+		ShaderMgr*				shaderMgr;
+		ModelMgr*				modelMgr;
+		RenderTarget*			rtDiffuse;
+		RenderTarget*			rtSpecular;
+		RenderTarget*			rtNormal;
+		RenderTarget*			rtDepth;
+		RenderTarget*			rtLight;
+		RenderTarget*			rtShadow;
 
-		ScreenQuadMesh*				screenQuadMesh;
-		PointLightMesh*				pointLightMesh;
+		ScreenQuadMesh*			screenQuadMesh;
+		PointLightMesh*			pointLightMesh;
 
-		MeshRenderItemVector			vecSceneMeshRenderItem;
-		PointLightVector				vecScenePointLight;
+		MeshRenderItemVector	vecSceneMeshRenderItem;
+		PointLightVector		vecScenePointLight;
 
-		MeshRenderItemVector			vecCulledMeshRenderItem;
-		PointLightVector				vecCulledPointLight;
+		MeshRenderItemVector	vecCulledMeshRenderItem;
+		PointLightVector		vecCulledPointLight;
 
-		DirectionalLight				sunLight;
+		DirectionalLight		sunLight;
 
 		CBHolder<CBOnResize_G>				cbOnResize_G;
-		CBHolder<CBEveryFrame_G>				cbEveryFrame_G;
-		CBHolder<CBEachAllMesh_G_VS>			cbEachAllMesh_G_VS;
-		CBHolder<CBEachAllMesh_G_PS>			cbEachMeshInstance_G_PS;
-		CBHolder<CBEachSkinedMesh_G>			cbEachSkinedMesh_G;
+		CBHolder<CBEveryFrame_G>			cbEveryFrame_G;
+		CBHolder<CBEachAllMesh_G_VS>		cbEachAllMesh_G_VS;
+		CBHolder<CBEachAllMesh_G_PS>		cbEachMeshInstance_G_PS;
+		CBHolder<CBEachSkinedMesh_G>		cbEachSkinedMesh_G;
 
-		CBHolder<CBEachAllMesh_S_VS>			cbEachAllMesh_S_VS;
+		CBHolder<CBEachAllMesh_S_VS>		cbEachAllMesh_S_VS;
 		CBHolder<CBEachSkinedMesh_S_VS>		cbEachSkinedMesh_S_VS;
 		
 		CBHolder<CBOnResize_L_directional>	cbOnResize_L_directional;
@@ -244,8 +244,8 @@ namespace i4graphics
 		CBHolder<CBOnResize_L_point_VS>		cbOnResize_L_point_VS;
 		CBHolder<CBOnResize_L_point_PS>		cbOnResize_L_point_PS;
 		CBHolder<CBEveryFrame_L_point>		cbEveryFrame_L_point;
-		CBHolder<CBEachLight_L_point_VS>		cbEachLight_L_point_VS;
-		CBHolder<CBEachLight_L_point_PS>		cbEachLight_L_point_PS;
+		CBHolder<CBEachLight_L_point_VS>	cbEachLight_L_point_VS;
+		CBHolder<CBEachLight_L_point_PS>	cbEachLight_L_point_PS;
 
 		int			shadowSplitSize;
 		float		shadowSplitZ[SHADOW_SPLIT_NUM];

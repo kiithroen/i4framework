@@ -293,6 +293,29 @@ namespace i4graphics
 		}
 	}
 
+	void DeferredRenderer::commit(const DebugBox& box)
+	{
+		if (debugMode)
+		{
+			Vector3 edges[8];
+			box.aabb.extractEdges(edges);
+
+			debugLineBatch->add(edges[0], edges[1], box.color);
+			debugLineBatch->add(edges[1], edges[2], box.color);
+			debugLineBatch->add(edges[2], edges[3], box.color);
+			debugLineBatch->add(edges[0], edges[3], box.color);
+			debugLineBatch->add(edges[0], edges[1], box.color);
+			debugLineBatch->add(edges[4], edges[5], box.color);
+			debugLineBatch->add(edges[5], edges[6], box.color);
+			debugLineBatch->add(edges[6], edges[7], box.color);
+			debugLineBatch->add(edges[4], edges[7], box.color);
+			debugLineBatch->add(edges[0], edges[4], box.color);
+			debugLineBatch->add(edges[1], edges[5], box.color);
+			debugLineBatch->add(edges[2], edges[6], box.color);
+			debugLineBatch->add(edges[3], edges[7], box.color);
+		}
+	}
+
 	void DeferredRenderer::render()
 	{
 		PROFILE_THISFUNC;

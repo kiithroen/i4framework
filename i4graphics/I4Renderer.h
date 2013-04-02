@@ -50,6 +50,12 @@ namespace i4graphics {
 		Vector4	color;
 	};
 
+	struct DebugBox
+	{
+		AABB aabb;
+		Vector4 color;
+	};
+
 	class Renderer
 	{
 	public:
@@ -66,14 +72,15 @@ namespace i4graphics {
 
 		virtual bool	initialize(void* _windowID, unsigned int _width, unsigned int _height)	{ return true; }
 
-		virtual void	commit(const MeshRenderItem& item)			{}
-		virtual void	commit(DirectionalLight* light)				{}
+		virtual void	commit(const MeshRenderItem& item)				{}
+		virtual void	commit(DirectionalLight* light)					{}
 		virtual void	commit(PointLight* light)						{}
 		virtual void	commit(const DebugLine& line)					{}
+		virtual void	commit(const DebugBox& box)						{}
 
-		virtual void	render()										{}
+		virtual void	render()									{}
 
-		Camera&		getMainCamera()					{ return mainCamera; }
+		Camera&			getMainCamera()					{ return mainCamera; }
 
 		bool			isWireMode() const				{ return wireMode; }
 		void			setWireMode(bool enable)		{ wireMode = enable; }
@@ -82,7 +89,7 @@ namespace i4graphics {
 		void			setDebugMode(bool enable)		{ debugMode = enable; }
 
 	protected:
-		Camera	mainCamera;
+		Camera		mainCamera;
 		bool		wireMode;
 		bool		debugMode;
 	};

@@ -83,23 +83,8 @@ namespace i4core
 			if (maxEdge.z < box.maxEdge.z) maxEdge.z = box.maxEdge.z;
 		}
 		
-		
-		void repair()
-		{
-			// 변환이 이루어지고 나서는 최대 최소가 바낄수 있으므로 확인해서 고쳐준다.
-			if (minEdge.x > maxEdge.x) swap(minEdge.x, maxEdge.x);
-			if (minEdge.y > maxEdge.y) swap(minEdge.y, maxEdge.y);
-			if (minEdge.z > maxEdge.z) swap(minEdge.z, maxEdge.z);
-		}
-
 		const AABB transform(const Matrix4x4& mat) const
 		{
-			/*
-			// 최적화된 AABB가 아니다.
-			// 최적화된 AABB를 만드려면 8개점을 모두 옮기고 다시 AABB를 구해야함.
-			AABB aabb(mat.transformCoord(minEdge), mat.transformCoord(maxEdge));
-			aabb.repair();
-			*/
 			Vector3 edges[8];
 			extractEdges(edges);
 
@@ -114,14 +99,6 @@ namespace i4core
 				aabb.merge(edges[i]);
 			}
 			return aabb;
-		}
-
-		const AABB transformInto(const Matrix4x4& mat) const
-		{
-			Matrix4x4 matInv;
-			mat.extractInversePrimitive(matInv);
-
-			return transform(matInv);
 		}
 
 		// 		  /5--------/6

@@ -91,64 +91,12 @@ namespace i4graphics
 
 	void ModelBone::commitToRenderer(Renderer* renderer, const Matrix4x4& parentTM)
 	{
-		AABB aa(Vector3(-1, -1, -1), Vector3(1, 1, 1));
+		const Matrix4x4 worldTM = resultTM*parentTM;
 
-		Vector3 edges[8];
-		aa.extractEdges(edges);
-
-		Matrix4x4 m = resultTM*parentTM;
-		worldInverseTM.extractInverse(m);
-		m = m*parentTM;
-
-		DebugLine l;
-		l.color = Vector4(1, 0, 0, 1);
-		l.p0 = m.transformCoord(edges[0]);
-		l.p1 = m.transformCoord(edges[1]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[1]);
-		l.p1 = m.transformCoord(edges[2]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[2]);
-		l.p1 = m.transformCoord(edges[3]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[0]);
-		l.p1 = m.transformCoord(edges[3]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[4]);
-		l.p1 = m.transformCoord(edges[5]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[5]);
-		l.p1 = m.transformCoord(edges[6]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[6]);
-		l.p1 = m.transformCoord(edges[7]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[4]);
-		l.p1 = m.transformCoord(edges[7]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[0]);
-		l.p1 = m.transformCoord(edges[4]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[1]);
-		l.p1 = m.transformCoord(edges[5]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[2]);
-		l.p1 = m.transformCoord(edges[6]);
-		renderer->commit(l);
-
-		l.p0 = m.transformCoord(edges[3]);
-		l.p1 = m.transformCoord(edges[7]);
-		renderer->commit(l);
+		DebugBox box;
+		box.aabb = AABB(Vector3(-1, -1, -1), Vector3(1, 1, 1)).transform(worldTM);
+		box.color = Vector4(1, 0, 0, 1);
+		renderer->commit(box);
 	}
 
 	//------------------------- ModelMesh -------------------------

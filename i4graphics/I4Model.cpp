@@ -5,6 +5,7 @@
 #include "I4ShaderMgr.h"
 #include "I4KeyFrameSet.h"
 #include "I4Profile.h"
+#include "I4Renderer.h"
 
 namespace i4graphics
 {
@@ -144,10 +145,13 @@ namespace i4graphics
 	{
 		PROFILE_THISFUNC;
 
-		unsigned int boneSize = vecBone.size();
-		for (unsigned int i = 0; i < boneSize; ++i)
+		if (renderer->isDebugMode())
 		{
-			vecBone[i]->commitToRenderer(renderer, worldTM);
+			unsigned int boneSize = vecBone.size();
+			for (unsigned int i = 0; i < boneSize; ++i)
+			{
+				vecBone[i]->commitToRenderer(renderer, worldTM);
+			}
 		}
 
 		unsigned int meshSize = vecMesh.size();
