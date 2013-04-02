@@ -51,7 +51,7 @@ namespace i4graphics
 
 	void AnimationController::addTrack(const char* name, KeyFrameSet* keyFrameSet)
 	{
-		AnimationTrack* animationTrack = new AnimationTrack(keyFrameSet);
+		auto animationTrack = new AnimationTrack(keyFrameSet);
 		mapAnimationTrack.insert(make_pair(name, animationTrack));	
 	}
 

@@ -35,7 +35,7 @@ namespace i4object {
 	{
 		assert(findObject(name) == nullptr);		// 같은 이름으로는 처음 생성되어야 한다.
 
-		Object* sceneNode = new Object(this, name);
+		auto sceneNode = new Object(this, name);
 		mapObject.insert(make_pair(name, sceneNode));
 		
 		return sceneNode;

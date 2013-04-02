@@ -64,7 +64,7 @@ namespace i4graphics
 
 		do
 		{
-			ModelElementInfo* nodeInfo = new ModelElementInfo();
+			auto nodeInfo = new ModelElementInfo();
 			vecBoneInfo.push_back(nodeInfo);
 			parseNodeInfo(*nodeInfo, xml);
 
@@ -181,7 +181,7 @@ namespace i4graphics
 
 		do
 		{
-			ModelElementInfo* nodeInfo = new ModelElementInfo();
+			auto nodeInfo = new ModelElementInfo();
 			vecMeshInfo.push_back(nodeInfo);
 
 			parseNodeInfo(*nodeInfo, xml);	 
@@ -487,7 +487,7 @@ namespace i4graphics
 				data.vecUV, data.vecIndex.size(), data.vecIndex, data.vecTangent);
 		}
 
-		TriangleMesh* mesh = new TriangleMesh();
+		auto mesh = new TriangleMesh();
 
 		mesh->skined = data.skined;
 		mesh->localAABB = data.localAABB;
@@ -844,7 +844,7 @@ namespace i4graphics
 
 		do
 		{
-			KeyFrameSet* keyFrameSet = new KeyFrameSet();
+			auto keyFrameSet = new KeyFrameSet();
 			xml.getAttrValue(keyFrameSet->nodeName, "name");
 			keyFrameSet->startFrame = startFrame;
 			keyFrameSet->endFrame = endFrame;

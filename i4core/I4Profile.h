@@ -23,7 +23,7 @@ namespace i4core
 			}
 
 			// 없으면 새로운 자식을 만들고 첫번째 자식으로 추가하고 리턴
-			ProfileNode* node = new ProfileNode(name, this, child);
+			auto node = new ProfileNode(name, this, child);
 			child = node;
 
 			return child;

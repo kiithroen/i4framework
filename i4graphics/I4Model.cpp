@@ -27,7 +27,7 @@ namespace i4graphics
 		{
 			ModelElementInfo* boneInfo = boneResource->getBoneInfo(i);
 
-			ModelBone* modelBone = new ModelBone(this, boneInfo);
+			auto modelBone = new ModelBone(this, boneInfo);
 
 			vecBone.push_back(modelBone);
 			mapElement.insert(make_pair(boneInfo->name, modelBone));
@@ -46,7 +46,7 @@ namespace i4graphics
 			ModelElementInfo* meshInfo = meshResource->getMeshInfo(i);
 			TriangleMesh* mesh = meshResource->getMesh(i);
 
-			ModelMesh* modelMesh = new ModelMesh(this, meshInfo, mesh);
+			auto modelMesh = new ModelMesh(this, meshInfo, mesh);
 
 			vecMesh.push_back(modelMesh);
 			mapElement.insert(make_pair(meshInfo->name, modelMesh));
