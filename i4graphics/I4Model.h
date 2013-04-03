@@ -20,7 +20,7 @@ namespace i4graphics {
 		typedef map<string, ModelElement*>	ModelElementMap;
 		typedef vector<ModelBone*>			ModelBoneVector;
 		typedef vector<ModelMesh*>			ModelMeshVector;
-		typedef vector<Matrix4x4>				ModelSkinTMVector;
+		typedef vector<Matrix4x4>			ModelSkinTMVector;
 	public:
 		Model();
 		virtual ~Model();
@@ -40,14 +40,14 @@ namespace i4graphics {
 		void					animate(float dt);	
 		void					commitToRenderer(Renderer* renderer, const Matrix4x4& worldTM);
 
-		const Matrix4x4&		getSkinTMs(unsigned int i) const		{ return vecSkinTM[i]; }
-		Matrix4x4*			getSkinTMs()							{ return &vecSkinTM[0]; }
+		const Matrix4x4&		getSkinTMs(unsigned int i) const	{ return vecSkinTM[i]; }
+		Matrix4x4*				getSkinTMs()						{ return &vecSkinTM[0]; }
 
 		unsigned int			getBoneCount() const				{ return vecBone.size(); }
-		ModelBone*			getBone(unsigned int i)				{ return vecBone[i]; }
+		ModelBone*				getBone(unsigned int i)				{ return vecBone[i]; }
 
 		unsigned int			getMeshCount() const				{ return vecMesh.size(); }
-		ModelMesh*			getMesh(unsigned int i)				{ return vecMesh[i]; }
+		ModelMesh*				getMesh(unsigned int i)				{ return vecMesh[i]; }
 
 		void					setShadowCaster(bool enable)		{ shadowCaster = enable; }
 		bool					isShadowCaster() const				{ return shadowCaster; }
@@ -56,10 +56,11 @@ namespace i4graphics {
 		bool					isShadowReceiver() const			{ return shadowReceiver; }
 
 	private:
-		ModelElementMap		mapElement;
-		ModelBoneVector		vecBone;
-		ModelMeshVector		vecMesh;
+		ModelElementMap			mapElement;
+		ModelBoneVector			vecBone;
+		ModelMeshVector			vecMesh;
 		ModelSkinTMVector		vecSkinTM;
+		vector<int>				vecAllRefBone;
 		bool					shadowCaster;
 		bool					shadowReceiver;
 	};

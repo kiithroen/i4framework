@@ -136,6 +136,25 @@ namespace i4graphics
 
 		item.shaderMask = SHADER_MASK_NONE;
 
+		if (mesh->skined && model->getBoneCount() > 0)
+		{
+			item.shaderMask |= SHADER_MASK_SKINNING;
+			item.worldTM = worldTM;
+			item.boneCount = elementInfo->boneRefTable.size();
+			item.resultTM = resultTM;
+			item.boneRefTable = &elementInfo->boneRefTable[0];
+			item.skinTMs = model->getSkinTMs();
+		}
+		else
+		{
+			item.worldTM = finalTM;
+			// 아래 정보들은 사용안함
+			item.boneCount = 0;
+			item.skinTMs = nullptr;
+			item.boneRefTable = nullptr;
+			item.resultTM = MATRIX4X4_IDENTITY; 
+		}		
+
 		for (unsigned int i = 0; i < mesh->subMeshes.size(); ++i)
 		{
 			item.subMeshID = i;
@@ -155,23 +174,6 @@ namespace i4graphics
 			{
 				item.shaderMask |= SHADER_MASK_TEX_NORMAL;
 			}
-
-			if (mesh->skined && model->getBoneCount() > 0)
-			{
-				item.shaderMask |= SHADER_MASK_SKINNING;
-				item.worldTM = worldTM;
-				item.boneCount = model->getBoneCount();
-				item.resultTM = resultTM;
-				item.skinTMs = model->getSkinTMs();
-			}
-			else
-			{
-				item.worldTM = finalTM;
-				// 아래 정보들은 사용안함
-				item.boneCount = 0;
-				item.skinTMs = nullptr;
-				item.resultTM = MATRIX4X4_IDENTITY; 
-			}		
 
 			renderer->commit(item);
 		}

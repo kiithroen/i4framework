@@ -15,13 +15,14 @@ namespace i4graphics
 {
 	struct ParsedMeshData
 	{
-		bool					skined;
-		AABB					localAABB;
+		bool				skined;
+		AABB				localAABB;	
+		vector<int>			boneRefTable;
 		vector<Vector3>		vecPosition;
 		vector<Vector3>		vecNormal;
 		vector<Vector4>		vecTangent;
-		vector<TextureUV>		vecUV;
-		vector<Index16>		vecIndex;
+		vector<TextureUV>	vecUV;
+		vector<Index16>		vecIndex;	
 		vector<BoneID>		vecBoneID;
 		vector<Weight>		vecWeight;
 		vector<SubMesh>		subMeshes;
@@ -206,7 +207,8 @@ namespace i4graphics
 		xml.getAttrValue(out.parentName, "parent_name");
 
 		parseNodeInfoLocalTM(out, xml);
-		parseNodeInfoWorldTM(out, xml);
+		parseNodeInfoWorldTM(out, xml);		
+		parseBoneRefTable(out, xml);
 	}
 
 	void ModelMeshResource::parseNodeInfoLocalTM(ModelElementInfo& out,XmlData& xml)
@@ -260,6 +262,34 @@ namespace i4graphics
 
 			out.worldTM._14 = out.worldTM._24 = out.worldTM._34 = 0.0f;
 			out.worldTM._44 = 1.0f;
+
+			xml.selectParentNode();
+		}
+	}
+	
+	void ModelMeshResource::parseBoneRefTable(ModelElementInfo& out, XmlData& xml)
+	{
+		if (xml.selectFirstChildNode("boneRef"))
+		{
+			int size;
+			xml.getAttrValue(size, "count");
+			out.boneRefTable.resize(size);
+
+			if (xml.selectFirstChildNode("a"))
+			{
+				int i = 0;
+				do
+				{
+					const char* val = nullptr;
+					xml.getNodeValue(val);
+
+					sscanf_s(val, "%d", &out.boneRefTable[i]);
+					++i;
+
+				} while (xml.selectNextSiblingNode("a"));
+
+				xml.selectParentNode();
+			}
 
 			xml.selectParentNode();
 		}

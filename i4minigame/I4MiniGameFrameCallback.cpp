@@ -23,7 +23,8 @@
 #include "I4ModelElement.h"
 
 using namespace i4core;
-
+
+
 MiniGameFrameCallback::MiniGameFrameCallback()
 : objectMgr(nullptr)
 , renderer(nullptr)
@@ -31,7 +32,8 @@ MiniGameFrameCallback::MiniGameFrameCallback()
 , player(nullptr)
 {
 }
-
+
+
 MiniGameFrameCallback::~MiniGameFrameCallback()
 {
 }

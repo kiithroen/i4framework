@@ -50,7 +50,8 @@ namespace i4graphics {
 	class ModelMeshResource
 	{
 		typedef vector<ModelElementInfo*>	ModelInfoVector;
-		typedef vector<TriangleMesh*>				MeshVector;
+		typedef vector<TriangleMesh*>		MeshVector;
+		typedef vector<vector<int>>			MeshBoneRefTableVector;
 
 	public:
 		ModelMeshResource();
@@ -60,9 +61,9 @@ namespace i4graphics {
 
 		void					destroy();
 
-		unsigned int			getMeshCount() const				{ return vecMeshInfo.size(); }
-		ModelElementInfo*		getMeshInfo(unsigned int i) const	{ return vecMeshInfo[i]; }
-		TriangleMesh*			getMesh(unsigned int i) const		{ return vecMesh[i]; }
+		unsigned int			getMeshCount() const					{ return vecMeshInfo.size(); }
+		ModelElementInfo*		getMeshInfo(unsigned int i) const		{ return vecMeshInfo[i]; }
+		TriangleMesh*			getMesh(unsigned int i) const			{ return vecMesh[i]; }
 
 	private:
 		void					parseMesh(XmlData& xml);
@@ -70,6 +71,7 @@ namespace i4graphics {
 		void					parseNodeInfo(ModelElementInfo& out, XmlData& xml);
 		void					parseNodeInfoLocalTM(ModelElementInfo& out,XmlData& xml);
 		void					parseNodeInfoWorldTM(ModelElementInfo& out,XmlData& xml);
+		void					parseBoneRefTable(ModelElementInfo& out, XmlData& xml);
 
 		void					parseMeshPosition(ParsedMeshData& out,XmlData& xml);
 		void					parseMeshNormal(ParsedMeshData& out,XmlData& xml);	
@@ -83,8 +85,8 @@ namespace i4graphics {
 		void					CalculateTangentArray(long vertexCount, const vector<Vector3>& vertex, const vector<Vector3>& normal,
 			const vector<TextureUV>& texCoord, long triangleCount, const vector<Index16>& triangle, vector<Vector4>& tangent);
 	private:
-		ModelInfoVector		vecMeshInfo;
-		MeshVector			vecMesh;
+		ModelInfoVector			vecMeshInfo;
+		MeshVector				vecMesh;
 	};
 
 	//-------------------- ModelMaterialResource -----------------------

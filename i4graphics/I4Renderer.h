@@ -22,7 +22,8 @@ namespace i4graphics {
 		unsigned int		subMeshID;
 		TriangleMesh*		mesh;
 		Material*			material;
-		Matrix4x4*		skinTMs;
+		Matrix4x4*			skinTMs;
+		int*				boneRefTable;
 		bool				shadowCaster;
 		bool				shadowReceiver;
 

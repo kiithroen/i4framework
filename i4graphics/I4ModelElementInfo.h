@@ -13,6 +13,8 @@ namespace i4graphics {
 		string		parentName;
 		string		name;
 		string		type;
+		
+		vector<int>	boneRefTable;
 	};
 
 }

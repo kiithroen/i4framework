@@ -61,12 +61,14 @@ bool DnDFileToListCtrl::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filen
 }
 
 IMPLEMENT_APP(ConverterApp)
-
+
+
 ConverterApp::ConverterApp(void)
 {
 }
 
-
+
+
 ConverterApp::~ConverterApp(void)
 {
 }
@@ -82,7 +84,8 @@ bool ConverterApp::OnInit()
 
 	return true;
 }
-
+
+
 ConverterFrame::ConverterFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     : wxFrame( NULL, -1, title, pos, size )
 {
@@ -170,7 +173,8 @@ ConverterFrame::ConverterFrame(const wxString& title, const wxPoint& pos, const 
 
     SetStatusText( _("Ready! Drag and Drop Files or Directory.") );
 }
-
+
+
 ConverterFrame::~ConverterFrame()
 {
 	for (int i = 0; i < listCtrl->GetItemCount(); ++i)
@@ -414,7 +418,8 @@ bool ConverterFrame::Cancelled()
 
     return m_cancelled;
 }
-
+
+
 ExportWorkerThread::ExportWorkerThread(ConverterFrame *frame)
         : wxThread()
 		, frame(frame)

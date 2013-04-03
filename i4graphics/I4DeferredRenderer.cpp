@@ -489,12 +489,6 @@ namespace i4graphics
 				cbEachMeshInstance_G_PS.getData()->specularLevel = itr.material->specularLevel;
 				cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
 				shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
-
-				if (itr.shaderMask & SHADER_MASK_SKINNING)
-				{
-					buildMatrixPalette(cbEachSkinedMesh_G.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
-					shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
-				}
 			}
 
 			if (isChangedTwoSide)
@@ -534,6 +528,13 @@ namespace i4graphics
 			cbEachAllMesh_G_VS.getData()->world = itr.worldTM;
 			cbEachAllMesh_G_VS.getData()->result = itr.resultTM;
 			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
+
+			
+			if (itr.shaderMask & SHADER_MASK_SKINNING)
+			{
+				buildMatrixPalette(cbEachSkinedMesh_G.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneRefTable, itr.boneCount);
+				shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 4, cbEachSkinedMesh_G.getBuffer(), cbEachSkinedMesh_G.getData());
+			}
 
 			itr.mesh->drawSub(itr.subMeshID);
 
@@ -745,12 +746,6 @@ namespace i4graphics
 				}
 					
 				itr.mesh->bind();
-
-				if (itr.shaderMask & SHADER_MASK_SKINNING)
-				{
-					buildMatrixPalette(cbEachSkinedMesh_S_VS.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneCount);
-					shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
-				}
 			}
 	
 			if (isChangedTwoSide)
@@ -772,6 +767,12 @@ namespace i4graphics
 			cbEachAllMesh_S_VS.getData()->worldViewProj = itr.worldTM*camera.getViewProjectionMatrix(); 
 			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 0, cbEachAllMesh_S_VS.getBuffer(), cbEachAllMesh_S_VS.getData());			
 			
+			if (itr.shaderMask & SHADER_MASK_SKINNING)
+			{
+				buildMatrixPalette(cbEachSkinedMesh_S_VS.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneRefTable, itr.boneCount);
+				shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 1, cbEachSkinedMesh_S_VS.getBuffer(), cbEachSkinedMesh_S_VS.getData());
+			}
+
 			itr.mesh->drawAll();
 
 			prevItem = &itr;
@@ -785,16 +786,13 @@ namespace i4graphics
 		shaderMgr->end();
 	}
 
-	void DeferredRenderer::buildMatrixPalette(Matrix4x4* matrixPalette, const Matrix4x4& resultTM, const Matrix4x4* skinTMs, unsigned int boneCount)
+	void DeferredRenderer::buildMatrixPalette(Matrix4x4* matrixPalette, const Matrix4x4& resultTM, const Matrix4x4* skinTMs, const int* boneRefTable, unsigned int boneCount)
 	{
-		// 매트릭스 팔레트를 만들어서 넘겨준다.
-		// 또 모델이 바낄때마다 매트릭스 팔레트를 바꺼주고 resultTM을 셰이더에 넘겨주는것도 생각해봤는데 셰이더 연산량이 너무 많아서 안되겠다.
-		// TODO : 지금은 모델 참조하고 있는 전체 본을 넘겨주는데 메시가 참조하고 있는 본만 가져와서 인덱스를 재구성해서 넘겨주는 식으로 바꺼주자.
-		// 그럴려면 익스포터나 임포터 과정에서 전처리 해줘야할듯.
+		// 매트릭스 팔레트를 만들어서 넘겨준다..
 		for (unsigned int i = 0; i < boneCount; ++i)
 		{
-			
-			matrixPalette[i] = resultTM*skinTMs[i];
+			int boneID = boneRefTable[i];
+			matrixPalette[i] = resultTM*skinTMs[boneID];
 		}
 	}
 

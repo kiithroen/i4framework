@@ -53,7 +53,7 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachSkinedMesh_G
 	{
-		Matrix4x4 matrixPalette[120];
+		Matrix4x4 matrixPalette[128];
 	};
 
 	__declspec(align(16))
@@ -65,7 +65,7 @@ namespace i4graphics
 	__declspec(align(16))
 	struct CBEachSkinedMesh_S_VS
 	{
-		Matrix4x4 matrixPalette[120];
+		Matrix4x4 matrixPalette[128];
 	};
 
 	__declspec(align(16))
@@ -201,7 +201,7 @@ namespace i4graphics
 		void				cullAndSortMeshShadowRenderItem(const Camera& camera);
 		void				renderMeshShadowRenderItem(const Camera& camera);
 
-		void				buildMatrixPalette(Matrix4x4* matrixPalette, const Matrix4x4& resultTM, const Matrix4x4* skinTMs, unsigned int boneCount);
+		void				buildMatrixPalette(Matrix4x4* matrixPalette, const Matrix4x4& resultTM, const Matrix4x4* skinTMs, const int* boneRefTable, unsigned int boneCount);
 
 		void				renderDirectionalLight();
 

@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "I4FbxConverter.h"
 #include <wx/wx.h>
-
+
+
 FbxConverter::FbxConverter(void)
 : lSdkManager(nullptr)
 , pScene(nullptr)
@@ -13,7 +14,8 @@ FbxConverter::FbxConverter(void)
 {
 }
 
-
+
+
 FbxConverter::~FbxConverter(void)
 {
 }
@@ -77,6 +79,11 @@ void FbxConverter::Begin(const char* srcFileName, const char* destName)
 
 	wxLogMessage(wxT("build bone info"));
 	BuildBoneNameList(pScene->GetRootNode());
+
+	if (mapBoneNameList.size() > 0)
+	{
+		isFlipNormalZ = true;
+	}
 }
 
 void FbxConverter::WriteMeshes()
@@ -429,6 +436,9 @@ void FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 		}
 	}
 
+	set<int>		setBoneRef;
+	map<int, int>	mapBoneRefTable;
+
 	// 각각 버텍스에 본 가중치들을 추가한다.
 	int deformerCount = pMesh->GetDeformerCount();
 	if (deformerCount > 0)
@@ -459,7 +469,10 @@ void FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 
 				string name = pLinkNode->GetName();
 
+				int boneRefID = -1;
 				int boneID = mapBoneNameList[name];
+
+				setBoneRef.insert(boneID);
 
 				int associateCtrlPointCount = pCluster->GetControlPointIndicesCount();
 				int* pCtrlPointIndices = pCluster->GetControlPointIndices();
@@ -477,6 +490,14 @@ void FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 			}
 		}
 
+		
+
+		int idx = 0;
+		for (auto itr = setBoneRef.begin(); itr != setBoneRef.end(); ++itr)
+		{
+			mapBoneRefTable[*itr] = idx++;
+		}
+
 		// 얻어온 본 가중치들을 가중치순으로 정렬해준다.
 		for (unsigned int i = 0; i < data.vecI4SkinInfo.size(); ++i)
 		{
@@ -487,7 +508,17 @@ void FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 	splitVertexDifferentI4TextureUV(data);
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------------
-		
+	if (mapBoneRefTable.size() > 0)
+	{
+		fprintf(fpMesh, "\t\t<boneRef count=\"%d\">\n", mapBoneRefTable.size());
+
+		for (auto itr = setBoneRef.begin(); itr != setBoneRef.end(); ++itr)
+		{
+			fprintf(fpMesh, "\t\t\t<a>%d</a>\n", *itr);
+		}
+		fprintf(fpMesh, "\t\t</boneRef>\n");
+	}
+
 	fprintf(fpMesh, "\t\t<position count=\"%d\">\n", data.vecPosition.size());
 	for (unsigned int i = 0; i < data.vecPosition.size(); ++i)
 	{
@@ -525,7 +556,7 @@ void FbxConverter::WriteMesh(FbxMesh* pMesh, FILE* fpMesh)
 			fprintf(fpMesh, "\t\t\t<v>\n");
 			for (unsigned int j = 0; j < data.vecI4SkinInfo[i].data.size(); ++j)
 			{
-				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", data.vecI4SkinInfo[i].data[j].boneID, data.vecI4SkinInfo[i].data[j].boneWeight);
+				fprintf(fpMesh, "\t\t\t\t<a>%d %g</a>\n", mapBoneRefTable[data.vecI4SkinInfo[i].data[j].boneID], data.vecI4SkinInfo[i].data[j].boneWeight);
 			}
 			fprintf(fpMesh, "\t\t\t</v>\n");
 		}

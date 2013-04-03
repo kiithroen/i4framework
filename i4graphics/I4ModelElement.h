@@ -38,7 +38,7 @@ namespace i4graphics {
 	protected:
 		Matrix4x4				resultTM;
 
-		Model*				model;
+		Model*					model;
 		ModelElementInfo*		elementInfo;
 		ModelElement*			parentElement;
 		AnimationController*	aniController;
@@ -78,7 +78,7 @@ namespace i4graphics {
 		TriangleMesh*	getMesh()			{ return mesh; }
 
 	protected:
-		TriangleMesh*			mesh;
+		TriangleMesh*		mesh;
 		MaterialVector		vecMaterial;
 	};
 }

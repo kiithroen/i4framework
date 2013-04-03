@@ -25,7 +25,7 @@ cbuffer	CBEachAllMesh_G_PS : register(b3)
 #ifdef MASK_SKINNING
 cbuffer CBEachSkinedMesh_G : register(b4)
 {
-	matrix matrixPalette[120];
+	matrix matrixPalette[128];
 };
 #endif
 

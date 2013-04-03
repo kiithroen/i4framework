@@ -7,7 +7,7 @@ cbuffer cbPerObject : register(b0)
 #ifdef MASK_SKINNING
 cbuffer CBEachSkinedMesh_S : register(b1)
 {
-	matrix matrixPalette[120];
+	matrix matrixPalette[128];
 };
 #endif
 

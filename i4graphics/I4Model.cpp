@@ -41,6 +41,7 @@ namespace i4graphics
 
 	bool Model::registerMesh(ModelMeshResource* meshResource)
 	{
+		set<int> setAllRefBone;
 		unsigned int meshCount = meshResource->getMeshCount();
 		for (unsigned int i = 0; i < meshCount; ++i)
 		{
@@ -51,7 +52,16 @@ namespace i4graphics
 
 			vecMesh.push_back(modelMesh);
 			mapElement.insert(make_pair(meshInfo->name, modelMesh));
+
+			// 이 모델이 참조하는 모든 본 테이블을 만든다.
+			for (unsigned int j = 0; j < meshInfo->boneRefTable.size(); ++j)
+			{
+				setAllRefBone.insert(meshInfo->boneRefTable[j]);
+			}
 		} 
+
+		// 복사
+		vecAllRefBone.assign(setAllRefBone.begin(), setAllRefBone.end());
 
 		return true;
 	}
@@ -105,9 +115,6 @@ namespace i4graphics
 	{
 		for (auto& itr : mapElement)
 		{
-
-
-
 			delete itr.second;
 		}
 		mapElement.clear();
@@ -130,7 +137,13 @@ namespace i4graphics
 		for (unsigned int i = 0; i < boneSize; ++i)
 		{
 			vecBone[i]->animate(dt, vecBone[i]->getParentTM());
-			vecSkinTM[i] = vecBone[i]->getSkinTM();
+		}
+
+		// 이 모델이 참조하는 본들만 스킨행렬을 계산한다.
+		for (unsigned int i = 0; i < vecAllRefBone.size(); ++i)
+		{
+			const int boneID = vecAllRefBone[i];
+			vecSkinTM[boneID] = vecBone[boneID]->getSkinTM();
 		}
 
 		unsigned int meshSize = vecMesh.size();

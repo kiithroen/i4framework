@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <set>
 using namespace std;
 
 enum ExportType
@@ -190,8 +191,10 @@ private:
 
 	FbxAxisSystem SceneAxisSystem;
 
-	// 도저히 이유는 모르겠고... 유니티에서 사용되고 있는 FBX들은 Max, Blender에서 뽑은 데이타랑 다르게 노말이 뒤집혀있다. 
-	// 뭔가 정보가 있을듯 한데 도저히 못찾겠네..
+	// 도저히 이유는 모르겠고... 에니메이션이 적용된 모델은은 노말이 뒤집혀있다.
+	// 1. 스키닝한다고 바인딩포즈를 곱해주는데 이부분이 잘못되서 여기서 중복으로 곱해지거나.. 
+	// 2. 셰이더에서 스키닝시에 노말을 잘못 트랜스폼시키거나.. 
+	// 둘중에 하나일거 같은데 일단 에니메이션이 적용되어있으면 강제로 노말을 뒤집어주도록 했다.
 	bool isFlipNormalZ;	
 
 	FILE* fpMesh;
