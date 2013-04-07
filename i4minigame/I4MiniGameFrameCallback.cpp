@@ -88,6 +88,15 @@ bool MiniGameFrameCallback::onStart()
 	ObjectTPSCameraComponent* playerCamera = player->addComponent<ObjectTPSCameraComponent>();
 	playerCamera->setMainCamera(true);
 
+	Object* npc =  objectMgr->createObject("npc");
+	npc->setPosition(Vector3(10.0f, 0.0f, -10.0f));
+	npc->setScale(Vector3(0.01f, 0.01f, 0.01f));
+
+	ObjectViewComponent* npcView = npc->addComponent<ObjectViewComponent>();
+	npcView->attachModel("npc", "testmodel/marchhare", true, true, true);
+	npcView->attachAni("testmodel/marchhare.ani.xml", "idle");
+	npcView->playAnimation("idle");
+
 	physXMgr->createPlane();
 
 	Object* obj = nullptr;
