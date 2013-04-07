@@ -484,11 +484,6 @@ namespace i4graphics
 				}
 					
 				itr.mesh->bind();
-				
-				cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
-				cbEachMeshInstance_G_PS.getData()->specularLevel = itr.material->specularLevel;
-				cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
-				shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
 			}
 
 			if (isChangedTwoSide)
@@ -528,8 +523,12 @@ namespace i4graphics
 			cbEachAllMesh_G_VS.getData()->world = itr.worldTM;
 			cbEachAllMesh_G_VS.getData()->result = itr.resultTM;
 			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
-
 			
+			cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
+			cbEachMeshInstance_G_PS.getData()->specularLevel = itr.material->specularLevel;
+			cbEachMeshInstance_G_PS.getData()->specularPower = itr.material->specularPower;
+			shaderMgr->setConstantBuffer(SHADER_TYPE_PS, 3, cbEachMeshInstance_G_PS.getBuffer(), cbEachMeshInstance_G_PS.getData());				
+
 			if (itr.shaderMask & SHADER_MASK_SKINNING)
 			{
 				buildMatrixPalette(cbEachSkinedMesh_G.getData()->matrixPalette, itr.resultTM, itr.skinTMs, itr.boneRefTable, itr.boneCount);

@@ -4,7 +4,7 @@
 		<sub id="0">
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>1</specularPower>
+			<specularPower>8</specularPower>
 			<diffuseMap>MarchHare_DMA.dds</diffuseMap>
 			<specularMap>MarchHare_SM.dds</specularMap>
 			<normalMap>MarchHare_NM.dds</normalMap>
@@ -12,7 +12,7 @@
 		<sub id="1">
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>32</specularPower>
+			<specularPower>2</specularPower>
 			<diffuseMap>MarchHare_DMA.dds</diffuseMap>
 			<specularMap>MarchHare_SM.dds</specularMap>
 			<normalMap>MarchHare_NM.dds</normalMap>
@@ -20,7 +20,7 @@
 		<sub id="2">
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>64</specularPower>
+			<specularPower>2</specularPower>
 			<diffuseMap>MarchHare_DMA.dds</diffuseMap>
 			<specularMap>MarchHare_SM.dds</specularMap>
 			<normalMap>MarchHare_NM.dds</normalMap>
@@ -30,7 +30,7 @@
 		<sub id="0">
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>1</specularPower>
+			<specularPower>8</specularPower>
 			<diffuseMap>MarchHare_DMA.dds</diffuseMap>
 			<specularMap>MarchHare_SM.dds</specularMap>
 			<normalMap>MarchHare_NM.dds</normalMap>
@@ -38,7 +38,7 @@
 		<sub id="1">
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>32</specularPower>
+			<specularPower>2</specularPower>
 			<diffuseMap>MarchHare_DMA.dds</diffuseMap>
 			<specularMap>MarchHare_SM.dds</specularMap>
 			<normalMap>MarchHare_NM.dds</normalMap>
@@ -46,7 +46,7 @@
 		<sub id="2">
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>16</specularPower>
+			<specularPower>32</specularPower>
 			<diffuseMap>MarchHare_Eye_DM.dds</diffuseMap>
 			<specularMap>MarchHare_Eye_SM.dds</specularMap>
 			<normalMap>MarchHare_Eye_NM.dds</normalMap>

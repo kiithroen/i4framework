@@ -2,7 +2,7 @@
 	<version>1.0.0</version>
 	<node name="Alice_New" parent_name="undefined">
 		<sub id="0">
-			<ambient>0.7</ambient>
+			<ambient>0.85</ambient>
 			<specularLevel>1</specularLevel>
 			<specularPower>8</specularPower>
 			<diffuseMap>Alice_DM.dds</diffuseMap>
@@ -13,7 +13,7 @@
 		<sub id="1">
 			<ambient>0.7</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>8</specularPower>
+			<specularPower>32</specularPower>
 			<diffuseMap>Eye_DM.dds</diffuseMap>
 			<normalMap>Eye_NM.dds</normalMap>
 		</sub>
