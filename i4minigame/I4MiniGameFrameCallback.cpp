@@ -70,8 +70,8 @@ bool MiniGameFrameCallback::onStart()
 	player->setScale(Vector3(0.007f, 0.007f, 0.007f));
 
 	ObjectViewComponent* playerView = player->addComponent<ObjectViewComponent>();
-	playerView->attachModel("player", "testmodel/soldier", true, true, true);
-	playerView->attachAni("testmodel/soldier_idle.ani.xml", "idle");
+	playerView->attachModel("player", "testmodel/alice", true, true, true);
+	playerView->attachAni("testmodel/alice.ani.xml", "idle");
 	playerView->playAnimation("idle");
 
 	Matrix4x4 m;
@@ -90,9 +90,19 @@ bool MiniGameFrameCallback::onStart()
 
 	physXMgr->createPlane();
 
-	Object* objFloor = objectMgr->createObject("floor");
-	ObjectViewComponent* viewFloor = objFloor->addComponent<ObjectViewComponent>();
-	viewFloor->attachModel("floor", "testmodel/floor", true, true, false);
+	Object* obj = nullptr;
+	ObjectViewComponent* viewObj = nullptr; 
+
+	obj = objectMgr->createObject("floor");
+	viewObj = obj->addComponent<ObjectViewComponent>();
+	viewObj->attachModel("floor", "testmodel/floor", true, true, false);
+	obj->setPosition(Vector3(0, 0, 0));
+
+	obj = objectMgr->createObject("giwa");
+	viewObj = obj->addComponent<ObjectViewComponent>();
+	viewObj->attachModel("giwa", "testmodel/giwa", true, true, false);
+	obj->setPosition(Vector3(-20, 0, 20));
+	obj->setScale(Vector3(0.05, 0.05, 0.05));
 
 	Vector3 lightPointColor[] =
 	{
@@ -117,39 +127,46 @@ bool MiniGameFrameCallback::onStart()
 		{
 			int idx = i*10 + j;
 
-			char charName[256] = {0, };
-			sprintf(charName, "char_%d", idx);
-			Object* objChar = objectMgr->createObject(charName);
-			objChar->setPosition(Vector3(-20.0f + i*4.0f, 0.0f, -20.0f + j*4.0f));
+			char decoName[256] = {0, };
+			sprintf(decoName, "deco_%d", idx);
+			obj = objectMgr->createObject(decoName);
+			
+			viewObj = obj->addComponent<ObjectViewComponent>();
 
-			ObjectViewComponent* view = objChar->addComponent<ObjectViewComponent>();
-			ObjectRigidBodyComponent* rigid = objChar->addComponent<ObjectRigidBodyComponent>();
+			Quaternion rot;
+			rot.makeRotationAxis(VECTOR3_AXISY, MathUtil::degreeToRadian(rand()%360));
+			obj->setRotation(rot);
 
+			if (i%3 == 0)
 			{
-				objChar->setScale(Vector3(0.035f, 0.035f, 0.035f));
-
-				view->attachModel(charName, "testmodel/elin", true, true, false);
-				Matrix4x4 offset;
-				offset.makeTranslation(0, -0.55f, 0);
-				rigid->setOffset(offset);
-				rigid->attachCapsule(0.2f, 0.7f, 1, false);
+				obj->setPosition(Vector3(-30.0f + i*3.0f, (float)(rand()%100)*0.1f, -30.0f + j*3.0f));
+				viewObj->attachModel(decoName, "testmodel/rock", true, true, false);				
+			}
+			else if (i%3 == 1)
+			{				
+				obj->setPosition(Vector3(-25.0f + (float)(rand()%100)*0.5f, 0, -25.0f + (float)(rand()%100)*0.5f));
+				viewObj->attachModel(decoName, "testmodel/stone", true, true, false);
+			}
+			else
+			{
+				obj->setPosition(Vector3(5.0f + i*3, 0, j*3));
+				viewObj->attachModel(decoName, "testmodel/tombstone", true, true, false);
 			}
 
 			char lightName[256] = {0, };
 			sprintf(lightName, "light_%d", idx);
 			objLight[idx] = objectMgr->createObject(lightName);
-			objLight[idx]->setPosition(Vector3(-20.0f + i*4.0f, 0.5f, -20.0f + j*4.0f));
 
 			ObjectPointLightComponent* lightPoint = objLight[idx]->addComponent<ObjectPointLightComponent>();
 			lightPoint->setColor(lightPointColor[idx%13]);
 			if ((i == 3 && j == 3) || (i == 6 && j == 6))
 			{
 				lightPoint->enableBlink(0.05f, 0.1f);
-				lightPoint->setRadius(5);
+				lightPoint->setRadius(10);
 			}
 			else
 			{
-				lightPoint->setRadius(2.5f);
+				lightPoint->setRadius(3.5f);
 			}
 		}
 	}
@@ -226,10 +243,19 @@ bool MiniGameFrameCallback::onUpdate()
 			}
 
 			int idx = i*10 + j;
-
-			objLight[idx]->setPosition(Vector3(-18.0f + i*4.0f + sign*2.5f*cos(MathUtil::degreeToRadian(degree)),
-				1.0f + sign*0.5f*cos(MathUtil::degreeToRadian(degree)),
-				-18.0f + j*4.0f + sign*2.5f*sin(MathUtil::degreeToRadian(degree))));
+			
+			if (i%2 == 0)
+			{
+				objLight[idx]->setPosition(Vector3(-20.0f + i*4.0f + sign*2.5f*cos(MathUtil::degreeToRadian(degree)),
+					5.0f + sign*0.5f*cos(MathUtil::degreeToRadian(degree)),
+					-30.0f + j*8.0f + sign*2.5f*sin(MathUtil::degreeToRadian(degree))));
+			}
+			else
+			{
+				objLight[idx]->setPosition(Vector3(-20.0f + i*4.0f + sign*2.5f*cos(MathUtil::degreeToRadian(degree)),
+					1.0f + sign*0.5f*cos(MathUtil::degreeToRadian(degree)),
+					-30.0f + j*8.0f + sign*2.5f*sin(MathUtil::degreeToRadian(degree))));
+			}
 		}
 	}
 	

@@ -20,6 +20,7 @@
 #include <set>
 #include <algorithm>
 #include <functional>
+#include <memory>
 using namespace std;
 using namespace std::placeholders;
 

@@ -4,17 +4,23 @@
 
 namespace i4core
 {
-	inline void to_string(string& out, const wstring& wstr)
+	class StringUtil
 	{
-		char szTemp[256];
-		WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, szTemp, sizeof(szTemp)/sizeof(szTemp[0]), NULL, NULL );
-		out = szTemp;
-	}
+	public:
+		static void		toString(string& out, const wstring& wstr);
+		static void		toWString(wstring& out, const string& str);
 
-	inline void to_wstring(wstring& out, const string& str)
-	{
-		wchar_t szTemp[256];
-		MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)strlen(str.c_str()) + 1, szTemp, sizeof(szTemp)/sizeof(szTemp[0]));
-		out = szTemp;
-	}
+		static bool		splitPath(wstring& dir, wstring& fname, wstring& ext, const wstring& path);
+
+		static wstring	trimLeft(const wstring& delim, const wstring& source);
+		static wstring	trimRight(const wstring& delim, const wstring& source);
+		static wstring	trim(const wstring& delim, const wstring& source);
+
+		static void		split(vector<wstring>& result, const wstring& delim, const wstring& source, unsigned int maxsize = 0);
+		static void		split(vector<wstring>& result, const char delim, const wstring& source, unsigned int maxsize = 0);
+		static void		splitTrim(vector<wstring>& result, const wstring& delim, const wstring& source, unsigned int maxsize = 0);
+
+		static wstring	toLower(const wstring& src);
+		static wstring	toUpper(const wstring& src);
+	};
 }

@@ -16,6 +16,7 @@ ipch/
 dependency/PhysX/
 dependency/fbxsdk/
 dependency/wxWidgets/
+dependency/DirectXTex/
 bin/
 i4converter/bin/
 screenshot/

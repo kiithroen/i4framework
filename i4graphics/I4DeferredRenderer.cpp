@@ -74,8 +74,8 @@ namespace i4graphics
 		clouds, haze=189,190,192
 		overcast=174,183,190
 		*/
-		sunLight.direction = Vector3(-0.3f, -1.0f, -0.85f);
-		sunLight.color = Vector3(1.0f, 1.0f, 1.0f);
+		sunLight.direction = Vector3(-0.45f, -1.0f, 0.45f);
+		sunLight.color = Vector3(192.0f/255.0f, 191.0f/255.0f, 173.0f/255.0f);
 		commit(&sunLight);
 	}
 

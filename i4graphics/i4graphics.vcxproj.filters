@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="DirectXTex">
-      <UniqueIdentifier>{2ed0821f-bb8a-4ad9-9969-4c7109676765}</UniqueIdentifier>
-    </Filter>
     <Filter Include="shader">
       <UniqueIdentifier>{0c32637f-028b-4be2-91b6-69cf8c7dea34}</UniqueIdentifier>
     </Filter>
@@ -22,9 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="I4Format.h" />
-    <ClInclude Include="..\dependency\DirectXTex\DDSTextureLoader.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="I4AnimationController.h">
@@ -111,14 +105,8 @@
     <ClInclude Include="I4LineBatch.h">
       <Filter>renderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\dependency\DirectXTex\WICTextureLoader.h">
-      <Filter>DirectXTex</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\dependency\DirectXTex\DDSTextureLoader.cpp">
-      <Filter>DirectXTex</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="I4AnimationController.cpp">
       <Filter>model</Filter>
@@ -182,9 +170,6 @@
     </ClCompile>
     <ClCompile Include="I4LineBatch.cpp">
       <Filter>renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dependency\DirectXTex\WICTextureLoader.cpp">
-      <Filter>DirectXTex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

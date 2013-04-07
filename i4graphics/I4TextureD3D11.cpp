@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "I4TextureD3D11.h"
-#include "DDSTextureLoader.h"
-#include "WICTextureLoader.h"
+#include "DirectXTex.h"
 #include "I4Log.h"
 #include "I4StringUtil.h"
+
+#pragma comment(lib, "DirectXTex.lib")
 
 namespace i4graphics
 {
@@ -24,17 +25,48 @@ namespace i4graphics
 		if (Texture::load(fname) == false)
 			return false;
 
-		wstring wfname;
-		to_wstring(wfname, fname);
-		if (FAILED(DirectX::CreateDDSTextureFromFile(d3dDevice, wfname.c_str(), nullptr, &shaderResourceView)))
-		{
-			LOG_WARN << L"texture is not dds. : " << wfname;
+		DirectX::TexMetadata info;
+		unique_ptr<DirectX::ScratchImage> image(new DirectX::ScratchImage);
 
-			if (FAILED(DirectX::CreateWICTextureFromFile(d3dDevice, d3dContext, wfname.c_str(), nullptr, &shaderResourceView)))
+		wstring wfname;
+		StringUtil::toWString(wfname, fname);
+
+		wstring wpath;
+		wstring wfilename;
+		wstring wext;
+
+		StringUtil::splitPath(wpath, wfilename, wext, wfname);
+
+		wext = StringUtil::toLower(wext);
+		if (wext.compare(L"dds") == 0)
+		{
+			if (FAILED(DirectX::LoadFromDDSFile(wfname.c_str(), DirectX::DDS_FLAGS_NONE, &info, *image)))
 			{
-				LOG_WARN << L"texture load failed. : " << wfname;
+				LOG_WARN << L"texture dds load failed. : " << wfname;
 				return false;
 			}
+		}
+		else if (wext.compare(L"tga") == 0)
+		{
+			if (FAILED(DirectX::LoadFromTGAFile(wfname.c_str(), &info, *image)))
+			{
+				LOG_WARN << L"texture tga load failed. : " << wfname;
+				return false;
+			}
+		}
+		else
+		{
+			if (FAILED(DirectX::LoadFromWICFile(wfname.c_str(), DirectX::DDS_FLAGS_NONE, &info, *image)))
+			{
+				LOG_WARN << L"texture etc load failed. : " << wfname;
+				return false;
+			}
+		}
+
+		if (FAILED(DirectX::CreateShaderResourceView(d3dDevice, image->GetImages(), image->GetImageCount(), info, &shaderResourceView)))
+		{
+			LOG_WARN << L"create share resource view failed. : " << wfname;
+			return false;
 		}
 
 		return true;
