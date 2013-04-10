@@ -24,6 +24,7 @@ namespace i4object
 		void attachBox(const Vector3& ext, float density, bool kinematic);
 		void attachSphere(float radius, float density, bool kinematic);
 		void attachCapsule(float radius, float height, float density, bool kinematic);
+		void attachRepX(const char* fname, float density, bool kinematic);
 
 		void onPreSimulate(MessageArgs& args);
 		void onPostSimulate(MessageArgs& args);

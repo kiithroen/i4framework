@@ -97,6 +97,16 @@ namespace i4object {
 		setKinematic(kinematic);
 	}
 
+	void ObjectRigidBodyComponent::attachRepX(const char* fname, float density, bool kinematic)
+	{
+		PxTransform transform;
+		WorldTM2PxTransform(transform);
+		body = getOwner()->getObjectMgr()->getPhysXMgr()->createRepX(transform, fname, density);
+		body->putToSleep();
+
+		setKinematic(kinematic);
+	}
+
 	void ObjectRigidBodyComponent::WorldTM2PxTransform(PxTransform& transform)
 	{
 		Matrix4x4 invOffset;

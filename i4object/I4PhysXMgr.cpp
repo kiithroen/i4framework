@@ -16,6 +16,8 @@ using namespace i4core;
 #pragma comment(lib, "PhysXProfileSDKDEBUG.lib")
 #pragma comment(lib, "PhysXVisualDebuggerSDKDEBUG.lib")
 #pragma comment(lib, "PxTaskDEBUG.lib")
+#pragma comment(lib, "RepX3DEBUG.lib")
+#pragma comment(lib, "RepXUpgrader3DEBUG.lib")
 
 #else
 
@@ -29,6 +31,8 @@ using namespace i4core;
 #pragma comment(lib, "PhysXProfileSDKPROFILE.lib")
 #pragma comment(lib, "PhysXVisualDebuggerSDKPROFILE.lib")
 #pragma comment(lib, "PxTaskPROFILE.lib")
+#pragma comment(lib, "RepX3PROFILE.lib")
+#pragma comment(lib, "RepXUpgrader3DPROFILE.lib")
 
 #else
 
@@ -40,6 +44,8 @@ using namespace i4core;
 #pragma comment(lib, "PhysXProfileSDK.lib")
 #pragma comment(lib, "PhysXVisualDebuggerSDK.lib")
 #pragma comment(lib, "PxTask.lib")
+#pragma comment(lib, "RepX3.lib")
+#pragma comment(lib, "RepXUpgrader3.lib")
 
 #endif
 
@@ -324,6 +330,43 @@ namespace i4object
 		}
 
 		return c;
+	}
+
+	PxRigidDynamic* PhysXMgr::createRepX(const PxTransform& transform, const char* fname, float density)
+	{
+		PxCollection* buffers = mPhysics->createCollection();
+		PxCollection* objects = mPhysics->createCollection();
+
+		PxDefaultFileInputData data(fname);
+		assert( data.isValid() );
+		repx::deserializeFromRepX( data, *mPhysics, *mCooking, NULL, NULL, *buffers, *objects, NULL );
+
+//		mPhysics->addCollection( *buffers, *mScene );
+//		mPhysics->addCollection( *objects, *mScene );
+		for (PxU32 i = 0; i < objects->getNbObjects(); i++ )
+		{
+			PxRigidDynamic* actor = objects->getObject(i)->is<PxRigidDynamic>();
+			if (actor)
+			{
+				actor->setGlobalPose(transform, true);
+
+				PxShape** shapes = new PxShape*[actor->getNbShapes()];
+				actor->getShapes(shapes, actor->getNbShapes());
+				for (PxU32 i = 0; i < actor->getNbShapes(); ++i)
+				{
+					shapes[i]->setLocalPose(PxTransform(PxQuat(-PI/2, PxVec3(1, 0, 0))));
+				}
+
+				PxRigidBodyExt::updateMassAndInertia(*actor, 1.0f);
+				mScene->addActor(*actor);
+
+				return actor;
+			}
+		}
+		objects->release();
+		buffers->release();
+
+		return nullptr;
 	}
 
 	void PhysXMgr::enablePvdConnection(bool enable)

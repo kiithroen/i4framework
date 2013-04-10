@@ -1,0 +1,29 @@
+<material>
+	<version>1.0.0</version>
+	<node name="Plane_002" parent_name="undefined">
+		<sub id="0">
+			<ambient>0.3</ambient>
+			<specularLevel>0.7</specularLevel>
+			<specularPower>16</specularPower>			
+			<diffuseMap>pallet_planks.png</diffuseMap>
+			<specularMap>pallet_planks_SPEC.png</specularMap>
+			<normalMap>pallet_planks_NRM.png</normalMap>
+		</sub>
+		<sub id="1">
+			<ambient>0.3</ambient>
+			<specularLevel>0.7</specularLevel>
+			<specularPower>16</specularPower>			
+			<diffuseMap>pallet_planks.png</diffuseMap>
+			<specularMap>pallet_planks_SPEC.png</specularMap>
+			<normalMap>pallet_planks_NRM.png</normalMap>
+		</sub>
+		<sub id="2">
+			<ambient>0.3</ambient>
+			<specularLevel>0.7</specularLevel>
+			<specularPower>16</specularPower>			
+			<diffuseMap>pallet_planks.png</diffuseMap>
+			<specularMap>pallet_planks_SPEC.png</specularMap>
+			<normalMap>pallet_planks_NRM.png</normalMap>
+		</sub>
+	</node>
+</mtrl>

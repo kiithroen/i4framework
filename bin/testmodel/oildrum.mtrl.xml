@@ -1,0 +1,12 @@
+<material>
+	<version>1.0.0</version>
+	<node name="Oildrum-ref" parent_name="undefined">
+		<sub id="0">
+			<ambient>0.3</ambient>
+			<specularLevel>1</specularLevel>
+			<specularPower>32</specularPower>
+			<diffuseMap>oildrum_col.jpg</diffuseMap>
+			<normalMap>oildrum_nor.jpg</normalMap>
+		</sub>
+	</node>
+</mtrl>

@@ -6,6 +6,30 @@
 
 namespace i4object {
 
+	static class CharacterHitReport : public PxUserControllerHitReport
+	{
+		virtual void onShapeHit(const PxControllerShapeHit& hit)
+		{
+			if (hit.dir.dot(PxVec3(0, 1, 0)) < -0.5f)
+				return;
+
+			PxRigidBody* rigid = hit.shape->getActor().is<PxRigidBody>();
+			if (rigid)
+			{
+				PxRigidBodyExt::addForceAtPos(*rigid, hit.dir*3, PxVec3((PxReal)hit.worldPos.x, (PxReal)hit.worldPos.y, (PxReal)hit.worldPos.z));
+			}
+		}
+
+		virtual void onControllerHit(const PxControllersHit& hit)
+		{
+		}
+
+		virtual void onObstacleHit(const PxControllerObstacleHit& hit)
+		{
+		}
+	} charHitReport;
+
+
 	ObjectCharacterMovementComponent::ObjectCharacterMovementComponent(void)
 		: controller(nullptr)
 		, grounded(false)
@@ -37,7 +61,7 @@ namespace i4object {
 	void ObjectCharacterMovementComponent::attach(float radius, float height, float slopeLimit, float stepOffset)
 	{
 		Vector3 p = getOwner()->getPosition();
-		controller = getOwner()->getObjectMgr()->getPhysXMgr()->createCapsuleController(p, radius, height, slopeLimit, stepOffset, nullptr, nullptr);
+		controller = getOwner()->getObjectMgr()->getPhysXMgr()->createCapsuleController(p, radius, height, slopeLimit, stepOffset, &charHitReport, nullptr);
 	}
 
 	void ObjectCharacterMovementComponent::onUpdateLogic(MessageArgs& args)

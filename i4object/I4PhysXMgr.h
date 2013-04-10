@@ -100,6 +100,8 @@ namespace i4object
 		PxRigidDynamic* createBox(const PxTransform& transform, const Vector3& ext, float density);
 		PxRigidDynamic* createSphere(const PxTransform& transform, float radius, float density);
 		PxRigidDynamic* createCapsule(const PxTransform& transform, float radius, float height, float density);
+		PxRigidDynamic* createRepX(const PxTransform& transform, const char* fname, float density);
+
 		PxController* createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
 
 	private:

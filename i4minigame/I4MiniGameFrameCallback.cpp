@@ -79,7 +79,7 @@ bool MiniGameFrameCallback::onStart()
 	playerView->setOffset(m);
 	
 	ObjectCharacterMovementComponent* playerMovement = player->addComponent<ObjectCharacterMovementComponent>();
-	playerMovement->attach(0.2f, 0.7f, cos(MathUtil::degreeToRadian(70)), 0.1f);
+	playerMovement->attach(0.2f, 0.7f, cos(MathUtil::degreeToRadian(45)), 0.05f);
 	playerMovement->setGravity(-9.8f);
 
 	ObjectCharacterControllerComponent* playerController = player->addComponent<ObjectCharacterControllerComponent>();	
@@ -148,18 +148,23 @@ bool MiniGameFrameCallback::onStart()
 
 			if (i%3 == 0)
 			{
-				obj->setPosition(Vector3(-30.0f + i*3.0f, (float)(rand()%100)*0.1f, -30.0f + j*3.0f));
-				viewObj->attachModel(decoName, "testmodel/rock", true, true, false);				
+				obj->setPosition(Vector3(0.0f + i, j*0.15f, -5.0f));
+				viewObj->attachModel(decoName, "testmodel/pallet", true, true, false);		
+				ObjectRigidBodyComponent* rigid = obj->addComponent<ObjectRigidBodyComponent>();
+				rigid->attachRepX("testmodel/pallet.RepX", 1.0f, false);
 			}
 			else if (i%3 == 1)
 			{				
-				obj->setPosition(Vector3(-25.0f + (float)(rand()%100)*0.5f, 0, -25.0f + (float)(rand()%100)*0.5f));
+				obj->setPosition(Vector3(-25.0f + (float)(rand()%100)*0.55f, 0, -25.0f + (float)(rand()%100)*0.5f));
 				viewObj->attachModel(decoName, "testmodel/stone", true, true, false);
 			}
 			else
 			{
-				obj->setPosition(Vector3(5.0f + i*3, 0, j*3));
-				viewObj->attachModel(decoName, "testmodel/tombstone", true, true, false);
+				obj->setPosition(Vector3(-10.0f + i*3, 0, j*3));
+				viewObj->attachModel(decoName, "testmodel/oildrum", true, true, false);
+				
+				ObjectRigidBodyComponent* rigid = obj->addComponent<ObjectRigidBodyComponent>();
+				rigid->attachRepX("testmodel/oildrum.RepX", 1.0f, false);
 			}
 
 			char lightName[256] = {0, };
