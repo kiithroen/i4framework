@@ -38,7 +38,6 @@ namespace i4graphics
 	struct CBEachAllMesh_G_VS
 	{
 		Matrix4x4 world;
-		Matrix4x4	result;
 	};
 
 	__declspec(align(16))

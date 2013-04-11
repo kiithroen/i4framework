@@ -1,0 +1,12 @@
+<material>
+	<version>1.0.0</version>
+	<node name="SMDImport" parent_name="undefined">
+		<sub id="0">
+			<ambient>0.588</ambient>
+			<specularLevel>1</specularLevel>
+			<specularPower>2</specularPower>
+			<diffuseMap>rollermine_sheet.tga</diffuseMap>
+			<normalMap>rollermine_normal.tga</normalMap>
+		</sub>
+	</node>
+</mtrl>

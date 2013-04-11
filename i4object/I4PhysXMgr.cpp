@@ -72,7 +72,6 @@ namespace i4object
 		, mCudaContextManager(nullptr)
 		, mPvdConnectionHandler(nullptr)
 		, mControllerManager(nullptr)
-		, mAccumulator(0)
 	{
 	}
 
@@ -98,6 +97,8 @@ namespace i4object
 		}
 		*/
 #ifdef PX_WINDOWS
+		// 뻗을때도 있고 안뻗을때도 있는데... 어차피 내 카드는 ATI.. 돌아가지도 않는거 일단 주석처리
+		/*
 		pxtask::CudaContextManagerDesc cudaContextManagerDesc;
 		mCudaContextManager = pxtask::createCudaContextManager(*mFoundation, cudaContextManagerDesc, mProfileZoneManager);
 		if( mCudaContextManager )
@@ -108,6 +109,7 @@ namespace i4object
 				mCudaContextManager = NULL;
 			}
 		}
+		*/
 #endif
 		bool recordMemoryAllocations = true;
 		mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, PxTolerancesScale(), recordMemoryAllocations, mProfileZoneManager );
@@ -334,15 +336,20 @@ namespace i4object
 
 	PxRigidDynamic* PhysXMgr::createRepX(const PxTransform& transform, const char* fname, float density)
 	{
+		PxRigidDynamic* rigid = nullptr;
 		PxCollection* buffers = mPhysics->createCollection();
 		PxCollection* objects = mPhysics->createCollection();
 
 		PxDefaultFileInputData data(fname);
-		assert( data.isValid() );
-		repx::deserializeFromRepX( data, *mPhysics, *mCooking, NULL, NULL, *buffers, *objects, NULL );
+		if (data.isValid() == false)
+			return nullptr;
 
-//		mPhysics->addCollection( *buffers, *mScene );
-//		mPhysics->addCollection( *objects, *mScene );
+		repx::deserializeFromRepX(data, *mPhysics, *mCooking, nullptr, nullptr, *buffers, *objects, nullptr);
+
+		// 씬 속성들을 덮어버리는 경우가 있어서 전부 포함하지말고 액터만 추가하도록 했다.
+		//mPhysics->addCollection( *buffers, *mScene );
+		//mPhysics->addCollection( *objects, *mScene );
+
 		for (PxU32 i = 0; i < objects->getNbObjects(); i++ )
 		{
 			PxRigidDynamic* actor = objects->getObject(i)->is<PxRigidDynamic>();
@@ -350,6 +357,8 @@ namespace i4object
 			{
 				actor->setGlobalPose(transform, true);
 
+				// 맥스 플러그인에서 뽑아져온걸 다렉 좌표계에 맞게 돌려준다.
+				// TODO : 느리기도 하고 귀찮은게 XML 을 직접 파싱하는게 나을지도...
 				PxShape** shapes = new PxShape*[actor->getNbShapes()];
 				actor->getShapes(shapes, actor->getNbShapes());
 				for (PxU32 i = 0; i < actor->getNbShapes(); ++i)
@@ -360,13 +369,16 @@ namespace i4object
 				PxRigidBodyExt::updateMassAndInertia(*actor, 1.0f);
 				mScene->addActor(*actor);
 
-				return actor;
+				delete[] shapes;
+
+				rigid = actor;
 			}
 		}
+
 		objects->release();
 		buffers->release();
 
-		return nullptr;
+		return rigid;
 	}
 
 	void PhysXMgr::enablePvdConnection(bool enable)

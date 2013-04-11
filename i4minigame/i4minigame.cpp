@@ -23,7 +23,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(437);
+//	_CrtSetBreakAlloc(103999);
+
 #ifdef _DEBUG
 	Log::initialize(Log::FLAG_DEBUGGER|Log::FLAG_FILE, Log::LEVEL_DEBUG, L"i4minigame_d.log");
 #else

@@ -101,17 +101,12 @@ bool MiniGameFrameCallback::onStart()
 
 	Object* obj = nullptr;
 	ObjectViewComponent* viewObj = nullptr; 
+	ObjectRigidBodyComponent* rigidObj = nullptr;
 
 	obj = objectMgr->createObject("floor");
 	viewObj = obj->addComponent<ObjectViewComponent>();
 	viewObj->attachModel("floor", "testmodel/floor", true, true, false);
 	obj->setPosition(Vector3(0, 0, 0));
-
-	obj = objectMgr->createObject("giwa");
-	viewObj = obj->addComponent<ObjectViewComponent>();
-	viewObj->attachModel("giwa", "testmodel/giwa", true, true, false);
-	obj->setPosition(Vector3(-20, 0, 20));
-	obj->setScale(Vector3(0.05, 0.05, 0.05));
 
 	Vector3 lightPointColor[] =
 	{
@@ -141,30 +136,32 @@ bool MiniGameFrameCallback::onStart()
 			obj = objectMgr->createObject(decoName);
 			
 			viewObj = obj->addComponent<ObjectViewComponent>();
+			rigidObj = obj->addComponent<ObjectRigidBodyComponent>();
 
 			Quaternion rot;
-			rot.makeRotationAxis(VECTOR3_AXISY, MathUtil::degreeToRadian(rand()%360));
+			rot.makeRotationAxis(VECTOR3_AXISY, MathUtil::degreeToRadian((float)(rand()%360)));
 			obj->setRotation(rot);
 
 			if (i%3 == 0)
 			{
 				obj->setPosition(Vector3(0.0f + i, j*0.15f, -5.0f));
-				viewObj->attachModel(decoName, "testmodel/pallet", true, true, false);		
-				ObjectRigidBodyComponent* rigid = obj->addComponent<ObjectRigidBodyComponent>();
-				rigid->attachRepX("testmodel/pallet.RepX", 1.0f, false);
+				viewObj->attachModel(decoName, "testmodel/pallet", true, true, false);
+
+				rigidObj->attachRepX("testmodel/pallet.RepX", 1.0f, false);
 			}
 			else if (i%3 == 1)
 			{				
-				obj->setPosition(Vector3(-25.0f + (float)(rand()%100)*0.55f, 0, -25.0f + (float)(rand()%100)*0.5f));
-				viewObj->attachModel(decoName, "testmodel/stone", true, true, false);
+				obj->setPosition(Vector3(-20.0f + i*2, 0.5f + (float)(rand()%100)*0.05f, -20.0f + j*2));
+				viewObj->attachModel(decoName, "testmodel/rollermine", true, true, false);
+
+				rigidObj->attachRepX("testmodel/rollermine.RepX", 1.0f, true);
 			}
 			else
 			{
-				obj->setPosition(Vector3(-10.0f + i*3, 0, j*3));
-				viewObj->attachModel(decoName, "testmodel/oildrum", true, true, false);
+				obj->setPosition(Vector3(-10.0f + i*1.5f, 0, j*1.5f));
+				viewObj->attachModel(decoName, "testmodel/oildrum", true, true, false);				
 				
-				ObjectRigidBodyComponent* rigid = obj->addComponent<ObjectRigidBodyComponent>();
-				rigid->attachRepX("testmodel/oildrum.RepX", 1.0f, false);
+				rigidObj->attachRepX("testmodel/oildrum.RepX", 1.0f, false);
 			}
 
 			char lightName[256] = {0, };

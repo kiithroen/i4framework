@@ -17,35 +17,6 @@
 
 namespace i4graphics
 {
-	// TODO : 그림자 그릴때와 일반일때 정렬알고리즘을 달리하자.
-	bool MeshRenderItem::operator < (const MeshRenderItem& other) const
-	{
-		if (shaderMask < other.shaderMask)									// 셰이더 우선으로 정렬하고
-		{
-			return true;
-		}
-		else
-		{
-			if (shaderMask == other.shaderMask)								// 셰이더가 같으면
-			{
-				if (material->diffuseMap < other.material->diffuseMap)		// 텍스쳐 우선으로 정렬한다. 다만 디퓨즈맵이 다르면 다른것도 다를 가능성이 높기에 디퓨즈맵만 비교한다
-				{
-					return true;
-				}
-				else
-				{
-					if (material->diffuseMap == other.material->diffuseMap)	// 디퓨즈맵이 같으면 
-					{
-						if (mesh < other.mesh)								// 메시 우선으로 정렬한다.
-							return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
 	DeferredRenderer::DeferredRenderer()
 		: shaderMgr(nullptr)
 		, rtDiffuse(nullptr)
@@ -59,7 +30,7 @@ namespace i4graphics
 		, shadowSplitSize(1024)
 	{
 		static const float defaultShadowSplitZ[] = { 5.0f, 15.0f, 40.0f, 100.0f };	// 0, 1 레벨은 거의 같은 크기로 나눠줘야 경계 현상이 안보인다
-		static const float defaultShadowBias[] = { 0.001f, 0.002f, 0.003f, 0.005f };
+		static const float defaultShadowBias[] = { 0.001f, 0.0015f, 0.002f, 0.003f };
 		for (int  i = 0; i < 4; ++i)
 		{
 			shadowSplitZ[i] = defaultShadowSplitZ[i];
@@ -393,7 +364,34 @@ namespace i4graphics
 			}
 		}
 
-		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end());
+		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end(),
+			[]( const MeshRenderItem& lhs, const MeshRenderItem& rhs)
+			{
+				if (lhs.shaderMask < rhs.shaderMask)									// 셰이더 우선으로 정렬하고
+				{
+					return true;
+				}
+				else
+				{
+					if (lhs.shaderMask == rhs.shaderMask)								// 셰이더가 같으면
+					{
+						if (lhs.material->diffuseMap < rhs.material->diffuseMap)		// 텍스쳐 우선으로 정렬한다. 다만 디퓨즈맵이 다르면 다른것도 다를 가능성이 높기에 디퓨즈맵만 비교한다
+						{
+							return true;
+						}
+						else
+						{
+							if (lhs.material->diffuseMap == rhs.material->diffuseMap)	// 디퓨즈맵이 같으면 
+							{
+								if (lhs.mesh < rhs.mesh)								// 메시 우선으로 정렬한다.
+									return true;
+							}
+						}
+					}
+				}
+
+				return false;
+			});
 	}
 
 	
@@ -521,7 +519,6 @@ namespace i4graphics
 			}				
 
 			cbEachAllMesh_G_VS.getData()->world = itr.worldTM;
-			cbEachAllMesh_G_VS.getData()->result = itr.resultTM;
 			shaderMgr->setConstantBuffer(SHADER_TYPE_VS, 2, cbEachAllMesh_G_VS.getBuffer(), cbEachAllMesh_G_VS.getData());
 			
 			cbEachMeshInstance_G_PS.getData()->ambient = itr.material->ambient;
@@ -686,7 +683,21 @@ namespace i4graphics
 			}
 		}
 
-		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end());
+		sort(vecCulledMeshRenderItem.begin(), vecCulledMeshRenderItem.end(),
+			[]( const MeshRenderItem& lhs, const MeshRenderItem& rhs)
+			{
+				if (lhs.shaderMask < rhs.shaderMask)									// 셰이더 우선으로 정렬하고
+				{
+					return true;
+				}
+				else
+				{
+					if (lhs.mesh < rhs.mesh)								// 메시 우선으로 정렬한다.
+						return true;
+				}
+
+				return false;
+			});
 	}
 
 	void DeferredRenderer::renderMeshShadowRenderItem(const Camera& camera)

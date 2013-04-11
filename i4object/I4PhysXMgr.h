@@ -121,7 +121,6 @@ namespace i4object
 #endif
 		PvdConnectionHandler*			mPvdConnectionHandler;
 		PxControllerManager*			mControllerManager;
-		float							mAccumulator;
 	};
 }
 

@@ -689,8 +689,11 @@ void FbxConverter::WriteNode(FbxNode* pNode, ExportType ExportType)
 						if (lTexture != NULL)
 						{
 							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
-							FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
-							fprintf(fpMtrl, "\t\t\t<diffuseMap>%s</diffuseMap>\n", fname.Buffer());
+							if (pTex)
+							{
+								FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
+								fprintf(fpMtrl, "\t\t\t<diffuseMap>%s</diffuseMap>\n", fname.Buffer());
+							}
 						}
 					}
 
@@ -701,8 +704,11 @@ void FbxConverter::WriteNode(FbxNode* pNode, ExportType ExportType)
                         if (lTexture != NULL)
 						{
 							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
-							FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
-							fprintf(fpMtrl, "\t\t\t<specularMap>%s</specularMap>\n", fname.Buffer());
+							if (pTex)
+							{
+								FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
+								fprintf(fpMtrl, "\t\t\t<specularMap>%s</specularMap>\n", fname.Buffer());
+							}
                         }
 					}
 
@@ -713,8 +719,11 @@ void FbxConverter::WriteNode(FbxNode* pNode, ExportType ExportType)
                         if (lTexture != NULL)
 						{
 							FbxFileTexture* pTex = FbxCast<FbxFileTexture>(lTexture);
-							FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
-							fprintf(fpMtrl, "\t\t\t<normalMap>%s</normalMap>\n", fname.Buffer());
+							if (pTex)
+							{
+								FbxString fname = FbxPathUtils::GetFileName(pTex->GetFileName());
+								fprintf(fpMtrl, "\t\t\t<normalMap>%s</normalMap>\n", fname.Buffer());
+							}
                         }
 					}
 					fprintf(fpMtrl, "\t\t</sub>\n");

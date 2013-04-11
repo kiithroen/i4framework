@@ -12,7 +12,6 @@ cbuffer	CBEveryFrame_G : register(b1)
 cbuffer	CBEachAllMesh_G_VS : register(b2)
 {
 	matrix world;
-	matrix result;
 }
 
 cbuffer	CBEachAllMesh_G_PS : register(b3)
