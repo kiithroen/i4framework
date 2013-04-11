@@ -5,8 +5,8 @@
 			<ambient>0.588</ambient>
 			<specularLevel>1</specularLevel>
 			<specularPower>2</specularPower>
-			<diffuseMap>rollermine_sheet.tga</diffuseMap>
-			<normalMap>rollermine_normal.tga</normalMap>
+			<diffuseMap>rollermine_sheet.dds</diffuseMap>
+			<normalMap>rollermine_normal.dds</normalMap>
 		</sub>
 	</node>
 </mtrl>

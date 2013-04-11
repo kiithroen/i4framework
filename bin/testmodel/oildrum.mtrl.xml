@@ -4,9 +4,9 @@
 		<sub id="0">
 			<ambient>0.3</ambient>
 			<specularLevel>1</specularLevel>
-			<specularPower>32</specularPower>
-			<diffuseMap>oildrum_col.jpg</diffuseMap>
-			<normalMap>oildrum_nor.jpg</normalMap>
+			<specularPower>8</specularPower>
+			<diffuseMap>oildrum_col.dds</diffuseMap>
+			<normalMap>oildrum_nor.dds</normalMap>
 		</sub>
 	</node>
 </mtrl>
