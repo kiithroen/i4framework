@@ -30,14 +30,14 @@ namespace i4graphics
 		delete aniController;
 	}
 
-	void ModelElement::registerAni(const char* name, KeyFrameSet* keyFrameSet)
+	void ModelElement::registerAni(const char* name, KeyFrameSet* keyFrameSet, float start, float end)
 	{
 		if (aniController == nullptr)
 		{
 			aniController = new AnimationController;
 		}
 		
-		aniController->addTrack(name, keyFrameSet);
+		aniController->addTrack(name, keyFrameSet, start, end);
 	}
 
 	void ModelElement::playAni(const char* name)

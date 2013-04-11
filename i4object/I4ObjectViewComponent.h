@@ -23,9 +23,9 @@ namespace i4object
 		virtual void			onRemove() override;
 
 		bool attachModel(const char* name, const char* modelPrefixName, bool hasMesh, bool hasMtrl, bool hasBone);
-		bool attachAni(const char* fname, const char* aniName);
+		bool attachAni(const char* fname, const char* aniName, float start, float end);
 		
-		void playAnimation(const char* name);
+		void playAnimation(const char* name, float speed = 1.0f);
 
 		void onUpateAnimation(MessageArgs& args);
 		void onCommitToRenderer(MessageArgs& args);

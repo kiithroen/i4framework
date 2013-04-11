@@ -64,13 +64,13 @@ namespace i4object {
 		return true;
 	}
 
-	bool ObjectViewComponent::attachAni(const char* fname, const char* aniName)
+	bool ObjectViewComponent::attachAni(const char* fname, const char* aniName, float start, float end)
 	{
 		if (model == nullptr)
 			return false;
 
 		ModelMgr* modelMgr = getOwner()->getObjectMgr()->getModelMgr();
-		if (!modelMgr->attachAni(model, fname, aniName))
+		if (!modelMgr->attachAni(model, fname, aniName, start, end))
 			return false;
 
 		getBroadcastMessenger().subscribe(Hash("onAnimate"), this, bind(&ObjectViewComponent::onUpateAnimation, this, _1));
@@ -78,11 +78,11 @@ namespace i4object {
 		return true;
 	}
 
-	void ObjectViewComponent::playAnimation(const char* name)
+	void ObjectViewComponent::playAnimation(const char* name, float speed)
 	{
 		if (model)
 		{
-			model->playAnimation(name);
+			model->playAnimation(name, speed);
 		}
 	}
 

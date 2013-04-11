@@ -71,8 +71,11 @@ bool MiniGameFrameCallback::onStart()
 
 	ObjectViewComponent* playerView = player->addComponent<ObjectViewComponent>();
 	playerView->attachModel("player", "testmodel/alice", true, true, true);
-	playerView->attachAni("testmodel/alice.ani.xml", "idle");
-	playerView->playAnimation("idle");
+	playerView->attachAni("testmodel/alice.ani.xml", "idle", 173, 195);
+	playerView->attachAni("testmodel/alice.ani.xml", "jump", 87, 105);
+	playerView->attachAni("testmodel/alice.ani.xml", "run", 138, 162);
+	playerView->attachAni("testmodel/alice.ani.xml", "walk", 216, 246);
+	playerView->playAnimation("idle", 0.5f);
 
 	Matrix4x4 m;
 	m.makeRotationY(MathUtil::degreeToRadian(180));
@@ -94,8 +97,9 @@ bool MiniGameFrameCallback::onStart()
 
 	ObjectViewComponent* npcView = npc->addComponent<ObjectViewComponent>();
 	npcView->attachModel("npc", "testmodel/marchhare", true, true, true);
-	npcView->attachAni("testmodel/marchhare.ani.xml", "idle");
-	npcView->playAnimation("idle");
+	npcView->attachAni("testmodel/marchhare.ani.xml", "idle", 1, 72);
+	npcView->attachAni("testmodel/marchhare.ani.xml", "hello", 129, 229);
+	npcView->playAnimation("hello");
 
 	physXMgr->createPlane();
 

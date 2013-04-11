@@ -11,7 +11,8 @@ namespace i4graphics
 {
 
 	Model::Model()
-		: shadowCaster(true)
+		: aniSpeed(1.0f)
+		, shadowCaster(true)
 		, shadowReceiver(true)
 	{
 	}
@@ -82,7 +83,7 @@ namespace i4graphics
 		return true;
 	}
 
-	bool Model::registerAni(ModelAniResource* aniResource, const char* aniName)
+	bool Model::registerAni(ModelAniResource* aniResource, const char* aniName, float start, float end)
 	{
 		unsigned int keyFrameSetCount = aniResource->getKeyFrameSetCount();
 		for (unsigned int i = 0; i < keyFrameSetCount; ++i)
@@ -91,7 +92,7 @@ namespace i4graphics
 			ModelElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
 			if (itr != mapElement.end())
 			{
-				(itr->second)->registerAni(aniName, keyFrameSet);
+				(itr->second)->registerAni(aniName, keyFrameSet, start, end);
 			}
 		}
 
@@ -136,7 +137,7 @@ namespace i4graphics
 		unsigned int boneSize = vecBone.size();
 		for (unsigned int i = 0; i < boneSize; ++i)
 		{
-			vecBone[i]->animate(dt, vecBone[i]->getParentTM());
+			vecBone[i]->animate(dt*aniSpeed, vecBone[i]->getParentTM());
 		}
 
 		// 이 모델이 참조하는 본들만 스킨행렬을 계산한다.
@@ -149,7 +150,7 @@ namespace i4graphics
 		unsigned int meshSize = vecMesh.size();
 		for (unsigned int i = 0; i < meshSize; ++i)
 		{
-			vecMesh[i]->animate(dt, vecMesh[i]->getParentTM());
+			vecMesh[i]->animate(dt*aniSpeed, vecMesh[i]->getParentTM());
 		}
 	}
 
@@ -174,8 +175,10 @@ namespace i4graphics
 		}
 	}
 
-	void Model::playAnimation(const char* aniName)
+	void Model::playAnimation(const char* aniName, float speed)
 	{
+		aniSpeed = speed;
+
 		for (auto& itr : mapElement)
 		{
 			(itr.second)->playAni(aniName);

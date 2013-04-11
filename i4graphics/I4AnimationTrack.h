@@ -7,7 +7,7 @@ namespace i4graphics {
 	class AnimationTrack
 	{
 	public:
-		AnimationTrack(KeyFrameSet* keyFrameSet);
+		AnimationTrack(KeyFrameSet* keyFrameSet, float start, float end);
 		~AnimationTrack();
 
 		void 				advanceFrame(float dt);
@@ -20,6 +20,8 @@ namespace i4graphics {
 	private:
 		KeyFrameSet*		keyFrameSet;
 		float				currentFrame;
+		float				startFrame;
+		float				endFrame;
 
 		static const float	ANIMATION_FRAME_RATE;
 	};

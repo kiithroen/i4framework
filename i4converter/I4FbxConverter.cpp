@@ -783,7 +783,7 @@ void FbxConverter::WriteNode(FbxNode* pNode, ExportType ExportType)
 			FbxTime duration = timeSpan.GetDuration();
 			FbxLongLong totalFrameCount = duration.GetFrameCount();
 
-			int samplingStepFrame = 2;
+			int samplingStepFrame = 1;
 			FbxTime step;
 			step.SetTime(0,0,0,samplingStepFrame);
 
@@ -902,7 +902,7 @@ void FbxConverter::WriteNode(FbxNode* pNode, ExportType ExportType)
 
 						if (vecKeyRot.size() != 0)
 						{
-							if (rot.Compare(prevRot, 0.0001f) == 0)
+							if (rot.Compare(prevRot, 0.000001f) == 0)
 							{
 								prevIdentity = true;
 								continue;
@@ -914,7 +914,7 @@ void FbxConverter::WriteNode(FbxNode* pNode, ExportType ExportType)
 
 								// 이전 키값을 한번 더 넣어줘서 보간에 의한 의도되지 않은 에니메이션이 이루어지는 것을 막는다.
 								vecKeyFrame.push_back(frameCount - samplingStepFrame);
-								vecKeyRot.push_back(rot);
+								vecKeyRot.push_back(prevRot);
 							}
 						}
 

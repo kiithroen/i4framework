@@ -57,11 +57,13 @@ namespace i4graphics
 		}
 	}
 
-	const float AnimationTrack::ANIMATION_FRAME_RATE = 30.0f;
+	const float AnimationTrack::ANIMATION_FRAME_RATE = 24.0f;
 
-	AnimationTrack::AnimationTrack(KeyFrameSet* _keyFrameSet)
+	AnimationTrack::AnimationTrack(KeyFrameSet* _keyFrameSet, float start, float end)
 		: keyFrameSet(_keyFrameSet)
 		, currentFrame(0)
+		, startFrame(start)
+		, endFrame(end)
 	{
 	}
 
@@ -72,17 +74,18 @@ namespace i4graphics
 
 	void AnimationTrack::advanceFrame(float dt)
 	{
-		currentFrame += dt*ANIMATION_FRAME_RATE;
+		float elapsed = dt*ANIMATION_FRAME_RATE;
+		currentFrame += elapsed;
 
-		if (currentFrame >= keyFrameSet->endFrame)
+		if (currentFrame > endFrame)
 		{
-			currentFrame = keyFrameSet->startFrame;
+			currentFrame = startFrame + (currentFrame - endFrame);
 		}
 	}
 
 	void AnimationTrack::resetStartFrame()
 	{
-		currentFrame = keyFrameSet->startFrame;
+		currentFrame = startFrame;
 	}
 
 	bool AnimationTrack::getKeyRotation(Quaternion& out) const

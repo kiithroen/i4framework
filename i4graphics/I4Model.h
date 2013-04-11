@@ -28,14 +28,14 @@ namespace i4graphics {
 		bool					registerBone(ModelBoneResource* boneResource);
 		bool					registerMesh(ModelMeshResource* meshResource);
 		bool					registerMaterial(ModelMaterialResource* mtrlResource);
-		bool					registerAni(ModelAniResource* aniResource, const char* aniName);
+		bool					registerAni(ModelAniResource* aniResource, const char* aniName, float start, float end);
 
 		bool					initialize();
 		void					destroy();
 
 		ModelElement*			findElement(const char* name);
 
-		void					playAnimation(const char* aniName);
+		void					playAnimation(const char* aniName, float speed);
 
 		void					animate(float dt);	
 		void					commitToRenderer(Renderer* renderer, const Matrix4x4& worldTM);
@@ -61,6 +61,7 @@ namespace i4graphics {
 		ModelMeshVector			vecMesh;
 		ModelSkinTMVector		vecSkinTM;
 		vector<int>				vecAllRefBone;
+		float					aniSpeed;
 		bool					shadowCaster;
 		bool					shadowReceiver;
 	};

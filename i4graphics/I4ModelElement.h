@@ -21,7 +21,7 @@ namespace i4graphics {
 		ModelElement(Model* model, ModelElementInfo* info);
 		virtual ~ModelElement();
 
-		void					registerAni(const char* name, KeyFrameSet* keyFrameSet);
+		void					registerAni(const char* name, KeyFrameSet* keyFrameSet, float start, float end);
 		void					playAni(const char* name);
 
 		virtual bool			initialize();

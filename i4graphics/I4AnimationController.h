@@ -16,7 +16,7 @@ namespace i4graphics {
 		AnimationController();
 		~AnimationController();
 
-		void				addTrack(const char* name, KeyFrameSet* keyFrameSet);
+		void				addTrack(const char* name, KeyFrameSet* keyFrameSet, float start, float end);
 		void				playTrack(const char* name);
 
 		void				animate(float dt);
@@ -26,7 +26,7 @@ namespace i4graphics {
 	private:
 		AnimationTrackMap	mapAnimationTrack;
 		Matrix4x4			animationTM;
-		AnimationTrack*	curAnimationTrack;
+		AnimationTrack*		curAnimationTrack;
 	};
 
 }
