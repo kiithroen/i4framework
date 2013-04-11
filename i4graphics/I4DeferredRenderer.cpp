@@ -692,8 +692,11 @@ namespace i4graphics
 				}
 				else
 				{
-					if (lhs.mesh < rhs.mesh)								// 메시 우선으로 정렬한다.
-						return true;
+					if (lhs.shaderMask == rhs.shaderMask)
+					{
+						if (lhs.mesh < rhs.mesh)								// 메시 우선으로 정렬한다.
+							return true;
+					}
 				}
 
 				return false;

@@ -13,8 +13,8 @@ namespace i4object {
 			if (hit.dir.dot(PxVec3(0, 1, 0)) < -0.5f)
 				return;
 
-			PxRigidBody* rigid = hit.shape->getActor().is<PxRigidBody>();
-			if (rigid)
+			PxRigidDynamic* rigid = hit.shape->getActor().is<PxRigidDynamic>();
+			if (rigid && !(rigid->getRigidDynamicFlags() & PxRigidDynamicFlag::eKINEMATIC))
 			{
 				PxRigidBodyExt::addForceAtPos(*rigid, hit.dir*3, PxVec3((PxReal)hit.worldPos.x, (PxReal)hit.worldPos.y, (PxReal)hit.worldPos.z));
 			}
