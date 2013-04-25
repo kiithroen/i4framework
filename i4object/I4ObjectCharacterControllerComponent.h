@@ -20,6 +20,10 @@ namespace i4object
 		void activate(bool isActive);
 
 		void onUpdateLogic(MessageArgs& args);
+
+	private:
+		bool	isMoving;
+		bool	isJumping;
 	};
 }
 

@@ -37,6 +37,6 @@ namespace i4object
 		void setShadowReceiver(bool enable);
 	private:
 		Model*		model;
-		Matrix4x4		offset;
+		Matrix4x4	offset;
 	};
 }

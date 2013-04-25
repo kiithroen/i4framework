@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "I4ObjectCharacterControllerComponent.h"
 #include "I4ObjectCharacterMovementComponent.h"
+#include "I4ObjectViewComponent.h"
 #include "I4Hash.h"
 #include "I4Renderer.h"
 #include "I4Framework.h"
@@ -10,6 +11,8 @@ namespace i4object
 {
 
 	ObjectCharacterControllerComponent::ObjectCharacterControllerComponent(void)
+		: isMoving(false)
+		, isJumping(false)
 	{
 	}
 
@@ -41,11 +44,13 @@ namespace i4object
 
 	void ObjectCharacterControllerComponent::onUpdateLogic(MessageArgs& args)
 	{
-		ObjectCharacterMovementComponent* character = getOwner()->findComponent<ObjectCharacterMovementComponent>();
-		if (character == nullptr)
+		ObjectCharacterMovementComponent* movement = getOwner()->findComponent<ObjectCharacterMovementComponent>();
+		ObjectViewComponent* view = getOwner()->findComponent<ObjectViewComponent>();
+
+		if (movement == nullptr || view == nullptr)
 			return;
 
-		if (character->isGrounded() == false)
+		if (movement->isGrounded() == false)
 			return;
 
 		float dt = args[0].asFloat();
@@ -91,12 +96,22 @@ namespace i4object
 			isMove = true;
 		}
 
+		bool isJump = false;
 		if (InputState::KeyPressed[VK_SPACE])
-		{			
-  			character->jump(6);
+		{
+			isJump = true;
 		}
 
-		if (isMove)
+		if (isJump)
+		{
+			if (isJumping == false)
+			{
+  				movement->jump(6);
+				view->playAnimation("jump");
+				isJumping = true;
+			}
+		}
+		else if (isMove)
 		{
 			Vector3 scale = getOwner()->getScale();
 			Vector3 position = getOwner()->getPosition();
@@ -123,12 +138,27 @@ namespace i4object
 
 			moveDirection.y = 0;
 			moveDirection.normalize();
-			character->setDirection(moveDirection);
-			character->move(6);
+			movement->setDirection(moveDirection);
+
+			if (isMoving == false)
+			{				
+				movement->move(6);
+
+				view->playAnimation("run");
+
+				isMoving = true;
+			}
 		}
 		else
 		{
-			character->stop();
+			if (isMoving)
+			{
+				movement->stop();
+				view->playAnimation("idle");
+			}
+
+			isMoving = false;
+			isJumping = false;
 		}
 	}
 }
