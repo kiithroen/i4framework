@@ -154,7 +154,7 @@ namespace i4object
 			if (isMoving)
 			{
 				movement->stop();
-				view->playAnimation("idle");
+				view->playAnimation("idle", 0.5f);
 			}
 
 			isMoving = false;
