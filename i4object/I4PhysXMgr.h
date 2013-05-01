@@ -102,7 +102,9 @@ namespace i4object
 		PxRigidDynamic* createCapsule(const PxTransform& transform, float radius, float height, float density);
 		PxRigidDynamic* createRepX(const PxTransform& transform, const char* fname, float density);
 
-		PxController* createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
+		PxCapsuleController* createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback);
+
+		bool sweepSphere(const Vector3& p, float radius, const Vector3& dir, float dist);
 
 	private:
 		void enablePvdConnection(bool enable);

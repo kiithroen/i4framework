@@ -71,10 +71,11 @@ bool MiniGameFrameCallback::onStart()
 
 	ObjectViewComponent* playerView = player->addComponent<ObjectViewComponent>();
 	playerView->attachModel("player", "testmodel/alice", true, true, true);
-	playerView->attachAni("testmodel/alice.ani.xml", "idle", 173, 195);
-	playerView->attachAni("testmodel/alice.ani.xml", "jump", 87, 105);
-	playerView->attachAni("testmodel/alice.ani.xml", "run", 138, 162);
-	playerView->attachAni("testmodel/alice.ani.xml", "walk", 216, 246);
+	playerView->attachAni("testmodel/alice.ani.xml", "idle", 173, 195, ANIMATION_PLAY_LOOP);
+	playerView->attachAni("testmodel/alice.ani.xml", "jump", 87, 95, ANIMATION_PLAY_ONCE);
+	playerView->attachAni("testmodel/alice.ani.xml", "falling", 96, 105, ANIMATION_PLAY_ONCE);
+	playerView->attachAni("testmodel/alice.ani.xml", "run", 138, 162, ANIMATION_PLAY_LOOP);
+	playerView->attachAni("testmodel/alice.ani.xml", "walk", 216, 246, ANIMATION_PLAY_LOOP);
 	playerView->playAnimation("idle", 0.5f);
 
 	Matrix4x4 m;
@@ -97,8 +98,8 @@ bool MiniGameFrameCallback::onStart()
 
 	ObjectViewComponent* npcView = npc->addComponent<ObjectViewComponent>();
 	npcView->attachModel("npc", "testmodel/marchhare", true, true, true);
-	npcView->attachAni("testmodel/marchhare.ani.xml", "idle", 1, 72);
-	npcView->attachAni("testmodel/marchhare.ani.xml", "hello", 129, 229);
+	npcView->attachAni("testmodel/marchhare.ani.xml", "idle", 1, 72, ANIMATION_PLAY_LOOP);
+	npcView->attachAni("testmodel/marchhare.ani.xml", "hello", 129, 229, ANIMATION_PLAY_LOOP);
 	npcView->playAnimation("hello");
 
 	physXMgr->createPlane();

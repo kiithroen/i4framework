@@ -14,6 +14,7 @@ namespace i4graphics {
 	class ModelMaterialResource;
 	class ModelAniResource;
 	class Renderer;
+	enum ANIMATION_PLAY_TYPE;
 
 	class Model
 	{
@@ -28,7 +29,7 @@ namespace i4graphics {
 		bool					registerBone(ModelBoneResource* boneResource);
 		bool					registerMesh(ModelMeshResource* meshResource);
 		bool					registerMaterial(ModelMaterialResource* mtrlResource);
-		bool					registerAni(ModelAniResource* aniResource, const char* aniName, float start, float end);
+		bool					registerAni(ModelAniResource* aniResource, const char* aniName, float start, float end, ANIMATION_PLAY_TYPE type);
 
 		bool					initialize();
 		void					destroy();

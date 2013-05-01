@@ -7,6 +7,7 @@ namespace i4graphics {
 
 	struct KeyFrameSet;
 	class AnimationTrack;
+	enum ANIMATION_PLAY_TYPE;
 
 	class AnimationController
 	{
@@ -16,7 +17,7 @@ namespace i4graphics {
 		AnimationController();
 		~AnimationController();
 
-		void				addTrack(const char* name, KeyFrameSet* keyFrameSet, float start, float end);
+		void				addTrack(const char* name, KeyFrameSet* keyFrameSet, float start, float end, ANIMATION_PLAY_TYPE type);
 		void				playTrack(const char* name);
 
 		void				animate(float dt);

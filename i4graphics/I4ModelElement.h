@@ -12,6 +12,7 @@ namespace i4graphics {
 	class ModelBoneResource;
 	class AnimationController;
 	class Renderer;
+	enum ANIMATION_PLAY_TYPE;
 	
 	//------------------------- ModelElement ---------------------
 
@@ -21,7 +22,7 @@ namespace i4graphics {
 		ModelElement(Model* model, ModelElementInfo* info);
 		virtual ~ModelElement();
 
-		void					registerAni(const char* name, KeyFrameSet* keyFrameSet, float start, float end);
+		void					registerAni(const char* name, KeyFrameSet* keyFrameSet, float start, float end, ANIMATION_PLAY_TYPE type);
 		void					playAni(const char* name);
 
 		virtual bool			initialize();

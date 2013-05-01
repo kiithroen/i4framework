@@ -22,7 +22,7 @@ namespace i4graphics
 
 		void draw();
 
-		void	add(const Vector3& p0, const Vector3& p1, const Vector4& color)
+		void add(const Vector3& p0, const Vector3& p1, const Vector4& color)
 		{
 			Vertex_Pos_Col v;
 			v.pos = p0;
@@ -35,7 +35,7 @@ namespace i4graphics
 		}
 
 	private:
-		LineMesh*					mesh;
+		LineMesh*				mesh;
 		vector<Vertex_Pos_Col>	vecSceneVertex;
 		vector<Vertex_Pos_Col>	vecCulledVertex;
 	};

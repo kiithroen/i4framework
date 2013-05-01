@@ -59,11 +59,12 @@ namespace i4graphics
 
 	const float AnimationTrack::ANIMATION_FRAME_RATE = 24.0f;
 
-	AnimationTrack::AnimationTrack(KeyFrameSet* _keyFrameSet, float start, float end)
+	AnimationTrack::AnimationTrack(KeyFrameSet* _keyFrameSet, float start, float end, ANIMATION_PLAY_TYPE type)
 		: keyFrameSet(_keyFrameSet)
 		, currentFrame(0)
 		, startFrame(start)
 		, endFrame(end)
+		, playType(type)
 	{
 	}
 
@@ -79,7 +80,14 @@ namespace i4graphics
 
 		if (currentFrame > endFrame)
 		{
-			currentFrame = startFrame + (currentFrame - endFrame);
+			if (playType == ANIMATION_PLAY_LOOP)
+			{
+				currentFrame = startFrame + (currentFrame - endFrame);
+			}
+			else
+			{
+				currentFrame = endFrame;
+			}
 		}
 	}
 

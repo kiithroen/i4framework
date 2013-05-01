@@ -33,6 +33,7 @@ namespace i4object {
 	ObjectCharacterMovementComponent::ObjectCharacterMovementComponent(void)
 		: controller(nullptr)
 		, grounded(false)
+		, falling(false)
 		, stopped(false)
 		, moving(false)
 		, moveSpeed(0)
@@ -82,12 +83,21 @@ namespace i4object {
 			}
 		}
 		
+		deltaMove.y += jumpSpeed*dt + 0.5f*gravity*dt*dt;
+
 		if (grounded == false)
-		{
-			deltaMove.y += jumpSpeed*dt + 0.5f*gravity*dt*dt;
+		{			
 			jumpSpeed += gravity*dt;
+			if (jumpSpeed > 0)
+			{
+				falling = false;
+			}
+			else
+			{
+				falling = true;
+			}
 		}
-		else
+
 		{
 			if (stopped)
 			{
@@ -112,16 +122,30 @@ namespace i4object {
 
 		if (flag & PxControllerFlag::eCOLLISION_DOWN)
 		{
-			grounded = true;
-			jumpSpeed = 0;
+			if (falling == true)
+			{
+				grounded = true;
+				falling = false;
+				jumpSpeed = 0;
+			}
 		}
 		else if (flag & PxControllerFlag::eCOLLISION_UP)
 		{
 			jumpSpeed = 0;
 		}
+		else if (flag & PxControllerFlag::eCOLLISION_SIDES)
+		{
+			// nothing to do
+		}
 		else
 		{
-			grounded = false;
+			float radius = controller->getRadius();
+			Vector3 p = Vector3(controller->getFootPosition().x, controller->getFootPosition().y, controller->getFootPosition().z) + VECTOR3_AXISY*(radius + 0.01f);
+
+			if (getOwner()->getObjectMgr()->getPhysXMgr()->sweepSphere(p, radius, -VECTOR3_AXISY, controller->getStepOffset() + 0.1f) == false)
+			{
+				grounded = false;
+			}
 		}
 
 		const PxExtendedVec3 p = controller->getFootPosition();

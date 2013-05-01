@@ -6,6 +6,15 @@ using namespace i4core;
 
 namespace i4object
 {
+	enum OBJECT_STATE
+	{
+		OBJECT_IDLE = 0,
+		OBJECT_RUNNING,
+		OBJECT_WALKING,
+		OBJECT_JUMPING,
+		OBJECT_FALLING,
+	};
+
 	class ObjectCharacterControllerComponent : public ObjectComponent
 	{
 	public:
@@ -22,8 +31,7 @@ namespace i4object
 		void onUpdateLogic(MessageArgs& args);
 
 	private:
-		bool	isMoving;
-		bool	isJumping;
+		OBJECT_STATE	state;
 	};
 }
 

@@ -28,19 +28,21 @@ namespace i4object
 		void	setGravity(float gravity);
 
 		bool	isGrounded() const		{ return grounded; }
+		bool	isFalling() const		{ return falling; }
 		bool	isMoving() const		{ return moving; }
 		bool	isStopped() const		{ return stopped; }
 		void	onUpdateLogic(MessageArgs& args);
 
 	private:
-		PxController*	controller;
-		PxVec3			direction;
-		float			moveSpeed;
-		float			stopAccel;
-		float			jumpSpeed;
-		float			gravity;
-		bool			grounded;
-		bool			moving;
-		bool			stopped;
+		PxCapsuleController*	controller;
+		PxVec3					direction;
+		float					moveSpeed;
+		float					stopAccel;
+		float					jumpSpeed;
+		float					gravity;
+		bool					grounded;
+		bool					falling;
+		bool					moving;
+		bool					stopped;
 	};
 }

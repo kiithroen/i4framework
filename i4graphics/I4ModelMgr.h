@@ -5,6 +5,8 @@
 #include "I4Hash.h"
 using namespace i4core;
 
+#include "I4KeyFrameSet.h"
+
 namespace i4graphics {
 
 	class Model;
@@ -32,7 +34,7 @@ namespace i4graphics {
 		bool			attachBone(Model* model, const char* fname);
 		bool			attachMesh(Model* model, const char* fname);
 		bool			attachMaterial(Model* model, const char* fname);
-		bool			attachAni(Model* model, const char* fname, const char* aniName, float start, float end);
+		bool			attachAni(Model* model, const char* fname, const char* aniName, float start, float end, ANIMATION_PLAY_TYPE type);
 
 		void			destroy();
 

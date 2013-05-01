@@ -108,7 +108,7 @@ namespace i4graphics {
 		return model->registerMaterial(mtrlResource);
 	}
 
-	bool ModelMgr::attachAni(Model* model, const char* fname, const char* aniName, float start, float end)
+	bool ModelMgr::attachAni(Model* model, const char* fname, const char* aniName, float start, float end, ANIMATION_PLAY_TYPE type)
 	{
 		ModelAniResource* aniResource = nullptr;
 
@@ -130,7 +130,7 @@ namespace i4graphics {
 			aniResource = itr->second;
 		}
 
-		return model->registerAni(aniResource, aniName, start, end);
+		return model->registerAni(aniResource, aniName, start, end, type);
 	}
 
 	void ModelMgr::destroy()

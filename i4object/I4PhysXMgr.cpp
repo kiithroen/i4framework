@@ -312,7 +312,7 @@ namespace i4object
 		return actor;
 	}
 
-	PxController* PhysXMgr::createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback)
+	PxCapsuleController* PhysXMgr::createCapsuleController(const Vector3& p, float radius, float height, float slopeLimit, float stepOffset, PxUserControllerHitReport* hitCallback, PxControllerBehaviorCallback* behaviorCallback)
 	{
 		PxCapsuleControllerDesc desc;		
 		desc.setToDefault();
@@ -325,7 +325,7 @@ namespace i4object
 		desc.callback = hitCallback;
 		desc.behaviorCallback = behaviorCallback;
 
-		PxController* c = mControllerManager->createController(*mPhysics, mScene, desc);
+		PxCapsuleController* c = (PxCapsuleController*)mControllerManager->createController(*mPhysics, mScene, desc);
 		if (!c)
 		{
 			LOG_WARN << "create controller failed!";
@@ -379,6 +379,13 @@ namespace i4object
 		buffers->release();
 
 		return rigid;
+	}
+
+	bool PhysXMgr::sweepSphere(const Vector3& p, float radius, const Vector3& dir, float dist)
+	{
+		PxSweepHit hit;
+		const PxSceneQueryFlags outputFlags = PxSceneQueryFlag::eDISTANCE;
+		return mScene->sweepAny(PxSphereGeometry(radius), PxTransform(PxVec3(p.x, p.y, p.z)), PxVec3(dir.x, dir.y, dir.z), dist, outputFlags, hit);
 	}
 
 	void PhysXMgr::enablePvdConnection(bool enable)

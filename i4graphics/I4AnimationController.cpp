@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "I4AnimationController.h"
 #include "I4AnimationTrack.h"
+#include "I4Quaternion.h"
 
 namespace i4graphics
 {
@@ -49,9 +50,9 @@ namespace i4graphics
 		}
 	}
 
-	void AnimationController::addTrack(const char* name, KeyFrameSet* keyFrameSet, float start, float end)
+	void AnimationController::addTrack(const char* name, KeyFrameSet* keyFrameSet, float start, float end, ANIMATION_PLAY_TYPE type)
 	{
-		auto animationTrack = new AnimationTrack(keyFrameSet, start, end);
+		auto animationTrack = new AnimationTrack(keyFrameSet, start, end, type);
 		mapAnimationTrack.insert(make_pair(name, animationTrack));	
 	}
 

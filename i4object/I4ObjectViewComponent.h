@@ -7,6 +7,7 @@ using namespace i4core;
 namespace i4graphics 
 {
 	class Model;
+	enum  ANIMATION_PLAY_TYPE;
 }
 
 namespace i4object
@@ -23,7 +24,7 @@ namespace i4object
 		virtual void			onRemove() override;
 
 		bool attachModel(const char* name, const char* modelPrefixName, bool hasMesh, bool hasMtrl, bool hasBone);
-		bool attachAni(const char* fname, const char* aniName, float start, float end);
+		bool attachAni(const char* fname, const char* aniName, float start, float end, ANIMATION_PLAY_TYPE type);
 		
 		void playAnimation(const char* name, float speed = 1.0f);
 

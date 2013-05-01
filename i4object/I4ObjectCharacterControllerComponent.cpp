@@ -11,8 +11,7 @@ namespace i4object
 {
 
 	ObjectCharacterControllerComponent::ObjectCharacterControllerComponent(void)
-		: isMoving(false)
-		, isJumping(false)
+		: state(OBJECT_IDLE)
 	{
 	}
 
@@ -51,7 +50,18 @@ namespace i4object
 			return;
 
 		if (movement->isGrounded() == false)
+		{
+			
+			if (movement->isFalling())
+			{
+				if (state != OBJECT_FALLING)
+				{
+					view->playAnimation("falling");
+					state = OBJECT_FALLING;
+				}
+			}
 			return;
+		}
 
 		float dt = args[0].asFloat();
 
@@ -63,21 +73,21 @@ namespace i4object
 		camRight.normalize();
 
 		Vector3 camPos = getOwner()->getObjectMgr()->getRenderer()->getMainCamera().getWorldMatrix().getAxisX();
-		bool isMove = false;
+		bool isMoveKey = false;
 
 		Vector3 moveDirection = VECTOR3_ZERO;
 		if (InputState::KeyPressed['w'] || InputState::KeyPressed['W'])
 		{
 			moveDirection += camForward;
 
-			isMove = true;
+			isMoveKey = true;
 		}
 
 		if (InputState::KeyPressed['s'] || InputState::KeyPressed['S'])
 		{
 			moveDirection -= camForward;
 
-			isMove = true;
+			isMoveKey = true;
 		}
 
 		if (InputState::KeyPressed['a'] || InputState::KeyPressed['A'])
@@ -85,7 +95,7 @@ namespace i4object
 			moveDirection -= camForward*0.1f;
 			moveDirection -= camRight;
 
-			isMove = true;
+			isMoveKey = true;
 		}
 
 		if (InputState::KeyPressed['d'] || InputState::KeyPressed['D'])
@@ -93,25 +103,31 @@ namespace i4object
 			moveDirection -= camForward*0.1f;
 			moveDirection += camRight;
 
-			isMove = true;
+			isMoveKey = true;
 		}
 
-		bool isJump = false;
+		bool isJumpKey = false;
 		if (InputState::KeyPressed[VK_SPACE])
 		{
-			isJump = true;
+			isJumpKey = true;
 		}
 
-		if (isJump)
+		if (isJumpKey)
 		{
-			if (isJumping == false)
+			if (state == OBJECT_IDLE || state == OBJECT_WALKING)
 			{
-  				movement->jump(6);
+  				movement->jump(4.0f);
 				view->playAnimation("jump");
-				isJumping = true;
+				state = OBJECT_JUMPING;
+			}
+			else if (state == OBJECT_RUNNING)
+			{
+				movement->jump(5.0f);
+				view->playAnimation("jump");
+				state = OBJECT_JUMPING;
 			}
 		}
-		else if (isMove)
+		else if (isMoveKey)
 		{
 			Vector3 scale = getOwner()->getScale();
 			Vector3 position = getOwner()->getPosition();
@@ -140,25 +156,48 @@ namespace i4object
 			moveDirection.normalize();
 			movement->setDirection(moveDirection);
 
-			if (isMoving == false)
-			{				
-				movement->move(6);
-
-				view->playAnimation("run");
-
-				isMoving = true;
+			if (state == OBJECT_IDLE || state == OBJECT_FALLING)
+			{
+				if (InputState::KeyPressed[VK_SHIFT])
+				{
+					movement->move(6);
+					view->playAnimation("run");
+					state = OBJECT_RUNNING;
+				}
+				else
+				{
+					movement->move(2.5f);
+					view->playAnimation("walk");
+					state = OBJECT_WALKING;
+				}
+			}
+			else if (state == OBJECT_WALKING)
+			{
+				if (InputState::KeyPressed[VK_SHIFT])
+				{
+					movement->move(6);
+					view->playAnimation("run");
+					state = OBJECT_RUNNING;
+				}
+			}
+			else if (state == OBJECT_RUNNING)
+			{
+				if (InputState::KeyPressed[VK_SHIFT] == false)
+				{
+					movement->move(2.5f);
+					view->playAnimation("walk");
+					state = OBJECT_WALKING;
+				}
 			}
 		}
 		else
 		{
-			if (isMoving)
+			if (state != OBJECT_IDLE)
 			{
 				movement->stop();
 				view->playAnimation("idle", 0.5f);
+				state = OBJECT_IDLE;
 			}
-
-			isMoving = false;
-			isJumping = false;
 		}
 	}
 }

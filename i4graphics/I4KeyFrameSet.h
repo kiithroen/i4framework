@@ -5,6 +5,12 @@ using namespace i4core;
 
 namespace i4graphics {
 
+	enum ANIMATION_PLAY_TYPE
+	{
+		ANIMATION_PLAY_ONCE = 0,
+		ANIMATION_PLAY_LOOP,
+	};
+
 	struct KeyRotation
 	{
 		Quaternion	rotation;

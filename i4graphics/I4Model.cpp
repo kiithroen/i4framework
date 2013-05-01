@@ -83,7 +83,7 @@ namespace i4graphics
 		return true;
 	}
 
-	bool Model::registerAni(ModelAniResource* aniResource, const char* aniName, float start, float end)
+	bool Model::registerAni(ModelAniResource* aniResource, const char* aniName, float start, float end, ANIMATION_PLAY_TYPE type)
 	{
 		unsigned int keyFrameSetCount = aniResource->getKeyFrameSetCount();
 		for (unsigned int i = 0; i < keyFrameSetCount; ++i)
@@ -92,7 +92,7 @@ namespace i4graphics
 			ModelElementMap::iterator itr = mapElement.find(keyFrameSet->nodeName);
 			if (itr != mapElement.end())
 			{
-				(itr->second)->registerAni(aniName, keyFrameSet, start, end);
+				(itr->second)->registerAni(aniName, keyFrameSet, start, end, type);
 			}
 		}
 
