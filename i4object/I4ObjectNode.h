@@ -59,13 +59,13 @@ namespace i4object {
 		void					setWorldTM(const Matrix4x4& worldTM);
 
 		ObjectMgr*					getObjectMgr()	{ return objectMgr; }
-		ObjectComponentMessenger&		getMessenger()	{ return messenger; }
+		ObjectComponentMessenger&	getMessenger()	{ return messenger; }
 
 		const string&			getName()				{ return name; }
 
 		const Quaternion&		getRotation() const		{ return rotation; }
-		const Vector3&		getPosition() const		{ return position; }
-		const Vector3&		getScale() const		{ return scale; }
+		const Vector3&			getPosition() const		{ return position; }
+		const Vector3&			getScale() const		{ return scale; }
 
 		const Matrix4x4&		getWorldTM() const		{ return worldTM; }
 
@@ -76,12 +76,12 @@ namespace i4object {
 		Quaternion					rotation;
 		Vector3						scale;
 		Vector3						position;
-		Matrix4x4						worldTM;
-		string							name;
+		Matrix4x4					worldTM;
+		string						name;
 
 		ObjectMgr*					objectMgr;
 		ObjectComponentMap			mapComponent;
-		ObjectComponentMessenger		messenger;
+		ObjectComponentMessenger	messenger;
 	};
 
 }
